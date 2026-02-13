@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">ServiCerca</string>
+    <string name="nameApp">ServiCerca</string>
+    <string name="loginSubTitle">Conecta con los mejores servicios cerca de ti.</string>
+    <string name="emailLabel">Correo electrónico</string>
+    <string name="placeholderEmail">nombre@ejemplo.com</string>
+    <string name="passwordLabel">Contraseña</string>
+    <string name="login_forgot_password">¿Olvidaste tu contraseña?</string>
+    <string name="login_iniciar_secion">Iniciar sesión</string>
+    <string name="login_continuar_con">O continúa con</string>
+    <string name="login_no_account">¿No tienes una cuenta?</string>
+    <string name="login_create_account">Crear cuenta</string>
+</resources>
