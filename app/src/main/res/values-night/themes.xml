@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Placeholder night theme. App uses Compose ServiCercaTheme for styling -->
+    <style name="Theme.ServiCerca" parent="android:Theme.Material">
+        <!-- no-op -->
+    </style>
+</resources>
