@@ -112,16 +112,7 @@ fun RegisterScreen() {
             label = stringResource(R.string.register_confirm_password)
         )
 
-        Text(
-            text = stringResource(R.string.register_select_location_text),
-            fontWeight = FontWeight.Bold,
-        )
-        //TODO Ver como se pone el boton para solicitar los permios de gps para la app
 
-        Text(
-            text = stringResource(R.string.register_justification_selecting_location_text),
-            fontWeight = FontWeight.Light,
-        )
 
         PrimaryButton(
             text = stringResource(R.string.registrarse),
@@ -154,6 +145,7 @@ fun RegisterScreen() {
                 text = stringResource(R.string.register_terms_and_privacy_notice_text),
                 fontWeight = FontWeight.Light,
                 textAlign = TextAlign.Center,
+                fontSize = 10.sp,
                 modifier = Modifier.fillMaxWidth()
             )
 
