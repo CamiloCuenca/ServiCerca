@@ -36,7 +36,7 @@ import com.servicerca.app.core.components.button.SocialButton
 import com.servicerca.app.core.components.input.AppPasswordField
 import com.servicerca.app.core.components.input.AppTextField
 
-// TODO @CamiloCuenca me falta poner los Strings en el value strings.xml
+
 @Composable
 fun RegisterScreen() {
 
@@ -50,8 +50,6 @@ fun RegisterScreen() {
         .padding(24.dp),
         verticalArrangement = Arrangement.SpaceBetween)
     {
-
-
 
 
         Row(
@@ -76,22 +74,22 @@ fun RegisterScreen() {
         }
 
         Text(
-            text = "Crea una cuenta",
+            text = stringResource(R.string.register_create_an_account),
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.align(Alignment.CenterHorizontally),
             fontWeight = FontWeight.Bold,
 
             )
 
-        Text(text = "Únete a la comunidad y encuentra los mejores servicios cerca de ti.",
+        Text(text = stringResource(R.string.registration_subtitle),
             fontWeight = FontWeight.Light
         )
 
         AppTextField(
             value = name,
             onValueChange = {name = it},
-            label = "Nombre Completo",
-            placeholder = "Ej. Juan Pérez"
+            label = stringResource(R.string.register_label_full_name),
+            placeholder = stringResource(R.string.register_placeholder_example_name)
         )
 
         AppTextField(
@@ -114,16 +112,7 @@ fun RegisterScreen() {
             label = stringResource(R.string.register_confirm_password)
         )
 
-        Text(
-            text = "Selecionar Ubicación",
-            fontWeight = FontWeight.Bold,
-        )
-        //TODO Ver como se pone el boton para solicitar los permios de gps para la app
 
-        Text(
-            text = "Necesitamos esto para mostrarte proveedores cercanos.",
-            fontWeight = FontWeight.Light,
-        )
 
         PrimaryButton(
             text = stringResource(R.string.registrarse),
@@ -149,13 +138,14 @@ fun RegisterScreen() {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "¿Ya tienes una cuenta? Inicia sesión")
+            Text(text = stringResource(R.string.register_already_have_account_text))
             Spacer(modifier = Modifier.height(15.dp))
 
             Text(
-                text = "Al registrarte, aceptas nuestros Términos de Servicio \ny Politica de Privacidad",
+                text = stringResource(R.string.register_terms_and_privacy_notice_text),
                 fontWeight = FontWeight.Light,
                 textAlign = TextAlign.Center,
+                fontSize = 10.sp,
                 modifier = Modifier.fillMaxWidth()
             )
 

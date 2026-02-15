@@ -12,4 +12,12 @@
     <string name="login_create_account">Crear cuenta</string>
     <string name="register_confirm_password">Confirmar Contraseña</string>
     <string name="registrarse">Registrarse</string>
+    <string name="register_create_an_account">Crea una cuenta</string>
+    <string name="registration_subtitle">Únete a la comunidad y encuentra los mejores servicios cerca de ti.</string>
+    <string name="register_label_full_name">Nombre Completo</string>
+    <string name="register_placeholder_example_name">Ej. Juan Pérez</string>
+    <string name="register_select_location_text">Seleccionar Ubicación</string>
+    <string name="register_justification_selecting_location_text">Necesitamos esto para mostrarte proveedores cercanos.</string>
+    <string name="register_already_have_account_text">¿Ya tienes una cuenta? Inicia sesión</string>
+    <string name="register_terms_and_privacy_notice_text">Al registrarte, aceptas nuestros Términos de Servicio \ny Politica de Privacidad</string>
 </resources>

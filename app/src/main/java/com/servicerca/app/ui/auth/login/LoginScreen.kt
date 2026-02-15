@@ -35,7 +35,11 @@ import com.servicerca.app.core.components.button.SocialButton
 
 
 @Composable
-fun LoginScreen() {
+fun LoginScreen(
+
+    onNavigateToRegister: () -> Unit
+
+) {
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -139,7 +143,7 @@ fun LoginScreen() {
             Spacer(modifier = Modifier.height(8.dp))
 
             OutlinedButton(
-                onClick = { /* navegar a registro */ },
+                onClick = onNavigateToRegister,
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp)
             ) {
@@ -156,7 +160,7 @@ fun LoginScreen() {
 @Preview (showBackground = true , showSystemUi = true)
 @Composable
 fun LoginScreenPreview() {
-    LoginScreen()
+    LoginScreen(onNavigateToRegister = {})
 }
 
 

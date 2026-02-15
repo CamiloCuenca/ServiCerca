@@ -11,8 +11,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.servicerca.app.core.navigation.AppNavigation
 import com.servicerca.app.ui.theme.ServiCercaTheme
-import com.servicerca.app.ui.auth.login.LoginScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,11 +20,15 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ServiCercaTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Box(modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding)) {
-                        LoginScreen()
+                Scaffold(
+                    modifier = Modifier.fillMaxSize()
+                ) { innerPadding ->
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding)
+                    ) {
+                        AppNavigation()
                     }
                 }
             }
@@ -36,6 +40,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun PreviewMain() {
     ServiCercaTheme {
-        LoginScreen()
+
     }
 }
