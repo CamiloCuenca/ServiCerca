@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Tema night: usar NoActionBar; forceDarkAllowed se declara en v29 -->
     <style name="Theme.ServiCerca" parent="android:Theme.Material.NoActionBar">
-        <!-- forceDarkAllowed moved to values-night-v29 -->
+        <item name="android:forceDarkAllowed">false</item>
     </style>
 </resources>
