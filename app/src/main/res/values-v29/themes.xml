@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <style name="Theme.ServiCerca" parent="android:Theme.Material.Light.NoActionBar">
-        <!-- android:forceDarkAllowed moved to values-v29 to avoid API level issues -->
+        <item name="android:forceDarkAllowed">false</item>
     </style>
 </resources>

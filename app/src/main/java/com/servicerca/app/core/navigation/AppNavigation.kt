@@ -47,7 +47,9 @@ fun AppNavigation() {
             }
 
             composable<MainRoutes.Register> {
-                RegisterScreen()
+                RegisterScreen( onNavigateToLogin = {
+                    navController.navigate(MainRoutes.Login)
+                },)
             }
 
         }
