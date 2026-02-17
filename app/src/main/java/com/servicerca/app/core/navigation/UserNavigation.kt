@@ -6,6 +6,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import com.servicerca.app.ui.SearchScreen
+import com.servicerca.app.ui.chat.ChatScreen
+import com.servicerca.app.ui.dashboard.user.HomeUserScreen
+import com.servicerca.app.ui.dashboard.user.UserScreen
+import com.servicerca.app.ui.profile.UserProfileScreen
+import com.servicerca.app.ui.reservation.ReservationScreen
 
 
 @Composable
@@ -20,18 +26,28 @@ fun UserNavigation(
     ) {
 
         composable<DashboardRoutes.HomeUser> {
-            // La pantalla principal de la sección de usuarios que muestra la lista de usuarios
-
+            HomeUserScreen()
         }
 
         composable<DashboardRoutes.Search> {
+            SearchScreen()
         }
 
         composable<DashboardRoutes.Profile> {
+            UserProfileScreen()
         }
 
         composable<DashboardRoutes.UserDetail> {
         }
+
+        composable<DashboardRoutes.Chat> {
+            ChatScreen()
+        }
+
+        composable<DashboardRoutes.Reservation> {
+            ReservationScreen()
+        }
+
     }
 
 }

@@ -10,7 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import com.servicerca.app.ui.auth.login.LoginScreen
 import com.servicerca.app.ui.auth.register.RegisterScreen
 import com.servicerca.app.ui.dashboard.user.UserScreen
-import com.servicerca.app.ui.home.HomeScreen
+import com.servicerca.app.ui.Welcome.HomeScreen
 
 @Composable
 fun AppNavigation() {
