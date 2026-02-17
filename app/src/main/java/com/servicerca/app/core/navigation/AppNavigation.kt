@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.servicerca.app.ui.auth.login.LoginScreen
 import com.servicerca.app.ui.auth.register.RegisterScreen
+import com.servicerca.app.ui.dashboard.user.UserScreen
 import com.servicerca.app.ui.home.HomeScreen
 
 @Composable
@@ -43,6 +44,9 @@ fun AppNavigation() {
                     onNavigateToRegister = {
                         navController.navigate(MainRoutes.Register)
                     }
+                    , onNavigateToUsers = {
+                        navController.navigate(DashboardRoutes.HomeUser)
+                    }
                 )
             }
 
@@ -50,6 +54,17 @@ fun AppNavigation() {
                 RegisterScreen( onNavigateToLogin = {
                     navController.navigate(MainRoutes.Login)
                 },)
+            }
+
+            composable<DashboardRoutes.HomeUser> {
+                UserScreen(
+                    onLogout = {
+                        // Lógica para cerrar sesión y regresar a la pantalla de login
+                        navController.navigate(MainRoutes.Login) {
+                            popUpTo(MainRoutes.Login) { inclusive = true } // Evitar regresar a la pantalla anterior
+                        }
+                    }
+                )
             }
 
         }
