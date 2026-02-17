@@ -37,7 +37,8 @@ import com.servicerca.app.core.components.button.SocialButton
 @Composable
 fun LoginScreen(
 
-    onNavigateToRegister: () -> Unit
+    onNavigateToRegister: () -> Unit,
+    onNavigateToUsers: () -> Unit
 
 ) {
 
@@ -109,8 +110,8 @@ fun LoginScreen(
 
             PrimaryButton(
                 text = stringResource(R.string.login_iniciar_secion),
-                onClick = { /* login */ }
-            )
+                onClick = onNavigateToUsers
+             )
 
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -160,7 +161,7 @@ fun LoginScreen(
 @Preview (showBackground = true , showSystemUi = true)
 @Composable
 fun LoginScreenPreview() {
-    LoginScreen(onNavigateToRegister = {})
+    LoginScreen(onNavigateToRegister = {}, onNavigateToUsers = {})
 }
 
 
