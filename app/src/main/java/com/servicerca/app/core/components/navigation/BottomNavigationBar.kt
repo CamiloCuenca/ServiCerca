@@ -3,6 +3,9 @@ package com.servicerca.app.core.components.navigation
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material.icons.filled.ChatBubble
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
@@ -82,7 +85,11 @@ enum class Destination(
     val label: String,
     val icon: ImageVector,
 ){
-    HOME(DashboardRoutes.HomeUser, "Home", Icons.Default.Home ),
+    CHAT(DashboardRoutes.Chat, "Chat", Icons.Default.ChatBubble),
     SEARCH(DashboardRoutes.Search, "Buscar", Icons.Default.Search),
-    PROFILE(DashboardRoutes.Profile, "Perfil", Icons.Default.AccountCircle)
+    HOME(DashboardRoutes.HomeUser, "Inicio", Icons.Default.Home ),
+    RESERVATION(DashboardRoutes.Reservation, "Reservas", Icons.Default.CalendarMonth),
+    PROFILE(DashboardRoutes.Profile, "Perfil", Icons.Default.AccountCircle),
+
+
 }
