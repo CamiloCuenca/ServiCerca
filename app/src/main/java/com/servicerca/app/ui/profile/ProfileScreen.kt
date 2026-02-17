@@ -49,7 +49,6 @@ import androidx.core.graphics.translationMatrix
 
 @Composable
 fun ProfileScreen(
-    onNavigateToHome: () -> Unit,
 ){
 
     Scaffold(
@@ -60,46 +59,10 @@ fun ProfileScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 24.dp),
+                .padding(horizontal = 24.dp, vertical = 70.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
 
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 16.dp)
-            ) {
-
-
-                IconButton(
-                    onClick = onNavigateToHome, // TODO @CamiloCuenca cambiar para que recuerde cual fue lapantalla anteriro (ver guias del profe)
-                    modifier = Modifier.align(Alignment.CenterStart)
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Volver"
-                    )
-                }
-
-
-                Text(
-                    text = stringResource(R.string.profile_text),
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.align(Alignment.Center)
-                )
-
-                IconButton(
-                    onClick = onNavigateToHome, // TODO @CamiloCuenca cambiar para que recuerde cual fue lapantalla anteriro (ver guias del profe)
-                    modifier = Modifier.align(Alignment.CenterEnd)
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Settings,
-                        contentDescription = "Configuración"
-                    )
-                }
-            }
 
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -198,5 +161,5 @@ fun ProfileScreen(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun ProfileScreenPreview() {
-    ProfileScreen( onNavigateToHome = {})
+    ProfileScreen( )
 }
