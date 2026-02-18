@@ -13,4 +13,9 @@ sealed class MainRoutes {
     @Serializable
     data object Register : MainRoutes()
 
+    @Serializable
+    data object CreateService : MainRoutes()
+
+
+
 }

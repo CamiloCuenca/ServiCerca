@@ -63,6 +63,9 @@ fun AppNavigation() {
                         navController.navigate(MainRoutes.Login) {
                             popUpTo(MainRoutes.Login) { inclusive = true } // Evitar regresar a la pantalla anterior
                         }
+                    },
+                    onCreateService ={
+                        navController.navigate(MainRoutes.CreateService)
                     }
                 )
             }

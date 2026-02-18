@@ -1,6 +1,7 @@
 package com.servicerca.app.ui.auth.register
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,6 +34,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -92,18 +94,6 @@ fun RegisterScreen(
                 )
             }
 
-
-
-
-
-            // Subtítulo
-            Text(
-                text = stringResource(R.string.registration_subtitle),
-                fontWeight = FontWeight.Light,
-                modifier = Modifier.fillMaxWidth()
-            )
-
-
             // Formulario
             AppTextField(
                 value = name,
@@ -161,7 +151,16 @@ fun RegisterScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(text = stringResource(R.string.register_already_have_account_text))
+                Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Text(text = stringResource(R.string.register_already_have_account_text))
+                    Text(
+                        text = "Iniciar sesión",
+                        color = MaterialTheme.colorScheme.primary,
+                        textDecoration = TextDecoration.Underline,
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.clickable { onNavigateToLogin() }
+                    )
+                }
 
                 Text(
                     text = stringResource(R.string.register_terms_and_privacy_notice_text),
