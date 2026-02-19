@@ -20,10 +20,15 @@
     <string name="register_justification_selecting_location_text">Necesitamos esto para mostrarte proveedores cercanos.</string>
     <string name="register_already_have_account_text">¿Ya tienes una cuenta?</string>
     <string name="register_terms_and_privacy_notice_text">Al registrarte, aceptas nuestros Términos de Servicio \ny Politica de Privacidad</string>
+
+    <string name="create_service_add_image_label">Agregar imagen del servicio</string>
+    <string name="title_service_label">Titulo del servicio</string>
+    <string name="detailed_description_label">Descripción detallada</string>
     <string name="profile_text">Mi Perfil</string>
     <string name="name_user">Nombre del usuario</string>
     <string name="lacation_profile">Mi ubicación</string>
     <string name="recover_password">Recuperar contraseña</string>
     <string name="recover_password_button">Enviar instrucciones\n</string>
     <string name="recover_password_subtitle">Introduce tu correo electrónico para recibir\ninstrucciones de recuperación</string>
+
 </resources>
