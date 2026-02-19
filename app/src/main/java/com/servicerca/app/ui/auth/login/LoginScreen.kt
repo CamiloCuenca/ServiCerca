@@ -1,6 +1,7 @@
 package com.servicerca.app.ui.auth.login
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -30,6 +31,7 @@ import com.servicerca.app.core.components.input.AppTextField
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.text.style.TextDecoration
 import com.servicerca.app.R
 import com.servicerca.app.core.components.button.SocialButton
 
@@ -38,7 +40,8 @@ import com.servicerca.app.core.components.button.SocialButton
 fun LoginScreen(
 
     onNavigateToRegister: () -> Unit,
-    onNavigateToUsers: () -> Unit
+    onNavigateToUsers: () -> Unit,
+    onRecoverPassword: () -> Unit
 
 ) {
 
@@ -100,10 +103,12 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // TODO cambiar para que sea un hypervinculo
             Text(
                 text = stringResource(R.string.login_forgot_password),
-                modifier = Modifier.align(Alignment.End)
+                color = MaterialTheme.colorScheme.primary,
+                textDecoration = TextDecoration.Underline,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.clickable { onRecoverPassword() }.align(Alignment.End)
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -161,7 +166,7 @@ fun LoginScreen(
 @Preview (showBackground = true , showSystemUi = true)
 @Composable
 fun LoginScreenPreview() {
-    LoginScreen(onNavigateToRegister = {}, onNavigateToUsers = {})
+    LoginScreen(onNavigateToRegister = {}, onNavigateToUsers = {}, onRecoverPassword = {})
 }
 
 
