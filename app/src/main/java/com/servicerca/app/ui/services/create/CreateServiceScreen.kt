@@ -1,13 +1,10 @@
 package com.servicerca.app.ui.services.create
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -31,10 +28,8 @@ fun CreateServiceScreen(
 
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("")}
-    val charCount = description.length
 
-    Column(
-    ){
+    Column{
         Spacer(modifier = Modifier.height(40.dp))
 
         Text(
