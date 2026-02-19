@@ -20,4 +20,7 @@
     <string name="register_justification_selecting_location_text">Necesitamos esto para mostrarte proveedores cercanos.</string>
     <string name="register_already_have_account_text">¿Ya tienes una cuenta? Inicia sesión</string>
     <string name="register_terms_and_privacy_notice_text">Al registrarte, aceptas nuestros Términos de Servicio \ny Politica de Privacidad</string>
+    <string name="create_service_add_image_label">Agregar imagen del servicio</string>
+    <string name="title_service_label">Titulo del servicio</string>
+    <string name="detailed_description_label">Descripción detallada</string>
 </resources>
