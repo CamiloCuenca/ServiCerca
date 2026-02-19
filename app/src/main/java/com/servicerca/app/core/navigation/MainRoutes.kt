@@ -16,6 +16,15 @@ sealed class MainRoutes {
     @Serializable
     data object CreateService : MainRoutes()
 
+    @Serializable
+    data object RecoverPassword : MainRoutes()
+
+    @Serializable
+    data object VerifyEmail : MainRoutes()
+
+
+
+
 
 
 }

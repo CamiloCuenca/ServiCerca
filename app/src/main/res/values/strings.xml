@@ -25,4 +25,5 @@
     <string name="lacation_profile">Mi ubicación</string>
     <string name="recover_password">Recuperar contraseña</string>
     <string name="recover_password_button">Enviar instrucciones\n</string>
+    <string name="recover_password_subtitle">Introduce tu correo electrónico para recibir\ninstrucciones de recuperación</string>
 </resources>

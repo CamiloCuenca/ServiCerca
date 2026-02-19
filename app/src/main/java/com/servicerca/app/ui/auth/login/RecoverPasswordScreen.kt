@@ -42,7 +42,7 @@ fun RecoverPasswordScreen(
         )
 
         Text(
-            text = stringResource(R.string.recover_password),
+            text = stringResource(R.string.recover_password_subtitle),
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.padding(top = 4.dp)
         )

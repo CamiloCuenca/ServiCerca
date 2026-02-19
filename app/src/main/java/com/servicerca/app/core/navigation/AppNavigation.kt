@@ -11,6 +11,8 @@ import com.servicerca.app.ui.auth.login.LoginScreen
 import com.servicerca.app.ui.auth.register.RegisterScreen
 import com.servicerca.app.ui.dashboard.user.UserScreen
 import com.servicerca.app.ui.Welcome.HomeScreen
+import com.servicerca.app.ui.auth.login.RecoverPasswordScreen
+import com.servicerca.app.ui.auth.register.VerifyEmailScreen
 
 @Composable
 fun AppNavigation() {
@@ -46,6 +48,9 @@ fun AppNavigation() {
                     }
                     , onNavigateToUsers = {
                         navController.navigate(DashboardRoutes.HomeUser)
+                    },
+                    onRecoverPassword ={
+                        navController.navigate(MainRoutes.RecoverPassword)
                     }
                 )
             }
@@ -69,6 +74,30 @@ fun AppNavigation() {
                     }
                 )
             }
+
+            composable<MainRoutes.RecoverPassword> {
+                RecoverPasswordScreen(
+                    onNavigateToLogin = {
+                        navController.navigate(MainRoutes.Login)
+                    }
+                )
+            }
+
+            composable<MainRoutes.CreateService> {
+
+            }
+
+            composable<MainRoutes.VerifyEmail> {
+                VerifyEmailScreen(
+
+                    email = "juanPerez.example.com", // TODO Luego ver como se pasa el email por los estados
+                    onNavigateToLogin = {
+                        navController.navigate(MainRoutes.Login)
+                    },
+                    onResendEmail= {}
+                )
+            }
+
 
         }
     }
