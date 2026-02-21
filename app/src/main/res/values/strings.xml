@@ -23,6 +23,7 @@
 
     <string name="create_service_add_image_label">Agregar imagen del servicio</string>
     <string name="title_service_label">Titulo del servicio</string>
+    <string name="category_service_label">Categoría del servicio</string>
     <string name="detailed_description_label">Descripción detallada</string>
     <string name="profile_text">Mi Perfil</string>
     <string name="name_user">Nombre del usuario</string>
