@@ -1,5 +1,6 @@
 package com.servicerca.app.core.components.button
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -67,5 +68,46 @@ fun SocialButton(
         )
     ) {
         Text(text = text)
+    }
+}
+
+/**
+ * Boton de texto Outline para acciones secundarias
+ */
+@Composable
+fun OutlineButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    borderColor: Color = MaterialTheme.colorScheme.primary,
+    contentColor: Color = MaterialTheme.colorScheme.primary,
+    alpha: Float = 1f
+) {
+
+    val resolvedBorder = if (alpha in 0f..1f && alpha != 1f)
+        borderColor.copy(alpha = alpha)
+    else
+        borderColor
+
+    val resolvedContent = if (alpha in 0f..1f && alpha != 1f)
+        contentColor.copy(alpha = alpha)
+    else
+        contentColor
+
+    androidx.compose.material3.OutlinedButton(
+        onClick = onClick,
+        modifier = modifier.fillMaxWidth(),
+        enabled = enabled,
+        shape = RoundedCornerShape(16.dp),
+        border = BorderStroke(1.5.dp, resolvedBorder),
+        colors = ButtonDefaults.outlinedButtonColors(
+            contentColor = resolvedContent
+        )
+    ) {
+        Text(
+            text = text,
+            color = LocalContentColor.current
+        )
     }
 }

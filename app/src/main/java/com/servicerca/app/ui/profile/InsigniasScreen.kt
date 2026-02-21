@@ -1,21 +1,20 @@
 package com.servicerca.app.ui.profile
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -31,7 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.servicerca.app.R
 
 @Composable
-fun InsigniasScreen(){
+fun InsigniasScreen(onBack: () -> Unit) {
     Scaffold(
         modifier = Modifier.fillMaxSize()
     ) { paddingValues ->
@@ -40,7 +39,7 @@ fun InsigniasScreen(){
                 .fillMaxSize()
                 .padding(paddingValues)
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 24.dp, vertical = 70.dp),
+                .padding(horizontal = 24.dp, vertical = 24.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
 
@@ -56,8 +55,9 @@ fun InsigniasScreen(){
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        imageVector = Icons.Default.ArrowBack, // Icono de Material
-                        contentDescription = null
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack, // Icono AutoMirrored
+                        contentDescription = null,
+                        modifier = Modifier.clickable { onBack() }
                     )
                     Spacer(modifier = Modifier.width(95.dp))
                     Text(
@@ -205,52 +205,6 @@ fun InsigniasScreen(){
                         )
                     }
                 }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp, vertical = 8.dp),                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column(
-                        Modifier.padding(top = 8.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Image(painter = painterResource(id = R.drawable.insignia_verificado), contentDescription = null,
-                            modifier = Modifier
-                                .size(80.dp)
-                        )
-                        Text(
-                            text = stringResource(R.string.insignia_verified),
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
-                    }
-                    Column(
-                        Modifier.padding(top = 8.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Image(painter = painterResource(id = R.drawable.insignia_verificado), contentDescription = null,
-                            modifier = Modifier
-                                .size(80.dp)
-                        )
-                        Text(
-                            text = stringResource(R.string.insignia_verified),
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
-                    }
-                    Column(
-                        Modifier.padding(top = 8.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Image(painter = painterResource(id = R.drawable.insignia_verificado), contentDescription = null,
-                            modifier = Modifier
-                                .size(80.dp)
-                        )
-                        Text(
-                            text = stringResource(R.string.insignia_verified),
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
-                    }
-                }
             }
         }
     }
@@ -259,5 +213,5 @@ fun InsigniasScreen(){
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun InsigniasScreenPreview() {
-    InsigniasScreen()
+    InsigniasScreen(onBack = {})
 }
