@@ -13,6 +13,7 @@ import com.servicerca.app.ui.dashboard.user.UserScreen
 import com.servicerca.app.ui.Welcome.HomeScreen
 import com.servicerca.app.ui.auth.login.RecoverPasswordScreen
 import com.servicerca.app.ui.auth.register.VerifyEmailScreen
+import com.servicerca.app.ui.services.create.CreateServiceScreen
 
 @Composable
 fun AppNavigation() {
@@ -96,6 +97,10 @@ fun AppNavigation() {
                     },
                     onResendEmail= {}
                 )
+            }
+
+            composable<MainRoutes.CreateService> {
+                CreateServiceScreen()
             }
 
 

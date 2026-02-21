@@ -7,8 +7,10 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 /**
@@ -19,8 +21,16 @@ fun PrimaryButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    containerColor: Color = MaterialTheme.colorScheme.primary,
+    contentColor : Color = MaterialTheme.colorScheme.onPrimary,
+    // alpha permite ajustar la intensidad (0f = totalmente transparente, 1f = opaco)
+    alpha: Float = 1f
+
+
 ) {
+    val resolvedContainer = if (alpha in 0f..1f && alpha != 1f) containerColor.copy(alpha = alpha) else containerColor
+
     Button(
         onClick = onClick,
         modifier = modifier
@@ -28,11 +38,12 @@ fun PrimaryButton(
         enabled = enabled,
         shape = RoundedCornerShape(16.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary
+            containerColor = resolvedContainer,
+            contentColor = contentColor
         )
     ) {
-        Text(text = text)
+        // Usar LocalContentColor para que respete contentColor provisto por Button
+        Text(text = text, color = LocalContentColor.current)
     }
 }
 

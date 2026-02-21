@@ -54,7 +54,7 @@ fun RecoverPasswordScreen(
         )
 
         PrimaryButton(
-            text = stringResource(R.string.recover_password_button), // "Enviar instrucciones"
+            text = stringResource(R.string.recover_password_button),
             onClick = {}
         )
 
