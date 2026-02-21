@@ -13,6 +13,8 @@ import com.servicerca.app.ui.dashboard.user.UserScreen
 import com.servicerca.app.ui.Welcome.HomeScreen
 import com.servicerca.app.ui.auth.login.RecoverPasswordScreen
 import com.servicerca.app.ui.auth.register.VerifyEmailScreen
+import com.servicerca.app.ui.profile.InsigniasScreen
+import com.servicerca.app.ui.profile.ProfileScreen
 
 @Composable
 fun AppNavigation() {
@@ -99,6 +101,20 @@ fun AppNavigation() {
             }
 
 
-        }
-    }
-}
+
+            composable<MainRoutes.Insignias> {
+                InsigniasScreen()
+
+            }
+
+            composable<MainRoutes.Perfil> {
+                ProfileScreen(
+                    onInsignias = {
+                        navController.navigate(MainRoutes.Insignias)
+                    }
+                )
+
+            }
+
+
+    } }}
