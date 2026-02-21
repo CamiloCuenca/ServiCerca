@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,7 +22,7 @@ import com.servicerca.app.core.components.button.OutlineButton
 import com.servicerca.app.core.components.button.PrimaryButton
 
 @Composable
-fun HomeScreen(
+fun WelcomeScreen(
     onNavigateToLogin: () -> Unit,
     onNavigateToRegister: () -> Unit
 ) {
@@ -126,8 +125,8 @@ fun HomeScreen(
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun HomeScreenPreview() {
-    HomeScreen(
+fun WelcomeScreenPreview() {
+    WelcomeScreen(
         onNavigateToLogin = {},
         onNavigateToRegister = {}
     )
