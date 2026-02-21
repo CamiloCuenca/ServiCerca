@@ -1,191 +1,131 @@
 package com.servicerca.app.ui.Welcome
 
-import androidx.compose.foundation.Image
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.stringResource
+import com.airbnb.lottie.compose.*
+import com.servicerca.app.R
+import com.servicerca.app.core.components.button.OutlineButton
 import com.servicerca.app.core.components.button.PrimaryButton
-
-// Imports para Lottie
-import com.airbnb.lottie.compose.LottieAnimation
-import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.LottieConstants
-import com.airbnb.lottie.compose.animateLottieCompositionAsState
-import com.airbnb.lottie.compose.rememberLottieComposition
 
 @Composable
 fun HomeScreen(
     onNavigateToLogin: () -> Unit,
     onNavigateToRegister: () -> Unit
 ) {
-
-
-
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
 
+        Box(
+            modifier = Modifier
+                .size(520.dp)
+                .align(Alignment.TopCenter)
+                .offset(y = (-120).dp)
+                .background(
+                    MaterialTheme.colorScheme.primary.copy(alpha = 0.10f),
+                    shape = CircleShape
+                )
+        )
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 24.dp, vertical = 48.dp),
-            verticalArrangement = Arrangement.SpaceBetween
+                .padding(horizontal = 24.dp, vertical = 32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            // Sección superior con logo y nombre
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Image(
-                        painter = painterResource(id = com.servicerca.app.R.drawable.logo_servicerca),
-                        contentDescription = "Logo",
-                        modifier = Modifier.size(48.dp)
-                    )
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Text(
-                        text = stringResource(com.servicerca.app.R.string.nameApp),
-                        style = MaterialTheme.typography.headlineLarge,
-                        fontWeight = FontWeight.Bold,
-                        color =  Color.Black,
-                        fontSize = 28.sp
-                    )
-                }
-            }
+            Spacer(modifier = Modifier.height(24.dp))
 
-            // Sección central con animación y mensaje de bienvenida
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
+            val composition by rememberLottieComposition(
+                LottieCompositionSpec.RawRes(R.raw.welcome)
+            )
+
+            val progress by animateLottieCompositionAsState(
+                composition = composition,
+                iterations = LottieConstants.IterateForever
+            )
+
+            AnimatedVisibility(
+                visible = true,
+                enter = fadeIn() + slideInVertically(initialOffsetY = { it / 2 })
             ) {
 
-                // Animación Lottie
-                val composition by rememberLottieComposition(
-                    LottieCompositionSpec.RawRes(com.servicerca.app.R.raw.welcome)
-                )
-                val progress by animateLottieCompositionAsState(
-                    composition = composition,
-                    iterations = LottieConstants.IterateForever
-                )
 
-                LottieAnimation(
-                    composition = composition,
-                    progress = { progress },
-                    modifier = Modifier.size(300.dp)
-                )
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                // Card con mensaje de bienvenida
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = Color.White.copy(alpha = 0.15f)
-                    ),
-                    shape = RoundedCornerShape(20.dp)
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Column(
+
+                    LottieAnimation(
+                        composition = composition,
+                        progress = { progress },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(24.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = "¡Bienvenido!",
-                            style = MaterialTheme.typography.headlineMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onBackground,
-                            fontSize = 30.sp
-                        )
+                            .height(380.dp)
+                    )
 
-                        Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(24.dp))
 
-                        Text(
-                            text = "Encuentra servicios cerca de ti en segundos",
-                            style = MaterialTheme.typography.bodyLarge,
-                            fontWeight = FontWeight.Normal,
-                            color = MaterialTheme.colorScheme.onBackground,
-                            textAlign = TextAlign.Center,
-                            fontSize = 20.sp
-                        )
-                    }
+                    Text(
+                        text = "Bienvenido a ${stringResource(R.string.nameApp)}",
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Text(
+                        text = stringResource(R.string.registration_subtitle),
+                        style = MaterialTheme.typography.bodyLarge,
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
+                    )
                 }
             }
 
-            // Sección inferior con botones
+            Spacer(modifier = Modifier.weight(1f))
+
             Column(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
 
                 PrimaryButton(
-                    text = "Iniciar sesión",
-                    onClick = onNavigateToLogin,
-                    modifier = Modifier.fillMaxWidth(),
-
+                    text = stringResource(R.string.login_create_account),
+                    onClick = onNavigateToRegister
                 )
 
-                PrimaryButton(
-                    text = "Crear cuenta",
-                    onClick = onNavigateToRegister,
-                    modifier = Modifier.fillMaxWidth(),
-
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Text(
-                    text = "Tu plataforma de confianza para servicios locales",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    textAlign = TextAlign.Center,
-                    fontSize = 12.sp,
-                    modifier = Modifier.fillMaxWidth()
+                OutlineButton(
+                    text = stringResource(R.string.login_iniciar_secion),
+                    onClick = onNavigateToLogin
                 )
             }
+
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
 
-@Composable
 @Preview(showBackground = true, showSystemUi = true)
+@Composable
 fun HomeScreenPreview() {
     HomeScreen(
         onNavigateToLogin = {},
