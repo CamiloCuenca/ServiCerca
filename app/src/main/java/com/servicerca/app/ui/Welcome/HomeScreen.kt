@@ -22,8 +22,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -47,20 +45,12 @@ fun HomeScreen(
     onNavigateToRegister: () -> Unit
 ) {
 
-    val gradient = Brush.linearGradient(
-        colors = listOf(
-            Color(0xFF2EC4B6), // turquesa
-            Color(0xFF00B4D8), // azul
-            Color(0xFF52B788)  // verde suave
-        ),
-        start = Offset(0f, 0f),
-        end = Offset(1000f, 1000f)
-    )
+
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(gradient)
+            .background(MaterialTheme.colorScheme.background)
     ) {
 
         Column(
@@ -89,7 +79,7 @@ fun HomeScreen(
                         text = stringResource(com.servicerca.app.R.string.nameApp),
                         style = MaterialTheme.typography.headlineLarge,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White,
+                        color =  Color.Black,
                         fontSize = 28.sp
                     )
                 }
@@ -106,7 +96,7 @@ fun HomeScreen(
 
                 // Animación Lottie
                 val composition by rememberLottieComposition(
-                    LottieCompositionSpec.RawRes(com.servicerca.app.R.raw.toolsanimation)
+                    LottieCompositionSpec.RawRes(com.servicerca.app.R.raw.welcome)
                 )
                 val progress by animateLottieCompositionAsState(
                     composition = composition,
@@ -116,7 +106,7 @@ fun HomeScreen(
                 LottieAnimation(
                     composition = composition,
                     progress = { progress },
-                    modifier = Modifier.size(280.dp)
+                    modifier = Modifier.size(300.dp)
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -141,7 +131,7 @@ fun HomeScreen(
                             text = "¡Bienvenido!",
                             style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold,
-                            color = Color.White,
+                            color = MaterialTheme.colorScheme.onBackground,
                             fontSize = 30.sp
                         )
 
@@ -151,7 +141,7 @@ fun HomeScreen(
                             text = "Encuentra servicios cerca de ti en segundos",
                             style = MaterialTheme.typography.bodyLarge,
                             fontWeight = FontWeight.Normal,
-                            color = Color.White.copy(alpha = 0.95f),
+                            color = MaterialTheme.colorScheme.onBackground,
                             textAlign = TextAlign.Center,
                             fontSize = 20.sp
                         )
@@ -168,13 +158,15 @@ fun HomeScreen(
                 PrimaryButton(
                     text = "Iniciar sesión",
                     onClick = onNavigateToLogin,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+
                 )
 
                 PrimaryButton(
                     text = "Crear cuenta",
                     onClick = onNavigateToRegister,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -182,7 +174,7 @@ fun HomeScreen(
                 Text(
                     text = "Tu plataforma de confianza para servicios locales",
                     style = MaterialTheme.typography.bodySmall,
-                    color = Color.White.copy(alpha = 0.8f),
+                    color = MaterialTheme.colorScheme.onBackground,
                     textAlign = TextAlign.Center,
                     fontSize = 12.sp,
                     modifier = Modifier.fillMaxWidth()
