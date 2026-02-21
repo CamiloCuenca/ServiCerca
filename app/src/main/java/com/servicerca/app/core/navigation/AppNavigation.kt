@@ -100,6 +100,10 @@ fun AppNavigation() {
                 )
             }
 
+            composable<MainRoutes.CreateService> {
+                CreateServiceScreen()
+            }
+
 
 
             composable<MainRoutes.Insignias> {
