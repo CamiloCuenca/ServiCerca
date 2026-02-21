@@ -74,18 +74,7 @@ fun UserScreen(
     }
 }
 
-@Composable
-fun HomeUserScreen() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = "Bienvenido usuario 👋",
-            style = MaterialTheme.typography.titleLarge
-        )
-    }
-}
+
 
 @Preview(showBackground = true)
 @Composable
