@@ -10,6 +10,7 @@ import com.servicerca.app.ui.SearchScreen
 import com.servicerca.app.ui.chat.ChatScreen
 import com.servicerca.app.ui.dashboard.user.HomeUserScreen
 import com.servicerca.app.ui.dashboard.user.UserScreen
+import com.servicerca.app.ui.profile.InsigniasScreen
 import com.servicerca.app.ui.profile.ProfileScreen
 import com.servicerca.app.ui.reservation.ReservationScreen
 
@@ -34,7 +35,13 @@ fun UserNavigation(
         }
 
         composable<DashboardRoutes.Profile> {
-            ProfileScreen()
+            ProfileScreen(
+                onInsignias = {
+                    navController.navigate(MainRoutes.Insignias)
+                }
+
+
+            )
         }
 
         composable<DashboardRoutes.UserDetail> {
@@ -48,6 +55,10 @@ fun UserNavigation(
             ReservationScreen()
         }
 
+        composable<MainRoutes.Insignias> {
+            InsigniasScreen()
+
+        }
 
 
     }

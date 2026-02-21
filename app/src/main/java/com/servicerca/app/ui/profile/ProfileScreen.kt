@@ -46,6 +46,7 @@ import com.servicerca.app.core.components.card.CardStatistics
 
 @Composable
 fun ProfileScreen(
+    onInsignias : () -> Unit,
 ){
 
     Scaffold(
@@ -179,8 +180,7 @@ fun ProfileScreen(
                         text = stringResource(R.string.ver_todas),
                         style = MaterialTheme.typography.titleMedium,
                         color = Color.Cyan,
-                        modifier = Modifier.clickable { // Poner para navegar a la pagina de las insignias//
-                             }
+                        modifier = Modifier.clickable {onInsignias()}
                     )
                 }
                 Row(
@@ -337,5 +337,7 @@ fun ProfileScreen(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun ProfileScreenPreview() {
-    ProfileScreen()
+    ProfileScreen(
+        onInsignias = {}
+    )
 }

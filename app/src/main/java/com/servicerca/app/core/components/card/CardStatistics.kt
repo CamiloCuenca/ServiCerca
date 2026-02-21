@@ -31,8 +31,7 @@ import com.servicerca.app.core.components.progressBar.XpBar
 fun CardStatistics(
     @DrawableRes imageRes: Int,
     number: String,
-    label: String,
-    modifier: Modifier = Modifier
+    label: String
 ){
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
