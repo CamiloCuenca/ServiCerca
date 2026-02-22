@@ -17,6 +17,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -26,39 +27,36 @@ import com.servicerca.app.core.navigation.DashboardRoutes
 fun BottomNavigationBar(
     navController: NavHostController,
     titleTopBar: (String) -> Unit
-){
-    // Obtener la entrada actual de la pila de navegación
+) {
+
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
-    // Actualizar el título de la barra superior según la pantalla actual
     LaunchedEffect(currentDestination) {
-        val destination = Destination.entries.find { it.route::class.qualifiedName == currentDestination?.route }
-        if (destination != null) {
-            titleTopBar(destination.label)
+        val destination = Destination.entries.find {
+            it.route::class.qualifiedName == currentDestination?.route
+        }
+        destination?.let {
+            titleTopBar(it.label)
         }
     }
 
-    // Crear la barra de navegación inferior
     NavigationBar(
         modifier = Modifier.fillMaxWidth(),
-    ){
-        // Iteramos cada item de navegación definido en Destination
-        Destination.entries.forEachIndexed { index, destination ->
+        tonalElevation = 3.dp
+    ) {
 
-            // Verificar si el item está seleccionado
-            val isSelected = currentDestination?.route == destination.route::class.qualifiedName
+        Destination.entries.forEach { destination ->
+
+            val isSelected =
+                currentDestination?.route ==
+                        destination.route::class.qualifiedName
 
             NavigationBarItem(
-                label = {
-                    // Etiqueta del item de navegación
-                    Text(
-                        text = destination.label
-                    )
-                },
+                selected = isSelected,
+
                 onClick = {
-                    // Navegar a la ruta correspondiente al item seleccionado
-                    navController.navigate(destination.route){
+                    navController.navigate(destination.route) {
                         popUpTo(navController.graph.findStartDestination().id) {
                             saveState = true
                         }
@@ -66,19 +64,24 @@ fun BottomNavigationBar(
                         restoreState = true
                     }
                 },
+
                 icon = {
-                    // Icono del item de navegación
                     Icon(
                         imageVector = destination.icon,
                         contentDescription = destination.label
                     )
                 },
-                selected = isSelected
+
+                label = {
+                    Text(destination.label)
+                },
+
+
+                alwaysShowLabel = true
             )
         }
     }
 }
-
 // Definición de los items de navegación de la barra inferior
 enum class Destination(
     val route: DashboardRoutes,

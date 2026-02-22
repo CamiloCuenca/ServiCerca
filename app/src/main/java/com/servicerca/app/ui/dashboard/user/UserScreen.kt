@@ -4,11 +4,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,6 +21,7 @@ import com.servicerca.app.core.components.navigation.AppTopAppBar
 import com.servicerca.app.core.components.navigation.BottomNavigationBar
 import com.servicerca.app.core.navigation.UserNavigation
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserScreen(
     onLogout: () -> Unit,
@@ -33,12 +36,23 @@ fun UserScreen(
 
     val showBars = currentRoute != "insignias"
 
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    var notificationCount by remember { mutableStateOf(5) }
+
+
     Scaffold(
         topBar = {
             if (showBars) {
                 AppTopAppBar(
                     title = title,
-                    logout = onLogout
+                    notificationCount = notificationCount ,
+                    onLocationClick = {
+                        // TODO abrir mapa
+                    },
+                    onNotificationClick = {
+                        // TODO ir a notificaciones
+                    },
+                    scrollBehavior = scrollBehavior
                 )
             }
         },
