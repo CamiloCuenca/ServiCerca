@@ -36,14 +36,19 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.SuggestionChip
+
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.sp
 import com.servicerca.app.R
 import com.servicerca.app.core.components.button.SocialButton
 
@@ -131,6 +136,80 @@ fun DetailServiceScreen(
                     )
 
             ) {
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+               Row(
+                   modifier = Modifier.fillMaxWidth()
+                       .padding(16.dp),
+                   horizontalArrangement = Arrangement.SpaceBetween,
+                   verticalAlignment = Alignment.Top
+
+
+               ) {
+                   Column(
+                       modifier = Modifier.weight(1f),
+                       verticalArrangement = Arrangement.spacedBy(4.dp)
+
+                   ) {
+                       Row(
+                           horizontalArrangement = Arrangement.spacedBy(4.dp),
+                           verticalAlignment = Alignment.CenterVertically
+
+
+                       ) {
+                           AssistChip(
+                               onClick = { /*TODO*/ },
+                               label = {Text("Verificada", fontSize = 12.sp) },
+                               leadingIcon = {
+                                   Icon(
+                                       imageVector = Icons.Default.CheckCircle,
+                                       contentDescription = null,
+                                       tint = Color(0xFF00BFA5),
+                                       modifier = Modifier.size(16.dp)
+                                   )
+                               }
+
+                           )
+
+                           SuggestionChip(
+                               onClick = { /*TODO*/ },
+                               label = {Text("HOGAR", fontSize = 12.sp)}
+                           )
+                       }
+                       Text(
+                           text = "Reparacion de Fuga",
+                           style = MaterialTheme.typography.headlineMedium,
+                           fontWeight = FontWeight.Bold,
+                       )
+
+                       Text(
+                           text = "Plomeria Residencial",
+                           style = MaterialTheme.typography.bodyMedium,
+                           color = Color.Gray
+                       )
+                   }
+                   Column(
+                       horizontalAlignment = Alignment.End
+                   ) {
+                       Text(
+                           text = "$350",
+                           style = MaterialTheme.typography.headlineMedium,
+                           color = Color(0xFF00BCD4),
+                           fontWeight = FontWeight.Bold
+                       )
+                       Text(
+                           text = "por hora",
+                           style = MaterialTheme.typography.bodySmall,
+                           color = Color.Gray
+                       )
+                   }
+               }
+
+
+
+
+
             }
 
 
@@ -145,13 +224,10 @@ fun DetailServiceScreen(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 8.dp)
         ) {
-            OutlinedButton(
-                onClick = {},
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp)
-            ) {
-                Text("Solicitar Servicio")
-            }
+            PrimaryButton(
+                text = "Solicitar Servicio",
+                onClick = { /* Registrarse */ }
+            )
         }
 
 
