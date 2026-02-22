@@ -50,7 +50,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import com.servicerca.app.R
+import com.servicerca.app.core.components.button.ReactionIconButton
 import com.servicerca.app.core.components.button.SocialButton
+import com.servicerca.app.core.components.card.ServiceDetailHeader
 
 @Composable
 fun DetailServiceScreen(
@@ -139,72 +141,40 @@ fun DetailServiceScreen(
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-               Row(
-                   modifier = Modifier.fillMaxWidth()
-                       .padding(16.dp),
-                   horizontalArrangement = Arrangement.SpaceBetween,
-                   verticalAlignment = Alignment.Top
+                ServiceDetailHeader(
+                   title = "Reparación de Fugas",
+                    subtitle = "Plomería Residencial",
+                    price = 350.0,
+                    isVerified = true,
+                    category = "Hogar"
+                )
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.Start, // 👈 alineados a la izquierda
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    ReactionIconButton(
+                        icon = R.drawable.ic_thumb_up,
+                        onClick = { /*TODO*/ }
+
+                    )
+
+                    ReactionIconButton(
+                        icon = R.drawable.ic_push_pin,
+                        onClick = { /*TODO*/ }
+                    )
+                }
 
 
-               ) {
-                   Column(
-                       modifier = Modifier.weight(1f),
-                       verticalArrangement = Arrangement.spacedBy(4.dp)
-
-                   ) {
-                       Row(
-                           horizontalArrangement = Arrangement.spacedBy(4.dp),
-                           verticalAlignment = Alignment.CenterVertically
 
 
-                       ) {
-                           AssistChip(
-                               onClick = { /*TODO*/ },
-                               label = {Text("Verificada", fontSize = 12.sp) },
-                               leadingIcon = {
-                                   Icon(
-                                       imageVector = Icons.Default.CheckCircle,
-                                       contentDescription = null,
-                                       tint = Color(0xFF00BFA5),
-                                       modifier = Modifier.size(16.dp)
-                                   )
-                               }
 
-                           )
 
-                           SuggestionChip(
-                               onClick = { /*TODO*/ },
-                               label = {Text("HOGAR", fontSize = 12.sp)}
-                           )
-                       }
-                       Text(
-                           text = "Reparacion de Fuga",
-                           style = MaterialTheme.typography.headlineMedium,
-                           fontWeight = FontWeight.Bold,
-                       )
-
-                       Text(
-                           text = "Plomeria Residencial",
-                           style = MaterialTheme.typography.bodyMedium,
-                           color = Color.Gray
-                       )
-                   }
-                   Column(
-                       horizontalAlignment = Alignment.End
-                   ) {
-                       Text(
-                           text = "$350",
-                           style = MaterialTheme.typography.headlineMedium,
-                           color = Color(0xFF00BCD4),
-                           fontWeight = FontWeight.Bold
-                       )
-                       Text(
-                           text = "por hora",
-                           style = MaterialTheme.typography.bodySmall,
-                           color = Color.Gray
-                       )
-                   }
-               }
 
 
 

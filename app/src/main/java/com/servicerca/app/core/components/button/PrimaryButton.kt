@@ -146,29 +146,31 @@ fun ReactionIconButton(
     modifier: Modifier = Modifier
 ) {
     val containerColor = if (isSelected)
-        MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)
-    else
-        Color.Transparent
-
-    val contentColor = if (isSelected)
         MaterialTheme.colorScheme.primary
     else
-        MaterialTheme.colorScheme.onSurfaceVariant
+        MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
+
+    val contentColor = if (isSelected)
+        Color.White
+    else
+        Color.Black
 
     Surface(
         onClick = onClick,
         shape = CircleShape,
         color = containerColor,
-        modifier = modifier.size(40.dp)
+        border = BorderStroke(
+            width = 2.dp,
+            color = MaterialTheme.colorScheme.primary
+        ),
+        modifier = modifier.size(64.dp) // 👈 más grande como en el diseño
     ) {
-        Box(
-            contentAlignment = Alignment.Center
-        ) {
+        Box(contentAlignment = Alignment.Center) {
             Icon(
                 painter = painterResource(id = icon),
                 contentDescription = null,
                 tint = contentColor,
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(28.dp)
             )
         }
     }
