@@ -17,6 +17,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.servicerca.app.R
+import com.servicerca.app.core.components.button.OutlineButton
 import com.servicerca.app.core.components.button.PrimaryButton
 import com.servicerca.app.core.components.button.SocialButton
 import com.servicerca.app.core.components.input.AppPasswordField
@@ -146,13 +147,10 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            OutlinedButton(
+            OutlineButton(
+                text = stringResource(R.string.login_create_account),
                 onClick = onNavigateToRegister,
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp)
-            ) {
-                Text(stringResource(R.string.login_create_account))
-            }
+            )
 
             Spacer(modifier = Modifier.height(24.dp))
         }

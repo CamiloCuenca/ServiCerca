@@ -68,15 +68,29 @@ fun PrimaryButton(
 fun SocialButton(
     text: String,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    borderColor: Color = MaterialTheme.colorScheme.primary,
+    contentColor: Color = MaterialTheme.colorScheme.primary,
+    alpha: Float = 1f
 ) {
+
+    val resolvedBorder = if (alpha in 0f..1f && alpha != 1f)
+        borderColor.copy(alpha = alpha)
+    else
+        borderColor
+
+    val resolvedContent = if (alpha in 0f..1f && alpha != 1f)
+        contentColor.copy(alpha = alpha)
+    else
+        contentColor
+
     OutlinedButton(
         onClick = onClick,
         modifier = modifier,
         shape = RoundedCornerShape(16.dp),
+        border = BorderStroke(1.5.dp, resolvedBorder),
         colors = ButtonDefaults.outlinedButtonColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-            contentColor = MaterialTheme.colorScheme.onSurface
+            contentColor = resolvedContent
         )
     ) {
         Text(text = text)
