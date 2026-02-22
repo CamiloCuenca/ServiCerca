@@ -76,15 +76,17 @@ fun InsigniasScreen(onBack: () -> Unit) {
                             text = stringResource(R.string.tittle_insignias),
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold,
-                            color = Color.Gray
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier
+                                .padding(bottom = 15.dp)
                         )
                     }
 
-                    HorizontalDivider(thickness = 2.dp)
+                    HorizontalDivider(thickness = 2.dp, color = MaterialTheme.colorScheme.onSurfaceVariant,)
 
                     Column(
                         modifier = Modifier
-                            .padding(top = 30.dp)
+                            .padding(top = 15.dp)
                             .fillMaxWidth(),
                         horizontalAlignment = Alignment.Start
                     ) {

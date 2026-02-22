@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
@@ -15,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -32,8 +34,7 @@ fun CadInsignias(){
         modifier = Modifier
             .size(width = 340.dp, height = 280.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.background,
-            contentColor = Color.Black,
+            containerColor = MaterialTheme.colorScheme.surface
         ),
     ){
         Column(
@@ -57,6 +58,12 @@ fun CadInsignias(){
                         painter = painterResource(id = R.drawable.insignia_confiable),
                         contentDescription = null,
                         modifier = Modifier.size(80.dp)
+                            .shadow(
+                                elevation = 8.dp,
+                                shape = CircleShape,
+                                ambientColor = Color(0xFF1ABC9C),
+                                spotColor = Color(0xFF1ABC9C)
+                            )
                     )
 
                     Text(
@@ -65,7 +72,8 @@ fun CadInsignias(){
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
                         textAlign = TextAlign.Center,
-                        modifier = Modifier.width(90.dp)
+                        modifier = Modifier.width(90.dp),
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
 
@@ -78,6 +86,12 @@ fun CadInsignias(){
                         painter = painterResource(id = R.drawable.insignia_servicios),
                         contentDescription = null,
                         modifier = Modifier.size(80.dp)
+                            .shadow(
+                                elevation = 8.dp,
+                                shape = CircleShape,
+                                ambientColor = Color(0xFF5B9BD5),
+                                spotColor = Color(0xFF5B9BD5)
+                            )
                     )
 
                     Text(
@@ -86,7 +100,8 @@ fun CadInsignias(){
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
                         textAlign = TextAlign.Center,
-                        modifier = Modifier.width(90.dp)
+                        modifier = Modifier.width(90.dp),
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
 
@@ -99,6 +114,12 @@ fun CadInsignias(){
                         painter = painterResource(id = R.drawable.insignia_ubicacion),
                         contentDescription = null,
                         modifier = Modifier.size(80.dp)
+                            .shadow(
+                                elevation = 8.dp,
+                                shape = CircleShape,
+                                ambientColor = Color(0xFFF5A623),
+                                spotColor = Color(0xFFF5A623)
+                            )
                     )
 
                     Text(
@@ -107,7 +128,8 @@ fun CadInsignias(){
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
                         textAlign = TextAlign.Center,
-                        modifier = Modifier.width(90.dp)
+                        modifier = Modifier.width(90.dp),
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
             }
@@ -128,6 +150,13 @@ fun CadInsignias(){
                         painter = painterResource(id = R.drawable.insignia_rapido),
                         contentDescription = null,
                         modifier = Modifier.size(80.dp)
+                            .shadow(
+                                elevation = 8.dp,
+                                shape = CircleShape,
+                                ambientColor = Color(0xFF9C27B0),
+                                spotColor = Color(0xFF9C27B0)
+                            )
+
                     )
 
                     Text(
@@ -136,7 +165,8 @@ fun CadInsignias(){
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
                         textAlign = TextAlign.Center,
-                        modifier = Modifier.width(90.dp)
+                        modifier = Modifier.width(90.dp),
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
 
@@ -149,6 +179,13 @@ fun CadInsignias(){
                         painter = painterResource(id = R.drawable.insignia_chat),
                         contentDescription = null,
                         modifier = Modifier.size(80.dp)
+                            .shadow(
+                                elevation = 8.dp,
+                                shape = CircleShape,
+                                ambientColor = Color(0xFFE91E8C),
+                                spotColor = Color(0xFFE91E8C)
+                            )
+
                     )
 
                     Text(
@@ -157,7 +194,8 @@ fun CadInsignias(){
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
                         textAlign = TextAlign.Center,
-                        modifier = Modifier.width(90.dp)
+                        modifier = Modifier.width(90.dp),
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
 
@@ -170,6 +208,12 @@ fun CadInsignias(){
                         painter = painterResource(id = R.drawable.insignia_eco),
                         contentDescription = null,
                         modifier = Modifier.size(80.dp)
+                            .shadow(
+                                elevation = 8.dp,
+                                shape = CircleShape,
+                                ambientColor = Color(0xFF34A853),
+                                spotColor = Color(0xFF34A853)
+                            )
                     )
 
                     Text(
@@ -178,7 +222,8 @@ fun CadInsignias(){
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
                         textAlign = TextAlign.Center,
-                        modifier = Modifier.width(90.dp)
+                        modifier = Modifier.width(90.dp),
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
             }

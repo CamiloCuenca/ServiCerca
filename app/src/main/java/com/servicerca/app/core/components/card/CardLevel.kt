@@ -30,8 +30,7 @@ fun CardLevel(){
         modifier = Modifier
             .size(width = 340.dp, height = 150.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.background,
-            contentColor = Color.Black,
+            containerColor = MaterialTheme.colorScheme.surface
         ),
     ){
         Column(
@@ -56,13 +55,13 @@ fun CardLevel(){
                     text = stringResource(R.string.job),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    color = Color.Black
+                    color = MaterialTheme.colorScheme.onBackground
                 )
 
                 Text(
                     text = stringResource(R.string.xp),
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color.DarkGray,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1
                 )
             }
@@ -80,7 +79,7 @@ fun CardLevel(){
                 text = stringResource(R.string.mesaage_level),
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center,
-                color = Color.Gray,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier
                     .padding(8.dp)
             )

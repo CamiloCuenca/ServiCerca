@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
@@ -15,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -32,8 +34,7 @@ fun CardMainInsignias(){
         modifier = Modifier
             .size(width = 340.dp, height = 150.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.background,
-            contentColor = Color.Black,
+            containerColor = MaterialTheme.colorScheme.surface
         ),
     ){
         Column(
@@ -57,6 +58,12 @@ fun CardMainInsignias(){
                         painter = painterResource(id = R.drawable.insignia_top5),
                         contentDescription = null,
                         modifier = Modifier.size(80.dp)
+                            .shadow(
+                                elevation = 8.dp,
+                                shape = CircleShape,
+                                ambientColor = Color(0xFFFFEB3B),
+                                spotColor = Color(0xFFFFEB3B)
+                            )
                     )
 
                     Text(
@@ -65,7 +72,8 @@ fun CardMainInsignias(){
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
                         textAlign = TextAlign.Center,
-                        modifier = Modifier.width(90.dp)
+                        modifier = Modifier.width(90.dp),
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
 
@@ -78,6 +86,12 @@ fun CardMainInsignias(){
                         painter = painterResource(id = R.drawable.insignia_favorita),
                         contentDescription = null,
                         modifier = Modifier.size(80.dp)
+                            .shadow(
+                                elevation = 8.dp,
+                                shape = CircleShape,
+                                ambientColor = Color.Red,
+                                spotColor = Color.Red
+                            )
                     )
 
                     Text(
@@ -86,7 +100,8 @@ fun CardMainInsignias(){
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
                         textAlign = TextAlign.Center,
-                        modifier = Modifier.width(90.dp)
+                        modifier = Modifier.width(90.dp),
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
 
@@ -99,6 +114,12 @@ fun CardMainInsignias(){
                         painter = painterResource(id = R.drawable.insignia_verificado),
                         contentDescription = null,
                         modifier = Modifier.size(80.dp)
+                            .shadow(
+                                elevation = 8.dp,
+                                shape = CircleShape,
+                                ambientColor = Color.Cyan,
+                                spotColor = Color.Cyan
+                            )
                     )
 
                     Text(
@@ -107,7 +128,8 @@ fun CardMainInsignias(){
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
                         textAlign = TextAlign.Center,
-                        modifier = Modifier.width(90.dp)
+                        modifier = Modifier.width(90.dp),
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
             }

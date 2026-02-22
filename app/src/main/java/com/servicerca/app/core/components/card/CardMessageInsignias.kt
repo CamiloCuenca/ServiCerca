@@ -40,8 +40,7 @@ fun CardMessageInsignias(){
         modifier = Modifier
             .size(width = 340.dp, height = 150.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.background,
-            contentColor = Color.Black,
+            containerColor = MaterialTheme.colorScheme.surface
         ),
     ){
         Row(
@@ -64,6 +63,7 @@ fun CardMessageInsignias(){
                     style = MaterialTheme.typography.titleMedium,
                     overflow = TextOverflow.Ellipsis,
                     textAlign = TextAlign.Start,
+                    color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.fillMaxWidth()
                         .padding(vertical = 8.dp)
                 )
@@ -73,6 +73,7 @@ fun CardMessageInsignias(){
                     maxLines = 3,
                     overflow = TextOverflow.Ellipsis,
                     textAlign = TextAlign.Start,
+                    color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.fillMaxWidth()
                         .padding(vertical = 8.dp)
 
