@@ -2,75 +2,99 @@ package com.servicerca.app.ui.dashboard.user
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
-
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.servicerca.app.core.components.navigation.AppTopAppBar
 import com.servicerca.app.core.components.navigation.BottomNavigationBar
 import com.servicerca.app.core.navigation.UserNavigation
 
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserScreen(
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    onCreateService: () -> Unit
 ) {
 
-    // Estados para la navegación y el título de la barra superior
     val navController = rememberNavController()
-    var title by remember { mutableStateOf("Inicio usuario") }
+    var title by remember { mutableStateOf("Inicio") }
 
-    // Estructura Scaffold (barra superior, barra inferior y contenido)
+    val backStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = backStackEntry?.destination?.route
+
+    val showBars = currentRoute != "insignias"
+
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    var notificationCount by remember { mutableStateOf(5) }
+
+
     Scaffold(
         topBar = {
-            // Barra superior con título y botón de cierre de sesión
-            AppTopAppBar(
-                title = title,
-                logout = onLogout // Función para cerrar sesión, que se pasa desde el componente padre
-            )
+            if (showBars) {
+                AppTopAppBar(
+                    title = title,
+                    notificationCount = notificationCount ,
+                    onLocationClick = {
+                        // TODO abrir mapa
+                    },
+                    onNotificationClick = {
+                        // TODO ir a notificaciones
+                    },
+                    scrollBehavior = scrollBehavior
+                )
+            }
         },
         bottomBar = {
-            // Barra de navegación inferior con iconos y títulos
-            BottomNavigationBar(
-                navController = navController,
-                titleTopBar = {
-                    title = it
+            if (showBars) {
+                BottomNavigationBar(
+                    navController = navController,
+                    titleTopBar = { title = it }
+                )
+            }
+        },
+        floatingActionButton = {
+            if (showBars) {
+                FloatingActionButton(
+                    onClick = onCreateService,
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                    shape = MaterialTheme.shapes.medium
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = null
+                    )
                 }
-            )
+            }
         }
     ) { padding ->
-        // Contenido principal gestionado por la navegación (NavHost)
+
         UserNavigation(
             navController = navController,
-            padding = padding
+            _padding = padding
         )
-
-    }
-}
-
-@Composable
-fun HomeUserScreen() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text("Bienvenido usuario 👋")
     }
 }
 
 
+
+@Preview(showBackground = true)
 @Composable
-@Preview
-fun userScreenPreview(){
-    UserScreen( onLogout = {})
+fun UserScreenPreview() {
+    UserScreen(
+        onLogout = {},
+        onCreateService = {}
+    )
 }
-
-

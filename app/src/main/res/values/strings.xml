@@ -18,6 +18,38 @@
     <string name="register_placeholder_example_name">Ej. Juan Pérez</string>
     <string name="register_select_location_text">Seleccionar Ubicación</string>
     <string name="register_justification_selecting_location_text">Necesitamos esto para mostrarte proveedores cercanos.</string>
-    <string name="register_already_have_account_text">¿Ya tienes una cuenta? Inicia sesión</string>
+    <string name="register_already_have_account_text">¿Ya tienes una cuenta?</string>
     <string name="register_terms_and_privacy_notice_text">Al registrarte, aceptas nuestros Términos de Servicio \ny Politica de Privacidad</string>
+
+    <string name="create_service_add_image_label">Agregar imagen del servicio</string>
+    <string name="title_service_label">Titulo del servicio</string>
+    <string name="category_service_label">Categoría del servicio</string>
+    <string name="detailed_description_label">Descripción detallada</string>
+    <string name="profile_text">Mi Perfil</string>
+    <string name="name_user">Nombre del usuario</string>
+    <string name="lacation_profile">Mi ubicación</string>
+    <string name="recover_password">Recuperar contraseña</string>
+    <string name="recover_password_button">Enviar instrucciones\n</string>
+    <string name="recover_password_subtitle">Introduce tu correo electrónico para recibir\ninstrucciones de recuperación</string>
+    <string name="level">Nivel 5</string>
+    <string name="job">Experto Local</string>
+    <string name="xp">1250 / 2000 XP</string>
+    <string name="mesaage_level">¡Sólo 750 puntos más para el nivel Maestro!</string>
+    <string name="tittle_insignias">Insignias</string>
+    <string name="ver_todas">Ver todas</string>
+    <string name="insignia_verified">Verificado</string>
+    <string name="insignia_fast">Rápido</string>
+    <string name="insignia_top5">Top 5%</string>
+    <string name="statistic">Estadísticas</string>
+    <string name="num_services">34</string>
+    <string name="services_completed">Servicios completados</string>
+    <string name="num_points">1250</string>
+    <string name="total_points">Puntos totales</string>
+    <string name="qualification">4.5</string>
+    <string name="average_rating">Calificación media</string>
+    <string name="time">1 años</string>
+    <string name="member_time">Miembro desde</string>
+    <string name="edit_account">Editar cuenta</string>
+    <string name="delete_account">Eliminar cuenta</string>
+
 </resources>

@@ -1,28 +1,30 @@
 package com.servicerca.app.core.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.toRoute
 import com.servicerca.app.ui.SearchScreen
 import com.servicerca.app.ui.chat.ChatScreen
 import com.servicerca.app.ui.dashboard.user.HomeUserScreen
-import com.servicerca.app.ui.dashboard.user.UserScreen
-import com.servicerca.app.ui.profile.UserProfileScreen
+import com.servicerca.app.ui.profile.InsigniasScreen
+import com.servicerca.app.ui.profile.ProfileScreen
 import com.servicerca.app.ui.reservation.ReservationScreen
 
 
 @Composable
 fun UserNavigation(
     navController: NavHostController,
-    padding: PaddingValues
+    _padding: PaddingValues
 ){
 
     NavHost(
         navController = navController,
-        startDestination = DashboardRoutes.HomeUser
+        startDestination = DashboardRoutes.HomeUser,
+        modifier = Modifier.padding(_padding)
     ) {
 
         composable<DashboardRoutes.HomeUser> {
@@ -34,7 +36,13 @@ fun UserNavigation(
         }
 
         composable<DashboardRoutes.Profile> {
-            UserProfileScreen()
+            ProfileScreen(
+                onInsignias = {
+                    navController.navigate("insignias")
+                }
+
+
+            )
         }
 
         composable<DashboardRoutes.UserDetail> {
@@ -47,6 +55,12 @@ fun UserNavigation(
         composable<DashboardRoutes.Reservation> {
             ReservationScreen()
         }
+
+        composable("insignias") {
+            InsigniasScreen(onBack = { navController.popBackStack() })
+
+        }
+
 
     }
 

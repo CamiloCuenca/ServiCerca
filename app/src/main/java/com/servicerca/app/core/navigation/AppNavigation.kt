@@ -10,7 +10,11 @@ import androidx.navigation.compose.rememberNavController
 import com.servicerca.app.ui.auth.login.LoginScreen
 import com.servicerca.app.ui.auth.register.RegisterScreen
 import com.servicerca.app.ui.dashboard.user.UserScreen
-import com.servicerca.app.ui.Welcome.HomeScreen
+import com.servicerca.app.ui.Welcome.WelcomeScreen
+import com.servicerca.app.ui.auth.login.RecoverPasswordScreen
+import com.servicerca.app.ui.auth.register.VerifyEmailScreen
+import com.servicerca.app.ui.profile.ProfileScreen
+import com.servicerca.app.ui.services.create.CreateServiceScreen
 
 @Composable
 fun AppNavigation() {
@@ -29,7 +33,7 @@ fun AppNavigation() {
             // Definición de las rutas y sus composables asociados (se puede agregar más rutas según sea necesario)
 
             composable<MainRoutes.Home> {
-                HomeScreen(
+                WelcomeScreen(
                     onNavigateToLogin = {
                         navController.navigate(MainRoutes.Login)
                     },
@@ -46,6 +50,9 @@ fun AppNavigation() {
                     }
                     , onNavigateToUsers = {
                         navController.navigate(DashboardRoutes.HomeUser)
+                    },
+                    onRecoverPassword ={
+                        navController.navigate(MainRoutes.RecoverPassword)
                     }
                 )
             }
@@ -53,7 +60,14 @@ fun AppNavigation() {
             composable<MainRoutes.Register> {
                 RegisterScreen( onNavigateToLogin = {
                     navController.navigate(MainRoutes.Login)
-                },)
+                },
+                    onBackClick = {
+                        navController.popBackStack()
+                    },
+                    onVerifyEmail = {
+                        navController.navigate(MainRoutes.VerifyEmail)
+                    }
+                )
             }
 
             composable<DashboardRoutes.HomeUser> {
@@ -63,10 +77,48 @@ fun AppNavigation() {
                         navController.navigate(MainRoutes.Login) {
                             popUpTo(MainRoutes.Login) { inclusive = true } // Evitar regresar a la pantalla anterior
                         }
+                    },
+                    onCreateService ={
+                        navController.navigate(MainRoutes.CreateService)
                     }
                 )
             }
 
-        }
-    }
-}
+            composable<MainRoutes.RecoverPassword> {
+                RecoverPasswordScreen(
+                    onNavigateToLogin = {
+                        navController.navigate(MainRoutes.Login)
+                    }
+                    , onBackClick = {
+                        navController.popBackStack()
+                    }
+                )
+            }
+
+            composable<MainRoutes.VerifyEmail> {
+                VerifyEmailScreen(
+
+                    email = "juanPerez.example.com", // TODO Luego ver como se pasa el email por los estados
+                    onNavigateToLogin = {
+                        navController.navigate(MainRoutes.Login)
+                    },
+                    onResendEmail= {}
+                )
+            }
+
+            composable<MainRoutes.CreateService> {
+                CreateServiceScreen()
+            }
+
+            composable<MainRoutes.Perfil> {
+                ProfileScreen(
+                    onInsignias = {
+                        // cuando Profile quiere abrir Insignias, debe usar la navegación interna de usuario (tabs)
+                        navController.navigate(DashboardRoutes.HomeUser)
+                    }
+                )
+
+            }
+
+
+    } }}
