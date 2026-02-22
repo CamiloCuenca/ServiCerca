@@ -48,7 +48,12 @@ import com.servicerca.app.core.components.input.AppTextField
 @Composable
 fun RegisterScreen(
     onNavigateToLogin: () -> Unit,
-) {
+    onBackClick: () -> Unit,
+    onVerifyEmail: () -> Unit
+
+
+
+    ) {
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -75,7 +80,7 @@ fun RegisterScreen(
 
 
                 IconButton(
-                    onClick = onNavigateToLogin, // TODO @CamiloCuenca cambiar para que recuerde cual fue lapantalla anteriro (ver guias del profe)
+                    onClick = onBackClick, 
                     modifier = Modifier.align(Alignment.CenterStart)
                 ) {
                     Icon(
@@ -126,7 +131,7 @@ fun RegisterScreen(
             // Botón principal
             PrimaryButton(
                 text = stringResource(R.string.registrarse),
-                onClick = { /* Registrarse */ }
+                onClick = { onVerifyEmail() }
             )
 
             // Botones sociales
@@ -180,5 +185,5 @@ fun RegisterScreen(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun RegisterScreenPreview() {
-    RegisterScreen( onNavigateToLogin = {})
+    RegisterScreen( onNavigateToLogin = {} , onBackClick = {}, onVerifyEmail = {})
 }

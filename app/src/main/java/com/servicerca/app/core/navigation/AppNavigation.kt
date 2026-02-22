@@ -60,7 +60,14 @@ fun AppNavigation() {
             composable<MainRoutes.Register> {
                 RegisterScreen( onNavigateToLogin = {
                     navController.navigate(MainRoutes.Login)
-                },)
+                },
+                    onBackClick = {
+                        navController.popBackStack()
+                    },
+                    onVerifyEmail = {
+                        navController.navigate(MainRoutes.VerifyEmail)
+                    }
+                )
             }
 
             composable<DashboardRoutes.HomeUser> {
@@ -81,6 +88,9 @@ fun AppNavigation() {
                 RecoverPasswordScreen(
                     onNavigateToLogin = {
                         navController.navigate(MainRoutes.Login)
+                    }
+                    , onBackClick = {
+                        navController.popBackStack()
                     }
                 )
             }

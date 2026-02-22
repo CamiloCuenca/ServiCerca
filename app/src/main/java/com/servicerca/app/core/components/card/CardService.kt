@@ -2,9 +2,7 @@ package com.servicerca.app.core.components.card
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -14,7 +12,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -52,9 +49,10 @@ fun CardService(
         colors = CardDefaults.elevatedCardColors(
             containerColor = Color.White
         ),
+        // Usar fillMaxWidth y padding horizontal para que la tarjeta se alinee correctamente
         modifier = modifier
-            .width(380.dp)
-            .padding(8.dp)
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
         Column {
             Box(
