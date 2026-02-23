@@ -35,7 +35,7 @@ fun CardStatistics(
 ){
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 6.dp),
+            defaultElevation = 2.dp),
         modifier = Modifier
             .size(width = 150.dp, height = 130.dp),
         colors = CardDefaults.cardColors(

@@ -59,7 +59,7 @@ fun CadInsignias(){
                         contentDescription = null,
                         modifier = Modifier.size(80.dp)
                             .shadow(
-                                elevation = 8.dp,
+                                elevation = 2.dp,
                                 shape = CircleShape,
                                 ambientColor = Color(0xFF1ABC9C),
                                 spotColor = Color(0xFF1ABC9C)
@@ -87,7 +87,7 @@ fun CadInsignias(){
                         contentDescription = null,
                         modifier = Modifier.size(80.dp)
                             .shadow(
-                                elevation = 8.dp,
+                                elevation = 2.dp,
                                 shape = CircleShape,
                                 ambientColor = Color(0xFF5B9BD5),
                                 spotColor = Color(0xFF5B9BD5)
@@ -115,7 +115,7 @@ fun CadInsignias(){
                         contentDescription = null,
                         modifier = Modifier.size(80.dp)
                             .shadow(
-                                elevation = 8.dp,
+                                elevation = 2.dp,
                                 shape = CircleShape,
                                 ambientColor = Color(0xFFF5A623),
                                 spotColor = Color(0xFFF5A623)
@@ -151,7 +151,7 @@ fun CadInsignias(){
                         contentDescription = null,
                         modifier = Modifier.size(80.dp)
                             .shadow(
-                                elevation = 8.dp,
+                                elevation = 2.dp,
                                 shape = CircleShape,
                                 ambientColor = Color(0xFF9C27B0),
                                 spotColor = Color(0xFF9C27B0)
@@ -180,7 +180,7 @@ fun CadInsignias(){
                         contentDescription = null,
                         modifier = Modifier.size(80.dp)
                             .shadow(
-                                elevation = 8.dp,
+                                elevation = 2.dp,
                                 shape = CircleShape,
                                 ambientColor = Color(0xFFE91E8C),
                                 spotColor = Color(0xFFE91E8C)
@@ -209,7 +209,7 @@ fun CadInsignias(){
                         contentDescription = null,
                         modifier = Modifier.size(80.dp)
                             .shadow(
-                                elevation = 8.dp,
+                                elevation = 2.dp,
                                 shape = CircleShape,
                                 ambientColor = Color(0xFF34A853),
                                 spotColor = Color(0xFF34A853)
