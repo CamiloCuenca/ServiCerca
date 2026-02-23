@@ -197,6 +197,12 @@ fun ProfileScreen(
                         Image(painter = painterResource(id = R.drawable.insignia_verificado), contentDescription = null,
                             modifier = Modifier
                                 .size(80.dp)
+                                .shadow(
+                                    elevation = 8.dp,
+                                    shape = CircleShape,
+                                    ambientColor = Color.Cyan,
+                                    spotColor = Color.Cyan
+                                )
                         )
                         Text(
                             text = stringResource(R.string.insignia_verified),
@@ -210,6 +216,12 @@ fun ProfileScreen(
                         Image(painter = painterResource(id = R.drawable.insignia_rapido), contentDescription = null,
                             modifier = Modifier
                                 .size(80.dp)
+                                .shadow(
+                                    elevation = 8.dp,
+                                    shape = CircleShape,
+                                    ambientColor = Color(0xFF9C27B0),
+                                    spotColor = Color(0xFF9C27B0)
+                                )
                         )
                         Text(
                             text = stringResource(R.string.insignia_fast),
@@ -223,6 +235,12 @@ fun ProfileScreen(
                         Image(painter = painterResource(id = R.drawable.insignia_top5), contentDescription = null,
                             modifier = Modifier
                                 .size(80.dp)
+                                .shadow(
+                                    elevation = 8.dp,
+                                    shape = CircleShape,
+                                    ambientColor = Color(0xFFFFEB3B),
+                                    spotColor = Color(0xFFFFEB3B)
+                                )
                         )
                         Text(
                             text = stringResource(R.string.insignia_top5),
