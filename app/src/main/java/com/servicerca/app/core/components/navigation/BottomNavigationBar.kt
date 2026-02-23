@@ -4,14 +4,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.CalendarMonth
-import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.ChatBubble
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -22,6 +18,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.servicerca.app.core.navigation.DashboardRoutes
+import com.servicerca.app.ui.theme.NavigationBarColors
 
 @Composable
 fun BottomNavigationBar(
@@ -41,9 +38,12 @@ fun BottomNavigationBar(
         }
     }
 
+    val (bgColor, contentColor) = NavigationBarColors()
+
     NavigationBar(
         modifier = Modifier.fillMaxWidth(),
-        tonalElevation = 3.dp
+        tonalElevation = 3.dp,
+        containerColor = bgColor
     ) {
 
         Destination.entries.forEach { destination ->
@@ -76,23 +76,29 @@ fun BottomNavigationBar(
                     Text(destination.label)
                 },
 
+                alwaysShowLabel = true,
 
-                alwaysShowLabel = true
+                colors = NavigationBarItemDefaults.colors(
+                    selectedIconColor = MaterialTheme.colorScheme.primary,
+                    selectedTextColor = MaterialTheme.colorScheme.primary,
+                    indicatorColor = MaterialTheme.colorScheme.onSecondary,
+                    unselectedIconColor = contentColor.copy(alpha = 0.75f),
+                    unselectedTextColor = contentColor.copy(alpha = 0.75f)
+                )
             )
         }
     }
 }
-// Definición de los items de navegación de la barra inferior
+
+// Items de navegación
 enum class Destination(
     val route: DashboardRoutes,
     val label: String,
     val icon: ImageVector,
-){
+) {
     CHAT(DashboardRoutes.Chat, "Chat", Icons.Default.ChatBubble),
     SEARCH(DashboardRoutes.Search, "Buscar", Icons.Default.Search),
-    HOME(DashboardRoutes.HomeUser, "Inicio", Icons.Default.Home ),
+    HOME(DashboardRoutes.HomeUser, "Inicio", Icons.Default.Home),
     RESERVATION(DashboardRoutes.Reservation, "Reservas", Icons.Default.CalendarMonth),
     PROFILE(DashboardRoutes.Profile, "Perfil", Icons.Default.AccountCircle),
-
-
 }
