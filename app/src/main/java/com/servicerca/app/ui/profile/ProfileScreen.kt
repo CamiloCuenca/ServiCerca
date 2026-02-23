@@ -198,7 +198,7 @@ fun ProfileScreen(
                             modifier = Modifier
                                 .size(80.dp)
                                 .shadow(
-                                    elevation = 8.dp,
+                                    elevation = 1.dp,
                                     shape = CircleShape,
                                     ambientColor = Color.Cyan,
                                     spotColor = Color.Cyan
@@ -217,7 +217,7 @@ fun ProfileScreen(
                             modifier = Modifier
                                 .size(80.dp)
                                 .shadow(
-                                    elevation = 8.dp,
+                                    elevation = 1.dp,
                                     shape = CircleShape,
                                     ambientColor = Color(0xFF9C27B0),
                                     spotColor = Color(0xFF9C27B0)
@@ -236,7 +236,7 @@ fun ProfileScreen(
                             modifier = Modifier
                                 .size(80.dp)
                                 .shadow(
-                                    elevation = 8.dp,
+                                    elevation = 1.dp,
                                     shape = CircleShape,
                                     ambientColor = Color(0xFFFFEB3B),
                                     spotColor = Color(0xFFFFEB3B)

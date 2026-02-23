@@ -59,7 +59,7 @@ fun CardMainInsignias(){
                         contentDescription = null,
                         modifier = Modifier.size(80.dp)
                             .shadow(
-                                elevation = 8.dp,
+                                elevation = 2.dp,
                                 shape = CircleShape,
                                 ambientColor = Color(0xFFFFEB3B),
                                 spotColor = Color(0xFFFFEB3B)
@@ -87,7 +87,7 @@ fun CardMainInsignias(){
                         contentDescription = null,
                         modifier = Modifier.size(80.dp)
                             .shadow(
-                                elevation = 8.dp,
+                                elevation = 2.dp,
                                 shape = CircleShape,
                                 ambientColor = Color.Red,
                                 spotColor = Color.Red
@@ -115,7 +115,7 @@ fun CardMainInsignias(){
                         contentDescription = null,
                         modifier = Modifier.size(80.dp)
                             .shadow(
-                                elevation = 8.dp,
+                                elevation = 2.dp,
                                 shape = CircleShape,
                                 ambientColor = Color.Cyan,
                                 spotColor = Color.Cyan
