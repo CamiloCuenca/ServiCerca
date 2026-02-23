@@ -40,7 +40,7 @@ fun CardService(
     var isSelectedPin by remember { mutableStateOf(false) }
 
     ElevatedCard(
-        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.elevatedCardColors(
             containerColor = Color.White
@@ -55,7 +55,7 @@ fun CardService(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(180.dp)
+                    .height(150.dp)
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.plumber),
