@@ -3,11 +3,14 @@ package com.servicerca.app.ui.dashboard.user
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -20,6 +23,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.servicerca.app.core.components.card.CardService
 import com.servicerca.app.core.components.input.SearchTextField
+import com.servicerca.app.core.components.tag.CategoryTagSearch
+import com.servicerca.app.domain.model.Categories
 
 /**
  *TODO  Cuando hagamos los ViewModel seria algo asi :
@@ -33,6 +38,8 @@ import com.servicerca.app.core.components.input.SearchTextField
 fun HomeUserScreen() {
 
     var query by remember { mutableStateOf("") }
+    var selectedCategory by remember { mutableStateOf<Categories?>(null) }
+
 
     Column(
         modifier = Modifier
@@ -48,6 +55,23 @@ fun HomeUserScreen() {
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 12.dp)
         )
+
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(horizontal = 16.dp)
+        ) {
+            items(Categories.entries) { category ->
+                CategoryTagSearch(
+                    category = category,
+                    isSelected = selectedCategory == category,
+                    onClick = {
+                        selectedCategory =
+                            if (selectedCategory == category) null else category
+                    }
+                )
+            }
+        }
+
 
         // Lista scrolleable
         LazyColumn(

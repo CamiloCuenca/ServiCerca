@@ -7,7 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.servicerca.app.ui.SearchScreen
+import com.servicerca.app.ui.search.SearchScreen
 import com.servicerca.app.ui.chat.ChatScreen
 import com.servicerca.app.ui.dashboard.user.HomeUserScreen
 import com.servicerca.app.ui.profile.InsigniasScreen

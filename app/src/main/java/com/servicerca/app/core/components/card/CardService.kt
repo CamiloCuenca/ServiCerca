@@ -5,11 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,45 +16,46 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.servicerca.app.R
+import com.servicerca.app.core.components.button.PrimaryButton
 import com.servicerca.app.core.components.button.ReactionIconButton
 import com.servicerca.app.core.components.tag.CategoryTag
 import com.servicerca.app.core.components.tag.LevelTag
 import com.servicerca.app.core.components.tag.VerificationTag
 import com.servicerca.app.ui.theme.ServiCercaTheme
 
-// TODO los estados de los botnes de like luego lo manejamso con el ViewModel
 @Composable
 fun CardService(
     modifier: Modifier = Modifier,
     title: String = "Reparación de Fugas Urgente",
-    category: String = "Plomería",
+    category: String = "Hogar",
     distance: String = "A 2.4 km de ti",
     priceRange: String = "$20 - $50 USD",
     rating: String = "4.9",
     isVerified: Boolean = true,
-    level: String = "EXPERTO"
+    level: String = "EXPERTO",
+    onRequestClick: () -> Unit = {}
 ) {
 
-    var isSelectedlike by remember { mutableStateOf(false) }
-    var isSelected by remember { mutableStateOf(false) }
-
+    var isSelectedLike by remember { mutableStateOf(false) }
+    var isSelectedPin by remember { mutableStateOf(false) }
 
     ElevatedCard(
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.elevatedCardColors(
             containerColor = Color.White
         ),
-        // Usar fillMaxWidth y padding horizontal para que la tarjeta se alinee correctamente
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
         Column {
+
+            // Imagen
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(180.dp)
+                    .height(150.dp)
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.plumber),
@@ -77,6 +74,8 @@ fun CardService(
                     .padding(16.dp)
                     .fillMaxWidth()
             ) {
+
+                // Categoría y rating
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -84,10 +83,8 @@ fun CardService(
                 ) {
 
                     CategoryTag(
-                        text = category ,
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-
-
+                        text = category,
+                        modifier = Modifier.padding(vertical = 4.dp)
                     )
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -97,7 +94,7 @@ fun CardService(
                             tint = Color(0xFFFFD700),
                             modifier = Modifier.size(16.dp)
                         )
-                        Spacer(modifier = Modifier.width(2.dp))
+                        Spacer(modifier = Modifier.width(4.dp))
                         Text(
                             text = rating,
                             fontSize = 14.sp,
@@ -109,6 +106,7 @@ fun CardService(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
+                // Título
                 Text(
                     text = title,
                     fontSize = 20.sp,
@@ -117,8 +115,9 @@ fun CardService(
                     lineHeight = 24.sp
                 )
 
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(6.dp))
 
+                // Distancia
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_location),
@@ -136,6 +135,7 @@ fun CardService(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
+                // Precio y nivel
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -156,7 +156,6 @@ fun CardService(
                         )
                     }
 
-
                     LevelTag(
                         text = level,
                         backgroundColor = Color(0xFFF3E5F5),
@@ -164,40 +163,47 @@ fun CardService(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
+                // BOTÓN PRINCIPAL
+                PrimaryButton(
+                    text = "Solicitar servicio",
+                    onClick = onRequestClick,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(40.dp),
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Reacciones y compartir
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
 
+                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
 
                         ReactionIconButton(
                             icon = R.drawable.ic_thumb_up,
-                            isSelected = isSelectedlike,
-                            onClick = {
-                                isSelectedlike = !isSelectedlike
-                            }
+                            isSelected = isSelectedLike,
+                            onClick = { isSelectedLike = !isSelectedLike }
                         )
 
                         ReactionIconButton(
                             icon = R.drawable.ic_push_pin,
-                            isSelected = isSelected,
-                            onClick = {
-                                isSelected = !isSelected
-                            }
+                            isSelected = isSelectedPin,
+                            onClick = { isSelectedPin = !isSelectedPin }
                         )
-
                     }
 
-                    IconButton(onClick = { /*  */ }) {
+                    IconButton(onClick = { /* compartir */ }) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_share),
                             contentDescription = null,
-                            tint = Color(0xFF95a5a6),
-                            modifier = Modifier.size(32.dp)
+                            tint = Color(0xFF95A5A6),
+                            modifier = Modifier.size(28.dp)
                         )
                     }
                 }
@@ -213,10 +219,12 @@ fun CardServicePreview() {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Gray),
+                .background(Color(0xFFEDEDED)),
             contentAlignment = Alignment.Center
         ) {
-            CardService()
+            CardService(
+                onRequestClick = {}
+            )
         }
     }
 }

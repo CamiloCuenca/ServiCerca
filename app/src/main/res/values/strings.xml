@@ -62,4 +62,13 @@
     <string name="edit_account">Editar cuenta</string>
     <string name="delete_account">Eliminar cuenta</string>
 
+    <!-- Search Screen -->
+    <string name="search_title">Buscar</string>
+    <string name="search_placeholder">Buscar servicios...</string>
+    <string name="recent_searches_title">Búsquedas recientes</string>
+    <string name="clear_all">Borrar todo</string>
+    <string name="popular_categories_title">Categorías populares</string>
+    <string name="explore_map_title">Explorar en el mapa</string>
+    <string name="explore_map_description">Encuentra servicios profesionales justo donde los necesitas.</string>
+    <string name="open_map_button">Abrir mapa</string>
 </resources>

@@ -2,6 +2,7 @@ package com.servicerca.app.core.components.tag
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -9,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
+import com.servicerca.app.domain.model.Categories
 
 
 @Composable
@@ -27,6 +28,32 @@ fun CategoryTag(
             fontSize = 12.sp,
             color = Color.Gray,
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+        )
+    }
+}
+
+@Composable
+fun CategoryTagSearch(
+    category: Categories,
+    isSelected: Boolean,
+    onClick: (Categories) -> Unit
+) {
+    Surface(
+        onClick = { onClick(category) },
+        shape = RoundedCornerShape(50),
+        color = if (isSelected)
+            MaterialTheme.colorScheme.primary
+        else
+            Color(0xFFF1F3F5),
+    ) {
+        Text(
+            text = category.displayName,
+            fontSize = 10.sp,
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp),
+            color = if (isSelected)
+                MaterialTheme.colorScheme.onPrimary
+            else
+                Color.Gray
         )
     }
 }
