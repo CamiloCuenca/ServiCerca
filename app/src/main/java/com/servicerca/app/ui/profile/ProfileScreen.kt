@@ -49,6 +49,7 @@ import com.servicerca.app.core.components.card.CardStatistics
 @Composable
 fun ProfileScreen(
     onInsignias : () -> Unit,
+    onEditProflie:() -> Unit
 ){
 
     Scaffold(
@@ -306,7 +307,7 @@ fun ProfileScreen(
                 ) {
                     ButtonIcon(
                         text = stringResource(R.string.edit_account),
-                        onClick = { /* acción */ },
+                        onClick = { onEditProflie()},
                         icon = {
                             Icon(
                                 imageVector = Icons.Default.Edit, // Icono de Material
@@ -363,6 +364,7 @@ fun ProfileScreen(
 @Composable
 fun ProfileScreenPreview() {
     ProfileScreen(
-        onInsignias = {}
+        onInsignias = {},
+        onEditProflie = {}
     )
 }
