@@ -28,8 +28,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.servicerca.app.R
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -43,6 +45,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.input.KeyboardType
+import com.servicerca.app.core.components.button.PrimaryButton
+import com.servicerca.app.core.components.card.CardInfoprofile
 import com.servicerca.app.core.components.input.AppTextField
 
 @Composable
@@ -52,10 +57,12 @@ fun EditProfileScreen(
 
 ) {
 
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
-    var name by remember { mutableStateOf("") }
+    var first_name by remember { mutableStateOf("Primer nombre") }
+    var middle_name by remember { mutableStateOf("Segundo nombre") }
+    var first_last_name by remember { mutableStateOf("Primer apellido") }
+    var second_last_name by remember { mutableStateOf("Segundo apellido") }
+    var address by remember { mutableStateOf("Dirección") }
+    var num_tel by remember { mutableStateOf("300 123 4567") }
 
     Scaffold(
         modifier = Modifier.fillMaxSize()
@@ -105,7 +112,7 @@ fun EditProfileScreen(
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.fillMaxWidth()
-                        .padding(top = 15.dp)
+                        .padding(top = 30.dp)
                 ) {
                     Box(
                         contentAlignment = Alignment.BottomEnd,
@@ -121,10 +128,8 @@ fun EditProfileScreen(
                             modifier = Modifier
                                 .size(150.dp)
                                 .shadow(
-                                    elevation = 20.dp,
-                                    shape = CircleShape,
-                                    ambientColor = Color.Cyan,
-                                    spotColor = Color.Cyan
+                                    elevation = 2.dp,
+                                    shape = CircleShape
                                 )
                         ) {
                             Image(
@@ -136,8 +141,11 @@ fun EditProfileScreen(
                         }
 
                         // Botón cámara
-                        Box(
-                            contentAlignment = Alignment.Center,
+                        IconButton(
+                            onClick = {
+                                // 🔥 Acción aquí
+                                println("Cambiar foto")
+                            },
                             modifier = Modifier
                                 .size(45.dp)
                                 .offset(x = 5.dp, y = 5.dp)
@@ -176,38 +184,100 @@ fun EditProfileScreen(
                         .fillMaxWidth()
                         .padding(vertical = 8.dp, horizontal = 8.dp)
                 ) {
-                    Column(
+                    Row(
+                        modifier = Modifier.
+                        padding(bottom = 20.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Text(
-                            text = stringResource(R.string.first_name),
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            textAlign = TextAlign.Start,
+                        Column(
                             modifier = Modifier
-                                .fillMaxWidth()
-                        )
+                                .weight(1F)
+                        ) {
+                            AppTextField(
+                                value = first_name,
+                                onValueChange = { first_name = it },
+                                label = stringResource(R.string.first_name),
+
+                            )
+                        }
+                        Column(
+                            modifier = Modifier
+                                .weight(1F)
+                        ) {
+
+                            AppTextField(
+                                value = middle_name,
+                                onValueChange = { middle_name = it },
+                                label = stringResource(R.string.middle_name)
+                            )
+                        }
+                    }
+                    Row(
+                        modifier = Modifier.
+                        padding(bottom = 20.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .weight(1F)
+                        ) {
+
+                            AppTextField(
+                                value = first_last_name,
+                                onValueChange = { first_name = it },
+                                label = stringResource(R.string.first_last_name),
+                            )
+                        }
+                        Column(
+                            modifier = Modifier
+                                .weight(1F)
+                        ) {
+
+                            AppTextField(
+                                value = second_last_name,
+                                onValueChange = { second_last_name = it },
+                                label = stringResource(R.string.second_last_name),
+                            )
+                        }
+                    }
+                    Column (
+                        modifier = Modifier.padding(bottom = 20.dp)
+                    ) {
+
                         AppTextField(
-                            value = name,
-                            onValueChange = { name = it },
-                            label = stringResource(R.string.first_name),
-                            placeholder = stringResource(R.string.register_placeholder_example_name),
+                            value = address,
+                            onValueChange = { address = it },
+                            label = stringResource(R.string.address),
                         )
                     }
                     Column (
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp, horizontal = 8.dp)
-
+                        modifier = Modifier.padding(bottom = 20.dp)
                     ) {
+
                         AppTextField(
-                            value = name,
-                            onValueChange = { name = it },
-                            label = stringResource(R.string.middle_name),
-                            placeholder = stringResource(R.string.register_placeholder_example_name),
-                            modifier = Modifier
-                                .weight(1F)
+                            value = num_tel,
+                            onValueChange = { input ->
+                                num_tel = input.filter { it.isDigit() } // 🔥 Solo números
+                            },
+                            label = stringResource(R.string.number_tel),
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = Icons.Default.Phone,
+                                    contentDescription = "Teléfono"
+                                )
+                            },
                         )
                     }
+                }
+                CardInfoprofile()
+
+                Box(
+                    modifier = Modifier.padding(vertical = 20.dp)
+                ) {
+                    PrimaryButton(
+                        text = stringResource(R.string.btn_edit_profile),
+                        onClick = { }
+                    )
                 }
             }
         }

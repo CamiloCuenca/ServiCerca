@@ -72,6 +72,18 @@
     <string name="update_image">Actulizar imagen</string>
     <string name="first_name">Primer nombre</string>
     <string name="middle_name">Segundo nombre</string>
+    <string name="ph_middle_name">Opcional</string>
+    <string name="first_last_name">Primer apellido</string>
+    <string name="second_last_name">Segundo apellido</string>
+    <string name="ph_second_last_name">Opcional</string>
+    <string name="address">Dirección de residencia</string>
+    <string name="number_tel">Número telefónico</string>
+    <string name="info_account">Información de la cuenta</string>
+    <string name="info_email">Email</string>
+    <string name="email_edit_profile">usuario@email.com</string>
+    <string name="profile_type">Tipo de perfil</string>
+    <string name="user_type">Cliente</string>
+    <string name="btn_edit_profile">Guardar cambios</string>
 
 
     <!-- Search Screen -->
