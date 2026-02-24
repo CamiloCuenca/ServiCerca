@@ -14,7 +14,7 @@
     <string name="registrarse">Registrarse</string>
     <string name="register_create_an_account">Crea una cuenta</string>
     <string name="registration_subtitle">Únete a la comunidad y encuentra los mejores servicios cerca de ti.</string>
-    <string name="register_label_full_name">Nombre Completo</string>
+    <string name="register_label_first_name">Primer Nombre</string>
     <string name="register_placeholder_example_name">Ej. Juan Pérez</string>
     <string name="register_select_location_text">Seleccionar Ubicación</string>
     <string name="register_justification_selecting_location_text">Necesitamos esto para mostrarte proveedores cercanos.</string>
@@ -71,4 +71,7 @@
     <string name="explore_map_title">Explorar en el mapa</string>
     <string name="explore_map_description">Encuentra servicios profesionales justo donde los necesitas.</string>
     <string name="open_map_button">Abrir mapa</string>
+    <string name="register_label_second_name">Segundo Nombre</string>
+    <string name="register_label_first_lastname">Primer Apellido</string>
+    <string name="register_label_second_lastname">Segundo Apellido</string>
 </resources>
