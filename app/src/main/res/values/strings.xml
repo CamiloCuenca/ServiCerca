@@ -60,6 +60,7 @@
     <string name="time">1 años</string>
     <string name="member_time">Miembro desde</string>
     <string name="edit_account">Editar cuenta</string>
+    <string name="edit_password">Editar contraseña</string>
     <string name="delete_account">Eliminar cuenta</string>
 
     <!-- Search Screen -->
