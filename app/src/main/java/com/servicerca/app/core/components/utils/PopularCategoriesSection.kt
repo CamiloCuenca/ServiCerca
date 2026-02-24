@@ -36,12 +36,7 @@ fun PopularCategoriesSection(
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
-            Text(
-                text = stringResource(R.string.ver_todas),
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color(0xFF13ECEC),
-                modifier = Modifier.clickable { onViewAll() }
-            )
+
         }
 
         Spacer(modifier = Modifier.height(16.dp))

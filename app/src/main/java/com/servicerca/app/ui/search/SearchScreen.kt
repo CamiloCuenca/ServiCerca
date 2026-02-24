@@ -44,12 +44,7 @@ fun SearchScreen(
             .padding(horizontal = 16.dp)
     ) {
         Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = stringResource(R.string.search_title),
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onBackground
-        )
+
 
         Spacer(modifier = Modifier.height(16.dp))
 

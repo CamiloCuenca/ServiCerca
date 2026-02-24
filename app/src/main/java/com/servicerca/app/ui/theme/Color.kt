@@ -3,7 +3,7 @@ package com.servicerca.app.ui.theme
 import androidx.compose.ui.graphics.Color
 
 // Palette provided by user (light)
-val PrimaryLight = Color(0xFF13ECEC)      // Cian Brillante
+val PrimaryLight = Color(0xFF00C8B3)      // Cian Brillante
 val SecondaryLight = Color(0xFF006064)    // Azul Petróleo
 val SurfaceLight = Color(0xFFF8FDFF)      // Azul Glaciar (Cards / Contenedores)
 val BackgroundLight = Color(0xFFF8FDFF)   // Fondo
