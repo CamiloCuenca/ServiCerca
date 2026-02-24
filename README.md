@@ -1,16 +1,29 @@
 # ServiCerca
 
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/2762b1cc-ea61-44a5-b735-941b77ed4bf0"
+       alt="Logo ServiCerca"
+       width="200"/>
+</p>
 
-Una aplicación móvil para encontrar y contratar servicios locales confiables cerca de ti (plomería, electricidad, clases particulares, paseo de mascotas, soporte técnico, mudanzas y más).
+<p align="center">
+  Aplicación móvil para encontrar y contratar servicios locales confiables cerca de ti.
+</p>
+
+
+<p align="center">
+  <img src="https://skillicons.dev/icons?i=kotlin,androidstudio,firebase,gradle" />
+</p>
 
 ---
+
+ServiCerca te conecta con profesionales en plomería, electricidad, clases particulares, paseo de mascotas, soporte técnico, mudanzas y más.
 
 ## Índice
 
 - [Descripción](#descripción)
 - [Características principales](#características-principales)
 - [Categorías](#categorías)
-- [Licencia](#licencia)
 
 ---
 
