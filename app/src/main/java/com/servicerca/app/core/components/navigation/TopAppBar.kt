@@ -1,6 +1,8 @@
 package com.servicerca.app.core.components.navigation
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Logout
@@ -16,7 +18,10 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.servicerca.app.R
 import com.servicerca.app.core.components.button.AppNotificationAction
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -36,6 +41,14 @@ fun AppTopAppBar(
                 style = MaterialTheme.typography.titleLarge
             )
         },
+        navigationIcon = {
+            Image(
+                painter = painterResource(id = R.drawable.logo_servicerca),
+                contentDescription = "Logo ServiCerca",
+                modifier = Modifier.size(40.dp)
+            )
+        },
+
 
         actions = {
 
