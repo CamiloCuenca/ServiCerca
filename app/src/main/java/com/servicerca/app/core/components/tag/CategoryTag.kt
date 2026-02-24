@@ -48,8 +48,8 @@ fun CategoryTagSearch(
     ) {
         Text(
             text = category.displayName,
-            fontSize = 10.sp,
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp),
+            fontSize = 12.sp,
+            modifier = Modifier.padding(horizontal = 15.dp, vertical = 10.dp),
             color = if (isSelected)
                 MaterialTheme.colorScheme.onPrimary
             else
