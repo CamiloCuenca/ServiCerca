@@ -32,6 +32,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.ui.Alignment
@@ -40,6 +41,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import com.servicerca.app.core.components.button.ButtonIcon
 import com.servicerca.app.core.components.button.DeleteButton
+import com.servicerca.app.core.components.button.PasswordButton
 import com.servicerca.app.core.components.button.PrimaryButton
 import com.servicerca.app.core.components.card.CardLevel
 import com.servicerca.app.core.components.card.CardStatistics
@@ -97,21 +99,6 @@ fun ProfileScreen(
                                 )
                         )
                     }
-
-
-                    // Icono para cambiar foto
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = "Cambiar foto",
-                        tint = Color.White, //Color del lapiz
-                        modifier = Modifier
-                            .size(40.dp)
-                            .background(Color.Black, CircleShape) //Color del circulo
-                            .padding(8.dp)
-                            .clickable {
-                                // Aca iria la acción para cambiar la foto que no sé como hacer :D
-                            }
-                    )
                 }
             }
                 Box(
@@ -328,6 +315,26 @@ fun ProfileScreen(
                         }
                     )
                 }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 8.dp, bottom = 15.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    PasswordButton(
+                        text = stringResource(R.string.edit_password),
+                        onClick = { /* acción */ },
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Default.Lock, // Icono de Material
+                                contentDescription = null
+                            )
+                        }
+                    )
+                }
+
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
