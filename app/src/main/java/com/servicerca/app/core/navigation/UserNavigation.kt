@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import com.servicerca.app.ui.search.SearchScreen
 import com.servicerca.app.ui.chat.ChatScreen
 import com.servicerca.app.ui.dashboard.user.HomeUserScreen
+import com.servicerca.app.ui.profile.EditProfileScreen
 import com.servicerca.app.ui.profile.InsigniasScreen
 import com.servicerca.app.ui.profile.ProfileScreen
 import com.servicerca.app.ui.reservation.ReservationScreen
@@ -39,9 +40,10 @@ fun UserNavigation(
             ProfileScreen(
                 onInsignias = {
                     navController.navigate("insignias")
+                },
+                onEditProflie = {
+                    navController.navigate("editProfile")
                 }
-
-
             )
         }
 
@@ -58,6 +60,11 @@ fun UserNavigation(
 
         composable("insignias") {
             InsigniasScreen(onBack = { navController.popBackStack() })
+
+        }
+
+        composable("editProfile") {
+            EditProfileScreen(onBack = { navController.popBackStack() })
 
         }
 
