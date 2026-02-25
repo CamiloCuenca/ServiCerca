@@ -1,18 +1,13 @@
 package com.servicerca.app.ui.auth.register
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -29,7 +24,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -48,7 +42,12 @@ import com.servicerca.app.core.components.input.AppTextField
 @Composable
 fun RegisterScreen(
     onNavigateToLogin: () -> Unit,
-) {
+    onBackClick: () -> Unit,
+    onVerifyEmail: () -> Unit
+
+
+
+    ) {
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -75,7 +74,7 @@ fun RegisterScreen(
 
 
                 IconButton(
-                    onClick = onNavigateToLogin, // TODO @CamiloCuenca cambiar para que recuerde cual fue lapantalla anteriro (ver guias del profe)
+                    onClick = onBackClick, 
                     modifier = Modifier.align(Alignment.CenterStart)
                 ) {
                     Icon(
@@ -92,16 +91,48 @@ fun RegisterScreen(
                     textAlign = TextAlign.Center,
                     modifier = Modifier.align(Alignment.Center)
                 )
+
+
             }
 
             // Formulario
+            Text(
+                text = "Únete a la comunidad y encuentra los mejores\n" +
+                        "servicios cerca de ti.",
+                fontWeight = FontWeight.Light,
+
+                )
+
+            // Nombres
             AppTextField(
                 value = name,
                 onValueChange = { name = it },
-                label = stringResource(R.string.register_label_full_name),
+                label = stringResource(R.string.register_label_first_name),
+                placeholder = stringResource(R.string.register_placeholder_example_name)
+            )
+            AppTextField(
+                value = name,
+                onValueChange = { name = it },
+                label = stringResource(R.string.register_label_second_name),
                 placeholder = stringResource(R.string.register_placeholder_example_name)
             )
 
+            // Apellidos
+            AppTextField(
+                value = name,
+                onValueChange = { name = it },
+                label = stringResource(R.string.register_label_first_lastname),
+                placeholder = stringResource(R.string.register_placeholder_example_name)
+            )
+            AppTextField(
+                value = name,
+                onValueChange = { name = it },
+                label = stringResource(R.string.register_label_second_lastname),
+                placeholder = stringResource(R.string.register_placeholder_example_name)
+            )
+
+            
+            // Corro y contraseña
             AppTextField(
                 value = email,
                 onValueChange = { email = it },
@@ -126,7 +157,7 @@ fun RegisterScreen(
             // Botón principal
             PrimaryButton(
                 text = stringResource(R.string.registrarse),
-                onClick = { /* Registrarse */ }
+                onClick = { onVerifyEmail() }
             )
 
             // Botones sociales
@@ -180,5 +211,5 @@ fun RegisterScreen(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun RegisterScreenPreview() {
-    RegisterScreen( onNavigateToLogin = {})
+    RegisterScreen( onNavigateToLogin = {} , onBackClick = {}, onVerifyEmail = {})
 }

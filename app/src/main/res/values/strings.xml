@@ -14,7 +14,7 @@
     <string name="registrarse">Registrarse</string>
     <string name="register_create_an_account">Crea una cuenta</string>
     <string name="registration_subtitle">Únete a la comunidad y encuentra los mejores servicios cerca de ti.</string>
-    <string name="register_label_full_name">Nombre Completo</string>
+    <string name="register_label_first_name">Primer Nombre</string>
     <string name="register_placeholder_example_name">Ej. Juan Pérez</string>
     <string name="register_select_location_text">Seleccionar Ubicación</string>
     <string name="register_justification_selecting_location_text">Necesitamos esto para mostrarte proveedores cercanos.</string>
@@ -25,22 +25,24 @@
     <string name="title_service_label">Titulo del servicio</string>
     <string name="category_service_label">Categoría del servicio</string>
     <string name="detailed_description_label">Descripción detallada</string>
-    <string name="profile_text">Mi Perfil</string>
-    <string name="name_user">Nombre del usuario</string>
-    <string name="lacation_profile">Mi ubicación</string>
-    <string name="recover_password">Recuperar contraseña</string>
     <string name="recover_password_button">Enviar instrucciones\n</string>
     <string name="recover_password_subtitle">Introduce tu correo electrónico para recibir\ninstrucciones de recuperación</string>
+    <string name="profile_text">Mi Perfil</string>
+    <string name="recover_password">Recuperar contraseña</string>
+
+    <!-- Profile Screen -->
+    <string name="name_user">Nombre del usuario</string>
+    <string name="lacation_profile">Mi ubicación</string>
     <string name="level">Nivel 5</string>
     <string name="job">Experto Local</string>
     <string name="xp">1250 / 2000 XP</string>
     <string name="mesaage_level">¡Sólo 750 puntos más para el nivel Maestro!</string>
     <string name="tittle_insignias">Insignias</string>
     <string name="ver_todas">Ver todas</string>
-    <string name="insignia_verified">Verificado</string>
-    <string name="insignia_fast">Rápido</string>
-    <string name="insignia_top5">Top 5%</string>
     <string name="statistic">Estadísticas</string>
+    <string name="edit_account">Editar cuenta</string>
+    <string name="edit_password">Editar contraseña</string>
+    <string name="delete_account">Eliminar cuenta</string>
     <string name="num_services">34</string>
     <string name="services_completed">Servicios completados</string>
     <string name="num_points">1250</string>
@@ -55,4 +57,50 @@
     <string name="title_location_service">Ubicación del servicio</string>
     <string name="description_location_service">Toca para seleccionar en el mapa</string>
 
+    <!-- Insignias Screen -->
+    <string name="title_achievements">Logros principales</string>
+    <string name="title_insginias_obtained">Insignias obtenidas</string>
+    <string name="insignia_verified">Verificado</string>
+    <string name="insignia_fast">Rápido</string>
+    <string name="insignia_top5">Top 5%</string>
+    <string name="insignia_favorite">Favorito</string>
+    <string name="insignia_trusted">Confiable</string>
+    <string name="insignia_services">50 Servicios</string>
+    <string name="insignia_expert">Experto Norte</string>
+    <string name="insignia_chat">Chat activo</string>
+    <string name="insignia_eco">Eco-amigo</string>
+    <string name="tittle_elite">¡Estás en la Élite!</string>
+    <string name="text_best">Tu desempeño te posiciona entre los mejores.</string>
+
+    <!-- Eddit Profile Screen -->
+    <string name="update_profile">Editar perfil</string>
+    <string name="update_image">Actulizar imagen</string>
+    <string name="first_name">Primer nombre</string>
+    <string name="middle_name">Segundo nombre</string>
+    <string name="ph_middle_name">Opcional</string>
+    <string name="first_last_name">Primer apellido</string>
+    <string name="second_last_name">Segundo apellido</string>
+    <string name="ph_second_last_name">Opcional</string>
+    <string name="address">Dirección de residencia</string>
+    <string name="number_tel">Número telefónico</string>
+    <string name="info_account">Información de la cuenta</string>
+    <string name="info_email">Email</string>
+    <string name="email_edit_profile">usuario@email.com</string>
+    <string name="profile_type">Tipo de perfil</string>
+    <string name="user_type">Cliente</string>
+    <string name="btn_edit_profile">Guardar cambios</string>
+
+
+    <!-- Search Screen -->
+    <string name="search_title">Buscar</string>
+    <string name="search_placeholder">Buscar servicios...</string>
+    <string name="recent_searches_title">Búsquedas recientes</string>
+    <string name="clear_all">Borrar todo</string>
+    <string name="popular_categories_title">Categorías populares</string>
+    <string name="explore_map_title">Explorar en el mapa</string>
+    <string name="explore_map_description">Encuentra servicios profesionales justo donde los necesitas.</string>
+    <string name="open_map_button">Abrir mapa</string>
+    <string name="register_label_second_name">Segundo Nombre</string>
+    <string name="register_label_first_lastname">Primer Apellido</string>
+    <string name="register_label_second_lastname">Segundo Apellido</string>
 </resources>

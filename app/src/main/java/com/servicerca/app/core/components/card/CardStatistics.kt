@@ -31,17 +31,15 @@ import com.servicerca.app.core.components.progressBar.XpBar
 fun CardStatistics(
     @DrawableRes imageRes: Int,
     number: String,
-    label: String,
-    modifier: Modifier = Modifier
+    label: String
 ){
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 6.dp),
+            defaultElevation = 2.dp),
         modifier = Modifier
             .size(width = 150.dp, height = 130.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.background,
-            contentColor = Color.Black,
+            containerColor = MaterialTheme.colorScheme.surface
         ),
     ) {
         Column(
@@ -74,7 +72,8 @@ fun CardStatistics(
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(start = 8.dp)
+                    modifier = Modifier.padding(start = 8.dp),
+                    color = MaterialTheme.colorScheme.onBackground
                 )
             }
             Row(
@@ -87,7 +86,8 @@ fun CardStatistics(
                 Text(
                     text = label,
                     style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.padding(start = 8.dp, end = 8.dp)
+                    modifier = Modifier.padding(start = 8.dp, end = 8.dp),
+                    color = MaterialTheme.colorScheme.onBackground
                 )
             }
         }

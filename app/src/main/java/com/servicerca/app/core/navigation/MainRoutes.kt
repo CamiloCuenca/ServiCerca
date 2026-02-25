@@ -22,7 +22,14 @@ sealed class MainRoutes {
     @Serializable
     data object VerifyEmail : MainRoutes()
 
+    @Serializable
+    data object Perfil : MainRoutes()
 
+
+
+
+    @Serializable
+    data object Insignias : MainRoutes()
 
 
 

@@ -18,7 +18,7 @@ fun ButtonIcon(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    icon: @Composable (() -> Unit)? = null // 👈 slot opcional para icono
+    icon: @Composable (() -> Unit)? = null
 ) {
     Button(
         onClick = onClick,
@@ -31,7 +31,7 @@ fun ButtonIcon(
             contentColor = MaterialTheme.colorScheme.onPrimary
         )
     ) {
-        // Si hay icono, lo dibuja a la izquierda
+
         if (icon != null) {
             icon()
             Spacer(modifier = Modifier.width(8.dp))
