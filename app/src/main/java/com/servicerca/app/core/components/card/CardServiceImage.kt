@@ -36,6 +36,6 @@ fun CardServiceImage(
 
 @Preview
 @Composable
-fun CardServicePreview() {
+fun CardServiceImagePreview() {
     CardServiceImage()
 }

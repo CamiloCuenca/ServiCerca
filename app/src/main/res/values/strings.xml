@@ -40,9 +40,7 @@
     <string name="tittle_insignias">Insignias</string>
     <string name="ver_todas">Ver todas</string>
     <string name="statistic">Estadísticas</string>
-    <string name="edit_account">Editar cuenta</string>
     <string name="edit_password">Editar contraseña</string>
-    <string name="delete_account">Eliminar cuenta</string>
     <string name="num_services">34</string>
     <string name="services_completed">Servicios completados</string>
     <string name="num_points">1250</string>
@@ -103,4 +101,5 @@
     <string name="register_label_second_name">Segundo Nombre</string>
     <string name="register_label_first_lastname">Primer Apellido</string>
     <string name="register_label_second_lastname">Segundo Apellido</string>
+    <string name="title_create_service">Nuevo Servicio</string>
 </resources>

@@ -107,7 +107,11 @@ fun AppNavigation() {
             }
 
             composable<MainRoutes.CreateService> {
-                CreateServiceScreen()
+                CreateServiceScreen(
+                    onBack = {
+                        navController.popBackStack()
+                    }
+                )
             }
 
             composable<MainRoutes.Perfil> {
