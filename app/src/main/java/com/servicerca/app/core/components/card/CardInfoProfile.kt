@@ -32,7 +32,7 @@ import com.servicerca.app.core.components.progressBar.XpBar
 fun CardInfoprofile(){
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 6.dp),
+            defaultElevation = 3.dp),
         modifier = Modifier
             .size(width = 340.dp, height = 150.dp),
         colors = CardDefaults.cardColors(
@@ -93,14 +93,14 @@ fun CardInfoprofile(){
                     )
 
                     Surface(
-                        color = Color.Cyan,
+                        color = MaterialTheme.colorScheme.primary,
                         shape = RoundedCornerShape(12.dp), // 🔥 cuadrado con esquinas redondeadas
                         tonalElevation = 2.dp
                     ) {
                         Text(
                             text = stringResource(R.string.user_type),
                             style = MaterialTheme.typography.bodyMedium,
-                            color = Color.Black,
+                            color = MaterialTheme.colorScheme.onBackground,
                             modifier = Modifier
                                 .padding(horizontal = 12.dp, vertical = 6.dp)
                         )

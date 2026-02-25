@@ -151,7 +151,7 @@ fun EditProfileScreen(
                                 .offset(x = 5.dp, y = 5.dp)
                                 .shadow(8.dp, CircleShape)
                                 .background(
-                                    color = Color.Cyan,
+                                    color = MaterialTheme.colorScheme.primary,
                                     shape = CircleShape
                                 )
                                 .border(
@@ -163,7 +163,7 @@ fun EditProfileScreen(
                             Icon(
                                 imageVector = Icons.Default.CameraAlt,
                                 contentDescription = "Cambiar foto",
-                                tint = Color.Black,
+                                tint = Color.White,
                                 modifier = Modifier.size(20.dp)
                             )
                         }
@@ -171,7 +171,7 @@ fun EditProfileScreen(
                 }
                 Text(
                     text = stringResource(R.string.update_image),
-                    color = Color.Cyan,
+                    color = MaterialTheme.colorScheme.primary,
                     style = MaterialTheme.typography.bodyMedium,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
