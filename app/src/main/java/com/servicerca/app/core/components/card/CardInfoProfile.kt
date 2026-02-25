@@ -29,16 +29,17 @@ import com.servicerca.app.R
 import com.servicerca.app.core.components.progressBar.XpBar
 
 @Composable
-fun CardInfoprofile(){
+fun CardInfoprofile() {
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 3.dp),
+            defaultElevation = 3.dp
+        ),
         modifier = Modifier
             .size(width = 340.dp, height = 150.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
-    ){
+    ) {
         Column(
         ) {
             Column() {
@@ -94,7 +95,7 @@ fun CardInfoprofile(){
 
                     Surface(
                         color = MaterialTheme.colorScheme.primary,
-                        shape = RoundedCornerShape(12.dp), // 🔥 cuadrado con esquinas redondeadas
+                        shape = RoundedCornerShape(12.dp), // cuadrado con esquinas redondeadas
                         tonalElevation = 2.dp
                     ) {
                         Text(
@@ -115,7 +116,7 @@ fun CardInfoprofile(){
 
 @Composable
 @Preview
-fun CardInfoprofilePreview(){
+fun CardInfoprofilePreview() {
     CardInfoprofile()
 
 }

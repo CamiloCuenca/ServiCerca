@@ -72,7 +72,7 @@
 
     <!-- Eddit Profile Screen -->
     <string name="update_profile">Editar perfil</string>
-    <string name="update_image">Actulizar imagen</string>
+    <string name="update_image">Actualizar imagen</string>
     <string name="first_name">Primer nombre</string>
     <string name="middle_name">Segundo nombre</string>
     <string name="ph_middle_name">Opcional</string>
@@ -87,6 +87,22 @@
     <string name="profile_type">Tipo de perfil</string>
     <string name="user_type">Cliente</string>
     <string name="btn_edit_profile">Guardar cambios</string>
+
+    <!-- Delete Profile Screen -->
+    <string name="delete_profile">Eliminar perfil</string>
+    <string name="important_notice">AVISO IMPORTANTE</string>
+    <string name="question_confirm_delete_profile">¿Estás seguro que quieres
+        eliminar tu cuenta?</string>
+    <string name="information_delete_prefil">Esta acción es irreversible. Se perderán
+        todos tus servicios publicados, insginias obtenidas y el historial
+        completo de tu actividad en ServiCerca.</string>
+    <string name="data_question">¿Qué pasará con tus datos?</string>
+    <string name="option1">Perfil público eliminado.</string>
+    <string name="option2">Mensajes borrados permanentemente.</string>
+    <string name="option3">Suscripciones canceladas</string>
+    <string name="no_delete_account">Mantener mi cuenta</string>
+    <string name="delete_account_permanently">Eliminar cuenta definitivamente.</string>
+
 
 
     <!-- Search Screen -->

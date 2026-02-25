@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import com.servicerca.app.ui.search.SearchScreen
 import com.servicerca.app.ui.chat.ChatScreen
 import com.servicerca.app.ui.dashboard.user.HomeUserScreen
+import com.servicerca.app.ui.profile.DeleteProfileScreen
 import com.servicerca.app.ui.profile.EditProfileScreen
 import com.servicerca.app.ui.profile.InsigniasScreen
 import com.servicerca.app.ui.profile.ProfileScreen
@@ -43,6 +44,12 @@ fun UserNavigation(
                 },
                 onEditProflie = {
                     navController.navigate("editProfile")
+                },
+                onUpdatePassword = {
+                    navController.navigate("updatePassword")
+                },
+                onDeleteProfile = {
+                    navController.navigate("deleteProfile")
                 }
             )
         }
@@ -67,6 +74,16 @@ fun UserNavigation(
             EditProfileScreen(onBack = { navController.popBackStack() })
 
         }
+
+        /**composable("updatePassword") {
+            UpdatePasswordScreen(onBack = { navController.popBackStack() })
+
+        }**/
+        composable("deleteProfile") {
+            DeleteProfileScreen(onBack = { navController.popBackStack() })
+
+        }
+
 
 
     }

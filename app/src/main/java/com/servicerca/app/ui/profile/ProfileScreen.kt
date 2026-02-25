@@ -49,7 +49,9 @@ import com.servicerca.app.core.components.card.CardStatistics
 @Composable
 fun ProfileScreen(
     onInsignias : () -> Unit,
-    onEditProflie:() -> Unit
+    onEditProflie:() -> Unit,
+    onUpdatePassword: () -> Unit,
+    onDeleteProfile: () -> Unit,
 ){
 
     Scaffold(
@@ -327,7 +329,7 @@ fun ProfileScreen(
                 ) {
                     PasswordButton(
                         text = stringResource(R.string.edit_password),
-                        onClick = { /* acción */ },
+                        onClick = { onUpdatePassword() },
                         icon = {
                             Icon(
                                 imageVector = Icons.Default.Lock, // Icono de Material
@@ -346,7 +348,7 @@ fun ProfileScreen(
                 ) {
                     DeleteButton(
                         text = stringResource(R.string.delete_account),
-                        onClick = { /* acción */ },
+                        onClick = {onDeleteProfile() },
                         icon = {
                             Icon(
                                 imageVector = Icons.Default.Delete, // Icono de Material
@@ -366,6 +368,8 @@ fun ProfileScreen(
 fun ProfileScreenPreview() {
     ProfileScreen(
         onInsignias = {},
-        onEditProflie = {}
+        onEditProflie = {},
+        onUpdatePassword = {},
+        onDeleteProfile = {}
     )
 }
