@@ -1,0 +1,230 @@
+package com.servicerca.app.core.components.card
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.servicerca.app.R
+import com.servicerca.app.core.components.button.PrimaryButton
+import com.servicerca.app.core.components.button.ReactionIconButton
+import com.servicerca.app.core.components.tag.CategoryTag
+import com.servicerca.app.core.components.tag.LevelTag
+import com.servicerca.app.core.components.tag.VerificationTag
+import com.servicerca.app.ui.theme.ServiCercaTheme
+
+@Composable
+fun CardService(
+    modifier: Modifier = Modifier,
+    title: String = "Reparación de Fugas Urgente",
+    category: String = "Hogar",
+    distance: String = "A 2.4 km de ti",
+    priceRange: String = "$20 - $50 USD",
+    rating: String = "4.9",
+    isVerified: Boolean = true,
+    level: String = "EXPERTO",
+    onRequestClick: () -> Unit = {}
+) {
+
+    var isSelectedLike by remember { mutableStateOf(false) }
+    var isSelectedPin by remember { mutableStateOf(false) }
+
+    ElevatedCard(
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        shape = RoundedCornerShape(24.dp),
+        colors = CardDefaults.elevatedCardColors(
+            containerColor = Color.White
+        ),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+    ) {
+        Column {
+
+            // Imagen
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(150.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.plumber),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+
+                if (isVerified) {
+                    VerificationTag()
+                }
+            }
+
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth()
+            ) {
+
+                // Categoría y rating
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+
+                    CategoryTag(
+                        text = category,
+                        modifier = Modifier.padding(vertical = 4.dp)
+                    )
+
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_star),
+                            contentDescription = null,
+                            tint = Color(0xFFFFD700),
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = rating,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFFFFD700)
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Título
+                Text(
+                    text = title,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF1A1C1E),
+                    lineHeight = 24.sp
+                )
+
+                Spacer(modifier = Modifier.height(6.dp))
+
+                // Distancia
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_location),
+                        contentDescription = null,
+                        tint = Color.Gray,
+                        modifier = Modifier.size(14.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = distance,
+                        fontSize = 12.sp,
+                        color = Color.Gray
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Precio y nivel
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.Bottom
+                ) {
+                    Column {
+                        Text(
+                            text = "PRECIO ESTIMADO",
+                            fontSize = 10.sp,
+                            color = Color.Gray,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = priceRange,
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF1A1C1E)
+                        )
+                    }
+
+                    LevelTag(
+                        text = level,
+                        backgroundColor = Color(0xFFF3E5F5),
+                        contentColor = Color(0xFF9C27B0)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                // BOTÓN PRINCIPAL
+                PrimaryButton(
+                    text = "Solicitar servicio",
+                    onClick = onRequestClick,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(40.dp),
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Reacciones y compartir
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+
+                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+
+                        ReactionIconButton(
+                            icon = R.drawable.ic_thumb_up,
+                            isSelected = isSelectedLike,
+                            onClick = { isSelectedLike = !isSelectedLike }
+                        )
+
+                        ReactionIconButton(
+                            icon = R.drawable.ic_push_pin,
+                            isSelected = isSelectedPin,
+                            onClick = { isSelectedPin = !isSelectedPin }
+                        )
+                    }
+
+                    IconButton(onClick = { /* compartir */ }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_share),
+                            contentDescription = null,
+                            tint = Color(0xFF95A5A6),
+                            modifier = Modifier.size(28.dp)
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CardServicePreview() {
+    ServiCercaTheme {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0xFFEDEDED)),
+            contentAlignment = Alignment.Center
+        ) {
+            CardService(
+                onRequestClick = {}
+            )
+        }
+    }
+}

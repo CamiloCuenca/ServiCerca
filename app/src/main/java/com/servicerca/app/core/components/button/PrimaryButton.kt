@@ -1,16 +1,29 @@
 package com.servicerca.app.core.components.button
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 /**
@@ -55,17 +68,110 @@ fun PrimaryButton(
 fun SocialButton(
     text: String,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    borderColor: Color = MaterialTheme.colorScheme.primary,
+    contentColor: Color = MaterialTheme.colorScheme.primary,
+    alpha: Float = 1f
 ) {
+
+    val resolvedBorder = if (alpha in 0f..1f && alpha != 1f)
+        borderColor.copy(alpha = alpha)
+    else
+        borderColor
+
+    val resolvedContent = if (alpha in 0f..1f && alpha != 1f)
+        contentColor.copy(alpha = alpha)
+    else
+        contentColor
+
     OutlinedButton(
         onClick = onClick,
         modifier = modifier,
         shape = RoundedCornerShape(16.dp),
+        border = BorderStroke(1.5.dp, resolvedBorder),
         colors = ButtonDefaults.outlinedButtonColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-            contentColor = MaterialTheme.colorScheme.onSurface
+            contentColor = resolvedContent
         )
     ) {
         Text(text = text)
+    }
+}
+
+/**
+ * Boton de texto Outline para acciones secundarias
+ */
+@Composable
+fun OutlineButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    borderColor: Color = MaterialTheme.colorScheme.primary,
+    contentColor: Color = MaterialTheme.colorScheme.primary,
+    alpha: Float = 1f
+) {
+
+    val resolvedBorder = if (alpha in 0f..1f && alpha != 1f)
+        borderColor.copy(alpha = alpha)
+    else
+        borderColor
+
+    val resolvedContent = if (alpha in 0f..1f && alpha != 1f)
+        contentColor.copy(alpha = alpha)
+    else
+        contentColor
+
+    androidx.compose.material3.OutlinedButton(
+        onClick = onClick,
+        modifier = modifier.fillMaxWidth(),
+        enabled = enabled,
+        shape = RoundedCornerShape(16.dp),
+        border = BorderStroke(1.5.dp, resolvedBorder),
+        colors = ButtonDefaults.outlinedButtonColors(
+            contentColor = resolvedContent
+        )
+    ) {
+        Text(
+            text = text,
+            color = LocalContentColor.current
+        )
+    }
+}
+
+@Composable
+fun ReactionIconButton(
+    icon: Int,
+    isSelected: Boolean = false,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val containerColor = if (isSelected)
+        MaterialTheme.colorScheme.primary
+    else
+        MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
+
+    val contentColor = if (isSelected)
+        Color.White
+    else
+        Color.Black
+
+    Surface(
+        onClick = onClick,
+        shape = CircleShape,
+        color = containerColor,
+        border = BorderStroke(
+            width = 2.dp,
+            color = MaterialTheme.colorScheme.primary
+        ),
+        modifier = modifier.size(64.dp) // 👈 más grande como en el diseño
+    ) {
+        Box(contentAlignment = Alignment.Center) {
+            Icon(
+                painter = painterResource(id = icon),
+                contentDescription = null,
+                tint = contentColor,
+                modifier = Modifier.size(28.dp)
+            )
+        }
     }
 }

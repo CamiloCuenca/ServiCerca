@@ -9,6 +9,7 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Color
 
 private val DarkColorScheme = darkColorScheme(
     primary = PrimaryDark,
@@ -61,4 +62,18 @@ fun ServiCercaTheme(
         typography = Typography,
         content = content
     )
+}
+
+/**
+ * Helper composable para obtener los colores recomendados para un BottomNavigation/NavigationBar
+ * según el tema activo (modo claro/oscuro). Devuelve Pair(fondo, contenido).
+ * Uso sugerido:
+ * val (bg, content) = NavigationBarColors()
+ * BottomNavigation(backgroundColor = bg, contentColor = content) { ... }
+ */
+@Composable
+fun NavigationBarColors(): Pair<Color, Color> {
+    val colors = MaterialTheme.colorScheme
+    // Por defecto usamos surface/onSurface para mantener contraste accesible.
+    return Pair(colors.surface, colors.onSurface)
 }

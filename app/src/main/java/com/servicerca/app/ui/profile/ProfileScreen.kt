@@ -32,6 +32,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.ui.Alignment
@@ -40,12 +41,15 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import com.servicerca.app.core.components.button.ButtonIcon
 import com.servicerca.app.core.components.button.DeleteButton
+import com.servicerca.app.core.components.button.PasswordButton
 import com.servicerca.app.core.components.button.PrimaryButton
 import com.servicerca.app.core.components.card.CardLevel
 import com.servicerca.app.core.components.card.CardStatistics
 
 @Composable
 fun ProfileScreen(
+    onInsignias : () -> Unit,
+    onEditProflie:() -> Unit
 ){
 
     Scaffold(
@@ -56,7 +60,7 @@ fun ProfileScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 24.dp, vertical = 70.dp),
+                .padding(horizontal = 24.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
 
@@ -96,21 +100,6 @@ fun ProfileScreen(
                                 )
                         )
                     }
-
-
-                    // Icono para cambiar foto
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = "Cambiar foto",
-                        tint = Color.White, //Color del lapiz
-                        modifier = Modifier
-                            .size(40.dp)
-                            .background(Color.Black, CircleShape) //Color del circulo
-                            .padding(8.dp)
-                            .clickable {
-                                // Aca iria la acción para cambiar la foto que no sé como hacer :D
-                            }
-                    )
                 }
             }
                 Box(
@@ -179,8 +168,7 @@ fun ProfileScreen(
                         text = stringResource(R.string.ver_todas),
                         style = MaterialTheme.typography.titleMedium,
                         color = Color.Cyan,
-                        modifier = Modifier.clickable { // Poner para navegar a la pagina de las insignias//
-                             }
+                        modifier = Modifier.clickable {onInsignias()}
                     )
                 }
                 Row(
@@ -197,6 +185,12 @@ fun ProfileScreen(
                         Image(painter = painterResource(id = R.drawable.insignia_verificado), contentDescription = null,
                             modifier = Modifier
                                 .size(80.dp)
+                                .shadow(
+                                    elevation = 1.dp,
+                                    shape = CircleShape,
+                                    ambientColor = Color.Cyan,
+                                    spotColor = Color.Cyan
+                                )
                         )
                         Text(
                             text = stringResource(R.string.insignia_verified),
@@ -210,6 +204,12 @@ fun ProfileScreen(
                         Image(painter = painterResource(id = R.drawable.insignia_rapido), contentDescription = null,
                             modifier = Modifier
                                 .size(80.dp)
+                                .shadow(
+                                    elevation = 1.dp,
+                                    shape = CircleShape,
+                                    ambientColor = Color(0xFF9C27B0),
+                                    spotColor = Color(0xFF9C27B0)
+                                )
                         )
                         Text(
                             text = stringResource(R.string.insignia_fast),
@@ -223,6 +223,12 @@ fun ProfileScreen(
                         Image(painter = painterResource(id = R.drawable.insignia_top5), contentDescription = null,
                             modifier = Modifier
                                 .size(80.dp)
+                                .shadow(
+                                    elevation = 1.dp,
+                                    shape = CircleShape,
+                                    ambientColor = Color(0xFFFFEB3B),
+                                    spotColor = Color(0xFFFFEB3B)
+                                )
                         )
                         Text(
                             text = stringResource(R.string.insignia_top5),
@@ -301,7 +307,7 @@ fun ProfileScreen(
                 ) {
                     ButtonIcon(
                         text = stringResource(R.string.edit_account),
-                        onClick = { /* acción */ },
+                        onClick = { onEditProflie()},
                         icon = {
                             Icon(
                                 imageVector = Icons.Default.Edit, // Icono de Material
@@ -310,6 +316,26 @@ fun ProfileScreen(
                         }
                     )
                 }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 8.dp, bottom = 15.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    PasswordButton(
+                        text = stringResource(R.string.edit_password),
+                        onClick = { /* acción */ },
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Default.Lock, // Icono de Material
+                                contentDescription = null
+                            )
+                        }
+                    )
+                }
+
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -337,5 +363,8 @@ fun ProfileScreen(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun ProfileScreenPreview() {
-    ProfileScreen()
+    ProfileScreen(
+        onInsignias = {},
+        onEditProflie = {}
+    )
 }

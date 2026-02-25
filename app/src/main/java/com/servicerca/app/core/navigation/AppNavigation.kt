@@ -10,9 +10,10 @@ import androidx.navigation.compose.rememberNavController
 import com.servicerca.app.ui.auth.login.LoginScreen
 import com.servicerca.app.ui.auth.register.RegisterScreen
 import com.servicerca.app.ui.dashboard.user.UserScreen
-import com.servicerca.app.ui.Welcome.HomeScreen
+import com.servicerca.app.ui.Welcome.WelcomeScreen
 import com.servicerca.app.ui.auth.login.RecoverPasswordScreen
 import com.servicerca.app.ui.auth.register.VerifyEmailScreen
+import com.servicerca.app.ui.profile.ProfileScreen
 import com.servicerca.app.ui.services.create.CreateServiceScreen
 
 @Composable
@@ -32,7 +33,7 @@ fun AppNavigation() {
             // Definición de las rutas y sus composables asociados (se puede agregar más rutas según sea necesario)
 
             composable<MainRoutes.Home> {
-                HomeScreen(
+                WelcomeScreen(
                     onNavigateToLogin = {
                         navController.navigate(MainRoutes.Login)
                     },
@@ -59,7 +60,14 @@ fun AppNavigation() {
             composable<MainRoutes.Register> {
                 RegisterScreen( onNavigateToLogin = {
                     navController.navigate(MainRoutes.Login)
-                },)
+                },
+                    onBackClick = {
+                        navController.popBackStack()
+                    },
+                    onVerifyEmail = {
+                        navController.navigate(MainRoutes.VerifyEmail)
+                    }
+                )
             }
 
             composable<DashboardRoutes.HomeUser> {
@@ -81,11 +89,10 @@ fun AppNavigation() {
                     onNavigateToLogin = {
                         navController.navigate(MainRoutes.Login)
                     }
+                    , onBackClick = {
+                        navController.popBackStack()
+                    }
                 )
-            }
-
-            composable<MainRoutes.CreateService> {
-
             }
 
             composable<MainRoutes.VerifyEmail> {
@@ -103,7 +110,19 @@ fun AppNavigation() {
                 CreateServiceScreen()
             }
 
+            composable<MainRoutes.Perfil> {
+                ProfileScreen(
+                    onInsignias = {
+                        // cuando Profile quiere abrir Insignias, debe usar la navegación interna de usuario (tabs) onEditProflie
+                        navController.navigate(DashboardRoutes.HomeUser)
+                    },
+                    onEditProflie = {
+                        // cuando Profile quiere abrir Insignias, debe usar la navegación interna de usuario (tabs)
+                        navController.navigate(DashboardRoutes.HomeUser)
+                    }
+                )
 
-        }
-    }
-}
+            }
+
+
+    } }}
