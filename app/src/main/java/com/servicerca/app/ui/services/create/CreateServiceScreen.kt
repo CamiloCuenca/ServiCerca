@@ -1,5 +1,6 @@
 package com.servicerca.app.ui.services.create
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,9 +22,7 @@ import androidx.compose.material.icons.filled.AddLocationAlt
 import androidx.compose.material.icons.filled.ArrowCircleRight
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
@@ -41,7 +40,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -51,7 +52,7 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.servicerca.app.R
 import com.servicerca.app.core.components.button.ButtonCreateService
-import com.servicerca.app.core.components.card.CardServiceImage
+import com.servicerca.app.core.components.images.ImagesHorizontalScroller
 import com.servicerca.app.core.components.input.AppTextField
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -60,13 +61,13 @@ fun CreateServiceScreen(
     onBack: () -> Unit
 ) {
 
-    val opciones = listOf("Categoria 1", "Categoria 2", "Categoria 3")
+    val options = listOf("Categoria 1", "Categoria 2", "Categoria 3")
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
     var minValue by remember { mutableStateOf("") }
     var maxValue by remember { mutableStateOf("") }
-    var selectedOption by remember { mutableStateOf(opciones[0]) }
+    var selectedOption by remember { mutableStateOf(options[0]) }
 
     Scaffold(
         modifier = Modifier.fillMaxSize()
@@ -112,30 +113,15 @@ fun CreateServiceScreen(
 
                 Text(
                     text = stringResource(R.string.create_service_add_image_label),
-                    style = MaterialTheme.typography.headlineSmall,
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Medium,
                     modifier = Modifier
-                        .padding(bottom = 8.dp)
+                        .padding(horizontal = 8.dp)
                 )
 
-                Spacer(modifier = Modifier.height(5.dp))
+                Spacer(modifier = Modifier.height(2.dp))
 
-                ElevatedCard(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(4.dp),
-                    elevation = CardDefaults.elevatedCardElevation(
-                        defaultElevation = 7.dp
-                    )
-                ) {
-                    Row(
-                        modifier = Modifier.padding(16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    CardServiceImage()
-                    CardServiceImage()
-                    CardServiceImage()
-                } }
-
+                ImagesHorizontalScroller()
 
                 Spacer(modifier = Modifier.height(10.dp))
 
@@ -177,7 +163,7 @@ fun CreateServiceScreen(
                         shadowElevation = 10.dp,
                         shape = RoundedCornerShape(16.dp)
                     ) {
-                        opciones.forEach { option ->
+                        options.forEach { option ->
                             DropdownMenuItem(
                                 text = {
                                     Text(
@@ -290,6 +276,16 @@ fun CreateServiceScreen(
                     }
                 }
 
+                Image(
+                    painter = painterResource(id = R.drawable.mapa_test),
+                    contentDescription = "Mapa de ubicación",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .size(220.dp)
+                        .shadow(4.dp, shape = RoundedCornerShape(16.dp))
+
+                )
+
                 Spacer(modifier = Modifier.height(10.dp))
 
                 ButtonCreateService(
@@ -310,6 +306,7 @@ fun CreateServiceScreen(
 
 
             }
+
         }
     }
 
