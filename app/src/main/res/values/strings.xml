@@ -51,5 +51,8 @@
     <string name="member_time">Miembro desde</string>
     <string name="edit_account">Editar cuenta</string>
     <string name="delete_account">Eliminar cuenta</string>
+    <string name="publish_service_button">Publicar Oferta</string>
+    <string name="title_location_service">Ubicación del servicio</string>
+    <string name="description_location_service">Toca para seleccionar en el mapa</string>
 
 </resources>
