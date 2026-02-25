@@ -15,6 +15,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.AddLocationAlt
 import androidx.compose.material.icons.filled.ArrowCircleRight
@@ -27,6 +28,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -42,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
@@ -54,6 +57,7 @@ import com.servicerca.app.core.components.input.AppTextField
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateServiceScreen(
+    onBack: () -> Unit
 ) {
 
     val opciones = listOf("Categoria 1", "Categoria 2", "Categoria 3")
@@ -77,6 +81,33 @@ fun CreateServiceScreen(
         ) {
 
             Column{
+                // Header: ícono a la izquierda, título centrado
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                ) {
+                    IconButton(
+                        onClick = { onBack() },
+                        modifier = Modifier.align(Alignment.CenterStart)
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = null
+                        )
+                    }
+
+                    Text(
+                        text  = stringResource(R.string.title_create_service),
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .padding(bottom = 15.dp)
+                    )
+                }
                 Spacer(modifier = Modifier.height(40.dp))
 
                 Text(
@@ -287,5 +318,5 @@ fun CreateServiceScreen(
 @Preview (showBackground = true , showSystemUi = true)
 @Composable
 fun CreateServicePreview() {
-    CreateServiceScreen()
+    CreateServiceScreen( onBack = {})
 }
