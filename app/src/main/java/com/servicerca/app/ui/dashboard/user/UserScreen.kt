@@ -37,6 +37,7 @@ fun UserScreen(
     val showBars = currentRoute != "insignias"
     val showtop= currentRoute != "editProfile"
     val showBT = currentRoute != "deleteProfile"
+    val showBT2 = currentRoute != "updatePassword"
 
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -45,7 +46,7 @@ fun UserScreen(
 
     Scaffold(
         topBar = {
-            if (showBars && showtop && showBT) {
+            if (showBars && showtop && showBT && showBT2) {
                 AppTopAppBar(
                     title = title,
                     notificationCount = notificationCount ,
@@ -60,7 +61,7 @@ fun UserScreen(
             }
         },
         bottomBar = {
-            if (showBars && showtop && showBT) {
+            if (showBars && showtop && showBT && showBT2) {
                 BottomNavigationBar(
                     navController = navController,
                     titleTopBar = { title = it }
@@ -68,7 +69,7 @@ fun UserScreen(
             }
         },
         floatingActionButton = {
-            if (showBars && showtop) {
+            if (showBars && showtop && showBT && showBT2) {
                 FloatingActionButton(
                     onClick = onCreateService,
                     containerColor = MaterialTheme.colorScheme.primary,

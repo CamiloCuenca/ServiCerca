@@ -70,7 +70,7 @@
     <string name="tittle_elite">¡Estás en la Élite!</string>
     <string name="text_best">Tu desempeño te posiciona entre los mejores.</string>
 
-    <!-- Eddit Profile Screen -->
+    <!-- Edit Profile Screen -->
     <string name="update_profile">Editar perfil</string>
     <string name="update_image">Actualizar imagen</string>
     <string name="first_name">Primer nombre</string>
@@ -103,7 +103,14 @@
     <string name="no_delete_account">Mantener mi cuenta</string>
     <string name="delete_account_permanently">Eliminar cuenta definitivamente.</string>
 
-
+    <!-- Delete Profile Screen -->
+    <string name="change_password">Cambiar contraseña</string>
+    <string name="message_change_password">Ingrese tu contraseña actual y la nueva
+        para actualizar tu seguridad.</string>
+    <string name="current_password">Contraseña actual</string>
+    <string name="new_password">Nueva contraseña</string>
+    <string name="confirm_new_password">Confirmar nueva contraseña</string>
+    <string name="btn_update_password">Actualizar contraseña</string>
 
     <!-- Search Screen -->
     <string name="search_title">Buscar</string>

@@ -14,6 +14,7 @@ import com.servicerca.app.ui.profile.DeleteProfileScreen
 import com.servicerca.app.ui.profile.EditProfileScreen
 import com.servicerca.app.ui.profile.InsigniasScreen
 import com.servicerca.app.ui.profile.ProfileScreen
+import com.servicerca.app.ui.profile.UpdatePasswordScreen
 import com.servicerca.app.ui.reservation.ReservationScreen
 
 
@@ -75,10 +76,10 @@ fun UserNavigation(
 
         }
 
-        /**composable("updatePassword") {
+        composable("updatePassword") {
             UpdatePasswordScreen(onBack = { navController.popBackStack() })
 
-        }**/
+        }
         composable("deleteProfile") {
             DeleteProfileScreen(onBack = { navController.popBackStack() })
 
