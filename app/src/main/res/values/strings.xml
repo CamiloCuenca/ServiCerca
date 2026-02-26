@@ -102,4 +102,13 @@
     <string name="register_label_first_lastname">Primer Apellido</string>
     <string name="register_label_second_lastname">Segundo Apellido</string>
     <string name="title_create_service">Nuevo Servicio</string>
+
+    <!-- My Services Screen -->
+    <string name="my_services_title">Mis Servicios</string>
+    <string name="tab_active">Activos</string>
+    <string name="tab_pending">Pendientes</string>
+    <string name="tab_completed">Completados</string>
+    <string name="edit_button">Editar</string>
+    <string name="delete_button">Eliminar</string>
+    <string name="status_active">Activo</string>
 </resources>
