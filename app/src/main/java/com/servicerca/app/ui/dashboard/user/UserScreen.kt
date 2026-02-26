@@ -1,7 +1,5 @@
 package com.servicerca.app.ui.dashboard.user
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -9,11 +7,8 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -25,7 +20,8 @@ import com.servicerca.app.core.navigation.UserNavigation
 @Composable
 fun UserScreen(
     onLogout: () -> Unit,
-    onCreateService: () -> Unit
+    onCreateService: () -> Unit,
+    onNotificationClick: () -> Unit
 ) {
 
     val navController = rememberNavController()
@@ -55,7 +51,7 @@ fun UserScreen(
                         // TODO abrir mapa
                     },
                     onNotificationClick = {
-                        // TODO ir a notificaciones
+                        onNotificationClick()
                     },
                     scrollBehavior = scrollBehavior
                 )
@@ -100,6 +96,9 @@ fun UserScreen(
 fun UserScreenPreview() {
     UserScreen(
         onLogout = {},
-        onCreateService = {}
+        onCreateService = {},
+        onNotificationClick = {}
     )
 }
+
+
