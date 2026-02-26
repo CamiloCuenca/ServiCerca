@@ -123,7 +123,15 @@ fun AppNavigation() {
                     onEditProflie = {
                         // cuando Profile quiere abrir Insignias, debe usar la navegación interna de usuario (tabs)
                         navController.navigate(DashboardRoutes.HomeUser)
-                    }
+                    },
+                    onUpdatePassword = {
+                        // cuando Profile quiere abrir Insignias, debe usar la navegación interna de usuario (tabs)
+                        navController.navigate(DashboardRoutes.HomeUser)
+                    },
+                    onDeleteProfile = {
+                        // cuando Profile quiere abrir Insignias, debe usar la navegación interna de usuario (tabs)
+                        navController.navigate(DashboardRoutes.HomeUser)
+                    },
                 )
 
             }

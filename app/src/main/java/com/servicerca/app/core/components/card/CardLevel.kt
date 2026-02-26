@@ -40,7 +40,7 @@ fun CardLevel(){
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Start,
-                color = Color.Cyan,
+                color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
                     .padding(start = 15.dp, top = 15.dp)
             )

@@ -49,7 +49,9 @@ import com.servicerca.app.core.components.card.CardStatistics
 @Composable
 fun ProfileScreen(
     onInsignias : () -> Unit,
-    onEditProflie:() -> Unit
+    onEditProflie:() -> Unit,
+    onUpdatePassword: () -> Unit,
+    onDeleteProfile: () -> Unit,
 ){
 
     Scaffold(
@@ -111,6 +113,7 @@ fun ProfileScreen(
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center,
+
                         modifier = Modifier.align(Alignment.Center)
                     )
                 }
@@ -125,7 +128,7 @@ fun ProfileScreen(
                     Icon(
                         imageVector = Icons.Filled.LocationOn,
                         contentDescription = "Ubicación",
-                        tint = Color.Cyan,
+                        tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(25.dp)
                     )
 
@@ -167,7 +170,7 @@ fun ProfileScreen(
                     Text(
                         text = stringResource(R.string.ver_todas),
                         style = MaterialTheme.typography.titleMedium,
-                        color = Color.Cyan,
+                        color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.clickable {onInsignias()}
                     )
                 }
@@ -326,7 +329,7 @@ fun ProfileScreen(
                 ) {
                     PasswordButton(
                         text = stringResource(R.string.edit_password),
-                        onClick = { /* acción */ },
+                        onClick = { onUpdatePassword() },
                         icon = {
                             Icon(
                                 imageVector = Icons.Default.Lock, // Icono de Material
@@ -345,7 +348,7 @@ fun ProfileScreen(
                 ) {
                     DeleteButton(
                         text = stringResource(R.string.delete_account),
-                        onClick = { /* acción */ },
+                        onClick = {onDeleteProfile() },
                         icon = {
                             Icon(
                                 imageVector = Icons.Default.Delete, // Icono de Material
@@ -365,6 +368,8 @@ fun ProfileScreen(
 fun ProfileScreenPreview() {
     ProfileScreen(
         onInsignias = {},
-        onEditProflie = {}
+        onEditProflie = {},
+        onUpdatePassword = {},
+        onDeleteProfile = {}
     )
 }

@@ -40,7 +40,7 @@
     <string name="tittle_insignias">Insignias</string>
     <string name="ver_todas">Ver todas</string>
     <string name="statistic">Estadísticas</string>
-    <string name="edit_password">Editar contraseña</string>
+    <string name="edit_password">Cambiar contraseña</string>
     <string name="num_services">34</string>
     <string name="services_completed">Servicios completados</string>
     <string name="num_points">1250</string>
@@ -49,7 +49,7 @@
     <string name="average_rating">Calificación media</string>
     <string name="time">1 años</string>
     <string name="member_time">Miembro desde</string>
-    <string name="edit_account">Editar cuenta</string>
+    <string name="edit_account">Editar perfil</string>
     <string name="delete_account">Eliminar cuenta</string>
     <string name="publish_service_button">Publicar Oferta</string>
     <string name="title_location_service">Ubicación del servicio</string>
@@ -70,9 +70,9 @@
     <string name="tittle_elite">¡Estás en la Élite!</string>
     <string name="text_best">Tu desempeño te posiciona entre los mejores.</string>
 
-    <!-- Eddit Profile Screen -->
+    <!-- Edit Profile Screen -->
     <string name="update_profile">Editar perfil</string>
-    <string name="update_image">Actulizar imagen</string>
+    <string name="update_image">Actualizar imagen</string>
     <string name="first_name">Primer nombre</string>
     <string name="middle_name">Segundo nombre</string>
     <string name="ph_middle_name">Opcional</string>
@@ -88,6 +88,52 @@
     <string name="user_type">Cliente</string>
     <string name="btn_edit_profile">Guardar cambios</string>
 
+    <!-- Delete Profile Screen -->
+    <string name="delete_profile">Eliminar cuenta</string>
+    <string name="important_notice">AVISO IMPORTANTE</string>
+    <string name="question_confirm_delete_profile">¿Estás seguro que quieres
+        eliminar tu cuenta?</string>
+    <string name="information_delete_prefil">Esta acción es irreversible. Se perderán
+        todos tus servicios publicados, insginias obtenidas y el historial
+        completo de tu actividad en ServiCerca.</string>
+    <string name="data_question">¿Qué pasará con tus datos?</string>
+    <string name="option1">Perfil público eliminado.</string>
+    <string name="option2">Mensajes borrados permanentemente.</string>
+    <string name="option3">Suscripciones canceladas</string>
+    <string name="no_delete_account">Mantener mi cuenta</string>
+    <string name="delete_account_permanently">Eliminar cuenta definitivamente.</string>
+
+    <!-- Update Password Screen -->
+    <string name="change_password">Cambiar contraseña</string>
+    <string name="message_change_password">Ingrese tu contraseña actual y la nueva
+        para actualizar tu seguridad.</string>
+    <string name="current_password">Contraseña actual</string>
+    <string name="new_password">Nueva contraseña</string>
+    <string name="confirm_new_password">Confirmar nueva contraseña</string>
+    <string name="btn_update_password">Actualizar contraseña</string>
+
+    <!-- Notifications Screen -->
+    <string name="notifications">Notificaciones</string>
+    <string name="tittle1">Nueva solicitud de servicio</string>
+    <string name="tittle2">Comentario recibido</string>
+    <string name="tittle3">Servicio verificado</string>
+    <string name="tittle4">Publicación rechazada</string>
+    <string name="tittle5">Nueva publicación</string>
+    <string name="content1">Haz recibido una nueva propuesta para el proyecto
+        \"Reparación Eléctrica\".</string>
+    <string name="content2">Federico Álvarez ha dejado una reseña de 5 estrellas
+        en tu perfil</string>
+    <string name="content3">Tu publicación \"Limpieza de Hogar Express\" ha sido
+        verificada con éxito.</string>
+    <string name="content4">La oferta "Clses de \"Yoga\" no cumple con los términos
+        de uso.</string>
+    <string name="content5">Se ha publicado un nuevo servicio de \"Jardinería\" cerca
+        de tu ubicación.</string>
+    <string name="date1">5 min</string>
+    <string name="date2">2 h</string>
+    <string name="date3">Ayer</string>
+    <string name="date4">Ayer</string>
+    <string name="date5">2 días</string>
 
     <!-- Search Screen -->
     <string name="search_title">Buscar</string>
