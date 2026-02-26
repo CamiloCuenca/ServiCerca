@@ -63,7 +63,9 @@ fun DeleteProfileScreen (
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                        .padding(horizontal = 8.dp, vertical = 4.dp),
+                    contentAlignment = Alignment.Center
+
                 ) {
                     IconButton(
                         onClick = { onBack() },
@@ -83,7 +85,6 @@ fun DeleteProfileScreen (
                         textAlign = TextAlign.Center,
                         modifier = Modifier
                             .align(Alignment.Center)
-                            .padding(bottom = 15.dp)
                     )
                 }
                 HorizontalDivider(thickness = 2.dp, color = MaterialTheme.colorScheme.outline)

@@ -83,7 +83,6 @@ fun UpdatePasswordScreen(
                             textAlign = TextAlign.Center,
                             modifier = Modifier
                                 .align(Alignment.Center)
-                                .padding(bottom = 15.dp)
                         )
                     }
                     HorizontalDivider(thickness = 2.dp, color = MaterialTheme.colorScheme.outline)
