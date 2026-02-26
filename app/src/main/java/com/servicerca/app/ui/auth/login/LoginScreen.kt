@@ -15,6 +15,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.servicerca.app.R
 import com.servicerca.app.core.components.button.OutlineButton
 import com.servicerca.app.core.components.button.PrimaryButton
@@ -24,13 +25,13 @@ import com.servicerca.app.core.components.input.AppTextField
 
 @Composable
 fun LoginScreen(
+    viewModel: LoginViewModel = viewModel(),
     onNavigateToRegister: () -> Unit,
     onNavigateToUsers: () -> Unit,
     onRecoverPassword: () -> Unit
 ) {
 
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+
 
     val scrollState = rememberScrollState()
 
@@ -75,8 +76,8 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(32.dp))
 
             AppTextField(
-                value = email,
-                onValueChange = { email = it },
+                value = viewModel.email.value,
+                onValueChange = { viewModel.email.onChange(it) },
                 label = stringResource(R.string.emailLabel),
                 placeholder = stringResource(R.string.placeholderEmail),
                 keyboardType = KeyboardType.Email
@@ -85,8 +86,8 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             AppPasswordField(
-                password = password,
-                onPasswordChange = { password = it },
+                password = viewModel.password.value,
+                onPasswordChange = { viewModel.password.onChange(it) },
                 label = stringResource(R.string.passwordLabel)
             )
 
