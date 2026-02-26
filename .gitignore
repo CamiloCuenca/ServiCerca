@@ -1,6 +1,7 @@
 *.iml
 .gradle
 /.idea
+/.idea/material_theme_project_new.xml
 /local.properties
 /.idea/caches
 /.idea/libraries
