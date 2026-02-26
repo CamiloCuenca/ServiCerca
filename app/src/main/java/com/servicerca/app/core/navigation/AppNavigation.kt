@@ -13,6 +13,7 @@ import com.servicerca.app.ui.dashboard.user.UserScreen
 import com.servicerca.app.ui.Welcome.WelcomeScreen
 import com.servicerca.app.ui.auth.login.RecoverPasswordScreen
 import com.servicerca.app.ui.auth.register.VerifyEmailScreen
+import com.servicerca.app.ui.notifications.NotificationsScreen
 import com.servicerca.app.ui.profile.ProfileScreen
 import com.servicerca.app.ui.services.create.CreateServiceScreen
 
@@ -80,6 +81,10 @@ fun AppNavigation() {
                     },
                     onCreateService ={
                         navController.navigate(MainRoutes.CreateService)
+                    },
+
+                    onNotificationClick = {
+                        navController.navigate(MainRoutes.Notifications)
                     }
                 )
             }
@@ -108,6 +113,14 @@ fun AppNavigation() {
 
             composable<MainRoutes.CreateService> {
                 CreateServiceScreen(
+                    onBack = {
+                        navController.popBackStack()
+                    }
+                )
+            }
+
+            composable <MainRoutes.Notifications>{
+                NotificationsScreen(
                     onBack = {
                         navController.popBackStack()
                     }

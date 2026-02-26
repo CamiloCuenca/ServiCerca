@@ -25,6 +25,9 @@ sealed class MainRoutes {
     @Serializable
     data object Perfil : MainRoutes()
 
+    @Serializable
+    data object Notifications : MainRoutes()
+
 
 
 
