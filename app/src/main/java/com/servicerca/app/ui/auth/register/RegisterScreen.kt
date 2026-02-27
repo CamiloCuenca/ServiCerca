@@ -108,13 +108,13 @@ fun RegisterScreen(
                 value = name,
                 onValueChange = { name = it },
                 label = stringResource(R.string.register_label_first_name),
-                placeholder = stringResource(R.string.register_placeholder_example_name)
+                placeholder = stringResource(R.string.register_placeholder_example_name),
             )
             AppTextField(
                 value = name,
                 onValueChange = { name = it },
                 label = stringResource(R.string.register_label_second_name),
-                placeholder = stringResource(R.string.register_placeholder_example_name)
+                placeholder = stringResource(R.string.register_placeholder_example_name),
             )
 
             // Apellidos
@@ -122,13 +122,13 @@ fun RegisterScreen(
                 value = name,
                 onValueChange = { name = it },
                 label = stringResource(R.string.register_label_first_lastname),
-                placeholder = stringResource(R.string.register_placeholder_example_name)
+                placeholder = stringResource(R.string.register_placeholder_example_name),
             )
             AppTextField(
                 value = name,
                 onValueChange = { name = it },
                 label = stringResource(R.string.register_label_second_lastname),
-                placeholder = stringResource(R.string.register_placeholder_example_name)
+                placeholder = stringResource(R.string.register_placeholder_example_name),
             )
 
             
@@ -137,8 +137,7 @@ fun RegisterScreen(
                 value = email,
                 onValueChange = { email = it },
                 label = stringResource(R.string.emailLabel),
-                placeholder = stringResource(R.string.placeholderEmail),
-                keyboardType = KeyboardType.Email
+                placeholder = stringResource(R.string.placeholderEmail)
             )
 
             AppPasswordField(

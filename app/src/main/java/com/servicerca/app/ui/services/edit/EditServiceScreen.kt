@@ -119,7 +119,7 @@ fun InsigniasScreen(onBack: () -> Unit) {
         AppTextField(
             value = title,
             onValueChange = {title = it},
-            label = stringResource(R.string.title_service_label),
+            label = stringResource(R.string.title_service_label)
         )
 
         Spacer(modifier = Modifier.height(10.dp))
@@ -177,9 +177,9 @@ fun InsigniasScreen(onBack: () -> Unit) {
             AppTextField(
                 value = description,
                 onValueChange = {description = it},
-                label = stringResource(R.string.detailed_description_label),
                 modifier = Modifier
-                    .height(150.dp)
+                    .height(150.dp),
+                label = stringResource(R.string.detailed_description_label),
             )
 
         }
@@ -194,17 +194,17 @@ fun InsigniasScreen(onBack: () -> Unit) {
             AppTextField(
                 value = minValue,
                 onValueChange = {minValue = it},
-                label = "Precio Min",
                 modifier = Modifier
-                    .weight(1f)
+                    .weight(1f),
+                label = "Precio Min",
             )
 
             AppTextField(
                 value = maxValue,
                 onValueChange = {maxValue = it},
-                label = "Precio Max",
                 modifier = Modifier
-                    .weight(1f)
+                    .weight(1f),
+                label = "Precio Max",
             )
 
         }
