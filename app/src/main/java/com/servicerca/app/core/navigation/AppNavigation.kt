@@ -145,6 +145,10 @@ fun AppNavigation() {
                         // cuando Profile quiere abrir Insignias, debe usar la navegación interna de usuario (tabs)
                         navController.navigate(DashboardRoutes.HomeUser)
                     },
+                    onModeratorPanel = {
+                        // cuando Profile quiere abrir Insignias, debe usar la navegación interna de usuario (tabs)
+                        navController.navigate(DashboardRoutes.HomeUser)
+                    },
                 )
 
             }
