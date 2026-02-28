@@ -45,6 +45,8 @@ import com.servicerca.app.core.components.button.PasswordButton
 import com.servicerca.app.core.components.button.PrimaryButton
 import com.servicerca.app.core.components.card.CardLevel
 import com.servicerca.app.core.components.card.CardStatistics
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.IconButton
 
 @Composable
 fun ProfileScreen(
@@ -52,6 +54,7 @@ fun ProfileScreen(
     onEditProflie:() -> Unit,
     onUpdatePassword: () -> Unit,
     onDeleteProfile: () -> Unit,
+    onModeratorPanel: () -> Unit
 ){
 
     Scaffold(
@@ -72,35 +75,48 @@ fun ProfileScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Box(
-                    contentAlignment = Alignment.BottomEnd, // El icono va en la esquina inferior derecha
-                    modifier = Modifier.size(150.dp)
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    // Imagen de perfil
-                    Card(
-                        shape = CircleShape,
-                        colors = CardDefaults.cardColors(
-                            Color.White
-                        ),
+
+                    // 🔧 Botón arriba a la derecha
+                    IconButton(
+                        onClick = { onModeratorPanel () },
                         modifier = Modifier
-                            .size(150.dp)
-                            .shadow(
-                                elevation = 20.dp,
-                                shape = CircleShape,
-                                ambientColor = Color.Cyan,
-                                spotColor = Color.Cyan
-                            )
-                    )
-                    {
-                        Image(painter = painterResource(id = R.drawable.logo_profile), contentDescription = null,
-                            modifier = Modifier
-                                .size(250.dp)
-                                .shadow(
-                                    elevation = 16.dp,
-                                    shape = CircleShape,
-                                    ambientColor = Color.Cyan,
-                                    spotColor = Color.Cyan
-                                )
+                            .align(Alignment.TopEnd)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = "Configuración",
+                            tint = MaterialTheme.colorScheme.primary
                         )
+                    }
+
+                    // 👇 Tu contenido centrado
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Box(
+                            contentAlignment = Alignment.BottomEnd,
+                            modifier = Modifier.size(150.dp)
+                        ) {
+                            Card(
+                                shape = CircleShape,
+                                colors = CardDefaults.cardColors(Color.White),
+                                modifier = Modifier
+                                    .size(150.dp)
+                                    .shadow(
+                                        elevation = 20.dp,
+                                        shape = CircleShape
+                                    )
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.logo_profile),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(150.dp)
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -370,6 +386,7 @@ fun ProfileScreenPreview() {
         onInsignias = {},
         onEditProflie = {},
         onUpdatePassword = {},
-        onDeleteProfile = {}
+        onDeleteProfile = {},
+        onModeratorPanel = {}
     )
 }

@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import com.servicerca.app.ui.search.SearchScreen
 import com.servicerca.app.ui.chat.ChatScreen
 import com.servicerca.app.ui.dashboard.user.HomeUserScreen
+import com.servicerca.app.ui.moderator.ModeratorPanelScreen
 import com.servicerca.app.ui.profile.DeleteProfileScreen
 import com.servicerca.app.ui.profile.EditProfileScreen
 import com.servicerca.app.ui.profile.InsigniasScreen
@@ -51,6 +52,9 @@ fun UserNavigation(
                 },
                 onDeleteProfile = {
                     navController.navigate("deleteProfile")
+                },
+                onModeratorPanel = {
+                    navController.navigate("moderatorPanel")
                 }
             )
         }
@@ -85,8 +89,10 @@ fun UserNavigation(
 
         }
 
+        composable("moderatorPanel") {
+            ModeratorPanelScreen(onBack = { navController.popBackStack() })
 
-
+        }
     }
 
 }

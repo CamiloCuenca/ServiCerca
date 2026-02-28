@@ -157,4 +157,30 @@
     <string name="edit_button">Editar</string>
     <string name="delete_button">Eliminar</string>
     <string name="status_active">Activo</string>
+
+    <!-- Moderator Panel Screen -->
+    <string name="type_service_moderation_panel">MANTENIMIENTO / HOGAR</string>
+    <string name="title_service_moderation_panel">Instalaciones Eléctricas Residenciales</string>
+    <string name="description_service_moderation_panel">Electricista especializado en instalaciones
+        eléctricas residenciales, realizando trabajos completos en casas y departamentos, reparación
+        de fallas, instalación de tableros, contactos y luminarias, así como mantenimiento preventivo
+        y correctivo. Ofrezco un servicio seguro, confiable y puntual, cumpliendo normas de seguridad
+        y garantizando calidad en cada trabajo.</string>
+    <string name="type_service_moderation_panel2">LIMPIEZA / SERVICIOS</string>
+    <string name="title_service_moderation_panel2">Limpieza Profunda de Departamentos</string>
+    <string name="description_service_moderation_panel2">Ofrezco servicio profesional de limpieza
+        profunda de departamentos, ideal para dejar cada espacio impecable y desinfectado. Realizo
+        limpieza detallada de baños, cocina, pisos, ventanas y superficies, eliminando grasa, polvo
+        y suciedad acumulada. Trabajo con responsabilidad, productos adecuados y atención al detalle
+        para garantizar un ambiente limpio, fresco y saludable.</string>
+    <string name="type_service_moderation_panel3">PLOMERÍA / URGENCIAS</string>
+    <string name="title_service_moderation_panel3">Reparación de Fugas Express</string>
+    <string name="description_service_moderation_panel3">Servicio de reparación de fugas express
+        para hogares y departamentos, atendiendo filtraciones en tuberías, llaves, baños y
+        conexiones de agua de forma rápida y eficiente. Detecto y soluciono el problema para evitar
+        daños mayores y desperdicio de agua, ofreciendo un trabajo confiable, puntual y con garantía.</string>
+    <string name="btn_virified_moderation_panel">Verificar</string>
+    <string name="btn_decline_moderation_panel">Rechazar</string>
+
+
 </resources>
