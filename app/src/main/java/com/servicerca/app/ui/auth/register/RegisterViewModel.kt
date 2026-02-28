@@ -40,21 +40,28 @@ class RegisterViewModel : ViewModel() {
 
     val SecondName = ValidatedField("") { value ->
         when {
-            value.isEmpty() -> "El nombre es obligatoria"
+            value.isEmpty() -> "El segundo nombre es obligatoria"
             else -> null
         }
     }
 
     val Lastname = ValidatedField("") { value ->
         when {
-            value.isEmpty() -> "El nombre es obligatoria"
+            value.isEmpty() -> "El apellido es obligatoria"
             else -> null
         }
     }
 
     val SecondLastname = ValidatedField("") { value ->
         when {
-            value.isEmpty() -> "El nombre es obligatoria"
+            value.isEmpty() -> "El segundo apellido es obligatoria"
+            else -> null
+        }
+    }
+
+    val address = ValidatedField("") { value ->
+        when{
+            value.isEmpty() -> "La dirección es obligatoria"
             else -> null
         }
     }

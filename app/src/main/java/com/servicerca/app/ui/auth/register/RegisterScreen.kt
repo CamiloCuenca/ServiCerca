@@ -15,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
@@ -62,12 +63,7 @@ fun RegisterScreen(
 
     ) {
 
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
-    var name by remember { mutableStateOf("") }
-    var city by remember { mutableStateOf("") }
-    var address by remember { mutableStateOf("") }
+
     var expanded by remember { mutableStateOf(false) }
     val opciones = listOf("Ciudad 1", "Ciudad 2", "Ciudad 3")
 
@@ -204,8 +200,9 @@ fun RegisterScreen(
                         focusedIndicatorColor = Color(0xFF6C63FF),
                         unfocusedIndicatorColor = Color.Transparent
                     ),
-                    modifier = Modifier.fillMaxWidth()
-                )
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)     )
 
                 ExposedDropdownMenu(
                     expanded = expanded,
@@ -232,8 +229,8 @@ fun RegisterScreen(
             }
 
             AppTextField(
-                value = address,
-                onValueChange = { address = it },
+                value = viewModel.address.value,
+                onValueChange = { viewModel.address.onChange(it)},
                 label = "Dirección",
                 placeholder = "Dirección"
             )
