@@ -158,6 +158,20 @@
     <string name="delete_button">Eliminar</string>
     <string name="status_active">Activo</string>
 
+    <!-- Reservation Screen -->
+    <string name="reservation_tab_reserved">Reservé</string>
+    <string name="reservation_tab_offered">Ofrezco</string>
+    <string name="reservation_month_year">Mayo 2024</string>
+    <string name="reservation_today_format">Hoy, %s</string>
+    <string name="reservation_num_services_format">%d servicios</string>
+    <string name="reservation_ver_detalle">Ver detalle</string>
+    <string name="reservation_status_confirmed">CONFIRMADO</string>
+    <string name="reservation_status_pending">PENDIENTE</string>
+    <string name="reservation_status_cancelled">CANCELADO</string>
+    <string name="reservation_service_plumber">Plomería Residencial</string>
+    <string name="reservation_service_electrician">Reparación Eléctrica</string>
+    <string name="reservation_service_cleaning">Limpieza Profunda</string>
+
     <!-- Moderator Panel Screen -->
     <string name="type_service_moderation_panel">MANTENIMIENTO / HOGAR</string>
     <string name="title_service_moderation_panel">Instalaciones Eléctricas Residenciales</string>
