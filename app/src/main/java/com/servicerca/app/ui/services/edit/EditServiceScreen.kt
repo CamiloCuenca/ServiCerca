@@ -19,6 +19,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
@@ -40,22 +41,25 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.servicerca.app.R
 import com.servicerca.app.core.components.button.DeleteButton
 import com.servicerca.app.core.components.button.PrimaryButton
 import com.servicerca.app.core.components.card.CardServiceImage
 import com.servicerca.app.core.components.input.AppTextField
+import com.servicerca.app.ui.auth.register.RegisterViewModel
 import com.servicerca.app.ui.theme.ServiCercaTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InsigniasScreen(onBack: () -> Unit) {
+fun InsigniasScreen(
+    onBack: () -> Unit,
+    viewModel: EditServiceViewModel = viewModel(),
+
+) {
     val opciones = listOf("Categoria 1", "Categoria 2", "Categoria 3")
-    var title by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
+
     var expanded by remember { mutableStateOf(false) }
-    var minValue by remember { mutableStateOf("") }
-    var maxValue by remember { mutableStateOf("") }
     var selectedOption by remember { mutableStateOf(opciones[0]) }
 
     Column(
@@ -117,8 +121,8 @@ fun InsigniasScreen(onBack: () -> Unit) {
             } }
 
         AppTextField(
-            value = title,
-            onValueChange = {title = it},
+            value = viewModel.title.value,
+            onValueChange = { viewModel.title.onChange(it) },
             label = stringResource(R.string.title_service_label)
         )
 
@@ -145,6 +149,8 @@ fun InsigniasScreen(onBack: () -> Unit) {
                     unfocusedIndicatorColor = Color.Transparent
                 ),
                 modifier = Modifier.fillMaxWidth()
+                    .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+
             )
 
             ExposedDropdownMenu(
@@ -175,8 +181,8 @@ fun InsigniasScreen(onBack: () -> Unit) {
 
         Box{
             AppTextField(
-                value = description,
-                onValueChange = {description = it},
+                value = viewModel.description.value,
+                onValueChange = { viewModel.description.onChange(it) },
                 modifier = Modifier
                     .height(150.dp),
                 label = stringResource(R.string.detailed_description_label),
@@ -192,16 +198,16 @@ fun InsigniasScreen(onBack: () -> Unit) {
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             AppTextField(
-                value = minValue,
-                onValueChange = {minValue = it},
+                value = viewModel.minValue.value,
+                onValueChange = { viewModel.minValue.onChange(it) },
                 modifier = Modifier
                     .weight(1f),
                 label = "Precio Min",
             )
 
             AppTextField(
-                value = maxValue,
-                onValueChange = {maxValue = it},
+                value = viewModel.minValue.value,
+                onValueChange = { viewModel.maxValue.onChange(it) },
                 modifier = Modifier
                     .weight(1f),
                 label = "Precio Max",
