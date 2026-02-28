@@ -54,7 +54,8 @@ import com.servicerca.app.core.components.input.AppTextField
 @Composable
 fun RecoverPasswordScreen(
     onBackClick: () -> Unit,
-    onNavigateToLogin: () -> Unit
+    onNavigateToLogin: () -> Unit,
+    onNavigateToResetPassword: () -> Unit
 ) {
 
     var email by remember { mutableStateOf("") }
@@ -173,7 +174,7 @@ fun RecoverPasswordScreen(
 
                 PrimaryButton(
                     text = "Enviar instrucciones",
-                    onClick = {},
+                    onClick = onNavigateToResetPassword,
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -209,7 +210,8 @@ fun RecoverPasswordScreen(
 fun RecoverPasswordScreenPreview() {
     RecoverPasswordScreen(
         onNavigateToLogin = {}
-        , onBackClick = {}
+        , onBackClick = {},
+        onNavigateToResetPassword = {}
     )
 }
 

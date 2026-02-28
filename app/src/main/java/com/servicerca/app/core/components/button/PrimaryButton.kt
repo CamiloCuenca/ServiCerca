@@ -5,8 +5,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -60,29 +63,19 @@ fun PrimaryButton(
     }
 }
 
-// TODO ver como implemntar los iconos de las redes sociales
-/**
- * Boton para acciones secundarias  (Login con redes sociales en este caso)
- */
+// Boton para acciones secundarias (Login con redes sociales)
 @Composable
 fun SocialButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    borderColor: Color = MaterialTheme.colorScheme.primary,
-    contentColor: Color = MaterialTheme.colorScheme.primary,
+    iconRes: Int? = null,
+    borderColor: Color = MaterialTheme.colorScheme.outline,
+    contentColor: Color = MaterialTheme.colorScheme.onSurface,
     alpha: Float = 1f
 ) {
-
-    val resolvedBorder = if (alpha in 0f..1f && alpha != 1f)
-        borderColor.copy(alpha = alpha)
-    else
-        borderColor
-
-    val resolvedContent = if (alpha in 0f..1f && alpha != 1f)
-        contentColor.copy(alpha = alpha)
-    else
-        contentColor
+    val resolvedBorder = if (alpha != 1f) borderColor.copy(alpha = alpha) else borderColor
+    val resolvedContent = if (alpha != 1f) contentColor.copy(alpha = alpha) else contentColor
 
     OutlinedButton(
         onClick = onClick,
@@ -93,6 +86,15 @@ fun SocialButton(
             contentColor = resolvedContent
         )
     ) {
+        if (iconRes != null) {
+            Icon(
+                painter = painterResource(id = iconRes),
+                contentDescription = null,
+                tint = Color.Unspecified,
+                modifier = Modifier.size(20.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+        }
         Text(text = text)
     }
 }

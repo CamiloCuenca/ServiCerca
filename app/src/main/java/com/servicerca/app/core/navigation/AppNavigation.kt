@@ -12,6 +12,7 @@ import com.servicerca.app.ui.auth.register.RegisterScreen
 import com.servicerca.app.ui.dashboard.user.UserScreen
 import com.servicerca.app.ui.Welcome.WelcomeScreen
 import com.servicerca.app.ui.auth.login.RecoverPasswordScreen
+import com.servicerca.app.ui.auth.login.ResetPassword
 import com.servicerca.app.ui.auth.register.VerifyEmailScreen
 import com.servicerca.app.ui.notifications.NotificationsScreen
 import com.servicerca.app.ui.profile.ProfileScreen
@@ -58,6 +59,9 @@ fun AppNavigation() {
                 )
             }
 
+
+
+
             composable<MainRoutes.Register> {
                 RegisterScreen( onNavigateToLogin = {
                     navController.navigate(MainRoutes.Login)
@@ -95,6 +99,24 @@ fun AppNavigation() {
                         navController.navigate(MainRoutes.Login)
                     }
                     , onBackClick = {
+                        navController.popBackStack()
+                    },
+                    onNavigateToResetPassword = {
+                        navController.navigate(MainRoutes.Reset)
+
+
+                    }
+                )
+            }
+
+            composable<MainRoutes.Reset> {
+                ResetPassword(
+                    onNavigateToLogin = {
+                        navController.navigate(MainRoutes.Login) {
+                            popUpTo(MainRoutes.Login) { inclusive = true }
+                        }
+                    },
+                    onBackClick = {
                         navController.popBackStack()
                     }
                 )
