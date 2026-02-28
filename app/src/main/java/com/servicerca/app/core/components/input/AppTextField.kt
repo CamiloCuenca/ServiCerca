@@ -34,7 +34,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 /**
@@ -47,31 +46,33 @@ fun AppTextField(
     modifier: Modifier = Modifier,
     label: String = "",
     placeholder: String? = null,
-    keyboardType: KeyboardType = KeyboardType.Text,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     isPassword: Boolean = false,
     singleLine: Boolean = true,
     leadingIcon: (@Composable (() -> Unit))? = null,
-    trailingIcon: (@Composable (() -> Unit))? = null
+    trailingIcon: (@Composable (() -> Unit))? = null,
+    isError: Boolean = false,
+    supportingText: (@Composable (() -> Unit))? = null
 ) {
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
-        label = if (label.isNotEmpty()) {
-            { Text(label) }
-        } else null,
-        placeholder = if (placeholder != null) {
-            { Text(placeholder) }
-        } else null,
-        keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
-        visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
+        label = if (label.isNotEmpty()) { { Text(label) } } else null,
+        placeholder = placeholder?.let { { Text(it) } },
+        keyboardOptions = keyboardOptions,
+        visualTransformation = if (isPassword)
+            PasswordVisualTransformation()
+        else
+            VisualTransformation.None,
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         singleLine = singleLine,
         leadingIcon = leadingIcon,
-        trailingIcon = trailingIcon
+        trailingIcon = trailingIcon,
+        isError = isError,
+        supportingText = supportingText
     )
 }
-
 
 
 /**

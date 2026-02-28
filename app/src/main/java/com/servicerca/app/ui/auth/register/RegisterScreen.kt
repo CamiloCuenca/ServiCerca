@@ -241,7 +241,6 @@ fun RegisterScreen(
                 onValueChange = { viewModel.email.onChange(it)},
                 label = stringResource(R.string.emailLabel),
                 placeholder = stringResource(R.string.placeholderEmail),
-                keyboardType = KeyboardType.Email
             )
 
             AppPasswordField(
