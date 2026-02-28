@@ -1,7 +1,9 @@
 package com.servicerca.app.ui.auth.login
 
+import android.util.Patterns
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,14 +14,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.LockReset
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -30,8 +37,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.servicerca.app.R
 import com.servicerca.app.core.components.button.PrimaryButton
 import com.servicerca.app.core.components.input.AppTextField
 
@@ -43,6 +58,15 @@ fun RecoverPasswordScreen(
 ) {
 
     var email by remember { mutableStateOf("") }
+    var showEmailError by remember { mutableStateOf(false) }
+    var hasFocused by remember { mutableStateOf(false) }
+    val focusManager = LocalFocusManager.current
+
+    val emailError = if (showEmailError && hasFocused) validateEmail(email) else null
+
+
+
+
 
     Scaffold(
         topBar = {
@@ -64,7 +88,11 @@ fun RecoverPasswordScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(horizontal = 24.dp),
+                .padding(horizontal = 24.dp)
+                .clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() }
+                ) { focusManager.clearFocus() },
             verticalArrangement = Arrangement.SpaceBetween
         ) {
 
@@ -114,11 +142,31 @@ fun RecoverPasswordScreen(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                AppTextField(
+                OutlinedTextField(
                     value = email,
                     onValueChange = { email = it },
-                    modifier = Modifier.fillMaxWidth(),
-                    placeholder = "ejemplo@correo.com",
+                    isError = emailError != null,
+                    supportingText = {
+                        emailError?.let {
+                            Text(text = it)
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .onFocusChanged { focusState ->
+                            if (focusState.isFocused) {
+                                hasFocused = true
+                            } else if (hasFocused) {
+                                showEmailError = true
+                            }
+                        },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Email,
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = { focusManager.clearFocus() }
+                    )
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -163,4 +211,12 @@ fun RecoverPasswordScreenPreview() {
         onNavigateToLogin = {}
         , onBackClick = {}
     )
+}
+
+fun validateEmail(email: String): String? {
+    return when {
+        email.isEmpty() -> "El email es obligatorio"
+        !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> "Ingresa un email válido"
+        else -> null
+    }
 }
