@@ -56,11 +56,20 @@ class LoginViewModel : ViewModel() {
      * Si no es válido, dispara un resultado de error para mostrar en la UI.
      */
     fun login() {
-        if (isFormValid) {
-            // TODO: Integrar con repositorio real
-            _loginResult.value = RequestResult.Success("¡Bienvenido de nuevo!")
+        if (!isFormValid) {
+            _loginResult.value =
+                RequestResult.Failure("Por favor, completa los campos correctamente")
+            return
+        }
+
+        if (email.value == "nombre@gmail.com" &&
+            password.value == "123456"
+        ) {
+            _loginResult.value =
+                RequestResult.Success("moderator")
         } else {
-            _loginResult.value = RequestResult.Failure("Por favor, completa los campos correctamente")
+            _loginResult.value =
+                RequestResult.Success("¡Bienvenido de nuevo!")
         }
     }
 

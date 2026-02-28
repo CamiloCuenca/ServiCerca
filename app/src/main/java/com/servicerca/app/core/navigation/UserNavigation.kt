@@ -10,7 +10,7 @@ import androidx.navigation.compose.composable
 import com.servicerca.app.ui.search.SearchScreen
 import com.servicerca.app.ui.chat.ChatScreen
 import com.servicerca.app.ui.dashboard.user.HomeUserScreen
-import com.servicerca.app.ui.moderator.ModeratorPanelScreen
+import com.servicerca.app.ui.dashboard.moderador.ModeratorPanelScreen
 import com.servicerca.app.ui.profile.DeleteProfileScreen
 import com.servicerca.app.ui.profile.EditProfileScreen
 import com.servicerca.app.ui.profile.InsigniasScreen
@@ -89,10 +89,7 @@ fun UserNavigation(
 
         }
 
-        composable("moderatorPanel") {
-            ModeratorPanelScreen(onBack = { navController.popBackStack() })
 
-        }
     }
 
 }

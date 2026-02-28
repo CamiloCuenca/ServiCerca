@@ -14,6 +14,7 @@ import com.servicerca.app.ui.Welcome.WelcomeScreen
 import com.servicerca.app.ui.auth.login.RecoverPasswordScreen
 import com.servicerca.app.ui.auth.login.ResetPassword
 import com.servicerca.app.ui.auth.register.VerifyEmailScreen
+import com.servicerca.app.ui.dashboard.moderador.ModeratorScreen
 import com.servicerca.app.ui.notifications.NotificationsScreen
 import com.servicerca.app.ui.profile.ProfileScreen
 import com.servicerca.app.ui.services.create.CreateServiceScreen
@@ -55,6 +56,9 @@ fun AppNavigation() {
                     },
                     onRecoverPassword ={
                         navController.navigate(MainRoutes.RecoverPassword)
+                    },
+                    onModeratorPanel = {
+                        navController.navigate(DashboardRoutes.HomeModerator)
                     }
                 )
             }
@@ -75,6 +79,7 @@ fun AppNavigation() {
                 )
             }
 
+            // --- Usuario (Dashboard) ---
             composable<DashboardRoutes.HomeUser> {
                 UserScreen(
                     onLogout = {
@@ -87,6 +92,23 @@ fun AppNavigation() {
                         navController.navigate(MainRoutes.CreateService)
                     },
 
+                    onNotificationClick = {
+                        navController.navigate(MainRoutes.Notifications)
+                    }
+                )
+            }
+
+            // --- Moderador: registrar la pantalla principal del moderador en el NavHost raíz ---
+            composable<DashboardRoutes.HomeModerator> {
+                ModeratorScreen(
+                    onLogout = {
+                        navController.navigate(MainRoutes.Login) {
+                            popUpTo(MainRoutes.Login) { inclusive = true }
+                        }
+                    },
+                    onCreateService = {
+                        navController.navigate(MainRoutes.CreateService)
+                    },
                     onNotificationClick = {
                         navController.navigate(MainRoutes.Notifications)
                     }

@@ -40,7 +40,8 @@ fun LoginScreen(
     viewModel: LoginViewModel = viewModel(),
     onNavigateToRegister: () -> Unit,
     onNavigateToUsers: () -> Unit,
-    onRecoverPassword: () -> Unit
+    onRecoverPassword: () -> Unit,
+    onModeratorPanel: () -> Unit
 ) {
     val scrollState = rememberScrollState()
     val snackBarHostState = remember { SnackbarHostState() }
@@ -61,9 +62,14 @@ fun LoginScreen(
             )
 
             // Si el login fue exitoso, esperamos un momento para que el usuario vea el mensaje y navegamos
-            if (result is RequestResult.Success){
-                delay(10) // Un pequeño delay para feedback visual
-                onNavigateToUsers()
+            if (result is RequestResult.Success) {
+                delay(300)
+
+                if (result.message == "moderator") {
+                    onModeratorPanel()
+                } else {
+                    onNavigateToUsers()
+                }
             }
 
             // Limpiamos el resultado en el ViewModel para evitar que el efecto se dispare de nuevo innecesariamente
@@ -240,6 +246,7 @@ fun LoginScreenPreview() {
     LoginScreen(
         onNavigateToRegister = {},
         onNavigateToUsers = {},
-        onRecoverPassword = {}
+        onRecoverPassword = {},
+        onModeratorPanel = {}
     )
 }
