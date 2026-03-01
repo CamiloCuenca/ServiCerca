@@ -5,6 +5,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.ChatBubble
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
@@ -101,4 +102,89 @@ enum class Destination(
     HOME(DashboardRoutes.HomeUser, "Inicio", Icons.Default.Home),
     RESERVATION(DashboardRoutes.Reservation, "Reservas", Icons.Default.CalendarMonth),
     PROFILE(DashboardRoutes.Profile, "Perfil", Icons.Default.AccountCircle),
+}
+
+
+
+// Moderador
+@Composable
+fun BottomNavigationBarModerator(
+    navController: NavHostController,
+    titleTopBar: (String) -> Unit
+) {
+
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
+
+    LaunchedEffect(currentDestination) {
+        val destination = DestinationModerator.entries.find {
+            it.route::class.qualifiedName == currentDestination?.route
+        }
+        destination?.let {
+            titleTopBar(it.label)
+        }
+    }
+
+    val (bgColor, contentColor) = NavigationBarColors()
+
+    NavigationBar(
+        modifier = Modifier.fillMaxWidth(),
+        tonalElevation = 3.dp,
+        containerColor = bgColor
+    ) {
+
+        DestinationModerator.entries.forEach { destination ->
+
+            val isSelected =
+                currentDestination?.route ==
+                        destination.route::class.qualifiedName
+
+            NavigationBarItem(
+                selected = isSelected,
+
+                onClick = {
+                    navController.navigate(destination.route) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                },
+
+                icon = {
+                    Icon(
+                        imageVector = destination.icon,
+                        contentDescription = destination.label
+                    )
+                },
+
+                label = {
+                    Text(destination.label)
+                },
+
+                alwaysShowLabel = true,
+
+                colors = NavigationBarItemDefaults.colors(
+                    selectedIconColor = MaterialTheme.colorScheme.primary,
+                    selectedTextColor = MaterialTheme.colorScheme.primary,
+                    indicatorColor = MaterialTheme.colorScheme.onSecondary,
+                    unselectedIconColor = contentColor.copy(alpha = 0.75f),
+                    unselectedTextColor = contentColor.copy(alpha = 0.75f)
+                )
+            )
+        }
+    }
+}
+
+enum class DestinationModerator(
+    val route: DashboardRoutes,
+    val label: String,
+    val icon: ImageVector,
+) {
+
+    HOME(DashboardRoutes.HomeModerator, "Inicio", Icons.Default.Home),
+    PROFILE(DashboardRoutes.ProfileModerator, "Perfil", Icons.Default.AccountCircle),
+    HISTORIAL(DashboardRoutes.Historial, "Historial", Icons.Default.History)
+
 }

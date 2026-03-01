@@ -108,13 +108,12 @@ fun WelcomeScreen(
             ) {
 
                 PrimaryButton(
-                    text = stringResource(R.string.login_create_account),
-                    onClick = onNavigateToRegister
-                )
-
-                OutlineButton(
                     text = stringResource(R.string.login_iniciar_secion),
                     onClick = onNavigateToLogin
+                )
+                OutlineButton(
+                    text = stringResource(R.string.login_create_account),
+                    onClick = onNavigateToRegister
                 )
             }
 

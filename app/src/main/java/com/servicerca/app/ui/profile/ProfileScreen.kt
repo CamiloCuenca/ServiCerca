@@ -78,20 +78,7 @@ fun ProfileScreen(
                     modifier = Modifier.fillMaxWidth()
                 ) {
 
-                    // 🔧 Botón arriba a la derecha
-                    IconButton(
-                        onClick = { onModeratorPanel () },
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Settings,
-                            contentDescription = "Configuración",
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
 
-                    // 👇 Tu contenido centrado
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier.fillMaxWidth()

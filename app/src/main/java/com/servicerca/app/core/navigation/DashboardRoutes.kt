@@ -20,8 +20,23 @@ sealed class DashboardRoutes {
     data object  Chat : DashboardRoutes()
 
 
+    @Serializable
+    data class UserDetail(val userId : String) : DashboardRoutes()
+
+    // Moderator
+
+    @Serializable
+    data object HomeModerator : DashboardRoutes()
+
+    @Serializable
+    data object ProfileModerator : DashboardRoutes()
 
 
     @Serializable
-    data class UserDetail(val userId : String) : DashboardRoutes()
+    data object Historial : DashboardRoutes()
+
+
+
+
 }
+
