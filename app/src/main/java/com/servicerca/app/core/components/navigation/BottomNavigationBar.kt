@@ -5,6 +5,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.ChatBubble
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
@@ -184,6 +185,6 @@ enum class DestinationModerator(
 
     HOME(DashboardRoutes.HomeModerator, "Inicio", Icons.Default.Home),
     PROFILE(DashboardRoutes.ProfileModerator, "Perfil", Icons.Default.AccountCircle),
-    HISTORIAL(DashboardRoutes.Historial, "Historial", Icons.Default.CalendarMonth)
+    HISTORIAL(DashboardRoutes.Historial, "Historial", Icons.Default.History)
 
 }

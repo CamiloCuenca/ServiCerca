@@ -128,32 +128,26 @@ fun ReservationTabRow(
 data class ReservationData(
     val title: String,
     val time: String,
-    val status: ReservationStatus,
     val icon: Int
 )
 
-enum class ReservationStatus {
-    CONFIRMED, PENDING, CANCELLED
-}
+
 
 fun getSampleReservations(): List<ReservationData> {
     return listOf(
         ReservationData(
             title = "Plomería",
             time = "10:00 AM",
-            status = ReservationStatus.CONFIRMED,
             icon = R.drawable.ic_edit
         ),
         ReservationData(
             title = "Electricista",
             time = "02:30 PM",
-            status = ReservationStatus.PENDING,
             icon = R.drawable.ic_mic
         ),
         ReservationData(
             title = "Limpieza",
             time = "05:00 PM",
-            status = ReservationStatus.CANCELLED,
             icon = R.drawable.ic_star
         )
     )
