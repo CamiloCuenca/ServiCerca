@@ -165,14 +165,14 @@ fun ReactionIconButton(
             width = 2.dp,
             color = MaterialTheme.colorScheme.primary
         ),
-        modifier = modifier.size(64.dp) // 👈 más grande como en el diseño
+        modifier = modifier.size(40.dp) // 👈 más grande como en el diseño
     ) {
         Box(contentAlignment = Alignment.Center) {
             Icon(
                 painter = painterResource(id = icon),
                 contentDescription = null,
                 tint = contentColor,
-                modifier = Modifier.size(28.dp)
+                modifier = Modifier.size(20.dp)
             )
         }
     }

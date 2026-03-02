@@ -17,6 +17,7 @@ import com.servicerca.app.ui.profile.InsigniasScreen
 import com.servicerca.app.ui.profile.ProfileScreen
 import com.servicerca.app.ui.profile.UpdatePasswordScreen
 import com.servicerca.app.ui.reservation.ReservationScreen
+import com.servicerca.app.ui.services.ListService.ListServiceScreen
 
 
 @Composable
@@ -53,11 +54,19 @@ fun UserNavigation(
                 onDeleteProfile = {
                     navController.navigate("deleteProfile")
                 },
-                onModeratorPanel = {
-                    navController.navigate("moderatorPanel")
+                onListService = {
+                    navController.navigate("serviceList")
                 }
             )
         }
+
+        composable("serviceList" ){
+            ListServiceScreen(
+                onBackClick = { navController.popBackStack() }
+            )
+
+        }
+
 
         composable<DashboardRoutes.UserDetail> {
         }
