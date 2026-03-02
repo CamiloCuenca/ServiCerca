@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -31,6 +32,7 @@ import com.servicerca.app.R
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Handyman
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Card
@@ -46,7 +48,9 @@ import com.servicerca.app.core.components.button.PrimaryButton
 import com.servicerca.app.core.components.card.CardLevel
 import com.servicerca.app.core.components.card.CardStatistics
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.IconButton
+import com.servicerca.app.core.components.card.ManageServicesCard
 
 @Composable
 fun ProfileScreen(
@@ -54,18 +58,15 @@ fun ProfileScreen(
     onEditProflie:() -> Unit,
     onUpdatePassword: () -> Unit,
     onDeleteProfile: () -> Unit,
-    onModeratorPanel: () -> Unit
+   onListService: () -> Unit,
 ){
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize()
-    ) { paddingValues ->
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 24.dp),
+                .padding(24.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
 
@@ -152,6 +153,10 @@ fun ProfileScreen(
             ) {
                 CardLevel()
             }
+
+            ManageServicesCard(
+                onClick = {onListService()}
+            )
 
             Column(
                 modifier = Modifier
@@ -363,7 +368,7 @@ fun ProfileScreen(
             }
         }
     }
-}
+
 
 
 @Preview(showBackground = true, showSystemUi = true)
@@ -374,6 +379,6 @@ fun ProfileScreenPreview() {
         onEditProflie = {},
         onUpdatePassword = {},
         onDeleteProfile = {},
-        onModeratorPanel = {}
+        onListService = {}
     )
 }

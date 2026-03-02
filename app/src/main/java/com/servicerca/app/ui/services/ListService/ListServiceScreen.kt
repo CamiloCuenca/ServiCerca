@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.servicerca.app.R
 import com.servicerca.app.core.components.card.MyServiceCard
+import com.servicerca.app.core.components.navigation.TabItemApp
 import com.servicerca.app.ui.theme.ServiCercaTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -60,61 +61,40 @@ fun ListServiceScreen(
         )
     )
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = stringResource(id = R.string.my_services_title),
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Back"
-                        )
-                    }
-                },
-
-            )
-        }
-    ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .padding(24.dp)
                 .background(Color(0xFFF8FDFF))
         ) {
-            TabRow(
-                selectedTabIndex = selectedTab,
-                containerColor = Color.Transparent,
-                contentColor = MaterialTheme.colorScheme.primary,
-                indicator = { tabPositions ->
-                    TabRowDefaults.SecondaryIndicator(
-                        Modifier.tabIndicatorOffset(tabPositions[selectedTab]),
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                },
-                divider = {}
-            ) {
-                tabs.forEachIndexed { index, title ->
-                    Tab(
-                        selected = selectedTab == index,
-                        onClick = { selectedTab = index },
-                        text = {
-                            Text(
-                                text = title,
-                                fontSize = 14.sp,
-                                fontWeight = if (selectedTab == index) FontWeight.Bold else FontWeight.Normal,
-                                color = if (selectedTab == index) MaterialTheme.colorScheme.onSurface else Color.Gray
-                            )
-                        }
+
+
+            Row (
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
+
+            ){
+                IconButton(onClick = onBackClick) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Back"
                     )
                 }
+                Text(
+                    text = stringResource(id = R.string.my_services_title),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp
+                )
+
             }
+
+            ServiceTabRow(
+                selectedTabIndex = selectedTab,
+                onTabSelected = { selectedTab = it }
+            )
+
 
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
@@ -131,7 +111,7 @@ fun ListServiceScreen(
             }
         }
     }
-}
+
 
 // TODO info provisional
 data class MyServiceItem(
@@ -141,6 +121,37 @@ data class MyServiceItem(
     val status: String,
     val imageRes: Int
 )
+
+@Composable
+fun ServiceTabRow(
+    selectedTabIndex: Int,
+    onTabSelected: (Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(48.dp),
+        shape = RoundedCornerShape(12.dp),
+        color = Color(0xFFF1F3F5)
+    ) {
+        Row(modifier = Modifier.fillMaxSize()) {
+            TabItemApp(
+                text = "Activos",
+                isSelected = selectedTabIndex == 0,
+                onClick = { onTabSelected(0) },
+                modifier = Modifier.weight(1f)
+            )
+            TabItemApp(
+                text = "Inactivos",
+                isSelected = selectedTabIndex == 1,
+                onClick = { onTabSelected(1) },
+                modifier = Modifier.weight(1f)
+            )
+
+        }
+    }
+}
 
 @Composable
 @Preview(showBackground = true)

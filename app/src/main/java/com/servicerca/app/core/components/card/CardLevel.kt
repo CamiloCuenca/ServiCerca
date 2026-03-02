@@ -28,7 +28,7 @@ fun CardLevel(){
         elevation = CardDefaults.cardElevation(
             defaultElevation = 6.dp),
         modifier = Modifier
-            .size(width = 340.dp, height = 150.dp),
+            .size(width = 340.dp, height = 160.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
