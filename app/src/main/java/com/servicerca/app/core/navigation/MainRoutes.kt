@@ -33,6 +33,10 @@ sealed class MainRoutes {
     data object Notifications : MainRoutes()
 
     @Serializable
+    data object Map : MainRoutes()
+
+
+    @Serializable
     data object ServiceList : MainRoutes()
 
 

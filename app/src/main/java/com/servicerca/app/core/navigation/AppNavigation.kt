@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.servicerca.app.ui.Map.MapScreen
 import com.servicerca.app.ui.auth.login.LoginScreen
 import com.servicerca.app.ui.auth.register.RegisterScreen
 import com.servicerca.app.ui.dashboard.user.UserScreen
@@ -94,7 +95,11 @@ fun AppNavigation() {
 
                     onNotificationClick = {
                         navController.navigate(MainRoutes.Notifications)
+                    },
+                    onMapClick = {
+                        navController.navigate(MainRoutes.Map)
                     }
+
                 )
             }
 
@@ -166,6 +171,14 @@ fun AppNavigation() {
             composable <MainRoutes.Notifications>{
                 NotificationsScreen(
                     onBack = {
+                        navController.popBackStack()
+                    }
+                )
+            }
+
+            composable<MainRoutes.Map>{
+                MapScreen(
+                    onBackClick = {
                         navController.popBackStack()
                     }
                 )

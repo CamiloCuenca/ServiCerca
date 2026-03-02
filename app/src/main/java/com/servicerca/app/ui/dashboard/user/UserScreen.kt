@@ -21,7 +21,8 @@ import com.servicerca.app.core.navigation.UserNavigation
 fun UserScreen(
     onLogout: () -> Unit,
     onCreateService: () -> Unit,
-    onNotificationClick: () -> Unit
+    onNotificationClick: () -> Unit,
+    onMapClick: () -> Unit
 ) {
 
     val navController = rememberNavController()
@@ -51,7 +52,7 @@ fun UserScreen(
                     title = title,
                     notificationCount = notificationCount ,
                     onLocationClick = {
-                        // TODO abrir mapa
+                        onMapClick()
                     },
                     onNotificationClick = {
                         onNotificationClick()
@@ -100,7 +101,8 @@ fun UserScreenPreview() {
     UserScreen(
         onLogout = {},
         onCreateService = {},
-        onNotificationClick = {}
+        onNotificationClick = {},
+        onMapClick = {}
     )
 }
 
