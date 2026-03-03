@@ -17,6 +17,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -133,15 +135,26 @@ fun DetailServiceScreen() {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     ReactionIconButton(
-                        icon = R.drawable.ic_thumb_up,
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Default.Favorite,
+                                contentDescription = null,
+                            )
+                        },
                         isSelected = isSelectedLike,
                         onClick = { isSelectedLike = !isSelectedLike }
                     )
                     ReactionIconButton(
-                        icon = R.drawable.ic_push_pin,
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Default.Bookmark,
+                                contentDescription = null,
+                            )
+                        },
                         isSelected = isSelectedPin,
                         onClick = { isSelectedPin = !isSelectedPin }
                     )
+
                 }
 
                 HorizontalDivider(
