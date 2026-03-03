@@ -196,5 +196,17 @@
     <string name="btn_virified_moderation_panel">Verificar</string>
     <string name="btn_decline_moderation_panel">Rechazar</string>
 
+    <!-- Details Verification Moderator Screen -->
+    <string name="details_verifications">Detalles de verificación</string>
+    <string name="pending_revision">PENDIENTE DE REVISIÓN</string>
+    <string name="label_revision">Ofecido por</string>
+    <string name="username_revision">Kevin Payanene</string>
+    <string name="qualification_user">4.9 (124)</string>
+    <string name="estimated_budget">$450 - $1200</string>
+    <string name="service_description">DESCRIPCIÓN DEL SERVICIO</string>
+    <string name="approve_publication">Aprobar publicación</string>
+    <string name="reject_publication">Rechazar publicación</string>
+
+
 
 </resources>

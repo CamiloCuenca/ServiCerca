@@ -138,7 +138,7 @@ fun getSampleReservations(): List<ReservationData> {
         ReservationData(
             title = "Plomería",
             time = "10:00 AM",
-            icon = R.drawable.ic_edit
+            icon = R.drawable.ic_star
         ),
         ReservationData(
             title = "Electricista",

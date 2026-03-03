@@ -7,7 +7,10 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.servicerca.app.ui.dashboard.moderador.DetailsVerificationModeratorPreview
+import com.servicerca.app.ui.dashboard.moderador.DetailsVerificationModeratorScreen
 import com.servicerca.app.ui.dashboard.moderador.ModeratorPanelScreen
+import com.servicerca.app.ui.profile.DeleteProfileScreen
 
 @Composable
 fun ModeratorNavigation(
@@ -22,12 +25,21 @@ fun ModeratorNavigation(
 
         composable<DashboardRoutes.HomeModerator> {
             ModeratorPanelScreen(
+                navController = navController,
                 onBack = { navController.popBackStack() }
             )
+        }
+        composable("detailsServicesModerator") {
+            DetailsVerificationModeratorScreen(onBack = { navController.popBackStack() })
+
         }
 
         composable<DashboardRoutes.ProfileModerator> {
             // Pantalla perfil moderador
+        }
+
+        composable<DashboardRoutes.Historial> {
+            // Pantalla historial
         }
 
         composable<DashboardRoutes.Historial> {
