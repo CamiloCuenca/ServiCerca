@@ -41,6 +41,7 @@ fun ModeratorScreen(
     val showBT = currentRoute != "deleteProfile"
     val showBT2 = currentRoute != "updatePassword"
     val showBT3 = currentRoute != "notifications"
+    val showModerator = currentRoute != "detailsServicesModerator"
 
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -49,7 +50,7 @@ fun ModeratorScreen(
 
     Scaffold(
         topBar = {
-            if (showBars && showtop && showBT && showBT2 && showBT3) {
+            if (showBars && showtop && showBT && showBT2 && showBT3 && showModerator) {
                 AppTopAppBarModerator(
                     title = title,
                     notificationCount = notificationCount,
@@ -64,7 +65,7 @@ fun ModeratorScreen(
             }
         },
         bottomBar = {
-            if (showBars && showtop && showBT && showBT2 && showBT3) {
+            if (showBars && showtop && showBT && showBT2 && showBT3 && showModerator) {
                 BottomNavigationBarModerator (
                     navController = navController,
                     titleTopBar = { title = it }

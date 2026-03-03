@@ -45,7 +45,8 @@ fun CardModeratorPanelScreen (
     @DrawableRes imageRes: Int,
     type: String,
     tittle: String,
-    description: String
+    description: String,
+    onVerifyClick: () -> Unit
 ){
     ElevatedCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
@@ -114,7 +115,7 @@ fun CardModeratorPanelScreen (
             ) {
                 ButtonIcon(
                     text = stringResource(R.string.btn_virified_moderation_panel),
-                    onClick = { },
+                    onClick = onVerifyClick,
                     icon = {
                         Icon(
                             imageVector = Icons.Default.CheckCircleOutline, // Icono de Material
@@ -147,8 +148,9 @@ fun CardModeratorPanelScreen (
 fun CardModeratorPanelPreview(){
     CardModeratorPanelScreen(
         imageRes = R.drawable.electrician,
-        type = stringResource(R.string.type_service_moderation_panel),
-        tittle = stringResource(R.string.title_service_moderation_panel),
-        description = stringResource(R.string.description_service_moderation_panel)
+        type = "Tipo",
+        tittle = "Título",
+        description = "Descripción",
+        onVerifyClick = {}
     )
 }

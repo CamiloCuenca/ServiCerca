@@ -22,13 +22,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.servicerca.app.R
 import com.servicerca.app.core.components.card.CardModeratorPanelScreen
 import com.servicerca.app.core.components.navigation.TabItemApp
 import com.servicerca.app.ui.reservation.ReservationTabRow
 
 @Composable
-fun ModeratorPanelScreen (onBack: () -> Unit) {
+fun ModeratorPanelScreen (navController: NavHostController,
+                          onBack: () -> Unit) {
 
     var selectedTab by remember { mutableStateOf(0) }
 
@@ -51,19 +54,28 @@ fun ModeratorPanelScreen (onBack: () -> Unit) {
                 imageRes = R.drawable.electrician,
                 type = stringResource(R.string.type_service_moderation_panel),
                 tittle = stringResource(R.string.title_service_moderation_panel),
-                description = stringResource(R.string.description_service_moderation_panel)
+                description = stringResource(R.string.description_service_moderation_panel),
+                onVerifyClick = {
+                    navController.navigate("detailsServicesModerator")
+                }
             )
             CardModeratorPanelScreen(
                 imageRes = R.drawable.cleaner,
                 type = stringResource(R.string.type_service_moderation_panel2),
                 tittle = stringResource(R.string.title_service_moderation_panel2),
-                description = stringResource(R.string.description_service_moderation_panel2)
+                description = stringResource(R.string.description_service_moderation_panel2),
+                onVerifyClick = {
+                    navController.navigate("detailsServicesModerator")
+                }
             )
             CardModeratorPanelScreen(
                 imageRes = R.drawable.plumber2,
                 type = stringResource(R.string.type_service_moderation_panel3),
                 tittle = stringResource(R.string.title_service_moderation_panel3),
-                description = stringResource(R.string.description_service_moderation_panel3)
+                description = stringResource(R.string.description_service_moderation_panel3),
+                onVerifyClick = {
+                    navController.navigate("detailsServicesModerator")
+                }
             )
         }
 
@@ -107,8 +119,11 @@ fun ServiceTabRow(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
-fun ModeratorPanelScreenPreview(){
-    ModeratorPanelScreen(onBack = {})
+fun ModeratorPanelScreenPreview() {
+    ModeratorPanelScreen(
+        navController = rememberNavController(),
+        onBack = {}
+    )
 }
