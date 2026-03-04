@@ -17,6 +17,8 @@ import com.servicerca.app.ui.auth.login.Reset.ResetPassword
 import com.servicerca.app.ui.auth.register.VerifyEmailScreen
 import com.servicerca.app.ui.dashboard.moderador.ModeratorScreen
 import com.servicerca.app.ui.notifications.NotificationsScreen
+import com.servicerca.app.ui.reservation.ReservationScreen
+import com.servicerca.app.ui.reservation.details.DetailsReservationScreen
 import com.servicerca.app.ui.services.create.CreateServiceScreen
 
 @Composable
@@ -182,6 +184,9 @@ fun AppNavigation() {
                     }
                 )
             }
+
+
+
 
 
 

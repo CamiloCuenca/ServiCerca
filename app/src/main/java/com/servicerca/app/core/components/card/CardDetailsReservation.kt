@@ -21,7 +21,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -36,6 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.servicerca.app.R
+import com.servicerca.app.core.components.tag.CategoryTag
 
 @Composable
 fun CardDetailsReservation(
@@ -97,14 +97,16 @@ fun CardDetailsReservation(
                         text = serviceRequestedLabelFinal,
                         style = MaterialTheme.typography.labelLarge,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF00E5FF),
+                        color = MaterialTheme.colorScheme.onSurface,
                         letterSpacing = 1.sp
                     )
 
-                    StatusTag(
+
+
+                    CategoryTag(
                         text = statusTextFinal,
-                        containerColor = statusContainerColor,
-                        contentColor = statusContentColor
+                        color =statusContainerColor,
+                        colorText = statusContentColor
                     )
                 }
 
@@ -112,13 +114,13 @@ fun CardDetailsReservation(
                     text = serviceTitleFinal,
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF004D40)
+                    color = MaterialTheme.colorScheme.onSurface
                 )
 
                 HorizontalDivider(
                     modifier = Modifier.padding(vertical = 8.dp),
                     thickness = 1.dp,
-                    color = Color(0xFFF2F4F7)
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)
                 )
 
                 Row(
@@ -141,7 +143,7 @@ fun CardDetailsReservation(
                             text = professionalNameFinal,
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFF101828)
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                         Row(
                             verticalAlignment = Alignment.CenterVertically
@@ -149,24 +151,24 @@ fun CardDetailsReservation(
                             Text(
                                 text = professionalBadgeTextFinal,
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = Color(0xFF667085)
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                             Text(
                                 text = " • ",
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = Color(0xFF667085)
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_star),
                                 contentDescription = null,
-                                tint = Color(0xFF667085),
+                                tint = MaterialTheme.colorScheme.onSurface,
                                 modifier = Modifier.size(16.dp)
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
                                 text = ratingFinal,
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = Color(0xFF667085)
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     }
@@ -177,31 +179,9 @@ fun CardDetailsReservation(
 }
 
 @Composable
-private fun StatusTag(
-    text: String,
-    containerColor: Color,
-    contentColor: Color,
-    modifier: Modifier = Modifier
-) {
-    Surface(
-        color = containerColor,
-        shape = RoundedCornerShape(16.dp),
-        modifier = modifier
-    ) {
-        Text(
-            text = text,
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
-            style = MaterialTheme.typography.labelLarge,
-            fontWeight = FontWeight.Medium,
-            color = contentColor
-        )
-    }
-}
-
-@Composable
 @Preview(showBackground = true)
 fun CardDetailsReservationPreview() {
-    Box(modifier = Modifier.background(Color(0xFFF9FAFB))) {
+    Box(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
         CardDetailsReservation()
     }
 }

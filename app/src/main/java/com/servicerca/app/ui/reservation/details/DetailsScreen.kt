@@ -1,17 +1,87 @@
 package com.servicerca.app.ui.reservation.details
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.servicerca.app.R
+import com.servicerca.app.core.components.Map.MapBox
+import com.servicerca.app.core.components.button.DeleteButton
+import com.servicerca.app.core.components.button.PrimaryButton
 import com.servicerca.app.core.components.card.CardDetailsReservation
 
 @Composable
-fun DetailsReservationScreen(){
+fun DetailsReservationScreen(
+    onBackClick: () -> Unit = {},
+) {
 
-    Column() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp)
+            .verticalScroll(rememberScrollState())
+            .background(MaterialTheme.colorScheme.background)
+
+    ) {
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // 🔹 Top Bar
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 20.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = onBackClick) {
+                Icon(
+                    imageVector = Icons.Filled.ArrowBack,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurface
+                )
+            }
+
+            Text(
+                text = "Detalles de la Reserva",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
+
         CardDetailsReservation(
             serviceRequestedLabel = stringResource(R.string.reservation_servicio_solicitado),
             statusText = stringResource(R.string.reservation_status_confirmed),
@@ -21,16 +91,165 @@ fun DetailsReservationScreen(){
             professionalName = "Kavin Payanene",
             professionalBadgeText = stringResource(R.string.reservation_profesional_certificado),
             rating = "4.9"
-
         )
-    }
 
+        Spacer(modifier = Modifier.height(28.dp))
+
+        // 🔹 SECTION TITLE
+        Text(
+            text = "INFORMACIÓN",
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.primary,
+            letterSpacing = 1.sp
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        ElevatedCard(
+            shape = RoundedCornerShape(24.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+            colors = CardDefaults.elevatedCardColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            ),
+        ) {
+            Column(modifier = Modifier.padding(20.dp)) {
+
+                InfoItem(
+                    icon = Icons.Default.CalendarMonth,
+                    label = "Fecha y hora",
+                    value = "Lunes, 24 de Julio - 10:00 AM"
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                InfoItem(
+                    icon = Icons.Default.LocationOn,
+                    label = "Ubicación",
+                    value = "Av. Principal 123, Ciudad Central"
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                MapBox(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(180.dp)
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                EstimatedCostRow(
+                    label = "Costo Estimado",
+                    value = "$45.00"
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        PrimaryButton( // TODO @CamiloCuenca Añadir el icono de chat
+            text = "Chatear con el Profesional",
+            onClick = {}
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        DeleteButton(
+            text = "Cancelar Reserva",
+            onClick = {},
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurface
+                )
+            }
+        )
+
+        Spacer(modifier = Modifier.height(32.dp))
+    }
 }
 
 
 @Composable
+fun InfoItem(
+    icon: ImageVector,
+    label: String,
+    value: String
+) {
+    Row(verticalAlignment = Alignment.CenterVertically,
+
+        modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surface)) {
+
+        Surface(
+            modifier = Modifier.size(48.dp),
+            shape = RoundedCornerShape(14.dp),
+            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.width(16.dp))
+
+        Column {
+            Text(
+                text = label.uppercase(),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                text = value,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Medium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
+    }
+}
+
+@Composable
+fun EstimatedCostRow(label: String, value: String) {
+    Surface(
+        shape = RoundedCornerShape(24.dp),
+        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.08f),
+        border = BorderStroke(
+            1.dp,
+            MaterialTheme.colorScheme.primary.copy(alpha = 0.25f)
+        )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 14.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+            Text(
+                text = label,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+
+            Text(
+                text = value,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
+        }
+    }
+}
+
+@Composable
 @Preview
-fun DetailsReservationScreenPreview(){
+fun DetailsReservationScreenPreview() {
     DetailsReservationScreen()
 
 }
