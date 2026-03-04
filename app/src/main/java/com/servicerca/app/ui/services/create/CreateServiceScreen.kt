@@ -106,7 +106,7 @@ fun CreateServiceScreen(
                         textAlign = TextAlign.Center,
                         modifier = Modifier
                             .align(Alignment.Center)
-                            .padding(bottom = 15.dp)
+
                     )
                 }
                 Spacer(modifier = Modifier.height(40.dp))
