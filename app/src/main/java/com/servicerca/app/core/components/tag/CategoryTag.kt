@@ -16,17 +16,19 @@ import com.servicerca.app.domain.model.Categories
 @Composable
 fun CategoryTag(
     text: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    color: Color = Color(0xFFF1F3F5),
+    colorText: Color = Color.Gray
 ) {
     Surface(
-        color = Color(0xFFF1F3F5),
+        color = color,
         shape = RoundedCornerShape(8.dp),
         modifier = modifier
     ) {
         Text(
             text = text,
             fontSize = 12.sp,
-            color = Color.Gray,
+            color = colorText,
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
         )
     }
