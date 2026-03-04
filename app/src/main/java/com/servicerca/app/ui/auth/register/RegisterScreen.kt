@@ -1,5 +1,6 @@
 package com.servicerca.app.ui.auth.register
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -67,10 +68,9 @@ fun RegisterScreen(
 
     ) {
 
-
     var expanded by remember { mutableStateOf(false) }
     val opciones = listOf("Ciudad 1", "Ciudad 2", "Ciudad 3")
-    var selectedOption by remember { mutableStateOf(opciones[0]) }
+    var selectedOption by remember { mutableStateOf<String?>(null) } // null = nada seleccionado
     val snackbarHostState = remember { SnackbarHostState() }
     val registerResult by viewModel.registerResult.collectAsState()
 
@@ -233,7 +233,7 @@ fun RegisterScreen(
             ) {
 
                 TextField(
-                    value = selectedOption,
+                    value = selectedOption ?: "",
                     onValueChange = {},
                     readOnly = true,
                     label = { Text("Categoría") },
@@ -242,32 +242,32 @@ fun RegisterScreen(
                     },
                     shape = RoundedCornerShape(16.dp),
                     colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color(0xFFF8F8F8),
-                        unfocusedContainerColor = Color(0xFFF0F0F0),
-                        focusedIndicatorColor = Color(0xFF6C63FF),
+                        focusedContainerColor = MaterialTheme.colorScheme.background,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.background,
+                        focusedIndicatorColor = Color.Transparent,  // ocultar el borde inferior
                         unfocusedIndicatorColor = Color.Transparent
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)     )
+                        .border(
+                            width = 2.dp,
+                            color = if (expanded || selectedOption != null) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),                            shape = RoundedCornerShape(16.dp)
+                        )
+                        .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+                )
 
                 ExposedDropdownMenu(
                     expanded = expanded,
                     onDismissRequest = { expanded = false },
-                    containerColor = Color.White,
+                    containerColor = MaterialTheme.colorScheme.background,
                     shadowElevation = 10.dp,
                     shape = RoundedCornerShape(16.dp)
                 ) {
                     opciones.forEach { option ->
                         DropdownMenuItem(
-                            text = {
-                                Text(
-                                    option,
-                                    fontWeight = FontWeight.Medium
-                                )
-                            },
+                            text = { Text(option, fontWeight = FontWeight.Medium) },
                             onClick = {
-                                selectedOption = option
+                                selectedOption = option  // guarda la selección
                                 expanded = false
                             }
                         )
