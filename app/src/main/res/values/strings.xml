@@ -208,6 +208,16 @@
     <string name="approve_publication">Aprobar publicación</string>
     <string name="reject_publication">Rechazar publicación</string>
 
-
+    <!-- Reject Reason Screen -->
+    <string name="reject_reason">Motivo del rechazo</string>
+    <string name="question_reject_reason">¿Por qué se rechazó la publicación?</string>
+    <string name="message_reject_reason">Por favor, proporciona una explicación detallada sobre el motivo del
+        rechazo para informar al proveedor. Esto ayudará a mejorar la calidad de los servicios en ServiCerca.</string>
+    <string name="description_reject_reason">Descripción detallada</string>
+    <string name="example_reject_reason">Ej: La imagen de perfil no cumple con los requisitos
+        mínimos o la descripción contiene lenguaje inapropiado...</string>
+    <string name="option1_reject_reason">Imagen inapropiada</string>
+    <string name="option2_reject_reason">Descripción incompleta</string>
+    <string name="option3_reject_reason">Spam</string>
 
 </resources>
