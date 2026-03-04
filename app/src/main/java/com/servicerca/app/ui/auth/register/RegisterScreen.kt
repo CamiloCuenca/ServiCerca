@@ -1,6 +1,5 @@
 package com.servicerca.app.ui.auth.register
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,15 +9,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuAnchorType
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -27,21 +21,16 @@ import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
@@ -51,10 +40,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.servicerca.app.R
 import com.servicerca.app.core.components.button.PrimaryButton
 import com.servicerca.app.core.components.button.SocialButton
+import com.servicerca.app.core.components.input.AppExposedDropdownMenu
 import com.servicerca.app.core.components.input.AppPasswordField
 import com.servicerca.app.core.components.input.AppTextField
 import com.servicerca.app.core.utils.RequestResult
-import com.servicerca.app.ui.auth.login.LoginViewModel
 import kotlinx.coroutines.delay
 
 
@@ -68,14 +57,9 @@ fun RegisterScreen(
 
     ) {
 
-    var expanded by remember { mutableStateOf(false) }
-    val opciones = listOf("Ciudad 1", "Ciudad 2", "Ciudad 3")
-    var selectedOption by remember { mutableStateOf<String?>(null) } // null = nada seleccionado
+    val opciones = listOf("Hogar", "Tecnología", "Mecánica", "Salud", "Belleza")
     val snackbarHostState = remember { SnackbarHostState() }
     val registerResult by viewModel.registerResult.collectAsState()
-
-
-
 
 
     // Efecto para mostrar el snackbar cuando hay resultado
@@ -98,9 +82,6 @@ fun RegisterScreen(
             viewModel.resetLoginResult()
         }
     }
-
-
-
 
 
     Scaffold(
@@ -227,53 +208,13 @@ fun RegisterScreen(
 
             }
 
-            ExposedDropdownMenuBox(
-                expanded = expanded,
-                onExpandedChange = { expanded = !expanded }
-            ) {
-
-                TextField(
-                    value = selectedOption ?: "",
-                    onValueChange = {},
-                    readOnly = true,
-                    label = { Text("Categoría") },
-                    trailingIcon = {
-                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-                    },
-                    shape = RoundedCornerShape(16.dp),
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = MaterialTheme.colorScheme.background,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.background,
-                        focusedIndicatorColor = Color.Transparent,  // ocultar el borde inferior
-                        unfocusedIndicatorColor = Color.Transparent
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .border(
-                            width = 2.dp,
-                            color = if (expanded || selectedOption != null) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),                            shape = RoundedCornerShape(16.dp)
-                        )
-                        .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
-                )
-
-                ExposedDropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false },
-                    containerColor = MaterialTheme.colorScheme.background,
-                    shadowElevation = 10.dp,
-                    shape = RoundedCornerShape(16.dp)
-                ) {
-                    opciones.forEach { option ->
-                        DropdownMenuItem(
-                            text = { Text(option, fontWeight = FontWeight.Medium) },
-                            onClick = {
-                                selectedOption = option  // guarda la selección
-                                expanded = false
-                            }
-                        )
-                    }
-                }
-            }
+            AppExposedDropdownMenu(
+                label = "Categoría",
+                options = opciones,
+                selectedOption = viewModel.category.value,
+                onOptionSelected = { viewModel.category.onChange(it) },
+                errorMessage = viewModel.category.error
+            )
 
             AppTextField(
                 value = viewModel.address.value,
