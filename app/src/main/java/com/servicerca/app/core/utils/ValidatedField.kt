@@ -35,4 +35,8 @@ class ValidatedField<T>(
         value = initialValue
         showError = false
     }
+
+    fun touch() {
+        showError = true
+    }
 }

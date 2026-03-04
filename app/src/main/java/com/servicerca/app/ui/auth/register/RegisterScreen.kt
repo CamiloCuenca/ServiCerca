@@ -22,10 +22,15 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,7 +52,9 @@ import com.servicerca.app.core.components.button.PrimaryButton
 import com.servicerca.app.core.components.button.SocialButton
 import com.servicerca.app.core.components.input.AppPasswordField
 import com.servicerca.app.core.components.input.AppTextField
+import com.servicerca.app.core.utils.RequestResult
 import com.servicerca.app.ui.auth.login.LoginViewModel
+import kotlinx.coroutines.delay
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,21 +65,61 @@ fun RegisterScreen(
     onVerifyEmail: () -> Unit,
     viewModel: RegisterViewModel = viewModel(),
 
-
-
-
     ) {
 
 
     var expanded by remember { mutableStateOf(false) }
     val opciones = listOf("Ciudad 1", "Ciudad 2", "Ciudad 3")
-
     var selectedOption by remember { mutableStateOf(opciones[0]) }
+    val snackbarHostState = remember { SnackbarHostState() }
+    val registerResult by viewModel.registerResult.collectAsState()
+
+
+
+
+
+    // Efecto para mostrar el snackbar cuando hay resultado
+    LaunchedEffect(registerResult) {
+        registerResult?.let { result ->
+            // Obtener el mensaje según el resultado
+            val message = when (result) {
+                is RequestResult.Success -> result.message
+                is RequestResult.Failure -> result.errorMessage
+            }
+            snackbarHostState.showSnackbar(message) // Mostrar el snackbar con el mensaje
+
+            // Navegar a la pantalla de usuarios si el login fue exitoso. Se puede agregar un delay para que el usuario alcance a ver el mensaje
+            if (result is RequestResult.Success) {
+                delay(1000) // 2 segundos
+                onNavigateToLogin()
+            }
+
+            // Reseta el estado del loginResult en el ViewModel después de mostrar el mensaje
+            viewModel.resetLoginResult()
+        }
+    }
+
+
 
 
 
     Scaffold(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
+
+        snackbarHost = {
+            // Mostrar el SnackbarHost para gestionar los snackbars. Un SnackbarHost es un contenedor que muestra los snackbars.
+            SnackbarHost(snackbarHostState) { data ->
+                val isError = registerResult is RequestResult.Failure
+                // Mostrar el Snackbar con el estilo adecuado según si es error o éxito
+                Snackbar(
+                    containerColor = if (isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                    contentColor = Color.White
+                ) {
+                    Text(data.visuals.message)
+                }
+            }
+        }
+
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -259,7 +306,7 @@ fun RegisterScreen(
             // Botón principal
             PrimaryButton(
                 text = stringResource(R.string.registrarse),
-                onClick = { onVerifyEmail() }
+                onClick = { viewModel.register() }  // ✅ Primero registra
             )
 
             // Botones sociales
