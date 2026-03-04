@@ -186,11 +186,13 @@ fun LoginScreen(
                     SocialButton(
                         text = "Google",
                         onClick = {},
+                        iconRes = R.drawable.ic_google,
                         modifier = Modifier.weight(1f)
                     )
                     SocialButton(
                         text = "Facebook",
                         onClick = {},
+                        iconRes = R.drawable.ic_facebook,
                         modifier = Modifier.weight(1f)
                     )
                 }

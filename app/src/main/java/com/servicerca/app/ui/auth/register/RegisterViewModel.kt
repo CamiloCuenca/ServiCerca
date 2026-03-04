@@ -2,9 +2,25 @@ package com.servicerca.app.ui.auth.register
 
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
+import com.servicerca.app.core.utils.RequestResult
 import com.servicerca.app.core.utils.ValidatedField
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 
 class RegisterViewModel : ViewModel() {
+
+
+    private val _RegisterResult = MutableStateFlow<RequestResult?>(null)
+
+    val registerResult: StateFlow<RequestResult?> = _RegisterResult.asStateFlow()
+
+    fun resetLoginResult(){
+        _RegisterResult.value = null
+    }
+
 
     val email = ValidatedField("") { value ->
         when {
@@ -66,6 +82,44 @@ class RegisterViewModel : ViewModel() {
         }
     }
 
+    val category = ValidatedField("") { value ->
+        when {
+            value.isEmpty() -> "La categoría es obligatoria"
+            else -> null
+        }
+    }
+
+    fun register() {
+        // Forzar validación visual de todos los campos
+        name.touch()
+        SecondName.touch()
+        Lastname.touch()
+        SecondLastname.touch()
+        address.touch()
+        category.touch()
+        email.touch()
+        password.touch()
+        confirmPassword.touch()
+
+        if (!isFormValid) {
+            _RegisterResult.value = RequestResult.Failure("Por favor completa todos los campos")
+            return
+        }
+
+        if (password.value != confirmPassword.value) {
+            _RegisterResult.value = RequestResult.Failure("Las contraseñas no coinciden")
+            return
+        }
+
+        viewModelScope.launch {
+            try {
+                _RegisterResult.value = RequestResult.Success("Registro exitoso")
+            } catch (e: Exception) {
+                _RegisterResult.value = RequestResult.Failure("Error al registrarse: ${e.message}")
+            }
+        }
+    }
+
 
 
 
@@ -73,10 +127,18 @@ class RegisterViewModel : ViewModel() {
     val isFormValid: Boolean
         get() = email.isValid
                 && password.isValid
+                && confirmPassword.isValid
+                && name.isValid
+                && SecondName.isValid
+                && Lastname.isValid
+                && SecondLastname.isValid
+                && address.isValid
+                && category.isValid
 
     // Es útil para resetear el formulario después de un login exitoso
     fun resetForm() {
         email.reset()
         password.reset()
+        category.reset()
     }
 }
