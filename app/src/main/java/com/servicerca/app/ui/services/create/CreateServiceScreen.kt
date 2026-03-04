@@ -52,6 +52,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.servicerca.app.R
+import com.servicerca.app.core.components.Map.MapBox
 import com.servicerca.app.core.components.button.ButtonCreateService
 import com.servicerca.app.core.components.images.ImagesHorizontalScroller
 import com.servicerca.app.core.components.input.AppTextField
@@ -278,14 +279,10 @@ fun CreateServiceScreen(
                     }
                 }
 
-                Image(
-                    painter = painterResource(id = R.drawable.mapa_test),
-                    contentDescription = "Mapa de ubicación",
+                MapBox(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .size(220.dp)
-                        .shadow(4.dp, shape = RoundedCornerShape(16.dp))
-
+                        .height(200.dp)
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))

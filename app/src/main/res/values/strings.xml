@@ -166,12 +166,14 @@
     <string name="reservation_today_format">Hoy, %s</string>
     <string name="reservation_num_services_format">%d servicios</string>
     <string name="reservation_ver_detalle">Ver detalle</string>
-    <string name="reservation_status_confirmed">CONFIRMADO</string>
+    <string name="reservation_status_confirmed">Confirmado</string>
     <string name="reservation_status_pending">PENDIENTE</string>
     <string name="reservation_status_cancelled">CANCELADO</string>
     <string name="reservation_service_plumber">Plomería Residencial</string>
     <string name="reservation_service_electrician">Reparación Eléctrica</string>
     <string name="reservation_service_cleaning">Limpieza Profunda</string>
+    <string name="reservation_servicio_solicitado">SERVICIO SOLICITADO</string>
+    <string name="reservation_profesional_certificado">Profesional Certificado</string>
 
     <!-- Moderator Panel Screen -->
     <string name="type_service_moderation_panel">MANTENIMIENTO / HOGAR</string>
