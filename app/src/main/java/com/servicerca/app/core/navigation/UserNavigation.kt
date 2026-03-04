@@ -17,6 +17,7 @@ import com.servicerca.app.ui.profile.InsigniasScreen
 import com.servicerca.app.ui.profile.ProfileScreen
 import com.servicerca.app.ui.profile.UpdatePasswordScreen
 import com.servicerca.app.ui.reservation.ReservationScreen
+import com.servicerca.app.ui.reservation.details.DetailsReservationScreen
 import com.servicerca.app.ui.services.ListService.ListServiceScreen
 
 
@@ -76,8 +77,23 @@ fun UserNavigation(
         }
 
         composable<DashboardRoutes.Reservation> {
-            ReservationScreen()
+            ReservationScreen(
+                onResevationDetails = {
+                    navController.navigate(MainRoutes.ReservationDetail)
+                }
+            )
         }
+
+        composable<MainRoutes.ReservationDetail> {
+
+            DetailsReservationScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
+
+        }
+
 
         composable("insignias") {
             InsigniasScreen(onBack = { navController.popBackStack() })
