@@ -22,8 +22,22 @@ sealed class MainRoutes {
     @Serializable
     data object VerifyEmail : MainRoutes()
 
+
+    @Serializable
+    data object Reset : MainRoutes()
+
     @Serializable
     data object Perfil : MainRoutes()
+
+    @Serializable
+    data object Notifications : MainRoutes()
+
+    @Serializable
+    data object Map : MainRoutes()
+
+
+    @Serializable
+    data object ServiceList : MainRoutes()
 
 
 
@@ -37,3 +51,4 @@ sealed class MainRoutes {
 
 
 }
+

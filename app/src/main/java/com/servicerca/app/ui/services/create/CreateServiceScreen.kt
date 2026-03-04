@@ -24,6 +24,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
@@ -128,7 +129,7 @@ fun CreateServiceScreen(
                 AppTextField(
                     value = title,
                     onValueChange = {title = it},
-                    label = stringResource(R.string.title_service_label),
+                    label = stringResource(R.string.title_service_label)
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))
@@ -153,7 +154,8 @@ fun CreateServiceScreen(
                             focusedIndicatorColor = Color(0xFF6C63FF),
                             unfocusedIndicatorColor = Color.Transparent
                         ),
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth()                        .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+
                     )
 
                     ExposedDropdownMenu(
@@ -186,9 +188,9 @@ fun CreateServiceScreen(
                     AppTextField(
                         value = description,
                         onValueChange = {description = it},
-                        label = stringResource(R.string.detailed_description_label),
                         modifier = Modifier
-                            .height(150.dp)
+                            .height(150.dp),
+                        label = stringResource(R.string.detailed_description_label),
                     )
 
                 }
@@ -203,17 +205,17 @@ fun CreateServiceScreen(
                     AppTextField(
                         value = minValue,
                         onValueChange = {minValue = it},
-                        label = "Precio Min",
                         modifier = Modifier
-                            .weight(1f)
+                            .weight(1f),
+                        label = "Precio Min",
                     )
 
                     AppTextField(
                         value = maxValue,
                         onValueChange = {maxValue = it},
-                        label = "Precio Max",
                         modifier = Modifier
-                            .weight(1f)
+                            .weight(1f),
+                        label = "Precio Max",
                     )
 
                 }

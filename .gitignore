@@ -1,6 +1,9 @@
 *.iml
 .gradle
+/app/src/main/res/values/mapbox_access_token.xml
 /.idea
+/.idea/deploymentTargetSelector.xml
+/.idea/material_theme_project_new.xml
 /local.properties
 /.idea/caches
 /.idea/libraries

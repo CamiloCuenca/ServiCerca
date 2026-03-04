@@ -47,13 +47,13 @@ fun HomeUserScreen() {
     ) {
 
         //
-        SearchTextField(
+        /*SearchTextField(
             query = query,
             onQueryChange = { query = it },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 12.dp)
-        )
+        )*/
 
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),

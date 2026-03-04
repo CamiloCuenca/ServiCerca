@@ -14,6 +14,9 @@ runtime = "1.10.2"
 material3 = "1.4.0"
 runtimeVersion = "1.10.3"
 foundation = "1.10.3"
+lifecycleViewmodelCompose = "2.10.0"
+mapsCompose = "11.11.0"
+
 
 
 [libraries]
@@ -38,6 +41,10 @@ androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime
 androidx-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
 androidx-runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = "runtimeVersion" }
 androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
+androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
+maps-android = { module = "com.mapbox.maps:android", version.ref = "mapsCompose" }
+maps-compose = { module = "com.mapbox.extension:maps-compose", version.ref = "mapsCompose" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

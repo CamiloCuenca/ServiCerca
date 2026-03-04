@@ -82,7 +82,6 @@ fun InsigniasScreen(onBack: () -> Unit) {
                             textAlign = TextAlign.Center,
                             modifier = Modifier
                                 .align(Alignment.Center)
-                                .padding(bottom = 15.dp)
                         )
                     }
 

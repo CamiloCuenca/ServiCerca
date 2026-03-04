@@ -3,6 +3,7 @@ package com.servicerca.app.core.components.progressBar
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
@@ -16,7 +17,7 @@ import com.servicerca.app.core.components.card.CardLevel
 fun XpBar(
     progress: Float, // Valor entre 0.0f y 1.0f
     modifier: Modifier = Modifier,
-    colorXp: Color = Color.Cyan, // Verde XP
+    colorXp: Color = MaterialTheme.colorScheme.primary, // Verde XP
     colorBackground: Color = Color.LightGray
 ) {
     Canvas(

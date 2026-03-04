@@ -7,12 +7,16 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.servicerca.app.ui.Map.MapScreen
 import com.servicerca.app.ui.auth.login.LoginScreen
 import com.servicerca.app.ui.auth.register.RegisterScreen
 import com.servicerca.app.ui.dashboard.user.UserScreen
 import com.servicerca.app.ui.Welcome.WelcomeScreen
 import com.servicerca.app.ui.auth.login.RecoverPasswordScreen
+import com.servicerca.app.ui.auth.login.ResetPassword
 import com.servicerca.app.ui.auth.register.VerifyEmailScreen
+import com.servicerca.app.ui.dashboard.moderador.ModeratorScreen
+import com.servicerca.app.ui.notifications.NotificationsScreen
 import com.servicerca.app.ui.profile.ProfileScreen
 import com.servicerca.app.ui.services.create.CreateServiceScreen
 
@@ -53,9 +57,15 @@ fun AppNavigation() {
                     },
                     onRecoverPassword ={
                         navController.navigate(MainRoutes.RecoverPassword)
+                    },
+                    onModeratorPanel = {
+                        navController.navigate(DashboardRoutes.HomeModerator)
                     }
                 )
             }
+
+
+
 
             composable<MainRoutes.Register> {
                 RegisterScreen( onNavigateToLogin = {
@@ -70,6 +80,7 @@ fun AppNavigation() {
                 )
             }
 
+            // --- Usuario (Dashboard) ---
             composable<DashboardRoutes.HomeUser> {
                 UserScreen(
                     onLogout = {
@@ -80,6 +91,31 @@ fun AppNavigation() {
                     },
                     onCreateService ={
                         navController.navigate(MainRoutes.CreateService)
+                    },
+
+                    onNotificationClick = {
+                        navController.navigate(MainRoutes.Notifications)
+                    },
+                    onMapClick = {
+                        navController.navigate(MainRoutes.Map)
+                    }
+
+                )
+            }
+
+            // --- Moderador: registrar la pantalla principal del moderador en el NavHost raíz ---
+            composable<DashboardRoutes.HomeModerator> {
+                ModeratorScreen(
+                    onLogout = {
+                        navController.navigate(MainRoutes.Login) {
+                            popUpTo(MainRoutes.Login) { inclusive = true }
+                        }
+                    },
+                    onCreateService = {
+                        navController.navigate(MainRoutes.CreateService)
+                    },
+                    onNotificationClick = {
+                        navController.navigate(MainRoutes.Notifications)
                     }
                 )
             }
@@ -90,6 +126,24 @@ fun AppNavigation() {
                         navController.navigate(MainRoutes.Login)
                     }
                     , onBackClick = {
+                        navController.popBackStack()
+                    },
+                    onNavigateToResetPassword = {
+                        navController.navigate(MainRoutes.Reset)
+
+
+                    }
+                )
+            }
+
+            composable<MainRoutes.Reset> {
+                ResetPassword(
+                    onNavigateToLogin = {
+                        navController.navigate(MainRoutes.Login) {
+                            popUpTo(MainRoutes.Login) { inclusive = true }
+                        }
+                    },
+                    onBackClick = {
                         navController.popBackStack()
                     }
                 )
@@ -114,19 +168,23 @@ fun AppNavigation() {
                 )
             }
 
-            composable<MainRoutes.Perfil> {
-                ProfileScreen(
-                    onInsignias = {
-                        // cuando Profile quiere abrir Insignias, debe usar la navegación interna de usuario (tabs) onEditProflie
-                        navController.navigate(DashboardRoutes.HomeUser)
-                    },
-                    onEditProflie = {
-                        // cuando Profile quiere abrir Insignias, debe usar la navegación interna de usuario (tabs)
-                        navController.navigate(DashboardRoutes.HomeUser)
+            composable <MainRoutes.Notifications>{
+                NotificationsScreen(
+                    onBack = {
+                        navController.popBackStack()
                     }
                 )
-
             }
+
+            composable<MainRoutes.Map>{
+                MapScreen(
+                    onBackClick = {
+                        navController.popBackStack()
+                    }
+                )
+            }
+
+
 
 
     } }}
