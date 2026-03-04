@@ -13,7 +13,7 @@ import com.servicerca.app.ui.auth.register.RegisterScreen
 import com.servicerca.app.ui.dashboard.user.UserScreen
 import com.servicerca.app.ui.Welcome.WelcomeScreen
 import com.servicerca.app.ui.auth.login.Recover.RecoverPasswordScreen
-import com.servicerca.app.ui.auth.login.ResetPassword
+import com.servicerca.app.ui.auth.login.Reset.ResetPassword
 import com.servicerca.app.ui.auth.register.VerifyEmailScreen
 import com.servicerca.app.ui.dashboard.moderador.ModeratorScreen
 import com.servicerca.app.ui.notifications.NotificationsScreen
