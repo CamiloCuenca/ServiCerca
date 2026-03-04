@@ -88,6 +88,52 @@
     <string name="user_type">Cliente</string>
     <string name="btn_edit_profile">Guardar cambios</string>
 
+    <!-- Delete Profile Screen -->
+    <string name="delete_profile">Eliminar cuenta</string>
+    <string name="important_notice">AVISO IMPORTANTE</string>
+    <string name="question_confirm_delete_profile">¿Estás seguro que quieres
+        eliminar tu cuenta?</string>
+    <string name="information_delete_prefil">Esta acción es irreversible. Se perderán
+        todos tus servicios publicados, insginias obtenidas y el historial
+        completo de tu actividad en ServiCerca.</string>
+    <string name="data_question">¿Qué pasará con tus datos?</string>
+    <string name="option1">Perfil público eliminado.</string>
+    <string name="option2">Mensajes borrados permanentemente.</string>
+    <string name="option3">Suscripciones canceladas</string>
+    <string name="no_delete_account">Mantener mi cuenta</string>
+    <string name="delete_account_permanently">Eliminar cuenta definitivamente.</string>
+
+    <!-- Update Password Screen -->
+    <string name="change_password">Cambiar contraseña</string>
+    <string name="message_change_password">Ingrese tu contraseña actual y la nueva
+        para actualizar tu seguridad.</string>
+    <string name="current_password">Contraseña actual</string>
+    <string name="new_password">Nueva contraseña</string>
+    <string name="confirm_new_password">Confirmar nueva contraseña</string>
+    <string name="btn_update_password">Actualizar contraseña</string>
+
+    <!-- Notifications Screen -->
+    <string name="notifications">Notificaciones</string>
+    <string name="tittle1">Nueva solicitud de servicio</string>
+    <string name="tittle2">Comentario recibido</string>
+    <string name="tittle3">Servicio verificado</string>
+    <string name="tittle4">Publicación rechazada</string>
+    <string name="tittle5">Nueva publicación</string>
+    <string name="content1">Haz recibido una nueva propuesta para el proyecto
+        \"Reparación Eléctrica\".</string>
+    <string name="content2">Federico Álvarez ha dejado una reseña de 5 estrellas
+        en tu perfil</string>
+    <string name="content3">Tu publicación \"Limpieza de Hogar Express\" ha sido
+        verificada con éxito.</string>
+    <string name="content4">La oferta "Clses de \"Yoga\" no cumple con los términos
+        de uso.</string>
+    <string name="content5">Se ha publicado un nuevo servicio de \"Jardinería\" cerca
+        de tu ubicación.</string>
+    <string name="date1">5 min</string>
+    <string name="date2">2 h</string>
+    <string name="date3">Ayer</string>
+    <string name="date4">Ayer</string>
+    <string name="date5">2 días</string>
 
     <!-- Search Screen -->
     <string name="search_title">Buscar</string>
@@ -103,4 +149,65 @@
     <string name="register_label_second_lastname">Segundo Apellido</string>
     <string name="title_create_service">Nuevo Servicio</string>
     <string name="title_message_list">Chats</string>
+
+    <!-- My Services Screen -->
+    <string name="my_services_title">Mis Servicios</string>
+    <string name="tab_active">Activos</string>
+    <string name="tab_pending">Pendientes</string>
+    <string name="tab_completed">Completados</string>
+    <string name="edit_button">Editar</string>
+    <string name="delete_button">Eliminar</string>
+    <string name="status_active">Activo</string>
+
+    <!-- Reservation Screen -->
+    <string name="reservation_tab_reserved">Reservé</string>
+    <string name="reservation_tab_offered">Ofrezco</string>
+    <string name="reservation_month_year">Mayo 2024</string>
+    <string name="reservation_today_format">Hoy, %s</string>
+    <string name="reservation_num_services_format">%d servicios</string>
+    <string name="reservation_ver_detalle">Ver detalle</string>
+    <string name="reservation_status_confirmed">CONFIRMADO</string>
+    <string name="reservation_status_pending">PENDIENTE</string>
+    <string name="reservation_status_cancelled">CANCELADO</string>
+    <string name="reservation_service_plumber">Plomería Residencial</string>
+    <string name="reservation_service_electrician">Reparación Eléctrica</string>
+    <string name="reservation_service_cleaning">Limpieza Profunda</string>
+
+    <!-- Moderator Panel Screen -->
+    <string name="type_service_moderation_panel">MANTENIMIENTO / HOGAR</string>
+    <string name="title_service_moderation_panel">Instalaciones Eléctricas Residenciales</string>
+    <string name="description_service_moderation_panel">Electricista especializado en instalaciones
+        eléctricas residenciales, realizando trabajos completos en casas y departamentos, reparación
+        de fallas, instalación de tableros, contactos y luminarias, así como mantenimiento preventivo
+        y correctivo. Ofrezco un servicio seguro, confiable y puntual, cumpliendo normas de seguridad
+        y garantizando calidad en cada trabajo.</string>
+    <string name="type_service_moderation_panel2">LIMPIEZA / SERVICIOS</string>
+    <string name="title_service_moderation_panel2">Limpieza Profunda de Departamentos</string>
+    <string name="description_service_moderation_panel2">Ofrezco servicio profesional de limpieza
+        profunda de departamentos, ideal para dejar cada espacio impecable y desinfectado. Realizo
+        limpieza detallada de baños, cocina, pisos, ventanas y superficies, eliminando grasa, polvo
+        y suciedad acumulada. Trabajo con responsabilidad, productos adecuados y atención al detalle
+        para garantizar un ambiente limpio, fresco y saludable.</string>
+    <string name="type_service_moderation_panel3">PLOMERÍA / URGENCIAS</string>
+    <string name="title_service_moderation_panel3">Reparación de Fugas Express</string>
+    <string name="description_service_moderation_panel3">Servicio de reparación de fugas express
+        para hogares y departamentos, atendiendo filtraciones en tuberías, llaves, baños y
+        conexiones de agua de forma rápida y eficiente. Detecto y soluciono el problema para evitar
+        daños mayores y desperdicio de agua, ofreciendo un trabajo confiable, puntual y con garantía.</string>
+    <string name="btn_virified_moderation_panel">Verificar</string>
+    <string name="btn_decline_moderation_panel">Rechazar</string>
+
+    <!-- Details Verification Moderator Screen -->
+    <string name="details_verifications">Detalles de verificación</string>
+    <string name="pending_revision">PENDIENTE DE REVISIÓN</string>
+    <string name="label_revision">Ofecido por</string>
+    <string name="username_revision">Kevin Payanene</string>
+    <string name="qualification_user">4.9 (124)</string>
+    <string name="estimated_budget">$450 - $1200</string>
+    <string name="service_description">DESCRIPCIÓN DEL SERVICIO</string>
+    <string name="approve_publication">Aprobar publicación</string>
+    <string name="reject_publication">Rechazar publicación</string>
+
+
+
 </resources>

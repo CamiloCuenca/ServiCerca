@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -31,6 +32,7 @@ import com.servicerca.app.R
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Handyman
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Card
@@ -45,22 +47,26 @@ import com.servicerca.app.core.components.button.PasswordButton
 import com.servicerca.app.core.components.button.PrimaryButton
 import com.servicerca.app.core.components.card.CardLevel
 import com.servicerca.app.core.components.card.CardStatistics
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.IconButton
+import com.servicerca.app.core.components.card.ManageServicesCard
 
 @Composable
 fun ProfileScreen(
     onInsignias : () -> Unit,
-    onEditProflie:() -> Unit
+    onEditProflie:() -> Unit,
+    onUpdatePassword: () -> Unit,
+    onDeleteProfile: () -> Unit,
+   onListService: () -> Unit,
 ){
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize()
-    ) { paddingValues ->
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 24.dp),
+                .padding(24.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
 
@@ -70,35 +76,35 @@ fun ProfileScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Box(
-                    contentAlignment = Alignment.BottomEnd, // El icono va en la esquina inferior derecha
-                    modifier = Modifier.size(150.dp)
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    // Imagen de perfil
-                    Card(
-                        shape = CircleShape,
-                        colors = CardDefaults.cardColors(
-                            Color.White
-                        ),
-                        modifier = Modifier
-                            .size(150.dp)
-                            .shadow(
-                                elevation = 20.dp,
+
+
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Box(
+                            contentAlignment = Alignment.BottomEnd,
+                            modifier = Modifier.size(150.dp)
+                        ) {
+                            Card(
                                 shape = CircleShape,
-                                ambientColor = Color.Cyan,
-                                spotColor = Color.Cyan
-                            )
-                    )
-                    {
-                        Image(painter = painterResource(id = R.drawable.logo_profile), contentDescription = null,
-                            modifier = Modifier
-                                .size(250.dp)
-                                .shadow(
-                                    elevation = 16.dp,
-                                    shape = CircleShape,
-                                    ambientColor = Color.Cyan,
-                                    spotColor = Color.Cyan
+                                colors = CardDefaults.cardColors(Color.White),
+                                modifier = Modifier
+                                    .size(150.dp)
+                                    .shadow(
+                                        elevation = 20.dp,
+                                        shape = CircleShape
+                                    )
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.logo_profile),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(150.dp)
                                 )
-                        )
+                            }
+                        }
                     }
                 }
             }
@@ -111,6 +117,7 @@ fun ProfileScreen(
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center,
+
                         modifier = Modifier.align(Alignment.Center)
                     )
                 }
@@ -125,7 +132,7 @@ fun ProfileScreen(
                     Icon(
                         imageVector = Icons.Filled.LocationOn,
                         contentDescription = "Ubicación",
-                        tint = Color.Cyan,
+                        tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(25.dp)
                     )
 
@@ -147,6 +154,10 @@ fun ProfileScreen(
                 CardLevel()
             }
 
+            ManageServicesCard(
+                onClick = {onListService()}
+            )
+
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -167,7 +178,7 @@ fun ProfileScreen(
                     Text(
                         text = stringResource(R.string.ver_todas),
                         style = MaterialTheme.typography.titleMedium,
-                        color = Color.Cyan,
+                        color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.clickable {onInsignias()}
                     )
                 }
@@ -326,7 +337,7 @@ fun ProfileScreen(
                 ) {
                     PasswordButton(
                         text = stringResource(R.string.edit_password),
-                        onClick = { /* acción */ },
+                        onClick = { onUpdatePassword() },
                         icon = {
                             Icon(
                                 imageVector = Icons.Default.Lock, // Icono de Material
@@ -345,7 +356,7 @@ fun ProfileScreen(
                 ) {
                     DeleteButton(
                         text = stringResource(R.string.delete_account),
-                        onClick = { /* acción */ },
+                        onClick = {onDeleteProfile() },
                         icon = {
                             Icon(
                                 imageVector = Icons.Default.Delete, // Icono de Material
@@ -357,7 +368,7 @@ fun ProfileScreen(
             }
         }
     }
-}
+
 
 
 @Preview(showBackground = true, showSystemUi = true)
@@ -365,6 +376,9 @@ fun ProfileScreen(
 fun ProfileScreenPreview() {
     ProfileScreen(
         onInsignias = {},
-        onEditProflie = {}
+        onEditProflie = {},
+        onUpdatePassword = {},
+        onDeleteProfile = {},
+        onListService = {}
     )
 }

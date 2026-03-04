@@ -13,7 +13,7 @@ val Error = Color(0xFFBA1A1A)             // Rojo Material
 // Contrapartes pensadas para modo oscuro
 val PrimaryDark = Color(0xFF00A3A3)       // versión más suave/oscura del cian
 val SecondaryDark = Color(0xFF4FB3B3)     // versión más clara del petróleo para contraste en oscuro
-val SurfaceDark = Color(0xFF042428)       // superficie oscura con matiz azulado
+val SurfaceDark = Color(0xFF002D30)       // superficie oscura con matiz azulado
 val BackgroundDark = Color(0xFF001F22)    // fondo muy oscuro con matiz teal
 val TextPrimaryDark = Color(0xFFF8FDFF)   // texto claro sobre fondos oscuros
 val ErrorDark = Color(0xFFBA1A1A)         // mantengo el mismo rojo para alertas

@@ -12,50 +12,95 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.servicerca.app.R
 import com.servicerca.app.core.components.button.PrimaryButton
 import com.servicerca.app.core.components.button.SocialButton
+import com.servicerca.app.core.components.input.AppExposedDropdownMenu
 import com.servicerca.app.core.components.input.AppPasswordField
 import com.servicerca.app.core.components.input.AppTextField
+import com.servicerca.app.core.utils.RequestResult
+import kotlinx.coroutines.delay
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreen(
     onNavigateToLogin: () -> Unit,
     onBackClick: () -> Unit,
-    onVerifyEmail: () -> Unit
-
-
+    onVerifyEmail: () -> Unit,
+    viewModel: RegisterViewModel = viewModel(),
 
     ) {
 
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
-    var name by remember { mutableStateOf("") }
+    val opciones = listOf("Hogar", "Tecnología", "Mecánica", "Salud", "Belleza")
+    val snackbarHostState = remember { SnackbarHostState() }
+    val registerResult by viewModel.registerResult.collectAsState()
+
+
+    // Efecto para mostrar el snackbar cuando hay resultado
+    LaunchedEffect(registerResult) {
+        registerResult?.let { result ->
+            // Obtener el mensaje según el resultado
+            val message = when (result) {
+                is RequestResult.Success -> result.message
+                is RequestResult.Failure -> result.errorMessage
+            }
+            snackbarHostState.showSnackbar(message) // Mostrar el snackbar con el mensaje
+
+            // Navegar a la pantalla de usuarios si el login fue exitoso. Se puede agregar un delay para que el usuario alcance a ver el mensaje
+            if (result is RequestResult.Success) {
+                delay(1000) // 2 segundos
+                onNavigateToLogin()
+            }
+
+            // Reseta el estado del loginResult en el ViewModel después de mostrar el mensaje
+            viewModel.resetLoginResult()
+        }
+    }
+
 
     Scaffold(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
+
+        snackbarHost = {
+            // Mostrar el SnackbarHost para gestionar los snackbars. Un SnackbarHost es un contenedor que muestra los snackbars.
+            SnackbarHost(snackbarHostState) { data ->
+                val isError = registerResult is RequestResult.Failure
+                // Mostrar el Snackbar con el estilo adecuado según si es error o éxito
+                Snackbar(
+                    containerColor = if (isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                    contentColor = Color.White
+                ) {
+                    Text(data.visuals.message)
+                }
+            }
+        }
+
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -104,52 +149,97 @@ fun RegisterScreen(
                 )
 
             // Nombres
-            AppTextField(
-                value = name,
-                onValueChange = { name = it },
-                label = stringResource(R.string.register_label_first_name),
-                placeholder = stringResource(R.string.register_placeholder_example_name)
-            )
-            AppTextField(
-                value = name,
-                onValueChange = { name = it },
-                label = stringResource(R.string.register_label_second_name),
-                placeholder = stringResource(R.string.register_placeholder_example_name)
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ){
+                Row(
+                modifier = Modifier.
+                padding(bottom = 20.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+
+                Column(modifier = Modifier
+                    .weight(1F)) {
+                AppTextField(
+                    value = viewModel.name.value,
+                    onValueChange = { viewModel.name.onChange(it) },
+                    label = stringResource(R.string.register_label_first_name),
+                    placeholder = stringResource(R.string.register_placeholder_example_name)
+                )
+
+                }
+                Column(modifier = Modifier
+                    .weight(1F)) {  AppTextField(
+                    value = viewModel.SecondName.value,
+                    onValueChange = { viewModel.SecondName.onChange(it) },
+                    label = stringResource(R.string.register_label_second_name),
+                    placeholder = stringResource(R.string.register_placeholder_example_name)
+                ) }
+
+
+                }
+
+                // Apellidos
+                Row( modifier = Modifier.
+                padding(bottom = 20.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)){
+
+                    Column(modifier = Modifier
+                        .weight(1F)){
+                        AppTextField(
+                            value = viewModel.Lastname.value,
+                            onValueChange = { viewModel.Lastname.onChange(it) },
+                            label = stringResource(R.string.register_label_first_lastname),
+                            placeholder = stringResource(R.string.register_placeholder_example_name)
+                        )
+                    }
+
+                    Column(modifier = Modifier
+                        .weight(1F)){
+                        AppTextField(
+                            value = viewModel.SecondLastname.value,
+                            onValueChange = { viewModel.SecondLastname.onChange(it) },
+                            label = stringResource(R.string.register_label_second_lastname),
+                            placeholder = stringResource(R.string.register_placeholder_example_name)
+                        )
+                    }
+                }
+
+            }
+
+            AppExposedDropdownMenu(
+                label = "Categoría",
+                options = opciones,
+                selectedOption = viewModel.category.value,
+                onOptionSelected = { viewModel.category.onChange(it) },
+                errorMessage = viewModel.category.error
             )
 
-            // Apellidos
             AppTextField(
-                value = name,
-                onValueChange = { name = it },
-                label = stringResource(R.string.register_label_first_lastname),
-                placeholder = stringResource(R.string.register_placeholder_example_name)
-            )
-            AppTextField(
-                value = name,
-                onValueChange = { name = it },
-                label = stringResource(R.string.register_label_second_lastname),
-                placeholder = stringResource(R.string.register_placeholder_example_name)
+                value = viewModel.address.value,
+                onValueChange = { viewModel.address.onChange(it)},
+                label = "Dirección",
+                placeholder = "Dirección"
             )
 
-            
             // Corro y contraseña
             AppTextField(
-                value = email,
-                onValueChange = { email = it },
+                value = viewModel.email.value,
+                onValueChange = { viewModel.email.onChange(it)},
                 label = stringResource(R.string.emailLabel),
                 placeholder = stringResource(R.string.placeholderEmail),
-                keyboardType = KeyboardType.Email
             )
 
             AppPasswordField(
-                password = password,
-                onPasswordChange = { password = it },
+                password = viewModel.password.value,
+                onPasswordChange = { viewModel.password.onChange(it)},
                 label = stringResource(R.string.passwordLabel)
             )
 
             AppPasswordField(
-                password = confirmPassword,
-                onPasswordChange = { confirmPassword = it },
+                password = viewModel.confirmPassword.value,
+                onPasswordChange = { viewModel.confirmPassword.onChange(it)},
                 label = stringResource(R.string.register_confirm_password)
             )
 
@@ -157,7 +247,7 @@ fun RegisterScreen(
             // Botón principal
             PrimaryButton(
                 text = stringResource(R.string.registrarse),
-                onClick = { onVerifyEmail() }
+                onClick = { viewModel.register() }  // ✅ Primero registra
             )
 
             // Botones sociales
@@ -168,11 +258,13 @@ fun RegisterScreen(
                 SocialButton(
                     text = "Google",
                     onClick = {},
+                    iconRes = R.drawable.ic_google,
                     modifier = Modifier.weight(1f)
                 )
                 SocialButton(
                     text = "Facebook",
                     onClick = {},
+                    iconRes = R.drawable.ic_facebook,
                     modifier = Modifier.weight(1f)
                 )
             }

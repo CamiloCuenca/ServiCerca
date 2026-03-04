@@ -1,7 +1,5 @@
 package com.servicerca.app.ui.dashboard.user
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -9,11 +7,8 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -25,7 +20,9 @@ import com.servicerca.app.core.navigation.UserNavigation
 @Composable
 fun UserScreen(
     onLogout: () -> Unit,
-    onCreateService: () -> Unit
+    onCreateService: () -> Unit,
+    onNotificationClick: () -> Unit,
+    onMapClick: () -> Unit
 ) {
 
     val navController = rememberNavController()
@@ -36,6 +33,12 @@ fun UserScreen(
 
     val showBars = currentRoute != "insignias"
     val showtop= currentRoute != "editProfile"
+    val showBT = currentRoute != "deleteProfile"
+    val showBT2 = currentRoute != "updatePassword"
+    val showBT3 = currentRoute != "notifications"
+    val showBT4 = currentRoute != "serviceList"
+
+
 
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -44,22 +47,22 @@ fun UserScreen(
 
     Scaffold(
         topBar = {
-            if (showBars && showtop) {
+            if (showBars && showtop && showBT && showBT2 && showBT3 &&showBT4) {
                 AppTopAppBar(
                     title = title,
                     notificationCount = notificationCount ,
                     onLocationClick = {
-                        // TODO abrir mapa
+                        onMapClick()
                     },
                     onNotificationClick = {
-                        // TODO ir a notificaciones
+                        onNotificationClick()
                     },
                     scrollBehavior = scrollBehavior
                 )
             }
         },
         bottomBar = {
-            if (showBars) {
+            if (showBars && showtop && showBT && showBT2 && showBT3 &&showBT4) {
                 BottomNavigationBar(
                     navController = navController,
                     titleTopBar = { title = it }
@@ -67,7 +70,7 @@ fun UserScreen(
             }
         },
         floatingActionButton = {
-            if (showBars && showtop) {
+            if (showBars && showtop && showBT && showBT2) {
                 FloatingActionButton(
                     onClick = onCreateService,
                     containerColor = MaterialTheme.colorScheme.primary,
@@ -97,6 +100,10 @@ fun UserScreen(
 fun UserScreenPreview() {
     UserScreen(
         onLogout = {},
-        onCreateService = {}
+        onCreateService = {},
+        onNotificationClick = {},
+        onMapClick = {}
     )
 }
+
+

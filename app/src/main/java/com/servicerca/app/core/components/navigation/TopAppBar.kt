@@ -85,3 +85,46 @@ fun AppTopAppBarPreview(){
 }
 
 
+// Moderador:
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AppTopAppBarModerator(
+    title: String,
+    notificationCount: Int = 0,
+    onLocationClick: () -> Unit,
+    onNotificationClick: () -> Unit,
+    scrollBehavior: TopAppBarScrollBehavior? = null
+) {
+
+    CenterAlignedTopAppBar(
+        title = {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleLarge
+            )
+        },
+        navigationIcon = {
+            Image(
+                painter = painterResource(id = R.drawable.logo_servicerca),
+                contentDescription = "Logo ServiCerca",
+                modifier = Modifier.size(40.dp)
+            )
+        },
+
+
+        actions = {
+
+
+            AppNotificationAction(
+                count = notificationCount,
+                onClick = onNotificationClick
+            )
+        },
+
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(),
+
+        scrollBehavior = scrollBehavior
+    )
+}
+
+

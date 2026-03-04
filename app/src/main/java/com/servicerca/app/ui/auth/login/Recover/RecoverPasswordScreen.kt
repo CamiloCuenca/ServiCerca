@@ -1,4 +1,4 @@
-package com.servicerca.app.ui.auth.login
+package com.servicerca.app.ui.auth.login.Recover
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -12,44 +12,95 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.LockReset
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.servicerca.app.R
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.servicerca.app.core.components.button.PrimaryButton
-import com.servicerca.app.core.components.input.AppTextField
+import com.servicerca.app.core.utils.RequestResult
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecoverPasswordScreen(
+    viewModel: RecoverPasswordViewModel = viewModel(),
     onBackClick: () -> Unit,
-    onNavigateToLogin: () -> Unit
+    onNavigateToLogin: () -> Unit,
+    onNavigateToResetPassword: () -> Unit
 ) {
 
-    var email by remember { mutableStateOf("") }
+
+    val snackBarHostState = remember { SnackbarHostState() }
+    val recoverResult by viewModel.recoverResult.collectAsState()
+
+    LaunchedEffect(recoverResult) {
+        recoverResult?.let { result ->
+            val message = when(result){
+                is RequestResult.Success -> result.message
+                is RequestResult.Failure -> result.errorMessage
+            }
+
+            // Muestra el snackbar y espera a que se oculte o descarte
+            snackBarHostState.showSnackbar(
+                message = message,
+                duration = SnackbarDuration.Short
+            )
+
+            // Si el login fue exitoso, esperamos un momento para que el usuario vea el mensaje y navegamos
+            if (result is RequestResult.Success) {
+                delay(300)
+
+                onNavigateToResetPassword()
+            }
+
+            // Limpiamos el resultado en el ViewModel para evitar que el efecto se dispare de nuevo innecesariamente
+            viewModel.resetRecoverResult()
+        }
+    }
+
+
+
 
     Scaffold(
+        snackbarHost = @androidx.compose.runtime.Composable {
+            SnackbarHost(snackBarHostState) { data ->
+                // Personalización del color según el tipo de resultado
+                // Nota: Usamos una variable local para capturar el estado actual del error antes de que se resetee
+                val isError = recoverResult is RequestResult.Failure
+                Snackbar(
+                    containerColor = if(isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                    contentColor = Color.White
+                ) {
+                    Text(data.visuals.message)
+                }
+            }
+        },
         topBar = {
             TopAppBar(
                 title = {},
@@ -119,23 +170,29 @@ fun RecoverPasswordScreen(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                AppTextField(
-                    value = email,
-                    onValueChange = { email = it },
-                    placeholder = "ejemplo@correo.com",
-                    modifier = Modifier.fillMaxWidth()
+                OutlinedTextField(
+                    value = viewModel.email.value,
+                    onValueChange = { viewModel.email.onChange(it) },
+                    modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Email,
+                        imeAction = ImeAction.Done
+                    ),
+                    supportingText = viewModel.email.error?.let { error ->
+                        { Text(text = error) }
+                    },
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
 
                 PrimaryButton(
                     text = "Enviar instrucciones",
-                    onClick = {},
+                    onClick = { viewModel.recover()},
                     modifier = Modifier.fillMaxWidth()
                 )
             }
 
-            // 🔽 Parte inferior
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -166,6 +223,9 @@ fun RecoverPasswordScreen(
 fun RecoverPasswordScreenPreview() {
     RecoverPasswordScreen(
         onNavigateToLogin = {}
-        , onBackClick = {}
+        , onBackClick = {},
+        onNavigateToResetPassword = {}
     )
 }
+
+

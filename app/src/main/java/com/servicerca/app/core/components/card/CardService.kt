@@ -3,7 +3,11 @@ package com.servicerca.app.core.components.card
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -43,7 +47,7 @@ fun CardService(
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.elevatedCardColors(
-            containerColor = Color.White
+            containerColor = MaterialTheme.colorScheme.surface
         ),
         modifier = modifier
             .fillMaxWidth()
@@ -65,7 +69,31 @@ fun CardService(
                 )
 
                 if (isVerified) {
-                    VerificationTag()
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.TopStart)
+                            .padding(8.dp)
+                    ) {
+                        VerificationTag()
+                    }
+                }
+
+                IconButton(
+                    onClick = { },
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(8.dp)
+                        .background(
+                            Color.Black.copy(alpha = 0.4f),
+                            shape = CircleShape
+                        )
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_share),
+                        contentDescription = "Compartir",
+                        tint = Color.White,
+                        modifier = Modifier.size(20.dp)
+                    )
                 }
             }
 
@@ -111,7 +139,7 @@ fun CardService(
                     text = title,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF1A1C1E),
+                    color = MaterialTheme.colorScheme.onSurface,
                     lineHeight = 24.sp
                 )
 
@@ -122,14 +150,14 @@ fun CardService(
                     Icon(
                         painter = painterResource(id = R.drawable.ic_location),
                         contentDescription = null,
-                        tint = Color.Gray,
+                        tint =  MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.size(14.dp)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
                         text = distance,
                         fontSize = 12.sp,
-                        color = Color.Gray
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                 }
 
@@ -145,14 +173,14 @@ fun CardService(
                         Text(
                             text = "PRECIO ESTIMADO",
                             fontSize = 10.sp,
-                            color = Color.Gray,
+                            color = MaterialTheme.colorScheme.onSurface,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
                             text = priceRange,
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFF1A1C1E)
+                            color = MaterialTheme.colorScheme.onSurface,
                         )
                     }
 
@@ -165,14 +193,7 @@ fun CardService(
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                // BOTÓN PRINCIPAL
-                PrimaryButton(
-                    text = "Solicitar servicio",
-                    onClick = onRequestClick,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(40.dp),
-                )
+
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -181,31 +202,47 @@ fun CardService(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
+
                 ) {
 
-                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                    ) {
 
                         ReactionIconButton(
-                            icon = R.drawable.ic_thumb_up,
+                            icon = {
+                                Icon(
+                                    imageVector = Icons.Default.Favorite,
+                                    contentDescription = null,
+                                )
+                            },
                             isSelected = isSelectedLike,
                             onClick = { isSelectedLike = !isSelectedLike }
                         )
 
                         ReactionIconButton(
-                            icon = R.drawable.ic_push_pin,
+                            icon = {
+                                Icon(
+                                    imageVector = Icons.Default.Bookmark,
+                                    contentDescription = null,
+                                )
+                            },
                             isSelected = isSelectedPin,
                             onClick = { isSelectedPin = !isSelectedPin }
                         )
+
+                        PrimaryButton(
+                            text = "Solicitar servicio",
+                            onClick = onRequestClick,
+
+                        )
+
+
+
+
                     }
 
-                    IconButton(onClick = { /* compartir */ }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_share),
-                            contentDescription = null,
-                            tint = Color(0xFF95A5A6),
-                            modifier = Modifier.size(28.dp)
-                        )
-                    }
+
                 }
             }
         }

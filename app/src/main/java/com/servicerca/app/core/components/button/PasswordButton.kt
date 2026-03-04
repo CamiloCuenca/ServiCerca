@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -33,9 +34,9 @@ fun PasswordButton(
         modifier = modifier
             .fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        border = BorderStroke(1.dp, Color.Cyan), // 👈 borde rojo
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary), // 👈 borde rojo
         colors = ButtonDefaults.buttonColors(
-            containerColor = if (isPressed) Color.Cyan else Color.White,
+            containerColor = if (isPressed) MaterialTheme.colorScheme.primary else Color.White,
             contentColor = Color.Black
         ),
         interactionSource = interactionSource

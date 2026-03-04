@@ -64,6 +64,10 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation("com.airbnb.android:lottie:6.7.1")
     implementation("com.airbnb.android:lottie-compose:6.7.1")
+    implementation("com.kizitonwose.calendar:compose:2.6.0")
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.maps.android)
+    implementation(libs.maps.compose)
 
 
 }
