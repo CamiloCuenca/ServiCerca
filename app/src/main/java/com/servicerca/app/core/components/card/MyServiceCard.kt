@@ -47,7 +47,7 @@ fun MyServiceCard(
     ElevatedCard(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.elevatedCardColors(containerColor = Color.White),
+        colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp)
     ) {
         Column {
@@ -71,7 +71,7 @@ fun MyServiceCard(
                         text = service.title,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1A1C1E)
+                        color =  MaterialTheme.colorScheme.onSurface
                     )
                     Surface(
                         color = Color(0xFFE8F5E9),
@@ -79,7 +79,7 @@ fun MyServiceCard(
                     ) {
                         Text(
                             text = service.status,
-                            color = Color(0xFF4CAF50),
+                            color =  MaterialTheme.colorScheme.onSurface,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Medium,
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
@@ -90,7 +90,7 @@ fun MyServiceCard(
                 Text(
                     text = service.description,
                     fontSize = 14.sp,
-                    color = Color.Gray,
+                    color =  MaterialTheme.colorScheme.onSurface,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )

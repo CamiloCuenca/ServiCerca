@@ -1,0 +1,122 @@
+package com.servicerca.app.core.components.chat
+
+import androidx.annotation.DrawableRes
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.servicerca.app.R
+
+@Composable
+fun ChatComponent(
+    @DrawableRes imageRes: Int,
+    name: String,
+    lastMessage: String,
+    time: String?
+) {
+    ElevatedCard(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(2.dp)
+            .height(85.dp),
+        shape = MaterialTheme.shapes.large,
+        elevation = CardDefaults.cardElevation(6.dp)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(7.dp)
+        ) {
+            Image(
+                painter = painterResource(id = imageRes),
+                contentDescription = "Foto de perfil",
+                modifier = Modifier
+                    .padding(4.dp)
+                    .size(60.dp)
+                    .clip(CircleShape)
+            )
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            // Centro: ocupa el espacio restante, pero NO empuja la derecha fuera
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 8.dp)
+            ) {
+                Text(
+                    text = name,
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    maxLines = 1,
+                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                )
+
+                Text(
+                    text = lastMessage,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    maxLines = 1, // o 2 si quieres
+                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                )
+            }
+
+            // Derecha: NO fillMaxWidth, que sea wrap y pegada a la derecha
+            Column(
+                horizontalAlignment = Alignment.End
+            ) {
+                if (time != null) {
+                    Text(
+                        text = time,
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontStyle = FontStyle.Italic,
+                        maxLines = 1
+                    )
+                }
+
+                Icon(
+                    painter = painterResource(id = R.drawable.rounded_counter_1_24),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+        }
+    }
+}
+
+
+@Composable
+@Preview
+fun ChatScreen(){
+    ChatComponent(
+        imageRes = R.drawable.foto_jcc,
+        name = "Juan Camilo Cuenca",
+        lastMessage = "Hola mi amor, ¿cómo estás?",
+        time = "12:45 PM"
+    )
+}
+

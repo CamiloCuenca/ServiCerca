@@ -65,7 +65,7 @@ fun ListServiceScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(24.dp)
-                .background(Color(0xFFF8FDFF))
+                .background(MaterialTheme.colorScheme.background)
         ) {
 
 

@@ -40,7 +40,7 @@
     <string name="tittle_insignias">Insignias</string>
     <string name="ver_todas">Ver todas</string>
     <string name="statistic">Estadísticas</string>
-    <string name="edit_password">Cambiar contraseña</string>
+    <string name="edit_password">Editar contraseña</string>
     <string name="num_services">34</string>
     <string name="services_completed">Servicios completados</string>
     <string name="num_points">1250</string>
@@ -49,7 +49,7 @@
     <string name="average_rating">Calificación media</string>
     <string name="time">1 años</string>
     <string name="member_time">Miembro desde</string>
-    <string name="edit_account">Editar perfil</string>
+    <string name="edit_account">Editar cuenta</string>
     <string name="delete_account">Eliminar cuenta</string>
     <string name="publish_service_button">Publicar Oferta</string>
     <string name="title_location_service">Ubicación del servicio</string>
@@ -70,9 +70,9 @@
     <string name="tittle_elite">¡Estás en la Élite!</string>
     <string name="text_best">Tu desempeño te posiciona entre los mejores.</string>
 
-    <!-- Edit Profile Screen -->
+    <!-- Eddit Profile Screen -->
     <string name="update_profile">Editar perfil</string>
-    <string name="update_image">Actualizar imagen</string>
+    <string name="update_image">Actulizar imagen</string>
     <string name="first_name">Primer nombre</string>
     <string name="middle_name">Segundo nombre</string>
     <string name="ph_middle_name">Opcional</string>
@@ -137,7 +137,7 @@
 
     <!-- Search Screen -->
     <string name="search_title">Buscar</string>
-    <string name="search_placeholder">Buscar servicios...</string>
+    <string name="search_placeholder">Buscar servicios…</string>
     <string name="recent_searches_title">Búsquedas recientes</string>
     <string name="clear_all">Borrar todo</string>
     <string name="popular_categories_title">Categorías populares</string>
@@ -148,6 +148,7 @@
     <string name="register_label_first_lastname">Primer Apellido</string>
     <string name="register_label_second_lastname">Segundo Apellido</string>
     <string name="title_create_service">Nuevo Servicio</string>
+    <string name="title_message_list">Chats</string>
 
     <!-- My Services Screen -->
     <string name="my_services_title">Mis Servicios</string>

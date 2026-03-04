@@ -1,9 +1,10 @@
-package com.servicerca.app.ui.auth.login
+package com.servicerca.app.ui.auth.login.Reset
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -36,42 +37,79 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.servicerca.app.core.components.button.PrimaryButton
+import com.servicerca.app.core.utils.RequestResult
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ResetPassword(
+    viewModel: ResetPasswordViewModel = viewModel(),
     onNavigateToLogin: () -> Unit,
     onBackClick: () -> Unit
 ) {
-    // — Estado de los campos —
-    var codeReset by remember { mutableStateOf("") }
-    var newPassword by remember { mutableStateOf("") }
+    // Estado para el icono de visibilizacion de contraseña
     var passwordVisible by remember { mutableStateOf(false) }
+    val snackBarHostState = remember { SnackbarHostState() }
+    val resetResult by viewModel.resetResult.collectAsState()
 
-    // — Estado de validación: código —
-    var showCodeResetError by remember { mutableStateOf(false) }
-    var hasFocusedCode by remember { mutableStateOf(false) }
-    val codeResetError = if (showCodeResetError && hasFocusedCode) validateResetCode(codeReset) else null
+    LaunchedEffect(resetResult) {
+        resetResult?.let { result ->
+            val message = when(result){
+                is RequestResult.Success -> result.message
+                is RequestResult.Failure -> result.errorMessage
+            }
 
-    // — Estado de validación: contraseña —
-    var showPasswordError by remember { mutableStateOf(false) }
-    var hasFocusedPassword by remember { mutableStateOf(false) }
-    val passwordError = if (showPasswordError && hasFocusedPassword) validatePassword(newPassword) else null
+            // Muestra el snackbar y espera a que se oculte o descarte
+            snackBarHostState.showSnackbar(
+                message = message,
+                duration = SnackbarDuration.Short
+            )
 
-    val focusManager = LocalFocusManager.current
+            // Si el login fue exitoso, esperamos un momento para que el usuario vea el mensaje y navegamos
+            if (result is RequestResult.Success) {
+                delay(300)
 
+                onNavigateToLogin()
+
+            }
+
+            // Limpiamos el resultado en el ViewModel para evitar que el efecto se dispare de nuevo innecesariamente
+            viewModel.resetResult()
+        }
+    }
     Scaffold(
+        snackbarHost = {
+            SnackbarHost(snackBarHostState) { data ->
+                // Personalización del color según el tipo de resultado
+                // Nota: Usamos una variable local para capturar el estado actual del error antes de que se resetee
+                val isError = resetResult is RequestResult.Failure
+                Snackbar(
+                    containerColor = if(isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                    contentColor = Color.White
+                ) {
+                    Text(data.visuals.message)
+                }
+            }
+        },
         topBar = {
             TopAppBar(
                 title = {},
@@ -93,16 +131,12 @@ fun ResetPassword(
                 .padding(paddingValues)
                 .padding(horizontal = 24.dp)
                 .verticalScroll(rememberScrollState())
-                .clickable(
-                    indication = null,
-                    interactionSource = remember { MutableInteractionSource() }
-                ) { focusManager.clearFocus() }
         ) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
             // — Ícono decorativo —
-            androidx.compose.foundation.layout.Box(
+            Box(
                 modifier = Modifier
                     .size(56.dp)
                     .background(
@@ -146,30 +180,22 @@ fun ResetPassword(
             Spacer(modifier = Modifier.height(8.dp))
 
             OutlinedTextField(
-                value = codeReset,
-                onValueChange = { codeReset = it },
+                value = viewModel.codeReset.value,
+                onValueChange = { viewModel.codeReset.onChange(it) },
                 placeholder = { Text(text = "Ej: 123456") },
-                isError = codeResetError != null,
-                supportingText = {
-                    codeResetError?.let { Text(text = it) }
-                },
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .onFocusChanged { focusState ->
-                        if (focusState.isFocused) {
-                            hasFocusedCode = true
-                        } else if (hasFocusedCode) {
-                            showCodeResetError = true
-                        }
-                    },
+                    .fillMaxWidth(),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
                     imeAction = ImeAction.Next
                 ),
-                keyboardActions = KeyboardActions(
-                    onNext = { focusManager.moveFocus(FocusDirection.Down) }
-                )
+                isError = viewModel.codeReset.error != null,
+                supportingText = viewModel.codeReset.error?.let { error ->
+                    { Text(text = error) }
+                },
+
+
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -183,13 +209,9 @@ fun ResetPassword(
             Spacer(modifier = Modifier.height(8.dp))
 
             OutlinedTextField(
-                value = newPassword,
-                onValueChange = { newPassword = it },
+                value = viewModel.newPassword.value,
+                onValueChange = { viewModel.newPassword.onChange(it) },
                 placeholder = { Text(text = "Mínimo 8 caracteres") },
-                isError = passwordError != null,
-                supportingText = {
-                    passwordError?.let { Text(text = it) }
-                },
                 visualTransformation = if (passwordVisible) VisualTransformation.None
                                        else PasswordVisualTransformation(),
                 trailingIcon = {
@@ -203,22 +225,16 @@ fun ResetPassword(
                     }
                 },
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .onFocusChanged { focusState ->
-                        if (focusState.isFocused) {
-                            hasFocusedPassword = true
-                        } else if (hasFocusedPassword) {
-                            showPasswordError = true
-                        }
-                    },
+                    .fillMaxWidth(),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Password,
                     imeAction = ImeAction.Done
                 ),
-                keyboardActions = KeyboardActions(
-                    onDone = { focusManager.clearFocus() }
-                )
+                isError = viewModel.newPassword.error != null,
+                supportingText = viewModel.newPassword.error?.let { error ->
+                    { Text(text = error) }
+                },
             )
 
             Spacer(modifier = Modifier.height(32.dp))
@@ -226,7 +242,7 @@ fun ResetPassword(
             // — Botón de acción —
             PrimaryButton(
                 text = "Restablecer contraseña",
-                onClick = {},
+                onClick = {viewModel.reset()},
                 modifier = Modifier.fillMaxWidth()
             )
 
