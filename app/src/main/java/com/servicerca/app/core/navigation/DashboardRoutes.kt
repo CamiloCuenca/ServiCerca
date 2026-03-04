@@ -17,7 +17,7 @@ sealed class DashboardRoutes {
     data object Reservation : DashboardRoutes()
 
     @Serializable
-    data object  Chat : DashboardRoutes()
+    data object  MessageList : DashboardRoutes()
 
 
     @Serializable

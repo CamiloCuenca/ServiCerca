@@ -8,7 +8,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.servicerca.app.ui.search.SearchScreen
-import com.servicerca.app.ui.chat.ChatScreen
+import com.servicerca.app.ui.chat.MessageListScreen
 import com.servicerca.app.ui.dashboard.user.HomeUserScreen
 import com.servicerca.app.ui.dashboard.moderador.ModeratorPanelScreen
 import com.servicerca.app.ui.profile.DeleteProfileScreen
@@ -71,8 +71,8 @@ fun UserNavigation(
         composable<DashboardRoutes.UserDetail> {
         }
 
-        composable<DashboardRoutes.Chat> {
-            ChatScreen()
+        composable<DashboardRoutes.MessageList> {
+            MessageListScreen()
         }
 
         composable<DashboardRoutes.Reservation> {
