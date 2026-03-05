@@ -32,6 +32,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.servicerca.app.R
@@ -144,4 +145,22 @@ fun MyServiceCard(
             }
         }
     }
+}
+
+
+@Composable
+@Preview
+fun MyServiceCardPreview(){
+     MyServiceCard(
+         service = MyServiceItem(
+             id = "1",
+             title = "Plomeria Residencial",
+             description = "Reparación experta de tuberías, grifería y filtraciones en hogares.",
+             status = "Activo",
+             imageRes = R.drawable.plumber
+         ),
+         onEdit = {},
+         onDelete = {}
+
+     )
 }

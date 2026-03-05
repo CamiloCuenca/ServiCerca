@@ -46,7 +46,7 @@ fun ReservationItem(
         shape = RoundedCornerShape(20.dp),
         elevation = CardDefaults.cardElevation(4.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.onSecondary,
+            containerColor = MaterialTheme.colorScheme.surface,
         )
 
     ) {
@@ -85,6 +85,7 @@ fun ReservationItem(
                     Text(
                         text = reservation.title,
                         style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurface,
                         fontWeight = FontWeight.SemiBold
                     )
 
@@ -95,7 +96,7 @@ fun ReservationItem(
                             imageVector = Icons.Default.Schedule,
                             contentDescription = null,
                             modifier = Modifier.size(16.dp),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            tint = MaterialTheme.colorScheme.onSurface
                         )
 
                         Spacer(modifier = Modifier.width(4.dp))
@@ -103,7 +104,7 @@ fun ReservationItem(
                         Text(
                             text = reservation.time,
                             style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 }

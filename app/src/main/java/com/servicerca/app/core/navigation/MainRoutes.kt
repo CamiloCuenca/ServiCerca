@@ -35,6 +35,10 @@ sealed class MainRoutes {
     @Serializable
     data object Map : MainRoutes()
 
+    @Serializable
+    data object ReservationDetail : MainRoutes()
+
+
 
     @Serializable
     data object ServiceList : MainRoutes()

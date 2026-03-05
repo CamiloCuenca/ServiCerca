@@ -33,7 +33,9 @@ import com.servicerca.app.core.components.navigation.TabItemApp
 import com.servicerca.app.ui.theme.ServiCercaTheme
 
 @Composable
-fun ReservationScreen(modifier: Modifier = Modifier) {
+fun ReservationScreen(modifier: Modifier = Modifier,
+    onResevationDetails: () -> Unit = {}
+) {
     var selectedTab by remember { mutableStateOf(0) }
 
     LazyColumn(
@@ -83,7 +85,7 @@ fun ReservationScreen(modifier: Modifier = Modifier) {
         }
         val reservations = getSampleReservations()
         items(reservations) { reservation ->
-            ReservationItem(reservation = reservation)
+            ReservationItem(reservation = reservation,onDetailClick = { onResevationDetails() })
         }
     }
 }
