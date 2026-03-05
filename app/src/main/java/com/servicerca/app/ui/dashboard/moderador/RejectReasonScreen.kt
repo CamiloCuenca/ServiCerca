@@ -4,27 +4,27 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.outlined.VerifiedUser
+import androidx.compose.material.icons.filled.Block
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
+import androidx.compose.material3.SuggestionChip
+import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -39,16 +39,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.mapbox.maps.extension.style.expressions.dsl.generated.color
 import com.servicerca.app.R
-import com.servicerca.app.core.components.input.AppTextField
-import com.servicerca.app.core.components.tag.CategoryTag
+import com.servicerca.app.core.components.button.ButtonIconDecline
 
 @Composable
 fun RejectReasonScreen(
     onBack: () -> Unit
 ) {
-    var description by remember { mutableStateOf("") }
     Scaffold(
         modifier = Modifier.fillMaxSize()
     ) { paddingValues ->
@@ -92,10 +89,14 @@ fun RejectReasonScreen(
                     )
                 }
                 HorizontalDivider(thickness = 2.dp, color = MaterialTheme.colorScheme.outline)
+                var description by remember { mutableStateOf("") }
+
                 Column(
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .padding(vertical = 20.dp)
                 ) {
+
                     Text(
                         text = stringResource(R.string.question_reject_reason),
                         style = MaterialTheme.typography.titleLarge,
@@ -118,59 +119,101 @@ fun RejectReasonScreen(
                         color = MaterialTheme.colorScheme.onBackground,
                         modifier = Modifier.padding(bottom = 5.dp)
                     )
-                    Box{
-                        OutlinedTextField(
-                            value = description,
-                            onValueChange = { description = it },
-                            modifier = Modifier
-                                .height(300.dp)
-                                .fillMaxWidth(),
-                            label = {
-                                Text(text = stringResource(R.string.example_reject_reason))
-                            },
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedLabelColor = MaterialTheme.colorScheme.outline,
-                                unfocusedLabelColor = MaterialTheme.colorScheme.outline,
-                            )
-                        )
-                    }
-                    Row() {
-                        Surface(
-                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
-                            shape = RoundedCornerShape(10.dp),
-                            tonalElevation = 2.dp,
-                            modifier = Modifier.padding(vertical = 10.dp)
-                                .fillMaxWidth()
-                                .size(width = 0.dp, height = 30.dp)
-                                .weight(1F)
-                        ) {
-                            Text(
-                                text = stringResource(R.string.option1_reject_reason),
-                                textAlign = TextAlign.Start,
-                                fontWeight = FontWeight.Bold,
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                        }
-                        Surface(
-                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
-                            shape = RoundedCornerShape(10.dp),
-                            tonalElevation = 2.dp,
-                            modifier = Modifier.padding(vertical = 10.dp)
-                                .fillMaxWidth()
-                                .size(width = 0.dp, height = 30.dp)
-                                .weight(1F)
-                        ) {
-                            Text(
-                                text = stringResource(R.string.option1_reject_reason),
-                                textAlign = TextAlign.Start,
-                                fontWeight = FontWeight.Bold,
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                        }
-                    }
 
+                    OutlinedTextField(
+                        value = description,
+                        onValueChange = { description = it },
+                        modifier = Modifier
+                            .height(250.dp)
+                            .fillMaxWidth(),
+                        placeholder = {
+                            Text(stringResource(R.string.example_reject_reason))
+                        },
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedPlaceholderColor = MaterialTheme.colorScheme.outline,
+                            unfocusedPlaceholderColor = MaterialTheme.colorScheme.outline
+                        )
+                    )
+
+                    Column(
+                        modifier = Modifier.padding(top = 10.dp)
+                    ) {
+
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            val description1 = stringResource(R.string.description1_reject_reason)
+                            val description2 = stringResource(R.string.description2_reject_reason)
+
+                            SuggestionChip(
+                                onClick = {
+                                    description = description1
+                                },
+                                label = {
+                                    Text(stringResource(R.string.option1_reject_reason))
+                                },
+                                colors = SuggestionChipDefaults.suggestionChipColors(
+                                    containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
+                                    labelColor = MaterialTheme.colorScheme.onSurface
+                                )
+                            )
+
+                            SuggestionChip(
+                                onClick = {
+                                    description = description2
+                                },
+                                label = {
+                                    Text(stringResource(R.string.option2_reject_reason))
+                                },
+                                colors = SuggestionChipDefaults.suggestionChipColors(
+                                    containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
+                                    labelColor = MaterialTheme.colorScheme.onSurface
+                                )
+                            )
+                        }
+
+                        Row {
+                            val description3 = stringResource(R.string.description3_reject_reason)
+
+                            SuggestionChip(
+                                onClick = {
+                                    description = description3
+                                },
+                                label = {
+                                    Text(stringResource(R.string.option3_reject_reason))
+                                },
+                                colors = SuggestionChipDefaults.suggestionChipColors(
+                                    containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
+                                    labelColor = MaterialTheme.colorScheme.onSurface
+                                )
+                            )
+                        }
+                    }
+                }
+                Column() {
+                    ButtonIconDecline(
+                        text = "Confirmar rechazo",
+                        onClick = { },
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Default.Block, // Icono de Material
+                                contentDescription = null
+                            )
+                        }
+                    )
+                    OutlinedButton(
+                        onClick = onBack,
+                        shape = RoundedCornerShape(16.dp),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            containerColor = Color.LightGray,
+                            contentColor = Color.Black
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 10.dp)
+                    ) {
+                        Text("Cancelar")
+                    }
                 }
             }
         }

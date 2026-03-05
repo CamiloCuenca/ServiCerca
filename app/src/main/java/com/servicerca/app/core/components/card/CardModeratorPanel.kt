@@ -46,7 +46,8 @@ fun CardModeratorPanelScreen (
     type: String,
     tittle: String,
     description: String,
-    onVerifyClick: () -> Unit
+    onVerifyClick: () -> Unit,
+    onRejectClick: () -> Unit
 ){
     ElevatedCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
@@ -128,7 +129,7 @@ fun CardModeratorPanelScreen (
 
                 ButtonIconDecline(
                     text = stringResource(R.string.btn_decline_moderation_panel),
-                    onClick = { },
+                    onClick = onRejectClick,
                     icon = {
                         Icon(
                             imageVector = Icons.Default.HighlightOff, // Icono de Material
@@ -151,6 +152,7 @@ fun CardModeratorPanelPreview(){
         type = "Tipo",
         tittle = "Título",
         description = "Descripción",
-        onVerifyClick = {}
+        onVerifyClick = {},
+        onRejectClick = {}
     )
 }

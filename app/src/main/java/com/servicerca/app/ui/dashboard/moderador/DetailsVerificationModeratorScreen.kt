@@ -45,7 +45,8 @@ import com.servicerca.app.core.components.card.CardRevisionUserService
 
 @Composable
 fun DetailsVerificationModeratorScreen(
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onRejectClick: () -> Unit
 ){
     Scaffold(
         modifier = Modifier.fillMaxSize()
@@ -177,7 +178,7 @@ fun DetailsVerificationModeratorScreen(
                         )
                         ButtonIconDecline(
                             text = stringResource(R.string.reject_publication),
-                            onClick = { },
+                            onClick = onRejectClick,
                             icon = {
                                 Icon(
                                     imageVector = Icons.Default.HighlightOff, // Icono de Material
@@ -199,6 +200,7 @@ fun DetailsVerificationModeratorScreen(
 @Composable
 fun DetailsVerificationModeratorPreview (){
     DetailsVerificationModeratorScreen(
-        onBack = {}
+        onBack = {},
+        onRejectClick = {}
     )
 }
