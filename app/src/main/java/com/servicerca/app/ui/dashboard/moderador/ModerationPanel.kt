@@ -57,6 +57,9 @@ fun ModeratorPanelScreen (navController: NavHostController,
                 description = stringResource(R.string.description_service_moderation_panel),
                 onVerifyClick = {
                     navController.navigate("detailsServicesModerator")
+                },
+                onRejectClick = {
+                    navController.navigate("rejectReason")
                 }
             )
             CardModeratorPanelScreen(
@@ -66,6 +69,9 @@ fun ModeratorPanelScreen (navController: NavHostController,
                 description = stringResource(R.string.description_service_moderation_panel2),
                 onVerifyClick = {
                     navController.navigate("detailsServicesModerator")
+                },
+                onRejectClick = {
+                    navController.navigate("rejectReason")
                 }
             )
             CardModeratorPanelScreen(
@@ -75,6 +81,9 @@ fun ModeratorPanelScreen (navController: NavHostController,
                 description = stringResource(R.string.description_service_moderation_panel3),
                 onVerifyClick = {
                     navController.navigate("detailsServicesModerator")
+                },
+                onRejectClick = {
+                    navController.navigate("rejectReason")
                 }
             )
         }

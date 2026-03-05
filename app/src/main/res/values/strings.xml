@@ -219,7 +219,18 @@
     <string name="example_reject_reason">Ej: La imagen de perfil no cumple con los requisitos
         mínimos o la descripción contiene lenguaje inapropiado...</string>
     <string name="option1_reject_reason">Imagen inapropiada</string>
+    <string name="description1_reject_reason">La imagen proporcionada no cumple con las políticas de
+        la plataforma. Debe estar relacionada directamente con el servicio ofrecido y no contener
+        contenido inapropiado, irrelevante o de baja calidad. Por favor, sube una imagen clara que
+        represente correctamente el servicio que deseas publicar.</string>
     <string name="option2_reject_reason">Descripción incompleta</string>
+    <string name="description2_reject_reason">La información del servicio es insuficiente o no describe
+        claramente lo que se ofrece. Te recomendamos agregar más detalles sobre el servicio, como qué
+        incluye, cómo se realiza y cualquier información relevante que ayude a los usuarios a entender
+        mejor tu publicación.</string>
     <string name="option3_reject_reason">Spam</string>
+    <string name="description3_reject_reason">La publicación ha sido identificada como contenido repetitivo,
+        promocional no permitido o que no corresponde a un servicio válido dentro de la plataforma.
+        Por favor, asegúrate de publicar únicamente servicios reales y relevantes para la comunidad.</string>
 
 </resources>
