@@ -210,4 +210,65 @@
 
 
     <string name="title_message_list">Chats</string>
+
+    <!-- My Services Screen -->
+    <string name="my_services_title">Mis Servicios</string>
+    <string name="tab_active">Activos</string>
+    <string name="tab_pending">Pendientes</string>
+    <string name="tab_completed">Completados</string>
+    <string name="edit_button">Editar</string>
+    <string name="delete_button">Eliminar</string>
+    <string name="status_active">Activo</string>
+
+    <!-- Reservation Screen -->
+    <string name="reservation_tab_reserved">Reservé</string>
+    <string name="reservation_tab_offered">Ofrezco</string>
+    <string name="reservation_month_year">Mayo 2024</string>
+    <string name="reservation_today_format">Hoy, %s</string>
+    <string name="reservation_num_services_format">%d servicios</string>
+    <string name="reservation_ver_detalle">Ver detalle</string>
+    <string name="reservation_status_confirmed">CONFIRMADO</string>
+    <string name="reservation_status_pending">PENDIENTE</string>
+    <string name="reservation_status_cancelled">CANCELADO</string>
+    <string name="reservation_service_plumber">Plomería Residencial</string>
+    <string name="reservation_service_electrician">Reparación Eléctrica</string>
+    <string name="reservation_service_cleaning">Limpieza Profunda</string>
+
+    <!-- Moderator Panel Screen -->
+    <string name="type_service_moderation_panel">MANTENIMIENTO / HOGAR</string>
+    <string name="title_service_moderation_panel">Instalaciones Eléctricas Residenciales</string>
+    <string name="description_service_moderation_panel">Electricista especializado en instalaciones
+        eléctricas residenciales, realizando trabajos completos en casas y departamentos, reparación
+        de fallas, instalación de tableros, contactos y luminarias, así como mantenimiento preventivo
+        y correctivo. Ofrezco un servicio seguro, confiable y puntual, cumpliendo normas de seguridad
+        y garantizando calidad en cada trabajo.</string>
+    <string name="type_service_moderation_panel2">LIMPIEZA / SERVICIOS</string>
+    <string name="title_service_moderation_panel2">Limpieza Profunda de Departamentos</string>
+    <string name="description_service_moderation_panel2">Ofrezco servicio profesional de limpieza
+        profunda de departamentos, ideal para dejar cada espacio impecable y desinfectado. Realizo
+        limpieza detallada de baños, cocina, pisos, ventanas y superficies, eliminando grasa, polvo
+        y suciedad acumulada. Trabajo con responsabilidad, productos adecuados y atención al detalle
+        para garantizar un ambiente limpio, fresco y saludable.</string>
+    <string name="type_service_moderation_panel3">PLOMERÍA / URGENCIAS</string>
+    <string name="title_service_moderation_panel3">Reparación de Fugas Express</string>
+    <string name="description_service_moderation_panel3">Servicio de reparación de fugas express
+        para hogares y departamentos, atendiendo filtraciones en tuberías, llaves, baños y
+        conexiones de agua de forma rápida y eficiente. Detecto y soluciono el problema para evitar
+        daños mayores y desperdicio de agua, ofreciendo un trabajo confiable, puntual y con garantía.</string>
+    <string name="btn_virified_moderation_panel">Verificar</string>
+    <string name="btn_decline_moderation_panel">Rechazar</string>
+
+    <!-- Details Verification Moderator Screen -->
+    <string name="details_verifications">Detalles de verificación</string>
+    <string name="pending_revision">PENDIENTE DE REVISIÓN</string>
+    <string name="label_revision">Ofecido por</string>
+    <string name="username_revision">Kevin Payanene</string>
+    <string name="qualification_user">4.9 (124)</string>
+    <string name="estimated_budget">$450 - $1200</string>
+    <string name="service_description">DESCRIPCIÓN DEL SERVICIO</string>
+    <string name="approve_publication">Aprobar publicación</string>
+    <string name="reject_publication">Rechazar publicación</string>
+
+
+
 </resources>
