@@ -1,0 +1,15 @@
+package com.servicerca.app.domain.model
+
+data class Service(
+    val id: String,
+    val title: String,
+    val description: String,
+    val location: Location,
+    val priceMin: Double,
+    val priceMax: Double,
+    val categories: Categories,
+    val status: ServiceStatus,
+    val type: String,
+    val photoUrl: String,
+    val ownerId: String
+)
