@@ -57,6 +57,12 @@ fun UserNavigation(
                 },
                 onListService = {
                     navController.navigate("serviceList")
+                },
+                onLogout = {
+                    navController.navigate(MainRoutes.Login) {
+                        popUpTo(0)
+                        launchSingleTop = true
+                    }
                 }
             )
         }

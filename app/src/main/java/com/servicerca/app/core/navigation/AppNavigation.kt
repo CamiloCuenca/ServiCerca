@@ -85,9 +85,11 @@ fun AppNavigation() {
             composable<DashboardRoutes.HomeUser> {
                 UserScreen(
                     onLogout = {
-                        // Lógica para cerrar sesión y regresar a la pantalla de login
                         navController.navigate(MainRoutes.Login) {
-                            popUpTo(MainRoutes.Login) { inclusive = true } // Evitar regresar a la pantalla anterior
+                            popUpTo(navController.graph.startDestinationId) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
                         }
                     },
                     onCreateService ={

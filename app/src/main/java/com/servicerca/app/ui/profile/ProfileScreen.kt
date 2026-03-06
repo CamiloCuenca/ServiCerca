@@ -1,5 +1,6 @@
 package com.servicerca.app.ui.profile
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -30,11 +31,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.servicerca.app.R
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Handyman
+import androidx.compose.material.icons.filled.HighlightOff
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.ui.Alignment
@@ -50,6 +54,12 @@ import com.servicerca.app.core.components.card.CardStatistics
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.IconButton
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.servicerca.app.core.components.alertDialog.ConfirmAlertDialog
 import com.servicerca.app.core.components.card.ManageServicesCard
 
 @Composable
@@ -59,8 +69,10 @@ fun ProfileScreen(
     onUpdatePassword: () -> Unit,
     onDeleteProfile: () -> Unit,
    onListService: () -> Unit,
+    onLogout: () -> Unit
 ){
 
+    var showConfirmDialog by remember { mutableStateOf(false) }
 
         Column(
             modifier = Modifier
@@ -69,7 +81,21 @@ fun ProfileScreen(
                 .padding(24.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 10.dp),
+                horizontalArrangement = Arrangement.End
+            ) {
+                IconButton(
+                    onClick = { showConfirmDialog = true }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Logout,
+                        contentDescription = "Cerrar sesión"
+                    )
+                }
+            }
 
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -367,6 +393,14 @@ fun ProfileScreen(
                 }
             }
         }
+    if (showConfirmDialog) {
+        ConfirmAlertDialog(
+            onShowExitDialogChange = { showConfirmDialog = it },
+            onConfirm = {
+                onLogout()
+            }
+        )
+    }
     }
 
 
@@ -379,6 +413,7 @@ fun ProfileScreenPreview() {
         onEditProflie = {},
         onUpdatePassword = {},
         onDeleteProfile = {},
-        onListService = {}
+        onListService = {},
+        onLogout = {}
     )
 }
