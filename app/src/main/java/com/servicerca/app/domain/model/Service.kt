@@ -7,7 +7,6 @@ data class Service(
     val location: Location,
     val priceMin: Double,
     val priceMax: Double,
-    val categories: Categories,
     val status: ServiceStatus,
     val type: String,
     val photoUrl: String,
