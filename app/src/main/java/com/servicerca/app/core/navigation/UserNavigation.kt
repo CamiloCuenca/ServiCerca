@@ -24,7 +24,8 @@ import com.servicerca.app.ui.services.ListService.ListServiceScreen
 @Composable
 fun UserNavigation(
     navController: NavHostController,
-    _padding: PaddingValues
+    _padding: PaddingValues,
+    onLogout: () -> Unit // nuevo parámetro para delegar logout al NavController raíz
 ){
 
     NavHost(
@@ -57,6 +58,10 @@ fun UserNavigation(
                 },
                 onListService = {
                     navController.navigate("serviceList")
+                },
+                onLogout = {
+                    // Delegar la acción de logout al callback pasado desde la pantalla raíz
+                    onLogout()
                 }
             )
         }

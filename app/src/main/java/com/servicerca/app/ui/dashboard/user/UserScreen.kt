@@ -88,7 +88,8 @@ fun UserScreen(
 
         UserNavigation(
             navController = navController,
-            _padding = padding
+            _padding = padding,
+            onLogout = onLogout // pasar el callback hacia UserNavigation
         )
     }
 }
@@ -105,5 +106,3 @@ fun UserScreenPreview() {
         onMapClick = {}
     )
 }
-
-

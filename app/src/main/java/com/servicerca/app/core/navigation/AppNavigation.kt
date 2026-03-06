@@ -20,6 +20,8 @@ import com.servicerca.app.ui.notifications.NotificationsScreen
 import com.servicerca.app.ui.reservation.ReservationScreen
 import com.servicerca.app.ui.reservation.details.DetailsReservationScreen
 import com.servicerca.app.ui.services.create.CreateServiceScreen
+import androidx.navigation.navOptions
+import androidx.navigation.NavGraph.Companion.findStartDestination
 
 @Composable
 fun AppNavigation() {
@@ -85,9 +87,12 @@ fun AppNavigation() {
             composable<DashboardRoutes.HomeUser> {
                 UserScreen(
                     onLogout = {
-                        // Lógica para cerrar sesión y regresar a la pantalla de login
+                        // Navegar al Login desde el NavHost raíz y limpiar el back stack de manera segura
                         navController.navigate(MainRoutes.Login) {
-                            popUpTo(MainRoutes.Login) { inclusive = true } // Evitar regresar a la pantalla anterior
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
                         }
                     },
                     onCreateService ={
@@ -109,7 +114,7 @@ fun AppNavigation() {
                 ModeratorScreen(
                     onLogout = {
                         navController.navigate(MainRoutes.Login) {
-                            popUpTo(MainRoutes.Login) { inclusive = true }
+                            popUpTo(navController.graph.findStartDestination().id) { inclusive = true }
                         }
                     },
                     onCreateService = {
@@ -141,7 +146,7 @@ fun AppNavigation() {
                 ResetPassword(
                     onNavigateToLogin = {
                         navController.navigate(MainRoutes.Login) {
-                            popUpTo(MainRoutes.Login) { inclusive = true }
+                            popUpTo(navController.graph.findStartDestination().id) { inclusive = true }
                         }
                     },
                     onBackClick = {
