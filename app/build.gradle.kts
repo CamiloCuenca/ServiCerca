@@ -69,5 +69,7 @@ dependencies {
     implementation(libs.maps.android)
     implementation(libs.maps.compose)
 
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network.okhttp)
 
 }

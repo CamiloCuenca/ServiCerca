@@ -61,6 +61,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.servicerca.app.core.components.alertDialog.ConfirmAlertDialog
 import com.servicerca.app.core.components.card.ManageServicesCard
+import com.servicerca.app.core.components.images.ProfileImage
 
 @Composable
 fun ProfileScreen(
@@ -114,22 +115,9 @@ fun ProfileScreen(
                             contentAlignment = Alignment.BottomEnd,
                             modifier = Modifier.size(150.dp)
                         ) {
-                            Card(
-                                shape = CircleShape,
-                                colors = CardDefaults.cardColors(Color.White),
-                                modifier = Modifier
-                                    .size(150.dp)
-                                    .shadow(
-                                        elevation = 20.dp,
-                                        shape = CircleShape
-                                    )
-                            ) {
-                                Image(
-                                    painter = painterResource(id = R.drawable.logo_profile),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(150.dp)
-                                )
-                            }
+                            ProfileImage(
+                                url = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEga-7mA9kd7EnROYLMEYwURS2xlW1uWK8eWC8F6X3RFuCrJQLnd5eJ8KNOqXeVNuUVM0c4X31Uoz7NlQKJ4QxFfF6EDWAwgT6y1F_HgZ23As74U0wOHy14ClTNC9kP5KJHgPouBaogO5IpYsvxGmDCYlJ9do4tNb9eb6fYBMMSIG3zEcAN-7y2lIrvTwOyb/s320/WhatsApp%20Image%202026-03-04%20at%2023.04.58.jpeg"
+                            )
                         }
                     }
                 }
