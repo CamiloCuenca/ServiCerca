@@ -6,13 +6,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -23,6 +20,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.servicerca.app.R
@@ -34,25 +32,16 @@ fun ChatComponent(
     lastMessage: String,
     time: String?
 ) {
-    ElevatedCard(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(2.dp)
-            .height(85.dp),
-        shape = MaterialTheme.shapes.large,
-        elevation = CardDefaults.cardElevation(6.dp)
-    ) {
-        Row(
+          Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(7.dp)
+                .padding(4.dp)
         ) {
             Image(
                 painter = painterResource(id = imageRes),
                 contentDescription = "Foto de perfil",
                 modifier = Modifier
-                    .padding(4.dp)
                     .size(60.dp)
                     .clip(CircleShape)
             )
@@ -67,19 +56,19 @@ fun ChatComponent(
             ) {
                 Text(
                     text = name,
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.W600,
                     color = MaterialTheme.colorScheme.onBackground,
                     maxLines = 1,
-                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis
                 )
 
                 Text(
                     text = lastMessage,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onBackground,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 1, // o 2 si quieres
-                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis
                 )
             }
 
@@ -106,7 +95,6 @@ fun ChatComponent(
             }
         }
     }
-}
 
 
 @Composable
