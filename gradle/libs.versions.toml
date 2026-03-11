@@ -16,6 +16,7 @@ runtimeVersion = "1.10.3"
 foundation = "1.10.3"
 lifecycleViewmodelCompose = "2.10.0"
 mapsCompose = "11.11.0"
+coil = "3.4.0"
 
 
 
@@ -44,6 +45,8 @@ androidx-compose-foundation = { group = "androidx.compose.foundation", name = "f
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
 maps-android = { module = "com.mapbox.maps:android", version.ref = "mapsCompose" }
 maps-compose = { module = "com.mapbox.extension:maps-compose", version.ref = "mapsCompose" }
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
+coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
