@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -12,6 +13,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -148,45 +150,39 @@ fun RegisterScreen(
 
                 )
 
-            // Nombres
+            // --- Sección 1: Datos Personales ---
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-            ){
-                Row(
-                modifier = Modifier.
-                padding(bottom = 20.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                modifier = Modifier.fillMaxWidth()
             ) {
-
-                Column(modifier = Modifier
-                    .weight(1F)) {
-                AppTextField(
-                    value = viewModel.name.value,
-                    onValueChange = { viewModel.name.onChange(it) },
-                    label = stringResource(R.string.register_label_first_name),
-                    placeholder = stringResource(R.string.register_placeholder_example_name)
-                )
-
-                }
-                Column(modifier = Modifier
-                    .weight(1F)) {  AppTextField(
-                    value = viewModel.SecondName.value,
-                    onValueChange = { viewModel.SecondName.onChange(it) },
-                    label = stringResource(R.string.register_label_second_name),
-                    placeholder = stringResource(R.string.register_placeholder_example_name)
-                ) }
-
-
+                // Nombres
+                Row(
+                    modifier = Modifier.padding(bottom = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    Column(modifier = Modifier.weight(1F)) {
+                        AppTextField(
+                            value = viewModel.name.value,
+                            onValueChange = { viewModel.name.onChange(it) },
+                            label = stringResource(R.string.register_label_first_name),
+                            placeholder = stringResource(R.string.register_placeholder_example_name)
+                        )
+                    }
+                    Column(modifier = Modifier.weight(1F)) {
+                        AppTextField(
+                            value = viewModel.SecondName.value,
+                            onValueChange = { viewModel.SecondName.onChange(it) },
+                            label = stringResource(R.string.register_label_second_name),
+                            placeholder = stringResource(R.string.register_placeholder_example_name)
+                        )
+                    }
                 }
 
                 // Apellidos
-                Row( modifier = Modifier.
-                padding(bottom = 20.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)){
-
-                    Column(modifier = Modifier
-                        .weight(1F)){
+                Row(
+                    modifier = Modifier.padding(bottom = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    Column(modifier = Modifier.weight(1F)) {
                         AppTextField(
                             value = viewModel.Lastname.value,
                             onValueChange = { viewModel.Lastname.onChange(it) },
@@ -194,9 +190,7 @@ fun RegisterScreen(
                             placeholder = stringResource(R.string.register_placeholder_example_name)
                         )
                     }
-
-                    Column(modifier = Modifier
-                        .weight(1F)){
+                    Column(modifier = Modifier.weight(1F)) {
                         AppTextField(
                             value = viewModel.SecondLastname.value,
                             onValueChange = { viewModel.SecondLastname.onChange(it) },
@@ -205,50 +199,85 @@ fun RegisterScreen(
                         )
                     }
                 }
-
             }
 
-            AppExposedDropdownMenu(
-                label = "Categoría",
-                options = opciones,
-                selectedOption = viewModel.category.value,
-                onOptionSelected = { viewModel.category.onChange(it) },
-                errorMessage = viewModel.category.error
-            )
+            // --- Sección 2: Contacto y Detalles ---
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                AppTextField(
+                    value = viewModel.email.value,
+                    onValueChange = { viewModel.email.onChange(it)},
+                    label = stringResource(R.string.emailLabel),
+                    placeholder = stringResource(R.string.placeholderEmail),
+                )
 
-            AppTextField(
-                value = viewModel.address.value,
-                onValueChange = { viewModel.address.onChange(it)},
-                label = "Dirección",
-                placeholder = "Dirección"
-            )
+                AppExposedDropdownMenu(
+                    label = "Categoría",
+                    options = opciones,
+                    selectedOption = viewModel.category.value,
+                    onOptionSelected = { viewModel.category.onChange(it) },
+                    errorMessage = viewModel.category.error
+                )
 
-            // Corro y contraseña
-            AppTextField(
-                value = viewModel.email.value,
-                onValueChange = { viewModel.email.onChange(it)},
-                label = stringResource(R.string.emailLabel),
-                placeholder = stringResource(R.string.placeholderEmail),
-            )
+                AppTextField(
+                    value = viewModel.address.value,
+                    onValueChange = { viewModel.address.onChange(it)},
+                    label = "Dirección",
+                    placeholder = "Dirección de servicio"
+                )
+            }
 
-            AppPasswordField(
-                password = viewModel.password.value,
-                onPasswordChange = { viewModel.password.onChange(it)},
-                label = stringResource(R.string.passwordLabel)
-            )
+            Spacer(modifier = Modifier.padding(4.dp))
 
-            AppPasswordField(
-                password = viewModel.confirmPassword.value,
-                onPasswordChange = { viewModel.confirmPassword.onChange(it)},
-                label = stringResource(R.string.register_confirm_password)
-            )
+            // --- Sección 3: Seguridad ---
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                AppPasswordField(
+                    password = viewModel.password.value,
+                    onPasswordChange = { viewModel.password.onChange(it)},
+                    label = stringResource(R.string.passwordLabel)
+                )
 
+                AppPasswordField(
+                    password = viewModel.confirmPassword.value,
+                    onPasswordChange = { viewModel.confirmPassword.onChange(it)},
+                    label = stringResource(R.string.register_confirm_password)
+                )
+            }
 
-            // Botón principal
+            Spacer(modifier = Modifier.padding(8.dp))
+
+            // -- Botón principal --
             PrimaryButton(
                 text = stringResource(R.string.registrarse),
-                onClick = { viewModel.register() }  // ✅ Primero registra
+                onClick = { viewModel.register() },
+                modifier = Modifier.fillMaxWidth()
             )
+
+            // -- Divisor Social --
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Divider(
+                    modifier = Modifier.weight(1f),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)
+                )
+                Text(
+                    text = "O regístrate con",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(horizontal = 8.dp)
+                )
+                Divider(
+                    modifier = Modifier.weight(1f),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)
+                )
+            }
 
             // Botones sociales
             Row(
@@ -290,7 +319,7 @@ fun RegisterScreen(
                     fontWeight = FontWeight.Light,
                     textAlign = TextAlign.Center,
                     fontSize = 10.sp,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp)
                 )
             }
 
