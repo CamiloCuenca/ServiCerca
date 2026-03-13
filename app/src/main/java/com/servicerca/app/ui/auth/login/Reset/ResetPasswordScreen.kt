@@ -25,7 +25,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -56,6 +55,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.servicerca.app.core.components.button.PrimaryButton
+import com.servicerca.app.core.components.input.AppPasswordField
+import com.servicerca.app.core.components.input.AppTextField
 import com.servicerca.app.core.utils.RequestResult
 import kotlinx.coroutines.delay
 
@@ -179,10 +180,10 @@ fun ResetPassword(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            OutlinedTextField(
+            AppTextField(
                 value = viewModel.codeReset.value,
                 onValueChange = { viewModel.codeReset.onChange(it) },
-                placeholder = { Text(text = "Ej: 123456") },
+                placeholder = "Ej: 123456",
                 modifier = Modifier
                     .fillMaxWidth(),
                 singleLine = true,
@@ -208,12 +209,11 @@ fun ResetPassword(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            OutlinedTextField(
+            AppTextField(
                 value = viewModel.newPassword.value,
                 onValueChange = { viewModel.newPassword.onChange(it) },
-                placeholder = { Text(text = "Mínimo 8 caracteres") },
-                visualTransformation = if (passwordVisible) VisualTransformation.None
-                                       else PasswordVisualTransformation(),
+                placeholder = "Mínimo 8 caracteres",
+                isPassword = !passwordVisible,
                 trailingIcon = {
                     IconButton(onClick = { passwordVisible = !passwordVisible }) {
                         Icon(

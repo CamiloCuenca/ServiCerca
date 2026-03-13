@@ -69,7 +69,7 @@ fun CategoryCard(
                     painter = painterResource(id = icon),
                     contentDescription = null,
                     modifier = Modifier.size(16.dp),
-                    tint = Color(0xFF13ECEC)
+                    tint = MaterialTheme.colorScheme.primary
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(

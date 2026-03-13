@@ -21,7 +21,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarDuration
@@ -43,6 +42,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.servicerca.app.core.components.button.PrimaryButton
+import com.servicerca.app.core.components.input.AppTextField
 import com.servicerca.app.core.utils.RequestResult
 import kotlinx.coroutines.delay
 
@@ -170,7 +170,7 @@ fun RecoverPasswordScreen(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                OutlinedTextField(
+                AppTextField(
                     value = viewModel.email.value,
                     onValueChange = { viewModel.email.onChange(it) },
                     modifier = Modifier.fillMaxWidth(),
@@ -181,6 +181,7 @@ fun RecoverPasswordScreen(
                     supportingText = viewModel.email.error?.let { error ->
                         { Text(text = error) }
                     },
+                    isError = viewModel.email.error != null
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
