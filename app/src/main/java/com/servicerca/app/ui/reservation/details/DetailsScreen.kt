@@ -28,6 +28,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -42,11 +46,15 @@ import com.servicerca.app.core.components.Map.MapBox
 import com.servicerca.app.core.components.button.DeleteButton
 import com.servicerca.app.core.components.button.PrimaryButton
 import com.servicerca.app.core.components.card.CardDetailsReservation
+import com.servicerca.app.ui.reservation.ConfirmActionModal
 
 @Composable
 fun DetailsReservationScreen(
     onBackClick: () -> Unit = {},
 ) {
+
+    var showDeleteModal by remember { mutableStateOf(false) }
+
 
     Column(
         modifier = Modifier
@@ -156,7 +164,7 @@ fun DetailsReservationScreen(
 
         DeleteButton(
             text = "Cancelar Reserva",
-            onClick = {},
+            onClick = {showDeleteModal = true},
             icon = {
                 Icon(
                     imageVector = Icons.Default.Delete,
@@ -168,6 +176,25 @@ fun DetailsReservationScreen(
 
         Spacer(modifier = Modifier.height(32.dp))
     }
+
+    // MODAL DE CONFIRMACIÓN
+    if (showDeleteModal) {
+
+        ConfirmActionModal(
+            onDismiss = { showDeleteModal = false },
+
+            onConfirm = {
+
+                showDeleteModal = false
+            },
+
+            title = "¿Cancelar Reserva?",
+            textPrimary = "Mantener mi Reserva",
+            textSecondary = "Cancelar Reserva"
+        )
+    }
+
+
 }
 
 

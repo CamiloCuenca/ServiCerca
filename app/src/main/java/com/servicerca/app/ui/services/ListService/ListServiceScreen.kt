@@ -1,6 +1,5 @@
 package com.servicerca.app.ui.services.ListService
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -8,26 +7,20 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.servicerca.app.R
 import com.servicerca.app.core.components.card.MyServiceCard
 import com.servicerca.app.core.components.navigation.TabItemApp
+import com.servicerca.app.ui.reservation.ConfirmActionModal
 import com.servicerca.app.ui.theme.ServiCercaTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -35,85 +28,106 @@ import com.servicerca.app.ui.theme.ServiCercaTheme
 fun ListServiceScreen(
     onBackClick: () -> Unit = {},
     onEditService: (String) -> Unit = {},
-    onDeleteService: (String) -> Unit = {}
 ) {
+
+    var showDeleteModal by remember { mutableStateOf(false) }
+    var selectedServiceId by remember { mutableStateOf<String?>(null) }
     var selectedTab by remember { mutableStateOf(0) }
-    val tabs = listOf(
-        stringResource(id = R.string.tab_active),
-        stringResource(id = R.string.tab_pending),
-        stringResource(id = R.string.tab_completed)
-    )
 
     val services = listOf(
         MyServiceItem(
             id = "1",
-            title = "Plomeria Residencial",
+            title = "Plomería Residencial",
             description = "Reparación experta de tuberías, grifería y filtraciones en hogares.",
-            status = stringResource(id = R.string.status_active),
+            status = "Activo",
             imageRes = R.drawable.plumber
         ),
         MyServiceItem(
             id = "2",
             title = "Electricista Certificado",
-            description = "Mantenimiento preventivo e Instalaciones eléctricas de alta...",
-            status = stringResource(id = R.string.status_active),
+            description = "Mantenimiento preventivo e instalaciones eléctricas...",
+            status = "Activo",
             imageRes = R.drawable.service
         )
     )
 
-        Column(
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp)
+            .background(MaterialTheme.colorScheme.background)
+    ) {
+
+        // HEADER
+        Row(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(24.dp)
-                .background(MaterialTheme.colorScheme.background)
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
 
-
-            Row (
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
-
-            ){
-                IconButton(onClick = onBackClick) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Back"
-                    )
-                }
-                Text(
-                    text = stringResource(id = R.string.my_services_title),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp
+            IconButton(onClick = onBackClick) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Back"
                 )
-
             }
 
-            ServiceTabRow(
-                selectedTabIndex = selectedTab,
-                onTabSelected = { selectedTab = it }
+            Text(
+                text = stringResource(id = R.string.my_services_title),
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp
             )
+        }
 
+        // TABS
+        ServiceTabRow(
+            selectedTabIndex = selectedTab,
+            onTabSelected = { selectedTab = it }
+        )
 
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                items(services) { service ->
-                    MyServiceCard(
-                        service = service,
-                        onEdit = { onEditService(service.id) },
-                        onDelete = { onDeleteService(service.id) }
-                    )
-                }
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // LISTA
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+
+            items(services) { service ->
+
+                MyServiceCard(
+                    service = service,
+                    onEdit = { onEditService(service.id) },
+
+                    onDelete = {
+                        selectedServiceId = service.id
+                        showDeleteModal = true
+                    }
+                )
             }
         }
     }
 
+    // MODAL DE CONFIRMACIÓN
+    if (showDeleteModal) {
 
-// TODO info provisional
+        ConfirmActionModal(
+            onDismiss = { showDeleteModal = false },
+
+            onConfirm = {
+
+                showDeleteModal = false
+            },
+
+            title = "¿Eliminar servicio?",
+            textPrimary = "Cancelar",
+            textSecondary = "Eliminar servicio"
+        )
+    }
+}
+
+// DATA CLASS PROVISIONAL
 data class MyServiceItem(
     val id: String,
     val title: String,
@@ -128,6 +142,7 @@ fun ServiceTabRow(
     onTabSelected: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
+
     Surface(
         modifier = modifier
             .fillMaxWidth()
@@ -135,27 +150,30 @@ fun ServiceTabRow(
         shape = RoundedCornerShape(12.dp),
         color = Color(0xFFF1F3F5)
     ) {
+
         Row(modifier = Modifier.fillMaxSize()) {
+
             TabItemApp(
                 text = "Activos",
                 isSelected = selectedTabIndex == 0,
                 onClick = { onTabSelected(0) },
                 modifier = Modifier.weight(1f)
             )
+
             TabItemApp(
                 text = "Inactivos",
                 isSelected = selectedTabIndex == 1,
                 onClick = { onTabSelected(1) },
                 modifier = Modifier.weight(1f)
             )
-
         }
     }
 }
 
-@Composable
 @Preview(showBackground = true)
+@Composable
 fun ListServiceScreenPreview() {
+
     ServiCercaTheme {
         ListServiceScreen()
     }
