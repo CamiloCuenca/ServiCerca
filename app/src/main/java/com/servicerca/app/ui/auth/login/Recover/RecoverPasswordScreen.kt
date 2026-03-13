@@ -41,6 +41,11 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
+import com.servicerca.app.R
 import com.servicerca.app.core.components.button.PrimaryButton
 import com.servicerca.app.core.components.input.AppTextField
 import com.servicerca.app.core.utils.RequestResult
@@ -58,6 +63,13 @@ fun RecoverPasswordScreen(
 
     val snackBarHostState = remember { SnackbarHostState() }
     val recoverResult by viewModel.recoverResult.collectAsState()
+
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.candado))
+    val progress by animateLottieCompositionAsState(
+        composition = composition,
+        iterations = 1, // Animate once on presentation
+        speed = 1.0f 
+    )
 
     LaunchedEffect(recoverResult) {
         recoverResult?.let { result ->
@@ -129,20 +141,20 @@ fun RecoverPasswordScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Icono decorativo
+                // Icono decorativo animado
                 Box(
                     modifier = Modifier
-                        .size(56.dp)
+                        .size(72.dp) // Biraz bigger to showcase the animation
                         .background(
                             color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                            shape = RoundedCornerShape(16.dp)
+                            shape = RoundedCornerShape(20.dp)
                         ),
                     contentAlignment = Alignment.Center
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.LockReset,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary
+                    LottieAnimation(
+                        composition = composition,
+                        progress = { progress },
+                        modifier = Modifier.size(48.dp)
                     )
                 }
 
