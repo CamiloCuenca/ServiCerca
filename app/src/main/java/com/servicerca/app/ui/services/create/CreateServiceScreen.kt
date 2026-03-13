@@ -51,24 +51,24 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.servicerca.app.R
 import com.servicerca.app.core.components.Map.MapBox
 import com.servicerca.app.core.components.button.ButtonCreateService
 import com.servicerca.app.core.components.images.ImagesHorizontalScroller
 import com.servicerca.app.core.components.input.AppTextField
+import com.servicerca.app.ui.services.edit.EditServiceViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateServiceScreen(
-    onBack: () -> Unit
-) {
+    onBack: () -> Unit,
+    viewModel: CreateServiceViewModel = viewModel(),
+
+    ) {
 
     val options = listOf("Categoria 1", "Categoria 2", "Categoria 3")
-    var title by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
-    var minValue by remember { mutableStateOf("") }
-    var maxValue by remember { mutableStateOf("") }
     var selectedOption by remember { mutableStateOf(options[0]) }
 
     Scaffold(
@@ -128,8 +128,8 @@ fun CreateServiceScreen(
                 Spacer(modifier = Modifier.height(10.dp))
 
                 AppTextField(
-                    value = title,
-                    onValueChange = {title = it},
+                    value = viewModel.title.value,
+                    onValueChange = { viewModel.title.onChange(it) },
                     label = stringResource(R.string.title_service_label)
                 )
 
@@ -187,8 +187,8 @@ fun CreateServiceScreen(
 
                 Box{
                     AppTextField(
-                        value = description,
-                        onValueChange = {description = it},
+                        value = viewModel.description.value,
+                        onValueChange = {viewModel.description.onChange(it)},
                         modifier = Modifier
                             .height(150.dp),
                         label = stringResource(R.string.detailed_description_label),
@@ -204,16 +204,16 @@ fun CreateServiceScreen(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     AppTextField(
-                        value = minValue,
-                        onValueChange = {minValue = it},
+                        value = viewModel.minValue.value,
+                        onValueChange = {viewModel.minValue.onChange(it)},
                         modifier = Modifier
                             .weight(1f),
                         label = "Precio Min",
                     )
 
                     AppTextField(
-                        value = maxValue,
-                        onValueChange = {maxValue = it},
+                        value = viewModel.maxValue.value,
+                        onValueChange = {viewModel.maxValue.onChange(it)},
                         modifier = Modifier
                             .weight(1f),
                         label = "Precio Max",
