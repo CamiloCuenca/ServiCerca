@@ -43,7 +43,7 @@ fun RecentSearchesSection(
             Text(
                 text = stringResource(R.string.clear_all),
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color(0xFF13ECEC),
+                color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.clickable { onClearAll() }
             )
         }

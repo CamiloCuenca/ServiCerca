@@ -36,12 +36,14 @@ fun ExploreMapCard(
     onOpenMap: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val colorScheme = MaterialTheme.colorScheme
+    
     Card(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp)),
         colors = CardDefaults.cardColors(
-            containerColor = Color(0xFFE0F7FA)
+            containerColor = colorScheme.primary.copy(alpha = 0.15f)
         ),
         shape = RoundedCornerShape(16.dp)
     ) {
@@ -56,13 +58,13 @@ fun ExploreMapCard(
                 Surface(
                     modifier = Modifier.size(48.dp),
                     shape = RoundedCornerShape(12.dp),
-                    color = Color(0xFF13ECEC)
+                    color = colorScheme.primary
                 ) {
                     Box(contentAlignment = Alignment.Center) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_location),
                             contentDescription = null,
-                            tint = Color.White,
+                            tint = colorScheme.onPrimary,
                             modifier = Modifier.size(24.dp)
                         )
                     }
@@ -73,12 +75,12 @@ fun ExploreMapCard(
                         text = stringResource(R.string.explore_map_title),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF006064)
+                        color = colorScheme.onSurface
                     )
                     Text(
                         text = stringResource(R.string.explore_map_description),
                         style = MaterialTheme.typography.bodySmall,
-                        color = Color(0xFF006064).copy(alpha = 0.7f)
+                        color = colorScheme.onSurface.copy(alpha = 0.7f)
                     )
                 }
             }
@@ -89,7 +91,7 @@ fun ExploreMapCard(
                     .fillMaxWidth(0.6f)
                     .height(40.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF13ECEC)
+                    containerColor = colorScheme.primary
                 ),
                 shape = RoundedCornerShape(8.dp),
                 contentPadding = PaddingValues(0.dp)
@@ -99,12 +101,12 @@ fun ExploreMapCard(
                         painter = painterResource(id = R.drawable.ic_location),
                         contentDescription = null,
                         modifier = Modifier.size(16.dp),
-                        tint = Color.Black
+                        tint = colorScheme.onPrimary
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
                         text = stringResource(R.string.open_map_button),
-                        color = Color.Black,
+                        color = colorScheme.onPrimary,
                         fontWeight = FontWeight.Bold,
                         fontSize = 12.sp
                     )

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
@@ -43,16 +44,16 @@ fun PrimaryButton(
     containerColor: Color = MaterialTheme.colorScheme.primary,
     contentColor : Color = MaterialTheme.colorScheme.onPrimary,
     // alpha permite ajustar la intensidad (0f = totalmente transparente, 1f = opaco)
-    alpha: Float = 1f
-
-
+    alpha: Float = 1f,
+    leadingIcon: @Composable (() -> Unit)? = null
 ) {
     val resolvedContainer = if (alpha in 0f..1f && alpha != 1f) containerColor.copy(alpha = alpha) else containerColor
 
     Button(
         onClick = onClick,
         modifier = modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .height(56.dp),
         enabled = enabled,
         shape = RoundedCornerShape(16.dp),
         colors = ButtonDefaults.buttonColors(
@@ -60,8 +61,12 @@ fun PrimaryButton(
             contentColor = contentColor
         )
     ) {
+        if (leadingIcon != null) {
+            leadingIcon()
+            Spacer(modifier = Modifier.width(8.dp))
+        }
         // Usar LocalContentColor para que respete contentColor provisto por Button
-        Text(text = text, color = LocalContentColor.current)
+        Text(text = text, color = LocalContentColor.current, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold)
     }
 }
 

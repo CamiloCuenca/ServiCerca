@@ -25,7 +25,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -55,7 +54,14 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
+import com.servicerca.app.R
 import com.servicerca.app.core.components.button.PrimaryButton
+import com.servicerca.app.core.components.input.AppPasswordField
+import com.servicerca.app.core.components.input.AppTextField
 import com.servicerca.app.core.utils.RequestResult
 import kotlinx.coroutines.delay
 
@@ -70,6 +76,13 @@ fun ResetPassword(
     var passwordVisible by remember { mutableStateOf(false) }
     val snackBarHostState = remember { SnackbarHostState() }
     val resetResult by viewModel.resetResult.collectAsState()
+
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.candado))
+    val progress by animateLottieCompositionAsState(
+        composition = composition,
+        iterations = 1,
+        speed = 1.0f 
+    )
 
     LaunchedEffect(resetResult) {
         resetResult?.let { result ->
@@ -135,20 +148,20 @@ fun ResetPassword(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // — Ícono decorativo —
+            // — Ícono decorativo animado —
             Box(
                 modifier = Modifier
-                    .size(56.dp)
+                    .size(72.dp)
                     .background(
                         color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                        shape = RoundedCornerShape(16.dp)
+                        shape = RoundedCornerShape(20.dp)
                     ),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    imageVector = Icons.Default.LockReset,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary
+                LottieAnimation(
+                    composition = composition,
+                    progress = { progress },
+                    modifier = Modifier.size(48.dp)
                 )
             }
 
@@ -179,10 +192,10 @@ fun ResetPassword(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            OutlinedTextField(
+            AppTextField(
                 value = viewModel.codeReset.value,
                 onValueChange = { viewModel.codeReset.onChange(it) },
-                placeholder = { Text(text = "Ej: 123456") },
+                placeholder = "Ej: 123456",
                 modifier = Modifier
                     .fillMaxWidth(),
                 singleLine = true,
@@ -208,12 +221,11 @@ fun ResetPassword(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            OutlinedTextField(
+            AppTextField(
                 value = viewModel.newPassword.value,
                 onValueChange = { viewModel.newPassword.onChange(it) },
-                placeholder = { Text(text = "Mínimo 8 caracteres") },
-                visualTransformation = if (passwordVisible) VisualTransformation.None
-                                       else PasswordVisualTransformation(),
+                placeholder = "Mínimo 8 caracteres",
+                isPassword = !passwordVisible,
                 trailingIcon = {
                     IconButton(onClick = { passwordVisible = !passwordVisible }) {
                         Icon(
