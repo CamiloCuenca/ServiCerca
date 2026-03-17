@@ -98,7 +98,7 @@ fun ChatComponent(
 
 
 @Composable
-@Preview
+@Preview(showBackground = true)
 fun ChatScreen(){
     ChatComponent(
         imageRes = R.drawable.foto_jcc,
