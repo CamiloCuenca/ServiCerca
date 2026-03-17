@@ -51,6 +51,7 @@ import com.servicerca.app.ui.reservation.ConfirmActionModal
 @Composable
 fun DetailsReservationScreen(
     onBackClick: () -> Unit = {},
+    onQr: () -> Unit = {}
 ) {
 
     var showDeleteModal by remember { mutableStateOf(false) }
@@ -158,6 +159,12 @@ fun DetailsReservationScreen(
         PrimaryButton( // TODO @CamiloCuenca Añadir el icono de chat
             text = "Chatear con el Profesional",
             onClick = {}
+        )
+        Spacer(modifier = Modifier.height(32.dp))
+
+        PrimaryButton(
+            text = "Terminar Servicio",
+            onClick = {onQr()}
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -275,7 +282,7 @@ fun EstimatedCostRow(label: String, value: String) {
 }
 
 @Composable
-@Preview
+@Preview(showBackground = true, showSystemUi = true)
 fun DetailsReservationScreenPreview() {
     DetailsReservationScreen()
 
