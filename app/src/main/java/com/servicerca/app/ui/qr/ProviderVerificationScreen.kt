@@ -268,6 +268,7 @@ fun CameraPreview(onQrCodeDetected: (String) -> Unit) {
                 }
 
                 val imageAnalyzer = ImageAnalysis.Builder()
+                    .setTargetResolution(android.util.Size(1280, 720))
                     .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                     .build()
                     .also {
@@ -300,6 +301,7 @@ fun CameraPreview(onQrCodeDetected: (String) -> Unit) {
 
 // Clase para analizar los frames de la cámara
 class BarcodeAnalyzer(private val onQrCodeDetected: (String) -> Unit) : ImageAnalysis.Analyzer {
+
     private val scanner = BarcodeScanning.getClient(
         BarcodeScannerOptions.Builder()
             .setBarcodeFormats(Barcode.FORMAT_QR_CODE)
@@ -308,19 +310,27 @@ class BarcodeAnalyzer(private val onQrCodeDetected: (String) -> Unit) : ImageAna
 
     @androidx.annotation.OptIn(androidx.camera.core.ExperimentalGetImage::class)
     override fun analyze(imageProxy: ImageProxy) {
+
         val mediaImage = imageProxy.image
         if (mediaImage != null) {
             val image = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
             scanner.process(image)
                 .addOnSuccessListener { barcodes ->
+
+                    println("Detectando QR... encontrados: ${barcodes.size}")
+
                     if (barcodes.isNotEmpty()) {
-                        barcodes.firstOrNull()?.rawValue?.let { rawValue ->
-                            onQrCodeDetected(rawValue)
+                        val value = barcodes.first().rawValue
+
+                        println("QR DETECTADO: $value")
+
+                        value?.let {
+                            onQrCodeDetected(it)
                         }
                     }
                 }
                 .addOnCompleteListener {
-                    imageProxy.close() // Importante cerrar ImageProxy para liberar el buffer
+                    imageProxy.close()
                 }
         } else {
             imageProxy.close()
