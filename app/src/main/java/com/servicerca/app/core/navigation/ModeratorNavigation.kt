@@ -41,7 +41,7 @@ fun ModeratorNavigation(
         }
 
         composable<DashboardRoutes.ProfileModerator> {
-            // Pantalla perfil moderador
+            ProfileModerator()
         }
 
         composable<DashboardRoutes.Historial> {
