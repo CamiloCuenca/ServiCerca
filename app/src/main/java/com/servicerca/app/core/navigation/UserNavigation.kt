@@ -94,7 +94,7 @@ fun UserNavigation(
                     navController.navigate(MainRoutes.ReservationDetail)
                 },
                 onQrScanner = {
-                    navController.navigate(MainRoutes.QrScanner)
+                    navController.navigate("QrScanner")
                 }
 
             )
@@ -107,13 +107,13 @@ fun UserNavigation(
                     navController.popBackStack()
                 },
                 onQr = {
-                    navController.navigate(MainRoutes.QrService)
+                    navController.navigate("QrService")
                 }
 
             )
 
         }
-        composable<MainRoutes.QrService>{
+        composable("QrService"){
             ServiceVerificationScreen(
                 onBackClick = {
                     navController.popBackStack()
@@ -121,7 +121,7 @@ fun UserNavigation(
             )
         }
 
-        composable<MainRoutes.QrScanner>{
+        composable("QrScanner"){
             ProviderVerificationScreen(
                 onBackClick = {
                     navController.popBackStack()
@@ -155,6 +155,10 @@ fun UserNavigation(
             DeleteProfileScreen(onBack = { navController.popBackStack() })
 
         }
+
+
+
+
 
 
     }
