@@ -27,6 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.servicerca.app.R
+import com.servicerca.app.core.components.button.PrimaryButton
 import com.servicerca.app.core.components.card.CalendarCard
 import com.servicerca.app.core.components.card.ReservationItem
 import com.servicerca.app.core.components.navigation.TabItemApp
@@ -34,7 +35,8 @@ import com.servicerca.app.ui.theme.ServiCercaTheme
 
 @Composable
 fun ReservationScreen(modifier: Modifier = Modifier,
-    onResevationDetails: () -> Unit = {}
+    onResevationDetails: () -> Unit = {},
+                      onQrScanner: () -> Unit = {}
 ) {
     var selectedTab by remember { mutableStateOf(0) }
 
@@ -58,6 +60,12 @@ fun ReservationScreen(modifier: Modifier = Modifier,
             CalendarCard()
         }
 
+        item {
+            PrimaryButton(
+                text = "Escanear QR",
+                onClick = {onQrScanner()}
+            )
+        }
         item {
             Row(
                 modifier = Modifier.fillMaxWidth(),

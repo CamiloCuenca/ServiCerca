@@ -16,6 +16,7 @@ import com.servicerca.app.ui.profile.EditProfileScreen
 import com.servicerca.app.ui.profile.InsigniasScreen
 import com.servicerca.app.ui.profile.ProfileScreen
 import com.servicerca.app.ui.profile.UpdatePasswordScreen
+import com.servicerca.app.ui.qr.ProviderVerificationScreen
 import com.servicerca.app.ui.qr.ServiceVerificationScreen
 import com.servicerca.app.ui.reservation.DeleteReservationScreen
 import com.servicerca.app.ui.reservation.ReservationScreen
@@ -91,7 +92,11 @@ fun UserNavigation(
             ReservationScreen(
                 onResevationDetails = {
                     navController.navigate(MainRoutes.ReservationDetail)
+                },
+                onQrScanner = {
+                    navController.navigate(MainRoutes.QrScanner)
                 }
+
             )
         }
 
@@ -115,6 +120,21 @@ fun UserNavigation(
                 }
             )
         }
+
+        composable<MainRoutes.QrScanner>{
+            ProviderVerificationScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onScanClick = {
+                    navController.navigate(MainRoutes.QrService)
+                }
+
+            )
+        }
+
+
+
 
 
         composable("insignias") {

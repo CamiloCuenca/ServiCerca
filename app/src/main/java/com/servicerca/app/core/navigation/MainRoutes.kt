@@ -46,6 +46,9 @@ sealed class MainRoutes {
     @Serializable
     data object QrService : MainRoutes()
 
+    @Serializable
+    data object QrScanner : MainRoutes()
+
 
 
     @Serializable
