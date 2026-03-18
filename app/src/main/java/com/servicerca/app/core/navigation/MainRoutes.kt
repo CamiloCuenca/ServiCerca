@@ -43,14 +43,16 @@ sealed class MainRoutes {
     @Serializable
     data object ServiceList : MainRoutes()
 
+    @Serializable
+    data object QrService : MainRoutes()
+
+    @Serializable
+    data object QrScanner : MainRoutes()
 
 
 
     @Serializable
     data object Insignias : MainRoutes()
-
-
-
 
 
 

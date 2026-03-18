@@ -17,6 +17,7 @@ foundation = "1.10.3"
 lifecycleViewmodelCompose = "2.10.0"
 mapsCompose = "11.11.0"
 coil = "3.4.0"
+foundationLayout = "1.10.5"
 
 
 
@@ -47,6 +48,7 @@ maps-android = { module = "com.mapbox.maps:android", version.ref = "mapsCompose"
 maps-compose = { module = "com.mapbox.extension:maps-compose", version.ref = "mapsCompose" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil" }
+androidx-compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version.ref = "foundationLayout" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
