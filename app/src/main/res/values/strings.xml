@@ -209,6 +209,11 @@
     <string name="approved_number">450</string>
     <string name="rejected_profile_moderator">RECHAZADOS</string>
     <string name="rejected_number">23</string>
+    <string name="title_panel_moderator">Panel de gestión</string>
+    <string name="validate_new_services">Validar nuevos servicios</string>
+    <string name="user_management">Gestión de usuarios</string>
+    <string name="moderation_history">Historial de moderación</string>
+
 
 
     <!-- Details Verification Moderator Screen -->

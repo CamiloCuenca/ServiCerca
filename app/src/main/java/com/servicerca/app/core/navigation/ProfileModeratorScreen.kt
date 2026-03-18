@@ -33,6 +33,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.servicerca.app.R
+import com.servicerca.app.core.components.card.CardMenuModerator
 import com.servicerca.app.core.components.card.CardProfileModerator
 import com.servicerca.app.core.components.images.ProfileImage
 
@@ -130,6 +131,15 @@ fun ProfileModerator (){
             label = stringResource(R.string.rejected_number),
             color = Color(0xFFC72E2E)
         )
+
+        Text(
+            text = stringResource(R.string.pending_profile_moderator),
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+        )
+
+        CardMenuModerator()
     }
 }
 
