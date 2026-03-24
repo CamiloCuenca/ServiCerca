@@ -1,15 +1,17 @@
-package com.servicerca.app.ui.dashboard.user
+package com.servicerca.app.ui.services.ListInteresting
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -20,27 +22,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.servicerca.app.core.components.card.CardService
-import com.servicerca.app.core.components.input.SearchTextField
+import com.servicerca.app.core.components.card.InterestingServiceCard
 import com.servicerca.app.core.components.tag.CategoryTagSearch
 import com.servicerca.app.domain.model.Categories
 
-/**
- *TODO  Cuando hagamos los ViewModel seria algo asi :
- *  items(serviceList) { service ->
- *     CardService(...)
- * }
- */
-
-
 @Composable
-fun HomeUserScreen(
-    onDetailClick: () -> Unit = {},
-) {
-
-    var query by remember { mutableStateOf("") }
+fun ListInteresting(
+    onBack: () -> Unit
+){
     var selectedCategory by remember { mutableStateOf<Categories?>(null) }
-
 
     Column(
         modifier = Modifier
@@ -48,15 +38,14 @@ fun HomeUserScreen(
             .background(MaterialTheme.colorScheme.background)
     ) {
 
-        //
-        /*SearchTextField(
-            query = query,
-            onQueryChange = { query = it },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp)
-        )*/
-
+        IconButton(
+            onClick = { onBack() },
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = null
+            )
+        }
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = PaddingValues(horizontal = 16.dp , vertical = 10.dp)
@@ -73,55 +62,36 @@ fun HomeUserScreen(
             }
         }
 
-
-        // Lista scrolleable
         LazyColumn(
             contentPadding = PaddingValues(bottom = 16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
             item {
-                CardService(
-                    title = "Reparación de Fugas Urgente",
-                    category = "Plomería",
-                    level = "EXPERTO",
-                    onRequestClick = (onDetailClick)
-                )
+                InterestingServiceCard()
+            }
+            item {
+                InterestingServiceCard()
+            }
+            item {
+                InterestingServiceCard()
+            }
+            item {
+                InterestingServiceCard()
             }
 
-            item {
-                CardService(
-                    title = "Instalación Eléctrica Residencial",
-                    category = "Electricidad",
-                    level = "PRO",
-                    onRequestClick = (onDetailClick)
-                )
-            }
-
-            item {
-                CardService(
-                    title = "Remodelación de Cocina",
-                    category = "Construcción",
-                    level = "PREMIUM",
-                    onRequestClick = (onDetailClick)
-                )
-            }
-
-            item {
-                CardService(
-                    title = "Limpieza Profunda del Hogar",
-                    category = "House Keeping",
-                    level = "BÁSICO",
-                    onRequestClick = (onDetailClick)
-                )
-            }
+            //@TODO @CAMILOCUENCA ver como poner cuando un servicio ya no esta disponible.
         }
     }
 }
 
+
 @Composable
 @Preview(showBackground = true, showSystemUi = true)
-fun HomeUserScreenPreview() {
-    HomeUserScreen()
+fun ListInterestingPreview(){
+    ListInteresting(
+        onBack = {}
+
+    )
+
 }

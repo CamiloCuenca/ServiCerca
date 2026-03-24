@@ -21,7 +21,9 @@ import com.servicerca.app.ui.qr.ServiceVerificationScreen
 import com.servicerca.app.ui.reservation.DeleteReservationScreen
 import com.servicerca.app.ui.reservation.ReservationScreen
 import com.servicerca.app.ui.reservation.details.DetailsReservationScreen
+import com.servicerca.app.ui.services.ListInteresting.ListInteresting
 import com.servicerca.app.ui.services.ListService.ListServiceScreen
+import com.servicerca.app.ui.services.detail.DetailServiceScreen
 
 
 @Composable
@@ -38,8 +40,19 @@ fun UserNavigation(
     ) {
 
         composable<DashboardRoutes.HomeUser> {
-            HomeUserScreen()
+            HomeUserScreen(
+                onDetailClick = {
+                    navController.navigate("DetailService")
+                }
+            )
         }
+
+        composable("DetailService" ){
+            DetailServiceScreen(
+                onBack = { navController.popBackStack() }
+            )
+        }
+
 
         composable<DashboardRoutes.Search> {
             SearchScreen()
@@ -62,10 +75,19 @@ fun UserNavigation(
                 onListService = {
                     navController.navigate("serviceList")
                 },
+                onListInteresting = {
+                    navController.navigate("ListInteresting")
+                },
                 onLogout = {
                     // Delegar la acción de logout al callback pasado desde la pantalla raíz
                     onLogout()
                 }
+            )
+        }
+
+        composable("ListInteresting" ){
+            ListInteresting(
+                onBack = { navController.popBackStack() }
             )
         }
 

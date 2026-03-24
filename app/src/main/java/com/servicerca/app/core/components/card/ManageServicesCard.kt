@@ -1,23 +1,34 @@
 package com.servicerca.app.core.components.card
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.Handyman
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun ManageServicesCard(
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
+    color: Color = MaterialTheme.colorScheme.primary,
+    contentColor: Color = MaterialTheme.colorScheme.onSecondary,
+    borderColor: Color = Color.Transparent,
+    borderWidth: Dp = 2.dp,
+    title: String = "Gestionar mis servicios",
+    description: String = "Ver, editar o añadir nuevos",
+    icon: ImageVector = Icons.Default.Handyman,
+    arrowIcon: ImageVector = Icons.Default.ArrowForwardIos
 ) {
-    ElevatedCard(
+    Card(
         onClick = onClick,
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
         modifier = Modifier
@@ -25,11 +36,12 @@ fun ManageServicesCard(
             .height(95.dp)
             .padding(horizontal = 16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primary
+            containerColor = color,
+            contentColor = contentColor
         ),
-        shape = MaterialTheme.shapes.large
+        shape = MaterialTheme.shapes.large,
+        border = BorderStroke(width = borderWidth, color = borderColor)
     ) {
-
         Row(
             modifier = Modifier
                 .fillMaxSize()
@@ -37,16 +49,11 @@ fun ManageServicesCard(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
-                    imageVector = Icons.Default.Handyman,
-                    contentDescription = "Gestionar servicios",
-                    tint = MaterialTheme.colorScheme.onSecondary,
+                    imageVector = icon,
+                    contentDescription = title,
+                    tint = contentColor,
                     modifier = Modifier.size(36.dp)
                 )
 
@@ -54,28 +61,28 @@ fun ManageServicesCard(
 
                 Column {
                     Text(
-                        text = "Gestionar mis servicios",
+                        text = title,
                         fontWeight = FontWeight.Bold,
-                        fontSize= MaterialTheme.typography.titleLarge.fontSize,
+                        fontSize = MaterialTheme.typography.titleLarge.fontSize,
                         style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onSecondary
+                        color = contentColor
                     )
 
                     Spacer(modifier = Modifier.height(4.dp))
 
                     Text(
-                        text = "Ver, editar o añadir nuevos",
+                        text = description,
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSecondary.copy(alpha = 0.85f)
+                        color = contentColor.copy(alpha = 0.85f)
                     )
                 }
             }
 
             Icon(
-                imageVector = Icons.Default.ArrowForward,
+                imageVector = arrowIcon,
                 contentDescription = "Ir",
-                tint = MaterialTheme.colorScheme.onSecondary,
-                modifier = Modifier.size(25.dp)
+                tint = contentColor,
+                modifier = Modifier.size(20.dp)
             )
         }
     }
@@ -84,5 +91,8 @@ fun ManageServicesCard(
 @Preview(showBackground = true)
 @Composable
 fun ManageServicesCardPreview() {
-    ManageServicesCard()
+    ManageServicesCard(
+        borderColor = Color.White,
+        borderWidth = 2.dp
+    )
 }

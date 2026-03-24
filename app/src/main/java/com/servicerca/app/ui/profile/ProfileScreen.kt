@@ -19,7 +19,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import com.servicerca.app.R
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Handyman
@@ -44,7 +44,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import com.servicerca.app.core.components.button.ButtonIcon
 import com.servicerca.app.core.components.button.DeleteButton
 import com.servicerca.app.core.components.button.PasswordButton
@@ -54,10 +53,12 @@ import com.servicerca.app.core.components.card.CardStatistics
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.servicerca.app.core.components.alertDialog.ConfirmAlertDialog
 import com.servicerca.app.core.components.card.ManageServicesCard
@@ -70,6 +71,7 @@ fun ProfileScreen(
     onUpdatePassword: () -> Unit,
     onDeleteProfile: () -> Unit,
    onListService: () -> Unit,
+    onListInteresting: () -> Unit,
     onLogout: () -> Unit
 ){
 
@@ -170,6 +172,17 @@ fun ProfileScreen(
 
             ManageServicesCard(
                 onClick = {onListService()}
+            )
+
+            ManageServicesCard(
+                onClick = { onListInteresting() },
+                color = MaterialTheme.colorScheme.surface,
+                borderColor= MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onSecondary,
+            borderWidth = 2.dp,
+                title = "Publicaciones Interesantes",
+                description = "Ver tus servicios favoritos",
+                icon = Icons.Default.Bookmark
             )
 
             Column(
@@ -402,6 +415,7 @@ fun ProfileScreenPreview() {
         onUpdatePassword = {},
         onDeleteProfile = {},
         onListService = {},
-        onLogout = {}
+        onLogout = {},
+        onListInteresting = {}
     )
 }
