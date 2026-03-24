@@ -40,6 +40,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.servicerca.app.R
+import com.servicerca.app.core.components.Map.MapBox
 import com.servicerca.app.core.components.button.PrimaryButton
 import com.servicerca.app.core.components.button.ReactionIconButton
 import com.servicerca.app.core.components.card.LocationSection
@@ -48,9 +49,14 @@ import com.servicerca.app.core.components.card.ReviewCard
 import com.servicerca.app.core.components.card.ServiceDescriptionSection
 import com.servicerca.app.core.components.card.ServiceDetailHeader
 import com.servicerca.app.core.components.input.ReviewInputField
+import kotlin.Unit
 
 @Composable
-fun DetailServiceScreen() {
+fun DetailServiceScreen(
+    onBack: () -> Unit
+) {
+
+    //TODO @Brandon Montealegre Cambiar los colores quemados por los colores del Thema tanto en la pantalla como el los componentes que utiliza
     var isSelectedLike by remember { mutableStateOf(false) }
     var isSelectedPin by remember { mutableStateOf(false) }
     var reviewText by remember { mutableStateOf("") }
@@ -78,7 +84,7 @@ fun DetailServiceScreen() {
                 )
 
                 IconButton(
-                    onClick = { },
+                    onClick = {  onBack()},
                     modifier = Modifier
                         .align(Alignment.TopStart)
                         .padding(12.dp)
@@ -178,9 +184,10 @@ fun DetailServiceScreen() {
                 )
 
                 // Ubicación
-                LocationSection(
-                    locationName = "Zona Centro",
-                    distanceLabel = "A 2.5 km de ti"
+                MapBox(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(180.dp)
                 )
 
                 HorizontalDivider(
@@ -275,5 +282,7 @@ fun DetailServiceScreen() {
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun DetailServiceScreenPreview() {
-    DetailServiceScreen()
+    DetailServiceScreen(
+        onBack = {}
+    )
 }

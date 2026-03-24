@@ -36,14 +36,18 @@ fun UserScreen(
         "deleteProfile",
         "updatePassword",
         "QrScanner",
-        "QrService"
+        "QrService",
+        "ListInteresting",
+        "DetailService"
     )
 
     val hideBottomBarRoutes = setOf(
         "insignias",
         "serviceList",
         "QrScanner",
-        "QrService"
+        "QrService",
+        "ListInteresting",
+        "DetailService"
     )
 
     val hideFabRoutes = setOf(
@@ -53,7 +57,9 @@ fun UserScreen(
         "updatePassword",
         "notifications",
         "QrScanner",
-        "QrService"
+        "QrService",
+        "ListInteresting",
+        "DetailService"
     )
 
     val showTopBar = currentRoute !in hideTopBarRoutes
