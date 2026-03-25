@@ -236,4 +236,7 @@
         promocional no permitido o que no corresponde a un servicio válido dentro de la plataforma.
         Por favor, asegúrate de publicar únicamente servicios reales y relevantes para la comunidad.</string>
 
+    <!-- Chat Screen -->
+    <string name="name_profile">Diego Alexander Jimenez</string>
+
 </resources>
