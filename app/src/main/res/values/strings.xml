@@ -202,6 +202,20 @@
     <string name="btn_virified_moderation_panel">Verificar</string>
     <string name="btn_decline_moderation_panel">Rechazar</string>
 
+    <!-- Profile Moderator Screen -->
+    <string name="pending_profile_moderator">PENDIENTES</string>
+    <string name="pending_number">12</string>
+    <string name="approved_profile_moderator">APROBADOS</string>
+    <string name="approved_number">450</string>
+    <string name="rejected_profile_moderator">RECHAZADOS</string>
+    <string name="rejected_number">23</string>
+    <string name="title_panel_moderator">Panel de gestión</string>
+    <string name="validate_new_services">Validar nuevos servicios</string>
+    <string name="user_management">Gestión de usuarios</string>
+    <string name="moderation_history">Historial de moderación</string>
+
+
+
     <!-- Details Verification Moderator Screen -->
     <string name="details_verifications">Detalles de verificación</string>
     <string name="pending_revision">PENDIENTE DE REVISIÓN</string>

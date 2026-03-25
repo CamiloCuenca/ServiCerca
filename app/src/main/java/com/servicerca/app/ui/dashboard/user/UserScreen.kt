@@ -31,14 +31,40 @@ fun UserScreen(
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
 
-    val showBars = currentRoute != "insignias"
-    val showtop= currentRoute != "editProfile"
-    val showBT = currentRoute != "deleteProfile"
-    val showBT2 = currentRoute != "updatePassword"
-    val showBT3 = currentRoute != "notifications"
-    val showBT4 = currentRoute != "serviceList"
+    val hideTopBarRoutes = setOf(
+        "editProfile",
+        "deleteProfile",
+        "updatePassword",
+        "QrScanner",
+        "QrService",
+        "ListInteresting",
+        "DetailService"
+    )
 
+    val hideBottomBarRoutes = setOf(
+        "insignias",
+        "serviceList",
+        "QrScanner",
+        "QrService",
+        "ListInteresting",
+        "DetailService"
+    )
 
+    val hideFabRoutes = setOf(
+        "insignias",
+        "editProfile",
+        "deleteProfile",
+        "updatePassword",
+        "notifications",
+        "QrScanner",
+        "QrService",
+        "ListInteresting",
+        "DetailService"
+    )
+
+    val showTopBar = currentRoute !in hideTopBarRoutes
+    val showBottomBar = currentRoute !in hideBottomBarRoutes
+    val showFab = currentRoute !in hideFabRoutes
 
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -47,7 +73,7 @@ fun UserScreen(
 
     Scaffold(
         topBar = {
-            if (showBars && showtop && showBT && showBT2 && showBT3 &&showBT4) {
+            if (showTopBar) {
                 AppTopAppBar(
                     title = title,
                     notificationCount = notificationCount ,
@@ -62,7 +88,7 @@ fun UserScreen(
             }
         },
         bottomBar = {
-            if (showBars && showtop && showBT && showBT2 && showBT3 &&showBT4) {
+            if (showBottomBar) {
                 BottomNavigationBar(
                     navController = navController,
                     titleTopBar = { title = it }
@@ -70,7 +96,7 @@ fun UserScreen(
             }
         },
         floatingActionButton = {
-            if (showBars && showtop && showBT && showBT2) {
+            if (showFab) {
                 FloatingActionButton(
                     onClick = onCreateService,
                     containerColor = MaterialTheme.colorScheme.primary,

@@ -16,9 +16,14 @@ import com.servicerca.app.ui.profile.EditProfileScreen
 import com.servicerca.app.ui.profile.InsigniasScreen
 import com.servicerca.app.ui.profile.ProfileScreen
 import com.servicerca.app.ui.profile.UpdatePasswordScreen
+import com.servicerca.app.ui.qr.ProviderVerificationScreen
+import com.servicerca.app.ui.qr.ServiceVerificationScreen
+import com.servicerca.app.ui.reservation.DeleteReservationScreen
 import com.servicerca.app.ui.reservation.ReservationScreen
 import com.servicerca.app.ui.reservation.details.DetailsReservationScreen
+import com.servicerca.app.ui.services.ListInteresting.ListInteresting
 import com.servicerca.app.ui.services.ListService.ListServiceScreen
+import com.servicerca.app.ui.services.detail.DetailServiceScreen
 
 
 @Composable
@@ -35,8 +40,19 @@ fun UserNavigation(
     ) {
 
         composable<DashboardRoutes.HomeUser> {
-            HomeUserScreen()
+            HomeUserScreen(
+                onDetailClick = {
+                    navController.navigate("DetailService")
+                }
+            )
         }
+
+        composable("DetailService" ){
+            DetailServiceScreen(
+                onBack = { navController.popBackStack() }
+            )
+        }
+
 
         composable<DashboardRoutes.Search> {
             SearchScreen()
@@ -59,6 +75,9 @@ fun UserNavigation(
                 onListService = {
                     navController.navigate("serviceList")
                 },
+                onListInteresting = {
+                    navController.navigate("ListInteresting")
+                },
                 onLogout = {
                     // Delegar la acción de logout al callback pasado desde la pantalla raíz
                     onLogout()
@@ -66,12 +85,22 @@ fun UserNavigation(
             )
         }
 
+        composable("ListInteresting" ){
+            ListInteresting(
+                onBack = { navController.popBackStack() }
+            )
+        }
+
         composable("serviceList" ){
             ListServiceScreen(
-                onBackClick = { navController.popBackStack() }
+                onBackClick = { navController.popBackStack() } ,
+                onEditService = { navController.navigate("editService") },
+
             )
 
         }
+
+
 
 
         composable<DashboardRoutes.UserDetail> {
@@ -85,7 +114,11 @@ fun UserNavigation(
             ReservationScreen(
                 onResevationDetails = {
                     navController.navigate(MainRoutes.ReservationDetail)
+                },
+                onQrScanner = {
+                    navController.navigate("QrScanner")
                 }
+
             )
         }
 
@@ -94,10 +127,36 @@ fun UserNavigation(
             DetailsReservationScreen(
                 onBackClick = {
                     navController.popBackStack()
+                },
+                onQr = {
+                    navController.navigate("QrService")
                 }
+
             )
 
         }
+        composable("QrService"){
+            ServiceVerificationScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable("QrScanner"){
+            ProviderVerificationScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onScanClick = {
+                    navController.navigate(MainRoutes.QrService)
+                }
+
+            )
+        }
+
+
+
 
 
         composable("insignias") {
@@ -118,6 +177,10 @@ fun UserNavigation(
             DeleteProfileScreen(onBack = { navController.popBackStack() })
 
         }
+
+
+
+
 
 
     }
