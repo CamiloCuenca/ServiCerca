@@ -27,7 +27,7 @@ fun MessageListScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(15.dp),
+                .padding(8.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ){
             Column{
