@@ -250,4 +250,46 @@
         promocional no permitido o que no corresponde a un servicio válido dentro de la plataforma.
         Por favor, asegúrate de publicar únicamente servicios reales y relevantes para la comunidad.</string>
 
+    <!-- History Moderator -->
+    <string name="history_tittle1">Instalaciones Electricas Residenciales</string>
+    <string name="history_result1">APROBADA</string>
+    <string name="history_username1">Erik Alexander Arbelaez</string>
+    <string name="history_actionPerformed1">Acción realizada</string>
+    <string name="history_reason1">Publicación autorizada</string>
+    <string name="history_date1">06 Dic 2025</string>
+    <string name="history_time1">09:45 AM</string>
+
+    <string name="history_tittle2">Pasear Perritas Ariscas</string>
+    <string name="history_result2">RECHAZADA</string>
+    <string name="history_username2">Federico Esneider Fonseca</string>
+    <string name="history_actionPerformed2">Acción realizada</string>
+    <string name="history_reason2">Título inapropiado</string>
+    <string name="history_date2">19 Ene 2026</string>
+    <string name="history_time2">02:36 PM</string>
+
+    <string name="history_tittle3">Limpieza Profesional de Oficinas</string>
+    <string name="history_result3">APROBADA</string>
+    <string name="history_username3">Jeimi Eliana Rodriguez</string>
+    <string name="history_actionPerformed3">Acción realizada</string>
+    <string name="history_reason3">Publicación autorizada</string>
+    <string name="history_date3">20 Ene 2026</string>
+    <string name="history_time3">04:51 PM</string>
+
+    <string name="history_tittle4">Condutor de Vehículos</string>
+    <string name="history_result4">RECHAZADA</string>
+    <string name="history_username4">Maria Salomé Alzate</string>
+    <string name="history_actionPerformed4">Acción realizada</string>
+    <string name="history_reason4">Foto inapropiada</string>
+    <string name="history_date4">10 Mar 2026</string>
+    <string name="history_time4">10:11 AM</string>
+
+    <string name="history_tittle5">Desarrollador de Aplicaciones Móviles</string>
+    <string name="history_result5">APROBADA</string>
+    <string name="history_username5">Camilo Santiago Triviño</string>
+    <string name="history_actionPerformed5">Acción realizada</string>
+    <string name="history_reason5">Publicación autorizada</string>
+    <string name="history_date5">25 Mar 2026</string>
+    <string name="history_time5">01:03 PM</string>
+
+
 </resources>
