@@ -24,7 +24,10 @@ import com.servicerca.app.R
 import com.servicerca.app.core.components.card.menu.MenuOptionModerator
 
 @Composable
-fun CardMenuModerator() {
+fun CardMenuModerator(
+    onValidateClick: () -> Unit = {},
+    onHistoryClick: () -> Unit = {}
+) {
 
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
@@ -43,7 +46,7 @@ fun CardMenuModerator() {
             MenuOptionModerator(
                 icon = Icons.Default.Checklist,
                 text = stringResource(R.string.validate_new_services),
-                onClick = { }
+                onClick = onValidateClick
             )
 
             Divider()
@@ -59,7 +62,7 @@ fun CardMenuModerator() {
             MenuOptionModerator(
                 icon = Icons.Default.History,
                 text = stringResource(R.string.moderation_history),
-                onClick = { }
+                onClick = onHistoryClick
             )
         }
     }
