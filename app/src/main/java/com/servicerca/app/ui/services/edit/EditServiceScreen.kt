@@ -19,7 +19,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
@@ -47,7 +46,6 @@ import com.servicerca.app.core.components.button.DeleteButton
 import com.servicerca.app.core.components.button.PrimaryButton
 import com.servicerca.app.core.components.card.CardServiceImage
 import com.servicerca.app.core.components.input.AppTextField
-import com.servicerca.app.ui.auth.register.RegisterViewModel
 import com.servicerca.app.ui.theme.ServiCercaTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -149,7 +147,7 @@ fun InsigniasScreen(
                     unfocusedIndicatorColor = Color.Transparent
                 ),
                 modifier = Modifier.fillMaxWidth()
-                    .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+                    .menuAnchor()
 
             )
 
@@ -245,4 +243,3 @@ fun InsigniasScreenPreview(){
     }
 
 }
-
