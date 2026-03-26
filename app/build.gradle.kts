@@ -92,4 +92,6 @@ dependencies {
 
     // --- Hilt + Compose Navigation ---
     implementation(libs.androidx.hilt.navigation.compose)
+
+    implementation(libs.data.store)
 }
