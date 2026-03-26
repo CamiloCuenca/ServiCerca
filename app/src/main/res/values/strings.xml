@@ -203,6 +203,8 @@
     <string name="btn_decline_moderation_panel">Rechazar</string>
 
     <!-- Profile Moderator Screen -->
+    <string name="name_moderator">Leon Scott Kennedy</string>
+    <string name="position_moderator">Administrador - Moderador</string>
     <string name="pending_profile_moderator">PENDIENTES</string>
     <string name="pending_number">12</string>
     <string name="approved_profile_moderator">APROBADOS</string>
@@ -277,7 +279,7 @@
 
     <string name="history_tittle4">Condutor de Vehículos</string>
     <string name="history_result4">RECHAZADA</string>
-    <string name="history_username4">Maria Salomé Alzate</string>
+    <string name="history_username4">Salomé María Alzate</string>
     <string name="history_actionPerformed4">Acción realizada</string>
     <string name="history_reason4">Foto inapropiada</string>
     <string name="history_date4">10 Mar 2026</string>

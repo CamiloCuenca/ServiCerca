@@ -42,7 +42,7 @@ fun ModeratorNavigation(
         }
 
         composable<DashboardRoutes.ProfileModerator> {
-            ProfileModerator()
+            ProfileModerator(navController = navController)
         }
 
         composable<DashboardRoutes.Historial> {
