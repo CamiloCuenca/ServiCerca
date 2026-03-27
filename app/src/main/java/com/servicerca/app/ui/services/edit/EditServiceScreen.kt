@@ -50,7 +50,7 @@ import com.servicerca.app.ui.theme.ServiCercaTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InsigniasScreen(
+fun Editservice(
     onBack: () -> Unit,
     viewModel: EditServiceViewModel = viewModel(),
 
@@ -239,7 +239,7 @@ fun InsigniasScreen(
 @Preview( showBackground = true, showSystemUi = true)
 fun InsigniasScreenPreview(){
     ServiCercaTheme{
-        InsigniasScreen( onBack = {})
+        Editservice( onBack = {})
     }
 
 }

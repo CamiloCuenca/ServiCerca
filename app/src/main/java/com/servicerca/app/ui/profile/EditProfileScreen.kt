@@ -82,6 +82,7 @@ fun EditProfileScreen(
                 viewModel.resetSaveResult()
             }
             null -> Unit
+            else -> {}
         }
     }
 

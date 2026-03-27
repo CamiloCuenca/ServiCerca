@@ -73,6 +73,7 @@ fun VerifyEmailScreen(
                 viewModel.resetVerifyResult()
             }
             null -> Unit
+            else -> {}
         }
     }
 
@@ -90,6 +91,7 @@ fun VerifyEmailScreen(
                 viewModel.resetResendResult()
             }
             null -> Unit
+            else -> {}
         }
     }
 
