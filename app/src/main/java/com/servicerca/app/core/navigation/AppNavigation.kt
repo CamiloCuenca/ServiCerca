@@ -22,6 +22,9 @@ import com.servicerca.app.ui.reservation.details.DetailsReservationScreen
 import com.servicerca.app.ui.services.create.CreateServiceScreen
 import androidx.navigation.navOptions
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.toRoute
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.servicerca.app.ui.auth.register.RegisterViewModel
 
 @Composable
 fun AppNavigation() {
@@ -71,14 +74,17 @@ fun AppNavigation() {
 
 
             composable<MainRoutes.Register> {
-                RegisterScreen( onNavigateToLogin = {
-                    navController.navigate(MainRoutes.Login)
-                },
+                val registerViewModel: RegisterViewModel = viewModel()
+                RegisterScreen(
+                    viewModel = registerViewModel,
+                    onNavigateToLogin = {
+                        navController.navigate(MainRoutes.Login)
+                    },
                     onBackClick = {
                         navController.popBackStack()
                     },
                     onVerifyEmail = {
-                        navController.navigate(MainRoutes.VerifyEmail)
+                        navController.navigate(MainRoutes.VerifyEmail(email = registerViewModel.email.value))
                     }
                 )
             }
@@ -155,14 +161,15 @@ fun AppNavigation() {
                 )
             }
 
-            composable<MainRoutes.VerifyEmail> {
+            composable<MainRoutes.VerifyEmail> { backStackEntry ->
+                val route = backStackEntry.toRoute<MainRoutes.VerifyEmail>()
                 VerifyEmailScreen(
-
-                    email = "juanPerez.example.com", // TODO Luego ver como se pasa el email por los estados
+                    email = route.email,
                     onNavigateToLogin = {
-                        navController.navigate(MainRoutes.Login)
-                    },
-                    onResendEmail= {}
+                        navController.navigate(MainRoutes.Login) {
+                            popUpTo(navController.graph.findStartDestination().id) { inclusive = true }
+                        }
+                    }
                 )
             }
 

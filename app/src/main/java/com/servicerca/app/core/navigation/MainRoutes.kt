@@ -20,7 +20,7 @@ sealed class MainRoutes {
     data object RecoverPassword : MainRoutes()
 
     @Serializable
-    data object VerifyEmail : MainRoutes()
+    data class VerifyEmail(val email: String) : MainRoutes()
 
 
     @Serializable

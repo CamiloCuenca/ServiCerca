@@ -18,8 +18,17 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -35,35 +44,58 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.IconButton
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.servicerca.app.core.components.button.PrimaryButton
 import com.servicerca.app.core.components.card.CardInfoprofile
 import com.servicerca.app.core.components.input.AppTextField
+import com.servicerca.app.core.utils.RequestResult
+import com.servicerca.app.ui.theme.Error
+import com.servicerca.app.ui.theme.PrimaryLight
 
 @Composable
 fun EditProfileScreen(
-    onBack: () -> Unit
-
-
+    onBack: () -> Unit,
+    onSaveSuccess: () -> Unit = {},
+    viewModel: EditProfileViewModel = viewModel()
 ) {
+    val saveResult by viewModel.saveResult.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+    var isError by remember { mutableStateOf(false) }
 
-    var first_name by remember { mutableStateOf("Primer nombre") }
-    var middle_name by remember { mutableStateOf("Segundo nombre") }
-    var first_last_name by remember { mutableStateOf("Primer apellido") }
-    var second_last_name by remember { mutableStateOf("Segundo apellido") }
-    var address by remember { mutableStateOf("Dirección") }
-    var num_tel by remember { mutableStateOf("300 123 4567") }
+    // Reacciona al resultado de guardar
+    LaunchedEffect(saveResult) {
+        when (val result = saveResult) {
+            is RequestResult.Success -> {
+                isError = false
+                snackbarHostState.showSnackbar(result.message)
+                viewModel.resetSaveResult()
+                onSaveSuccess()
+            }
+            is RequestResult.Failure -> {
+                isError = true
+                snackbarHostState.showSnackbar(result.errorMessage)
+                viewModel.resetSaveResult()
+            }
+            null -> Unit
+        }
+    }
 
     Scaffold(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState) { data ->
+                Snackbar(
+                    snackbarData = data,
+                    containerColor = if (isError) Error else PrimaryLight,
+                    contentColor = Color.White
+                )
+            }
+        }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -74,11 +106,9 @@ fun EditProfileScreen(
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
 
-            Column(
-                modifier = Modifier.fillMaxWidth()
-            ) {
+            Column(modifier = Modifier.fillMaxWidth()) {
 
-                // Header: ícono a la izquierda, título centrado
+                // ── Header ──
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -100,34 +130,31 @@ fun EditProfileScreen(
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onBackground,
                         textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .align(Alignment.Center)
+                        modifier = Modifier.align(Alignment.Center)
                     )
                 }
+
                 HorizontalDivider(thickness = 2.dp, color = MaterialTheme.colorScheme.outline)
 
+                // ── Avatar ──
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .padding(top = 30.dp)
                 ) {
                     Box(
                         contentAlignment = Alignment.BottomEnd,
                         modifier = Modifier.size(150.dp)
                     ) {
-
-                        // Imagen de perfil
                         Card(
                             shape = CircleShape,
                             colors = CardDefaults.cardColors(
-                                containerColor = Color.White
+                                containerColor = MaterialTheme.colorScheme.surface
                             ),
                             modifier = Modifier
                                 .size(150.dp)
-                                .shadow(
-                                    elevation = 2.dp,
-                                    shape = CircleShape
-                                )
+                                .shadow(elevation = 2.dp, shape = CircleShape)
                         ) {
                             Image(
                                 painter = painterResource(id = R.drawable.logo_profile),
@@ -139,10 +166,7 @@ fun EditProfileScreen(
 
                         // Botón cámara
                         IconButton(
-                            onClick = {
-                                // 🔥 Acción aquí
-                                println("Cambiar foto")
-                            },
+                            onClick = { /* TODO: abrir galería / cámara */ },
                             modifier = Modifier
                                 .size(45.dp)
                                 .offset(x = 5.dp, y = 5.dp)
@@ -153,19 +177,20 @@ fun EditProfileScreen(
                                 )
                                 .border(
                                     width = 3.dp,
-                                    color = Color.White,
+                                    color = MaterialTheme.colorScheme.surface,
                                     shape = CircleShape
                                 )
                         ) {
                             Icon(
                                 imageVector = Icons.Default.CameraAlt,
                                 contentDescription = "Cambiar foto",
-                                tint = Color.White,
+                                tint = MaterialTheme.colorScheme.onPrimary,
                                 modifier = Modifier.size(20.dp)
                             )
                         }
                     }
                 }
+
                 Text(
                     text = stringResource(R.string.update_image),
                     color = MaterialTheme.colorScheme.primary,
@@ -174,89 +199,85 @@ fun EditProfileScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(10.dp)
-
                 )
+
+                // ── Formulario ──
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 8.dp, horizontal = 8.dp)
                 ) {
+                    // Nombres
                     Row(
-                        modifier = Modifier.
-                        padding(bottom = 20.dp),
+                        modifier = Modifier.padding(bottom = 20.dp),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Column(
-                            modifier = Modifier
-                                .weight(1F)
-                        ) {
+                        Column(modifier = Modifier.weight(1F)) {
                             AppTextField(
-                                value = first_name,
-                                onValueChange = { first_name = it },
-                                label = stringResource(R.string.first_name)
-
+                                value = viewModel.firstName.value,
+                                onValueChange = { viewModel.firstName.onChange(it) },
+                                label = stringResource(R.string.first_name),
+                                isError = viewModel.firstName.error != null,
+                                supportingText = viewModel.firstName.error?.let { msg -> { Text(msg) } }
                             )
                         }
-                        Column(
-                            modifier = Modifier
-                                .weight(1F)
-                        ) {
-
+                        Column(modifier = Modifier.weight(1F)) {
                             AppTextField(
-                                value = middle_name,
-                                onValueChange = { middle_name = it },
+                                value = viewModel.middleName.value,
+                                onValueChange = { viewModel.middleName.onChange(it) },
                                 label = stringResource(R.string.middle_name),
+                                isError = viewModel.middleName.error != null,
+                                supportingText = viewModel.middleName.error?.let { msg -> { Text(msg) } }
                             )
                         }
                     }
+
+                    // Apellidos
                     Row(
-                        modifier = Modifier.
-                        padding(bottom = 20.dp),
+                        modifier = Modifier.padding(bottom = 20.dp),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Column(
-                            modifier = Modifier
-                                .weight(1F)
-                        ) {
-
+                        Column(modifier = Modifier.weight(1F)) {
                             AppTextField(
-                                value = first_last_name,
-                                onValueChange = { first_name = it },
-                                label = stringResource(R.string.first_last_name)
+                                value = viewModel.firstLastName.value,
+                                onValueChange = { viewModel.firstLastName.onChange(it) },
+                                label = stringResource(R.string.first_last_name),
+                                isError = viewModel.firstLastName.error != null,
+                                supportingText = viewModel.firstLastName.error?.let { msg -> { Text(msg) } }
                             )
                         }
-                        Column(
-                            modifier = Modifier
-                                .weight(1F)
-                        ) {
-
+                        Column(modifier = Modifier.weight(1F)) {
                             AppTextField(
-                                value = second_last_name,
-                                onValueChange = { second_last_name = it },
-                                label = stringResource(R.string.second_last_name)
+                                value = viewModel.secondLastName.value,
+                                onValueChange = { viewModel.secondLastName.onChange(it) },
+                                label = stringResource(R.string.second_last_name),
+                                isError = viewModel.secondLastName.error != null,
+                                supportingText = viewModel.secondLastName.error?.let { msg -> { Text(msg) } }
                             )
                         }
                     }
-                    Column (
-                        modifier = Modifier.padding(bottom = 20.dp)
-                    ) {
 
+                    // Dirección
+                    Column(modifier = Modifier.padding(bottom = 20.dp)) {
                         AppTextField(
-                            value = address,
-                            onValueChange = { address = it },
-                            label = stringResource(R.string.address)
+                            value = viewModel.address.value,
+                            onValueChange = { viewModel.address.onChange(it) },
+                            label = stringResource(R.string.address),
+                            isError = viewModel.address.error != null,
+                            supportingText = viewModel.address.error?.let { msg -> { Text(msg) } }
                         )
                     }
-                    Column (
-                        modifier = Modifier.padding(bottom = 20.dp)
-                    ) {
 
+                    // Teléfono
+                    Column(modifier = Modifier.padding(bottom = 20.dp)) {
                         AppTextField(
-                            value = num_tel,
+                            value = viewModel.phone.value,
                             onValueChange = { input ->
-                                num_tel = input.filter { it.isDigit() } // 🔥 Solo números
+                                viewModel.phone.onChange(input.filter { it.isDigit() })
                             },
                             label = stringResource(R.string.number_tel),
+                            isError = viewModel.phone.error != null,
+                            supportingText = viewModel.phone.error?.let { msg -> { Text(msg) } },
                             leadingIcon = {
                                 Icon(
                                     imageVector = Icons.Default.Phone,
@@ -266,14 +287,13 @@ fun EditProfileScreen(
                         )
                     }
                 }
+
                 CardInfoprofile()
 
-                Box(
-                    modifier = Modifier.padding(vertical = 20.dp)
-                ) {
+                Box(modifier = Modifier.padding(vertical = 20.dp)) {
                     PrimaryButton(
                         text = stringResource(R.string.btn_edit_profile),
-                        onClick = { }
+                        onClick = { viewModel.saveProfile() }
                     )
                 }
             }
@@ -284,8 +304,5 @@ fun EditProfileScreen(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun EditProfileScreenPreview() {
-    EditProfileScreen(
-        onBack = {}
-    )
-
+    EditProfileScreen(onBack = {})
 }
