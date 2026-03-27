@@ -207,15 +207,9 @@ private fun MainNavigation(
         composable<DashboardRoutes.HomeUser> {
             UserScreen(
                 onLogout = {
-                    // Llamar al callback del ViewModel para cerrar sesión
+                    // Solo llamamos a onLogout(). AppNavigation detectará el cambio de estado
+                    // y nos llevará de vuelta al flujo de Auth automáticamente.
                     onLogout()
-                    // Navegar al Login desde el NavHost raíz y limpiar el back stack de manera segura
-                    navController.navigate(MainRoutes.Login) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            inclusive = true
-                        }
-                        launchSingleTop = true
-                    }
                 },
                 onCreateService ={
                     navController.navigate(MainRoutes.CreateService)
@@ -231,15 +225,11 @@ private fun MainNavigation(
             )
         }
 
-        // --- Moderador: registrar la pantalla principal del moderador en el NavHost raíz ---
+        // --- Moderador ---
         composable<DashboardRoutes.HomeModerator> {
             ModeratorScreen(
                 onLogout = {
-                    // Llamar al callback del ViewModel para cerrar sesión
                     onLogout()
-                    navController.navigate(MainRoutes.Login) {
-                        popUpTo(navController.graph.findStartDestination().id) { inclusive = true }
-                    }
                 },
                 onCreateService = {
                     navController.navigate(MainRoutes.CreateService)
