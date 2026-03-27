@@ -78,7 +78,7 @@ fun RegisterScreen(
             // Navegar a la pantalla de usuarios si el login fue exitoso. Se puede agregar un delay para que el usuario alcance a ver el mensaje
             if (result is RequestResult.Success) {
                 delay(1000) // 2 segundos
-                onNavigateToLogin()
+                onVerifyEmail()
             }
 
             // Reseta el estado del loginResult en el ViewModel después de mostrar el mensaje

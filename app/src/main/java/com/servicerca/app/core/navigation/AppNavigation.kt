@@ -31,6 +31,11 @@ import com.servicerca.app.ui.dashboard.moderador.ModeratorScreen
 import com.servicerca.app.ui.dashboard.user.UserScreen
 import com.servicerca.app.ui.notifications.NotificationsScreen
 import com.servicerca.app.ui.services.create.CreateServiceScreen
+import androidx.navigation.navOptions
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.toRoute
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.servicerca.app.ui.auth.register.RegisterViewModel
 
 
 @Composable
@@ -122,18 +127,21 @@ private fun AuthNavigation(onLoginSuccess: (String, com.servicerca.app.domain.mo
 
 
 
-        composable<MainRoutes.Register> {
-            RegisterScreen( onNavigateToLogin = {
-                navController.navigate(MainRoutes.Login)
-            },
-                onBackClick = {
-                    navController.popBackStack()
-                },
-                onVerifyEmail = {
-                    navController.navigate(MainRoutes.VerifyEmail)
-                }
-            )
-        }
+            composable<MainRoutes.Register> {
+                val registerViewModel: RegisterViewModel = viewModel()
+                RegisterScreen(
+                    viewModel = registerViewModel,
+                    onNavigateToLogin = {
+                        navController.navigate(MainRoutes.Login)
+                    },
+                    onBackClick = {
+                        navController.popBackStack()
+                    },
+                    onVerifyEmail = {
+                        navController.navigate(MainRoutes.VerifyEmail(email = registerViewModel.email.value))
+                    }
+                )
+            }
 
         composable<MainRoutes.RecoverPassword> {
             RecoverPasswordScreen(
@@ -166,17 +174,17 @@ private fun AuthNavigation(onLoginSuccess: (String, com.servicerca.app.domain.mo
             )
         }
 
-
-        composable<MainRoutes.VerifyEmail> {
-            VerifyEmailScreen(
-
-                email = "juanPerez.example.com", // TODO Luego ver como se pasa el email por los estados
-                onNavigateToLogin = {
-                    navController.navigate(MainRoutes.Login)
-                },
-                onResendEmail= {}
-            )
-        }
+            composable<MainRoutes.VerifyEmail> { backStackEntry ->
+                val route = backStackEntry.toRoute<MainRoutes.VerifyEmail>()
+                VerifyEmailScreen(
+                    email = route.email,
+                    onNavigateToLogin = {
+                        navController.navigate(MainRoutes.Login) {
+                            popUpTo(navController.graph.findStartDestination().id) { inclusive = true }
+                        }
+                    }
+                )
+            }
 
 
 
