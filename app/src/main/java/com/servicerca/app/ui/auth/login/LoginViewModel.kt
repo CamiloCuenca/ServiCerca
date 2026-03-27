@@ -72,9 +72,9 @@ class LoginViewModel @Inject constructor(
         _loginResult.value = if (user != null) {
             // Si el usuario es ADMIN navegamos al panel de moderador
             if (user.role == UserRole.ADMIN) {
-                RequestResult.Success("moderator")
+                RequestResult.SuccessLogin(user.id, user.role)
             } else {
-                RequestResult.Success("Login exitoso")
+                RequestResult.SuccessLogin(user.id, user.role)
             }
         } else {
             RequestResult.Failure("Credenciales inválidas")

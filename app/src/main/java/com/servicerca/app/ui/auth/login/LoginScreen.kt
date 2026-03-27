@@ -1,5 +1,6 @@
 package com.servicerca.app.ui.auth.login
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -41,7 +42,8 @@ fun LoginScreen(
     onNavigateToRegister: () -> Unit,
     onNavigateToUsers: () -> Unit,
     onRecoverPassword: () -> Unit,
-    onModeratorPanel: () -> Unit
+    onModeratorPanel: () -> Unit,
+    onLoginSuccess: (userId: String, role: com.servicerca.app.domain.model.UserRole) -> Unit
 ) {
     val scrollState = rememberScrollState()
     val snackBarHostState = remember { SnackbarHostState() }
@@ -52,6 +54,7 @@ fun LoginScreen(
         loginResult?.let { result ->
             val message = when(result){
                 is RequestResult.Success -> result.message
+                is RequestResult.SuccessLogin -> "Login exitoso"
                 is RequestResult.Failure -> result.errorMessage
             }
             
@@ -62,14 +65,18 @@ fun LoginScreen(
             )
 
             // Si el login fue exitoso, esperamos un momento para que el usuario vea el mensaje y navegamos
-            if (result is RequestResult.Success) {
-                delay(300)
-
-                if (result.message == "moderator") {
-                    onModeratorPanel()
-                } else {
+            when (result) {
+                is RequestResult.SuccessLogin -> {
+                    delay(300)
+                    // Llamamos al callback que guardará la sesión en el SessionViewModel
+                    Log.d("LoginScreen", "onLoginSuccess invoked with userId=${result.userId}, role=${result.role}")
+                    onLoginSuccess(result.userId, result.role)
+                }
+                is RequestResult.Success -> {
+                    delay(300)
                     onNavigateToUsers()
                 }
+                else -> { /* no-op para Failure ya mostrado */ }
             }
 
             // Limpiamos el resultado en el ViewModel para evitar que el efecto se dispare de nuevo innecesariamente
@@ -249,6 +256,7 @@ fun LoginScreenPreview() {
         onNavigateToRegister = {},
         onNavigateToUsers = {},
         onRecoverPassword = {},
-        onModeratorPanel = {}
+        onModeratorPanel = {},
+        onLoginSuccess = { _, _ -> }
     )
 }

@@ -94,7 +94,7 @@ fun UserNavigation(
         composable("serviceList" ){
             ListServiceScreen(
                 onBackClick = { navController.popBackStack() } ,
-                onEditService = { navController.navigate("editService") },
+                onEditService = { navController.navigate("editService") },  // TODO @CAMILOCUENCA   ver por que no esta navegando.
 
             )
 
