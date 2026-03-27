@@ -27,7 +27,7 @@ import com.servicerca.app.ui.theme.ServiCercaTheme
 @Composable
 fun ListServiceScreen(
     onBackClick: () -> Unit = {},
-    onEditService: (String) -> Unit = {},
+    onEditService: () -> Unit = {},
 ) {
 
     var showDeleteModal by remember { mutableStateOf(false) }
@@ -98,7 +98,7 @@ fun ListServiceScreen(
 
                 MyServiceCard(
                     service = service,
-                    onEdit = { onEditService(service.id) },
+                    onEdit = { onEditService() },
 
                     onDelete = {
                         selectedServiceId = service.id

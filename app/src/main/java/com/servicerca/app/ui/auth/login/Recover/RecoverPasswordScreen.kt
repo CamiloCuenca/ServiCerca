@@ -76,11 +76,12 @@ fun RecoverPasswordScreen(
             val message = when(result){
                 is RequestResult.Success -> result.message
                 is RequestResult.Failure -> result.errorMessage
+                else -> {}
             }
 
             // Muestra el snackbar y espera a que se oculte o descarte
             snackBarHostState.showSnackbar(
-                message = message,
+                message = message as String,
                 duration = SnackbarDuration.Short
             )
 
