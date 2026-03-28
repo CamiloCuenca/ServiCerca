@@ -31,7 +31,6 @@ fun CardProfileManage(
     name : String,
     email : String,
     imageProfile : Int,
-    onBack : () -> Unit = {},
     onOpenOptions : () -> Unit ={}
 ) {
     ElevatedCard(
