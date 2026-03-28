@@ -2,11 +2,11 @@ package com.servicerca.app.core.components.chat
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -37,7 +38,7 @@ fun HeaderChatComponent(
     onBack : () -> Unit = {}
 ) {
 
-    Box (
+    Column (
         modifier = Modifier
             .fillMaxWidth()
     ) {
@@ -108,6 +109,10 @@ fun HeaderChatComponent(
                 )
             }
         }
+
+        Spacer(modifier = Modifier.height(6.dp))
+        HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outline)
+
     }
 }
 

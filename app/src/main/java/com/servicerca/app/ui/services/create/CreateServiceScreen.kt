@@ -1,5 +1,6 @@
 package com.servicerca.app.ui.services.create
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -112,9 +113,9 @@ fun CreateServiceScreen(
                 .padding(15.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Column {
 
-                // ── Header ──────────────────────────────────────────────
+            Column{
+                // Header: ícono a la izquierda, título centrado
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -235,7 +236,7 @@ fun CreateServiceScreen(
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                // ── Precios ───────────────────────────────────────────────
+                // Precios
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -259,6 +260,7 @@ fun CreateServiceScreen(
                         isError = viewModel.maxValue.error != null,
                         supportingText = viewModel.maxValue.error?.let { msg -> { Text(msg) } }
                     )
+
                 }
 
                 Spacer(modifier = Modifier.height(10.dp))
@@ -331,10 +333,15 @@ fun CreateServiceScreen(
                             modifier = Modifier.align(Alignment.End)
                         )
                     }
+
                 )
+
+
             }
+
         }
     }
+
 }
 
 @Preview(showBackground = true, showSystemUi = true)

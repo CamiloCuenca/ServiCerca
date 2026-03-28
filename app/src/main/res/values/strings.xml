@@ -215,6 +215,9 @@
     <string name="validate_new_services">Validar nuevos servicios</string>
     <string name="user_management">Gestión de usuarios</string>
     <string name="moderation_history">Historial de moderación</string>
+    <string name="menu_option_see_profile">Ver Perfil</string>
+    <string name="menu_option_suspend_profile">Suspender</string>
+    <string name="menu_option_delete_profile">Eliminar</string>
 
 
 
@@ -293,5 +296,8 @@
     <string name="history_date5">25 Mar 2026</string>
     <string name="history_time5">01:03 PM</string>
 
+
+    <!-- Chat Screen -->
+    <string name="name_profile">Diego Alexander Jimenez</string>
 
 </resources>
