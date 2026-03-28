@@ -71,13 +71,14 @@ fun RegisterScreen(
             val message = when (result) {
                 is RequestResult.Success -> result.message
                 is RequestResult.Failure -> result.errorMessage
+                else -> {}
             }
-            snackbarHostState.showSnackbar(message) // Mostrar el snackbar con el mensaje
+            //snackbarHostState.showSnackbar(message) // Mostrar el snackbar con el mensaje
 
             // Navegar a la pantalla de usuarios si el login fue exitoso. Se puede agregar un delay para que el usuario alcance a ver el mensaje
             if (result is RequestResult.Success) {
                 delay(1000) // 2 segundos
-                onNavigateToLogin()
+                onVerifyEmail()
             }
 
             // Reseta el estado del loginResult en el ViewModel después de mostrar el mensaje

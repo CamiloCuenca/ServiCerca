@@ -49,28 +49,32 @@ class RegisterViewModel : ViewModel() {
 
     val name = ValidatedField("") { value ->
         when {
-            value.isEmpty() -> "El nombre es obligatoria"
+            value.isEmpty() -> "El nombre es obligatorio"
+            !value.matches(Regex("[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ ]+")) -> "El nombre solo puede contener letras"
             else -> null
         }
     }
 
     val SecondName = ValidatedField("") { value ->
         when {
-            value.isEmpty() -> "El segundo nombre es obligatoria"
+            value.isEmpty() -> "El segundo nombre es obligatorio"
+            !value.matches(Regex("[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ ]+")) -> "El nombre solo puede contener letras"
             else -> null
         }
     }
 
     val Lastname = ValidatedField("") { value ->
         when {
-            value.isEmpty() -> "El apellido es obligatoria"
+            value.isEmpty() -> "El apellido es obligatorio"
+            !value.matches(Regex("[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ ]+")) -> "El apellido solo puede contener letras"
             else -> null
         }
     }
 
     val SecondLastname = ValidatedField("") { value ->
         when {
-            value.isEmpty() -> "El segundo apellido es obligatoria"
+            value.isEmpty() -> "El segundo apellido es obligatorio"
+            !value.matches(Regex("[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ ]+")) -> "El apellido solo puede contener letras"
             else -> null
         }
     }

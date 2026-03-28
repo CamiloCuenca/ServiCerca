@@ -4,15 +4,22 @@ import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import com.servicerca.app.core.utils.RequestResult
 import com.servicerca.app.core.utils.ValidatedField
+import com.servicerca.app.domain.model.UserRole
+import com.servicerca.app.domain.repository.UserRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import javax.inject.Inject
 
 /**
  * ViewModel encargado de gestionar la lógica de negocio y el estado de la pantalla de Login.
  * Maneja la validación de campos, el estado de la autenticación y los resultados de las peticiones.
  */
-class LoginViewModel : ViewModel() {
+@HiltViewModel
+class LoginViewModel @Inject constructor(
+    private val repository: UserRepository
+) : ViewModel() {
 
     private val _loginResult = MutableStateFlow<RequestResult?>(null)
     /**
@@ -51,9 +58,8 @@ class LoginViewModel : ViewModel() {
                 && password.isValid
 
     /**
-     * Ejecuta el proceso de inicio de sesión.
-     * Si el formulario es válido, dispara el resultado de éxito (simulado).
-     * Si no es válido, dispara un resultado de error para mostrar en la UI.
+     * Ejecuta el proceso de inicio de sesión usando el UserRepository.
+     * Si el formulario es válido, se consulta el repositorio y se actualiza el estado según el resultado.
      */
     fun login() {
         if (!isFormValid) {
@@ -62,14 +68,16 @@ class LoginViewModel : ViewModel() {
             return
         }
 
-        if (email.value == "nombre@gmail.com" &&
-            password.value == "123456"
-        ) {
-            _loginResult.value =
-                RequestResult.Success("moderator")
+        val user = repository.login(email.value, password.value)
+        _loginResult.value = if (user != null) {
+            // Si el usuario es ADMIN navegamos al panel de moderador
+            if (user.role == UserRole.ADMIN) {
+                RequestResult.SuccessLogin(user.id, user.role)
+            } else {
+                RequestResult.SuccessLogin(user.id, user.role)
+            }
         } else {
-            _loginResult.value =
-                RequestResult.Success("¡Bienvenido de nuevo!")
+            RequestResult.Failure("Credenciales inválidas")
         }
     }
 

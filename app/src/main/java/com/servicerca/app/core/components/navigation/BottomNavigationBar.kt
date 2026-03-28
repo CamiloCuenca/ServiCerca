@@ -49,20 +49,23 @@ fun BottomNavigationBar(
 
         Destination.entries.forEach { destination ->
 
-            val isSelected =
-                currentDestination?.route ==
-                        destination.route::class.qualifiedName
+            // Obtener una representación de ruta consistente (qualifiedName) usada al registrar composable<...>
+            val routeName = destination.route::class.qualifiedName ?: ""
+
+            val isSelected = currentDestination?.route == routeName
 
             NavigationBarItem(
                 selected = isSelected,
 
                 onClick = {
-                    navController.navigate(destination.route) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
+                    if (routeName.isNotEmpty()) {
+                        navController.navigate(routeName) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
                         }
-                        launchSingleTop = true
-                        restoreState = true
                     }
                 },
 
@@ -135,20 +138,22 @@ fun BottomNavigationBarModerator(
 
         DestinationModerator.entries.forEach { destination ->
 
-            val isSelected =
-                currentDestination?.route ==
-                        destination.route::class.qualifiedName
+            val routeName = destination.route::class.qualifiedName ?: ""
+
+            val isSelected = currentDestination?.route == routeName
 
             NavigationBarItem(
                 selected = isSelected,
 
                 onClick = {
-                    navController.navigate(destination.route) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
+                    if (routeName.isNotEmpty()) {
+                        navController.navigate(routeName) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
                         }
-                        launchSingleTop = true
-                        restoreState = true
                     }
                 },
 

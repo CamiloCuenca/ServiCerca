@@ -24,6 +24,7 @@ import com.servicerca.app.ui.reservation.details.DetailsReservationScreen
 import com.servicerca.app.ui.services.ListInteresting.ListInteresting
 import com.servicerca.app.ui.services.ListService.ListServiceScreen
 import com.servicerca.app.ui.services.detail.DetailServiceScreen
+import com.servicerca.app.ui.services.edit.EditServiceScreen
 
 
 @Composable
@@ -93,12 +94,12 @@ fun UserNavigation(
 
         composable("serviceList" ){
             ListServiceScreen(
-                onBackClick = { navController.popBackStack() } ,
-                onEditService = { navController.navigate("editService") },
+            onBackClick = { navController.popBackStack() } ,
+            onEditService = { navController.navigate("editService") },
 
-            )
+        )
 
-        }
+    }
 
 
 
@@ -175,6 +176,11 @@ fun UserNavigation(
         }
         composable("deleteProfile") {
             DeleteProfileScreen(onBack = { navController.popBackStack() })
+
+        }
+
+        composable("editService") {
+            EditServiceScreen(onBack = { navController.popBackStack() })
 
         }
 

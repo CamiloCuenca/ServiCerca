@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -43,7 +44,6 @@ import com.servicerca.app.R
 import com.servicerca.app.core.components.Map.MapBox
 import com.servicerca.app.core.components.button.PrimaryButton
 import com.servicerca.app.core.components.button.ReactionIconButton
-import com.servicerca.app.core.components.card.LocationSection
 import com.servicerca.app.core.components.card.ProviderRow
 import com.servicerca.app.core.components.card.ReviewCard
 import com.servicerca.app.core.components.card.ServiceDescriptionSection
@@ -55,8 +55,6 @@ import kotlin.Unit
 fun DetailServiceScreen(
     onBack: () -> Unit
 ) {
-
-    //TODO @Brandon Montealegre Cambiar los colores quemados por los colores del Thema tanto en la pantalla como el los componentes que utiliza
     var isSelectedLike by remember { mutableStateOf(false) }
     var isSelectedPin by remember { mutableStateOf(false) }
     var reviewText by remember { mutableStateOf("") }
@@ -83,12 +81,16 @@ fun DetailServiceScreen(
                     modifier = Modifier.fillMaxSize()
                 )
 
+                // Botón Atrás — overlay semitransparente usando scrim del tema
                 IconButton(
-                    onClick = {  onBack()},
+                    onClick = { onBack() },
                     modifier = Modifier
                         .align(Alignment.TopStart)
                         .padding(12.dp)
-                        .background(Color.Black.copy(alpha = 0.45f), CircleShape)
+                        .background(
+                            MaterialTheme.colorScheme.scrim.copy(alpha = 0.45f),
+                            CircleShape
+                        )
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -97,12 +99,16 @@ fun DetailServiceScreen(
                     )
                 }
 
+                // Botón Compartir — overlay semitransparente usando scrim del tema
                 IconButton(
                     onClick = { },
                     modifier = Modifier
                         .align(Alignment.TopEnd)
                         .padding(12.dp)
-                        .background(Color.Black.copy(alpha = 0.45f), CircleShape)
+                        .background(
+                            MaterialTheme.colorScheme.scrim.copy(alpha = 0.45f),
+                            CircleShape
+                        )
                 ) {
                     Icon(
                         imageVector = Icons.Default.Share,
@@ -112,12 +118,12 @@ fun DetailServiceScreen(
                 }
             }
 
-            // ── Tarjeta blanca con esquinas redondeadas ──
+            // ── Tarjeta con esquinas redondeadas usando surface del tema ──
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
-                    .background(Color.White)
+                    .background(MaterialTheme.colorScheme.surface)
             ) {
                 Spacer(modifier = Modifier.height(20.dp))
 
@@ -160,12 +166,11 @@ fun DetailServiceScreen(
                         isSelected = isSelectedPin,
                         onClick = { isSelectedPin = !isSelectedPin }
                     )
-
                 }
 
                 HorizontalDivider(
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp),
-                    color = Color(0xFFF0F0F0)
+                    color = MaterialTheme.colorScheme.outlineVariant
                 )
 
                 // Fila del proveedor
@@ -180,10 +185,10 @@ fun DetailServiceScreen(
 
                 HorizontalDivider(
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                    color = Color(0xFFF0F0F0)
+                    color = MaterialTheme.colorScheme.outlineVariant
                 )
 
-                // Ubicación
+                // Mapa de ubicación
                 MapBox(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -192,7 +197,7 @@ fun DetailServiceScreen(
 
                 HorizontalDivider(
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp),
-                    color = Color(0xFFF0F0F0)
+                    color = MaterialTheme.colorScheme.outlineVariant
                 )
 
                 // Descripción del servicio
@@ -202,10 +207,10 @@ fun DetailServiceScreen(
 
                 HorizontalDivider(
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp),
-                    color = Color(0xFFF0F0F0)
+                    color = MaterialTheme.colorScheme.outlineVariant
                 )
 
-                // Reseñas
+                // Encabezado de reseñas
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -217,12 +222,12 @@ fun DetailServiceScreen(
                         text = "Reseñas",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1A1C1E)
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
                         text = "Ver todas",
                         fontSize = 13.sp,
-                        color = Color(0xFF00BCD4),
+                        color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Medium
                     )
                 }
@@ -239,7 +244,7 @@ fun DetailServiceScreen(
 
                 HorizontalDivider(
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
-                    color = Color(0xFFF0F0F0)
+                    color = MaterialTheme.colorScheme.outlineVariant
                 )
 
                 ReviewCard(
@@ -268,7 +273,7 @@ fun DetailServiceScreen(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color.White)
+                .background(MaterialTheme.colorScheme.surface)
                 .padding(horizontal = 16.dp, vertical = 12.dp)
         ) {
             PrimaryButton(

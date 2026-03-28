@@ -32,13 +32,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.servicerca.app.R
 import com.servicerca.app.core.components.card.CardMenuModerator
 import com.servicerca.app.core.components.card.CardProfileModerator
 import com.servicerca.app.core.components.images.ProfileImage
 
 @Composable
-fun ProfileModerator (){
+fun ProfileModerator (
+    navController: NavHostController
+){
     var showConfirmDialog by remember { mutableStateOf(false) }
     Column(
         modifier = Modifier
@@ -81,7 +86,7 @@ fun ProfileModerator (){
                         modifier = Modifier.size(150.dp)
                     ) {
                         ProfileImage(
-                            url = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEga-7mA9kd7EnROYLMEYwURS2xlW1uWK8eWC8F6X3RFuCrJQLnd5eJ8KNOqXeVNuUVM0c4X31Uoz7NlQKJ4QxFfF6EDWAwgT6y1F_HgZ23As74U0wOHy14ClTNC9kP5KJHgPouBaogO5IpYsvxGmDCYlJ9do4tNb9eb6fYBMMSIG3zEcAN-7y2lIrvTwOyb/s320/WhatsApp%20Image%202026-03-04%20at%2023.04.58.jpeg"
+                            url = "https://i.pinimg.com/originals/ae/90/f5/ae90f5c41e36d420e8175f072367ead9.jpg"
                         )
                     }
                 }
@@ -92,7 +97,7 @@ fun ProfileModerator (){
                 .fillMaxWidth()
         ) {
             Text(
-                text = stringResource(R.string.name_user),
+                text = stringResource(R.string.name_moderator),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
@@ -110,7 +115,7 @@ fun ProfileModerator (){
             ) {
 
                 Text(
-                    text = stringResource(R.string.lacation_profile),
+                    text = stringResource(R.string.position_moderator),
                     style = MaterialTheme.typography.bodyLarge,
                     textAlign = TextAlign.Center
                 )
@@ -139,12 +144,31 @@ fun ProfileModerator (){
             textAlign = TextAlign.Center,
         )
 
-        CardMenuModerator()
+        CardMenuModerator(
+            onValidateClick = {
+                navController.navigate(DashboardRoutes.HomeModerator) {
+                    popUpTo(navController.graph.findStartDestination().id) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            },
+            onHistoryClick = {
+                navController.navigate(DashboardRoutes.Historial) {
+                    popUpTo(navController.graph.findStartDestination().id) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            }
+        )
     }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun ProfileModeratorPreview(){
-    ProfileModerator()
+    ProfileModerator(navController = rememberNavController())
 }
