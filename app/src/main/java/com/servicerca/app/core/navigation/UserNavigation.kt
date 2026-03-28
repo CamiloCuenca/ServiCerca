@@ -24,7 +24,7 @@ import com.servicerca.app.ui.reservation.details.DetailsReservationScreen
 import com.servicerca.app.ui.services.ListInteresting.ListInteresting
 import com.servicerca.app.ui.services.ListService.ListServiceScreen
 import com.servicerca.app.ui.services.detail.DetailServiceScreen
-import com.servicerca.app.ui.services.edit.Editservice
+import com.servicerca.app.ui.services.edit.EditServiceScreen
 
 
 @Composable
@@ -180,7 +180,7 @@ fun UserNavigation(
         }
 
         composable("editService") {
-            Editservice(onBack = { navController.popBackStack() })
+            EditServiceScreen(onBack = { navController.popBackStack() })
 
         }
 
