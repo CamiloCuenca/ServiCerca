@@ -1,6 +1,8 @@
 package com.servicerca.app.di
 
+import com.servicerca.app.data.repository.ServiceRepositoryImpl
 import com.servicerca.app.data.repository.UserRepositoryImpl
+import com.servicerca.app.domain.repository.ServiceRepository
 import com.servicerca.app.domain.repository.UserRepository
 import dagger.Binds
 import dagger.Module
@@ -17,4 +19,13 @@ abstract class RepositoryModule {
     abstract fun bindUserRepository(
         userRepositoryImpl: UserRepositoryImpl
     ): UserRepository // Vincula UserRepositoryImpl con UserRepository
+
+
+    @Binds
+    @Singleton
+    abstract fun bindServiceRepository(
+        serviceRepositoryImpl: ServiceRepositoryImpl
+    ): ServiceRepository
+
+
 }

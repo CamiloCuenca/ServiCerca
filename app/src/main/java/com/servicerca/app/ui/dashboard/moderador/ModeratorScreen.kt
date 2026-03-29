@@ -79,7 +79,8 @@ fun ModeratorScreen(
 
         ModeratorNavigation(
             navController = navController,
-            padding = padding
+            padding = padding,
+            onLogout = onLogout
         )
     }
 

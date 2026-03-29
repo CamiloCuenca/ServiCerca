@@ -284,7 +284,7 @@ fun DetailServiceScreen(
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true)
+@Preview()
 @Composable
 fun DetailServiceScreenPreview() {
     DetailServiceScreen(

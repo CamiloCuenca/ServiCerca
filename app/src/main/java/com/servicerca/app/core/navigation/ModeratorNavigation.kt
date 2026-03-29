@@ -7,17 +7,17 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.servicerca.app.ui.dashboard.moderador.DetailsVerificationModeratorPreview
 import com.servicerca.app.ui.dashboard.moderador.DetailsVerificationModeratorScreen
 import com.servicerca.app.ui.dashboard.moderador.ModerationHistory
 import com.servicerca.app.ui.dashboard.moderador.ModeratorPanelScreen
+import com.servicerca.app.ui.dashboard.moderador.ProfileModerator
 import com.servicerca.app.ui.dashboard.moderador.RejectReasonScreen
-import com.servicerca.app.ui.profile.DeleteProfileScreen
 
 @Composable
 fun ModeratorNavigation(
     navController: NavHostController,
-    padding: PaddingValues
+    padding: PaddingValues,
+    onLogout: () -> Unit
 ) {
     NavHost(
         navController = navController,
@@ -42,7 +42,14 @@ fun ModeratorNavigation(
         }
 
         composable<DashboardRoutes.ProfileModerator> {
-            ProfileModerator(navController = navController)
+            ProfileModerator(navController = navController,
+                onLogout = {
+                    // Delegar la acción de logout al callback pasado desde la pantalla raíz
+                    onLogout()
+                }
+
+            )
+
         }
 
         composable<DashboardRoutes.Historial> {

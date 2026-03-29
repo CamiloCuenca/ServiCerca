@@ -28,7 +28,7 @@ import com.servicerca.app.core.components.tag.VerificationTag
 import com.servicerca.app.ui.theme.ServiCercaTheme
 
 @Composable
-fun CardService(
+fun CardService( // TODO @CAMILOCUENCA luego de tener el firestorage ponerle el parametro de imagn del servicio.
     modifier: Modifier = Modifier,
     title: String = "Reparación de Fugas Urgente",
     category: String = "Hogar",

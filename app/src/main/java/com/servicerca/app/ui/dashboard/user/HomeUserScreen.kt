@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -20,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.servicerca.app.core.components.card.CardService
 import com.servicerca.app.core.components.input.SearchTextField
 import com.servicerca.app.core.components.tag.CategoryTagSearch
@@ -36,11 +38,12 @@ import com.servicerca.app.domain.model.Categories
 @Composable
 fun HomeUserScreen(
     onDetailClick: () -> Unit = {},
+    viewModel: HomeUserViewModel = hiltViewModel()
 ) {
 
     var query by remember { mutableStateOf("") }
     var selectedCategory by remember { mutableStateOf<Categories?>(null) }
-
+    val services by viewModel.services.collectAsState() // Observamos la lista
 
     Column(
         modifier = Modifier
@@ -80,40 +83,14 @@ fun HomeUserScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
-            item {
+            items(services) { service ->
                 CardService(
-                    title = "Reparación de Fugas Urgente",
-                    category = "Plomería",
-                    level = "EXPERTO",
-                    onRequestClick = (onDetailClick)
-                )
-            }
-
-            item {
-                CardService(
-                    title = "Instalación Eléctrica Residencial",
-                    category = "Electricidad",
-                    level = "PRO",
-                    onRequestClick = (onDetailClick)
-                )
-            }
-
-            item {
-                CardService(
-                    title = "Remodelación de Cocina",
-                    category = "Construcción",
-                    level = "PREMIUM",
-                    onRequestClick = (onDetailClick)
-                )
-            }
-
-            item {
-                CardService(
-                    title = "Limpieza Profunda del Hogar",
-                    category = "House Keeping",
-                    level = "BÁSICO",
-                    onRequestClick = (onDetailClick)
+                    title = service.title,
+                    category = service.type,
+                    // Puedes formatear el rango de precio aquí
+                    priceRange = "$${service.priceMin.toInt()} - $${service.priceMax.toInt()}",
+                    level = "EXPERTO", // Esto podrías añadirlo al modelo Service más adelante
+                    onRequestClick = onDetailClick
                 )
             }
         }
