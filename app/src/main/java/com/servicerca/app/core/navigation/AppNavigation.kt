@@ -31,6 +31,7 @@ import com.servicerca.app.ui.dashboard.moderador.ModeratorScreen
 import com.servicerca.app.ui.dashboard.user.UserScreen
 import com.servicerca.app.ui.notifications.NotificationsScreen
 import com.servicerca.app.ui.services.create.CreateServiceScreen
+import com.servicerca.app.ui.services.detail.DetailServiceScreen
 import androidx.navigation.navOptions
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.toRoute
@@ -268,6 +269,16 @@ private fun MainNavigation(
         composable<MainRoutes.Map>{
             MapScreen(
                 onBackClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable<MainRoutes.ServiceDetail> { backStackEntry ->
+            val route = backStackEntry.toRoute<MainRoutes.ServiceDetail>()
+            DetailServiceScreen(
+                serviceId = route.serviceId,
+                onBack = {
                     navController.popBackStack()
                 }
             )

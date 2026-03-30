@@ -37,7 +37,7 @@ import com.servicerca.app.domain.model.Categories
 
 @Composable
 fun HomeUserScreen(
-    onDetailClick: () -> Unit = {},
+    onDetailClick: (String) -> Unit = {},
     viewModel: HomeUserViewModel = hiltViewModel()
 ) {
 
@@ -87,10 +87,9 @@ fun HomeUserScreen(
                 CardService(
                     title = service.title,
                     category = service.type,
-                    // Puedes formatear el rango de precio aquí
                     priceRange = "$${service.priceMin.toInt()} - $${service.priceMax.toInt()}",
-                    level = "EXPERTO", // Esto podrías añadirlo al modelo Service más adelante
-                    onRequestClick = onDetailClick
+                    level = "EXPERTO",
+                    onRequestClick = { onDetailClick(service.id) }
                 )
             }
         }

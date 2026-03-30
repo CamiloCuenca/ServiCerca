@@ -42,14 +42,16 @@ fun UserNavigation(
 
         composable<DashboardRoutes.HomeUser> {
             HomeUserScreen(
-                onDetailClick = {
-                    navController.navigate("DetailService")
+                onDetailClick = { serviceId ->
+                    navController.navigate("DetailService/$serviceId")
                 }
             )
         }
 
-        composable("DetailService" ){
+        composable("DetailService/{serviceId}") { backStackEntry ->
+            val serviceId = backStackEntry.arguments?.getString("serviceId") ?: "1"
             DetailServiceScreen(
+                serviceId = serviceId,
                 onBack = { navController.popBackStack() }
             )
         }
