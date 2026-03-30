@@ -54,7 +54,8 @@ sealed class MainRoutes {
     @Serializable
     data object Insignias : MainRoutes()
 
-
+    @Serializable
+    data class ServiceDetail(val serviceId: String) : MainRoutes()
 
 }
 
