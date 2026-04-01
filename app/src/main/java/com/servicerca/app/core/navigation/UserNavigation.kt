@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 import com.servicerca.app.ui.search.SearchScreen
 import com.servicerca.app.ui.chat.MessageListScreen
 import com.servicerca.app.ui.dashboard.user.HomeUserScreen
@@ -115,8 +116,8 @@ fun UserNavigation(
 
         composable<DashboardRoutes.Reservation> {
             ReservationScreen(
-                onResevationDetails = {
-                    navController.navigate(MainRoutes.ReservationDetail)
+                onResevationDetails = { reservationId ->
+                    navController.navigate(MainRoutes.ReservationDetail(reservationId))
                 },
                 onQrScanner = {
                     navController.navigate("QrScanner")
@@ -125,9 +126,10 @@ fun UserNavigation(
             )
         }
 
-        composable<MainRoutes.ReservationDetail> {
-
+        composable<MainRoutes.ReservationDetail> { backStackEntry ->
+            val route: MainRoutes.ReservationDetail = backStackEntry.toRoute()
             DetailsReservationScreen(
+                reservationId = route.reservationId,
                 onBackClick = {
                     navController.popBackStack()
                 },

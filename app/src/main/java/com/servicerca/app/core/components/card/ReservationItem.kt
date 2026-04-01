@@ -31,11 +31,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.servicerca.app.R
-import com.servicerca.app.ui.reservation.ReservationData
+import com.servicerca.app.domain.model.Reservation
 
 @Composable
 fun ReservationItem(
-    reservation: ReservationData,
+    reservation: Reservation,
     modifier: Modifier = Modifier,
     onDetailClick: () -> Unit = {},
     onChatClick: () -> Unit = {}
@@ -83,7 +83,7 @@ fun ReservationItem(
                     modifier = Modifier.weight(1f)
                 ) {
                     Text(
-                        text = reservation.title,
+                        text = reservation.serviceTitle,
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onSurface,
                         fontWeight = FontWeight.SemiBold
@@ -148,4 +148,3 @@ fun ReservationItem(
         }
     }
 }
-
