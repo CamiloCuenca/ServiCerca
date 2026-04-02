@@ -1,6 +1,8 @@
 package com.servicerca.app.core.components.card
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,12 +13,17 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,16 +35,17 @@ import com.servicerca.app.R
 
 @Composable
 fun CardProfileManage(
-    name : String,
-    email : String,
-    imageProfile : Int,
-    onOpenOptions : () -> Unit ={}
+    name: String,
+    email: String,
+    imageProfile: Int,
+    onSeeProfile: () -> Unit = {},
+    onSuspendProfile: () -> Unit = {},
+    onDeleteProfile: () -> Unit = {}
 ) {
-    ElevatedCard(
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 2.dp,
+    var menuExpanded by remember { mutableStateOf(false) }
 
-            ),
+    ElevatedCard(
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
         ),
@@ -45,11 +53,13 @@ fun CardProfileManage(
             .fillMaxWidth()
             .padding(2.dp)
     ) {
-        Row (
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp)
-        ){
+                .padding(12.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Image(
                 painter = painterResource(id = imageProfile),
                 contentDescription = "Profile Image",
@@ -61,39 +71,55 @@ fun CardProfileManage(
 
             Spacer(modifier = Modifier.size(16.dp))
 
-             Column (
-                 modifier = Modifier
-                        .align(Alignment.CenterVertically)
-             ){
-                 Text(
-                     text = name,
-                     style = MaterialTheme.typography.titleLarge,
-                     fontWeight = FontWeight.Bold
-                 )
-
-                 Text(
-                     text = email,
-                     style = MaterialTheme.typography.bodyMedium,
-                     color = MaterialTheme.colorScheme.outline
-                 )
-             }
+            Column {
+                Text(
+                    text = name,
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = email,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.outline
+                )
+            }
 
             Spacer(modifier = Modifier.weight(1f))
 
 
-            IconButton(
-                onClick = { onOpenOptions() },
-                modifier = Modifier
-                    .size(30.dp)
-                    .align(Alignment.CenterVertically)
+            Box {
+                IconButton(
+                    onClick = { menuExpanded = true },
+                    modifier = Modifier
+                        .size(30.dp)
 
-            ) {
-                Icon(
-                    imageVector = Icons.Default.MoreVert,
-                    contentDescription = null
-                )
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.MoreVert,
+                        contentDescription = "Opciones"
+                    )
+                }
+
+                DropdownMenu(
+                    expanded = menuExpanded,
+                    onDismissRequest = { menuExpanded = false }
+                ) {
+                    CardMenuUserManage(
+                        onSeeProfile = {
+                            menuExpanded = false
+                            onSeeProfile()
+                        },
+                        onSuspendProfile = {
+                            menuExpanded = false
+                            onSuspendProfile()
+                        },
+                        onDeleteProfile = {
+                            menuExpanded = false
+                            onDeleteProfile()
+                        }
+                    )
+                }
             }
-
         }
     }
 }
