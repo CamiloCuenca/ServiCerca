@@ -27,8 +27,8 @@ fun ChatScreen(
 
     Column {
         HeaderChatComponent(
-            imageProfile = R.drawable.foto_perfil,
-            nameProfile = stringResource(R.string.name_profile),
+            imageProfile = uiState.participantImage,
+            nameProfile = uiState.participantName,
             onlineStatus = uiState.isOnline,
             onBack = onBack
         )

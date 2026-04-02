@@ -39,6 +39,7 @@ fun ChatComponent(
     name: String,
     lastMessage: String,
     time: String?,
+    unreadCount : Int,
     onChat: () -> Unit = {}
 ) {
 
@@ -112,7 +113,7 @@ fun ChatComponent(
                     )
 
                     Text(
-                        text = "1",
+                        text = unreadCount.toString(),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier
@@ -138,7 +139,8 @@ fun ChatScreen() {
         imageRes = R.drawable.foto_jcc,
         name = "Juan Camilo Cuenca",
         lastMessage = "Hola mi amor, ¿cómo estás?",
-        time = "12:45 PM"
+        time = "12:45 PM",
+        unreadCount = 20
     )
 }
 

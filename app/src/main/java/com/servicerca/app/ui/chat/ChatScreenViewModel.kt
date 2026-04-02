@@ -1,29 +1,59 @@
 package com.servicerca.app.ui.chat
 
 import android.icu.util.Calendar
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.servicerca.app.data.repository.ChatRepositoryImpl
+import com.servicerca.app.domain.model.Message
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-
-data class Message(
-    val id: String = java.util.UUID.randomUUID().toString(),
-    val message: String,
-    val time: String,
-    val isMine: Boolean,
-    val imageProfile: Int? = null
-)
+import kotlinx.coroutines.launch
 
 data class ChatUiState(
     val messages: List<Message> = emptyList(),
     val currentMessage: String = "",
-    val isOnline: Boolean = true
+    val isOnline: Boolean = true,
+    val participantName: String = "",
+    val participantImage: Int = 0
 )
 
-class ChatScreenViewModel : ViewModel() {
+class ChatScreenViewModel(
+    savedStateHandle: SavedStateHandle
+) : ViewModel() {
 
+    private val chatId: String = checkNotNull(savedStateHandle["chatId"])
+    private val repository = ChatRepositoryImpl()
     private val _uiState = MutableStateFlow(ChatUiState())
     val uiState: StateFlow<ChatUiState> = _uiState.asStateFlow()
+
+    init {
+        loadMessages()
+        loadChatInfo()
+    }
+
+    private fun loadMessages() {
+        viewModelScope.launch {
+            repository.getMessages(chatId).collect { messages ->
+                _uiState.value = _uiState.value.copy(messages = messages)
+            }
+        }
+    }
+
+    private fun loadChatInfo() {
+        viewModelScope.launch {
+            repository.getChats().collect { chats ->
+                val chat = chats.find { it.chatId == chatId }
+                chat?.let {
+                    _uiState.value = _uiState.value.copy(
+                        participantName = it.participantName,
+                        participantImage = it.participantImage
+                    )
+                }
+            }
+        }
+    }
 
     fun onMessageChange(newMessage: String) {
         _uiState.value = _uiState.value.copy(currentMessage = newMessage)
@@ -34,15 +64,16 @@ class ChatScreenViewModel : ViewModel() {
         if (text.isEmpty()) return
 
         val newMessage = Message(
+            senderId = "me",
             message = text,
             time = getCurrentTime(),
             isMine = true
         )
 
-        _uiState.value = _uiState.value.copy(
-            messages = _uiState.value.messages + newMessage,
-            currentMessage = ""
-        )
+        viewModelScope.launch {
+            repository.sendMessage(chatId, newMessage)
+            _uiState.value = _uiState.value.copy(currentMessage = "")
+        }
     }
 
     private fun getCurrentTime(): String {

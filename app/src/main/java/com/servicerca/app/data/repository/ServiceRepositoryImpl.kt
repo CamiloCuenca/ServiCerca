@@ -22,7 +22,7 @@ class ServiceRepositoryImpl @Inject constructor() : ServiceRepository {
     }
 
     override suspend fun save(service: Service) {
-        _services.value = _services.value + service
+        _services.value += service
     }
 
     override suspend fun update(service: Service) {
