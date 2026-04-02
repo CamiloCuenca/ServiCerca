@@ -2,6 +2,7 @@ package com.servicerca.app.ui.reservation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,10 +16,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,19 +26,38 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.servicerca.app.R
 import com.servicerca.app.core.components.button.PrimaryButton
 import com.servicerca.app.core.components.card.CalendarCard
 import com.servicerca.app.core.components.card.ReservationItem
 import com.servicerca.app.core.components.navigation.TabItemApp
 import com.servicerca.app.ui.theme.ServiCercaTheme
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @Composable
-fun ReservationScreen(modifier: Modifier = Modifier,
-    onResevationDetails: () -> Unit = {},
-                      onQrScanner: () -> Unit = {}
+fun ReservationScreen(
+    modifier: Modifier = Modifier,
+    viewModel: ReservationViewModel = hiltViewModel(),
+    onResevationDetails: (String) -> Unit = {},
+    onQrScanner: () -> Unit = {}
 ) {
-    var selectedTab by remember { mutableStateOf(0) }
+    val reservations by viewModel.reservations.collectAsState()
+    val selectedTab by viewModel.selectedTab.collectAsState()
+    val selectedDate by viewModel.selectedDate.collectAsState()
+
+    // Formatear la fecha seleccionada para el título
+    val dateTitle = remember(selectedDate) {
+        val today = LocalDate.now()
+        val formatter = DateTimeFormatter.ofPattern("dd 'de' MMMM", Locale("es", "ES"))
+        if (selectedDate == today) {
+            "Hoy, ${selectedDate.format(formatter)}"
+        } else {
+            selectedDate.format(formatter).replaceFirstChar { it.uppercase() }
+        }
+    }
 
     LazyColumn(
         modifier = modifier
@@ -52,20 +71,24 @@ fun ReservationScreen(modifier: Modifier = Modifier,
         item {
             ReservationTabRow(
                 selectedTabIndex = selectedTab,
-                onTabSelected = { selectedTab = it }
+                onTabSelected = { viewModel.onTabSelected(it) }
             )
         }
 
         item {
-            CalendarCard()
+            CalendarCard(
+                selectedDate = selectedDate,
+                onDateSelected = { viewModel.onDateSelected(it) }
+            )
         }
 
         item {
             PrimaryButton(
                 text = "Escanear QR",
-                onClick = {onQrScanner()}
+                onClick = { onQrScanner() }
             )
         }
+
         item {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -73,7 +96,7 @@ fun ReservationScreen(modifier: Modifier = Modifier,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = stringResource(id = R.string.reservation_today_format, "24 de Mayo"),
+                    text = dateTitle,
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
@@ -83,7 +106,7 @@ fun ReservationScreen(modifier: Modifier = Modifier,
                     shape = RoundedCornerShape(50)
                 ) {
                     Text(
-                        text = stringResource(id = R.string.reservation_num_services_format, 3),
+                        text = stringResource(id = R.string.reservation_num_services_format, reservations.size),
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                         style = MaterialTheme.typography.labelSmall,
                         color = Color.Gray
@@ -91,15 +114,34 @@ fun ReservationScreen(modifier: Modifier = Modifier,
                 }
             }
         }
-        val reservations = getSampleReservations()
-        items(reservations) { reservation ->
-            ReservationItem(reservation = reservation,onDetailClick = { onResevationDetails() })
+
+        if (reservations.isEmpty()) {
+            item {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 32.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "No hay reservas para este día",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.Gray
+                    )
+                }
+            }
+        } else {
+            items(reservations) { reservation ->
+                ReservationItem(
+                    reservation = reservation,
+                    onDetailClick = { onResevationDetails(reservation.id) }
+                )
+            }
         }
     }
 }
 
-// Composable secundario para la navegacion de tabs
- @Composable
+@Composable
 fun ReservationTabRow(
     selectedTabIndex: Int,
     onTabSelected: (Int) -> Unit,
@@ -129,45 +171,10 @@ fun ReservationTabRow(
     }
 }
 
-
-
-
-
-
-// Datos de ejemplo para las reservas
-data class ReservationData(
-    val title: String,
-    val time: String,
-    val icon: Int
-)
-
-
-
-fun getSampleReservations(): List<ReservationData> {
-    return listOf(
-        ReservationData(
-            title = "Plomería",
-            time = "10:00 AM",
-            icon = R.drawable.ic_star
-        ),
-        ReservationData(
-            title = "Electricista",
-            time = "02:30 PM",
-            icon = R.drawable.ic_mic
-        ),
-        ReservationData(
-            title = "Limpieza",
-            time = "05:00 PM",
-            icon = R.drawable.ic_star
-        )
-    )
-}
-
-
 @Preview(showBackground = true)
 @Composable
 fun ReservationScreenPreview() {
     ServiCercaTheme {
-        ReservationScreen()
+        Text("Vista previa de Reservas (Requiere ViewModel)")
     }
 }

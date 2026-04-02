@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -21,6 +22,7 @@ import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -28,6 +30,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,167 +45,219 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.servicerca.app.R
 import com.servicerca.app.core.components.Map.MapBox
 import com.servicerca.app.core.components.button.DeleteButton
 import com.servicerca.app.core.components.button.PrimaryButton
 import com.servicerca.app.core.components.card.CardDetailsReservation
+import com.servicerca.app.domain.model.ReservationStatus
 import com.servicerca.app.ui.reservation.ConfirmActionModal
 
 @Composable
 fun DetailsReservationScreen(
+    reservationId: String,
+    viewModel: ReservationDetailsViewModel = hiltViewModel(),
     onBackClick: () -> Unit = {},
     onQr: () -> Unit = {}
 ) {
-
+    val uiState by viewModel.uiState.collectAsState()
     var showDeleteModal by remember { mutableStateOf(false) }
 
+    LaunchedEffect(reservationId) {
+        viewModel.loadReservation(reservationId)
+    }
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 20.dp)
-            .verticalScroll(rememberScrollState())
-            .background(MaterialTheme.colorScheme.background)
+    if (uiState.isLoading) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+        }
+    } else if (uiState.reservation == null) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Text("No se encontró la reserva")
+        }
+    } else {
+        val reservation = uiState.reservation!!
+        val service = uiState.service
+        val provider = uiState.provider
 
-    ) {
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        // 🔹 Top Bar
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 20.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .padding(horizontal = 20.dp)
+                .verticalScroll(rememberScrollState())
+                .background(MaterialTheme.colorScheme.background)
         ) {
-            IconButton(onClick = onBackClick) {
-                Icon(
-                    imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurface
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // 🔹 Top Bar
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 20.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = onBackClick) {
+                    Icon(
+                        imageVector = Icons.Filled.ArrowBack,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+
+                Text(
+                    text = "Detalles de la Reserva",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
 
+            val statusInfo = getStatusInfo(reservation.status)
+
+            CardDetailsReservation(
+                serviceRequestedLabel = stringResource(R.string.reservation_servicio_solicitado),
+                statusText = statusInfo.text,
+                statusContainerColor = statusInfo.containerColor,
+                statusContentColor = statusInfo.contentColor,
+                serviceTitle = reservation.serviceTitle,
+                professionalName = provider?.name ?: "Cargando...",
+                professionalBadgeText = stringResource(R.string.reservation_profesional_certificado),
+                rating = "4.9"
+            )
+
+            Spacer(modifier = Modifier.height(28.dp))
+
+            // 🔹 SECTION TITLE
             Text(
-                text = "Detalles de la Reserva",
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface
+                text = "INFORMACIÓN",
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.primary,
+                letterSpacing = 1.sp
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            ElevatedCard(
+                shape = RoundedCornerShape(24.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+                colors = CardDefaults.elevatedCardColors(
+                    containerColor = MaterialTheme.colorScheme.surface
+                ),
+            ) {
+                Column(modifier = Modifier.padding(20.dp)) {
+
+                    InfoItem(
+                        icon = Icons.Default.CalendarMonth,
+                        label = "Fecha y hora",
+                        value = reservation.time
+                    )
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    InfoItem(
+                        icon = Icons.Default.LocationOn,
+                        label = "Ubicación",
+                        value = provider?.city ?: "Ubicación no disponible"
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    MapBox(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(180.dp)
+                    )
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    EstimatedCostRow(
+                        label = "Costo Estimado",
+                        value = if (service != null) "$${service.priceMin} - $${service.priceMax}" else "$0.00"
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            PrimaryButton(
+                text = "Chatear con el Profesional",
+                onClick = {}
+            )
+            Spacer(modifier = Modifier.height(32.dp))
+
+            if (reservation.status != ReservationStatus.CANCELLED) {
+                PrimaryButton(
+                    text = "Terminar Servicio",
+                    onClick = { onQr() }
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                DeleteButton(
+                    text = "Cancelar Reserva",
+                    onClick = { showDeleteModal = true },
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                )
+            }
+
+            Spacer(modifier = Modifier.height(32.dp))
+        }
+
+        // MODAL DE CONFIRMACIÓN
+        if (showDeleteModal) {
+            ConfirmActionModal(
+                onDismiss = { showDeleteModal = false },
+                onConfirm = {
+                    viewModel.cancelReservation(reservation.id) {
+                        showDeleteModal = false
+                    }
+                },
+                title = "¿Cancelar Reserva?",
+                textPrimary = "Mantener mi Reserva",
+                textSecondary = "Cancelar Reserva"
             )
         }
-
-        CardDetailsReservation(
-            serviceRequestedLabel = stringResource(R.string.reservation_servicio_solicitado),
-            statusText = stringResource(R.string.reservation_status_confirmed),
-            statusContainerColor = Color(0xFFD1FADF),
-            statusContentColor = Color(0xFF027A48),
-            serviceTitle = stringResource(R.string.reservation_service_plumber),
-            professionalName = "Kavin Payanene",
-            professionalBadgeText = stringResource(R.string.reservation_profesional_certificado),
-            rating = "4.9"
-        )
-
-        Spacer(modifier = Modifier.height(28.dp))
-
-        // 🔹 SECTION TITLE
-        Text(
-            text = "INFORMACIÓN",
-            style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.primary,
-            letterSpacing = 1.sp
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        ElevatedCard(
-            shape = RoundedCornerShape(24.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-            colors = CardDefaults.elevatedCardColors(
-                containerColor = MaterialTheme.colorScheme.surface
-            ),
-        ) {
-            Column(modifier = Modifier.padding(20.dp)) {
-
-                InfoItem(
-                    icon = Icons.Default.CalendarMonth,
-                    label = "Fecha y hora",
-                    value = "Lunes, 24 de Julio - 10:00 AM"
-                )
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                InfoItem(
-                    icon = Icons.Default.LocationOn,
-                    label = "Ubicación",
-                    value = "Av. Principal 123, Ciudad Central"
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                MapBox(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(180.dp)
-                )
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                EstimatedCostRow(
-                    label = "Costo Estimado",
-                    value = "$45.00"
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        PrimaryButton( // TODO @CamiloCuenca Añadir el icono de chat
-            text = "Chatear con el Profesional",
-            onClick = {}
-        )
-        Spacer(modifier = Modifier.height(32.dp))
-
-        PrimaryButton(
-            text = "Terminar Servicio",
-            onClick = {onQr()}
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        DeleteButton(
-            text = "Cancelar Reserva",
-            onClick = {showDeleteModal = true},
-            icon = {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurface
-                )
-            }
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
     }
+}
 
-    // MODAL DE CONFIRMACIÓN
-    if (showDeleteModal) {
+data class StatusUIInfo(
+    val text: String,
+    val containerColor: Color,
+    val contentColor: Color
+)
 
-        ConfirmActionModal(
-            onDismiss = { showDeleteModal = false },
-
-            onConfirm = {
-
-                showDeleteModal = false
-            },
-
-            title = "¿Cancelar Reserva?",
-            textPrimary = "Mantener mi Reserva",
-            textSecondary = "Cancelar Reserva"
+@Composable
+fun getStatusInfo(status: ReservationStatus): StatusUIInfo {
+    return when (status) {
+        ReservationStatus.CONFIRMED -> StatusUIInfo(
+            stringResource(R.string.reservation_status_confirmed),
+            Color(0xFFD1FADF),
+            Color(0xFF027A48)
+        )
+        ReservationStatus.PENDING -> StatusUIInfo(
+            "Pendiente",
+            Color(0xFFFEF0C7),
+            Color(0xFFB54708)
+        )
+        ReservationStatus.CANCELLED -> StatusUIInfo(
+            "Cancelada",
+            Color(0xFFFEE4E2),
+            Color(0xFFB42318)
+        )
+        ReservationStatus.COMPLETED -> StatusUIInfo(
+            "Completada",
+            Color(0xFFD1E9FF),
+            Color(0xFF175CD3)
         )
     }
-
-
 }
 
 
@@ -211,9 +267,12 @@ fun InfoItem(
     label: String,
     value: String
 ) {
-    Row(verticalAlignment = Alignment.CenterVertically,
-
-        modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surface)) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.surface)
+    ) {
 
         Surface(
             modifier = Modifier.size(48.dp),
@@ -279,11 +338,4 @@ fun EstimatedCostRow(label: String, value: String) {
             )
         }
     }
-}
-
-@Composable
-@Preview(showBackground = true, showSystemUi = true)
-fun DetailsReservationScreenPreview() {
-    DetailsReservationScreen()
-
 }
