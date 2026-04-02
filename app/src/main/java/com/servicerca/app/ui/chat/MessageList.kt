@@ -18,7 +18,8 @@ import com.servicerca.app.core.components.input.SearchTextField
 
 @Composable
 fun MessageListScreen(
-    onSearch: (String) -> Unit = {}
+    onSearch: (String) -> Unit = {},
+    onChatClick: (String) -> Unit = {}
 ){
 
 
@@ -49,28 +50,32 @@ fun MessageListScreen(
                     imageRes = R.drawable.primo_de_juan_camilo,
                     name = "Deiver Bonano Cuenca",
                     lastMessage = "Uy mano, mandame 50 mil pesos porfa, estoy en la quiebra",
-                    time = "3:45 PM"
+                    time = "3:45 PM",
+                    onChat = { onChatClick("chat_deiver") }  // 👈 ID único por chat
                 )
 
                 ChatComponent(
                     imageRes = R.drawable.papa_de_juan_camilo,
                     name = "Mauricio Cuenca",
                     lastMessage = "Usted donde anda!",
-                    time = "4:28 PM"
+                    time = "4:28 PM",
+                    onChat = { onChatClick("chat_mauricio") }
                 )
 
                 ChatComponent(
                     imageRes = R.drawable.tio_de_brandon,
                     name = "Julian Montealegre",
                     lastMessage = "Hola, ¿Donde estas? Te necesito para una cosa",
-                    time = "5:28 PM"
+                    time = "5:28 PM",
+                    onChat = { onChatClick("chat_julian") }
                 )
 
                 ChatComponent(
                     imageRes = R.drawable.otro_primo,
                     name = "Ferney Alexander",
                     lastMessage = "Mano llegame, estoy embalado con los tombos",
-                    time = "11:43 AM"
+                    time = "11:43 AM",
+                    onChat = { onChatClick("chat_ferney") }
                 )
             }
         }
