@@ -10,5 +10,6 @@ data class Reservation(
     val providerId: String,
     val date: Date,
     val time: String,
-    val status: ReservationStatus
+    val status: ReservationStatus,
+    val message: String = ""
 )

@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
+import java.time.ZoneId
 import java.util.Date
 import java.util.UUID
 import javax.inject.Inject
@@ -41,18 +42,25 @@ class MakeReservationViewModel @Inject constructor(
     fun loadServiceDetails(serviceId: String) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
-            val service = serviceRepository.findById(serviceId)
-            if (service != null) {
-                val provider = userRepository.findById(service.ownerId)
-                _uiState.value = _uiState.value.copy(
-                    service = service,
-                    provider = provider,
-                    isLoading = false
-                )
-            } else {
+            try {
+                val service = serviceRepository.findById(serviceId)
+                if (service != null) {
+                    val provider = userRepository.findById(service.ownerId)
+                    _uiState.value = _uiState.value.copy(
+                        service = service,
+                        provider = provider,
+                        isLoading = false
+                    )
+                } else {
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        error = "No se encontró el servicio"
+                    )
+                }
+            } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    error = "No se encontró el servicio"
+                    error = "Error al cargar datos: ${e.message}"
                 )
             }
         }
@@ -63,20 +71,23 @@ class MakeReservationViewModel @Inject constructor(
         providerId: String,
         serviceTitle: String,
         date: LocalDate,
-        time: LocalTime
+        time: LocalTime,
+        message: String
     ) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
             try {
+                val reservationDate = Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())
                 val reservation = Reservation(
                     id = UUID.randomUUID().toString(),
                     serviceId = serviceId,
                     serviceTitle = serviceTitle,
-                    userId = "current_user", // TODO: Obtener de la sesión real
+                    userId = "current_user",
                     providerId = providerId,
-                    date = Date(), // Podrías convertir LocalDate a Date si es necesario
+                    date = reservationDate,
                     time = time.toString(),
-                    status = ReservationStatus.PENDING
+                    status = ReservationStatus.PENDING,
+                    message = message
                 )
                 reservationRepository.createReservation(reservation)
                 _uiState.value = _uiState.value.copy(isLoading = false, isSuccess = true)

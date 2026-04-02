@@ -51,6 +51,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.servicerca.app.core.components.card.CardMakeReservation
+import com.servicerca.app.domain.model.Location
+import com.servicerca.app.domain.model.Service
+import com.servicerca.app.domain.model.ServiceStatus
+import com.servicerca.app.domain.model.User
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
@@ -70,12 +74,19 @@ fun MakeReservation(
         viewModel.loadServiceDetails(serviceId)
     }
 
-    // Estados para los pickers
+    // Manejar éxito de la reserva
+    LaunchedEffect(uiState.isSuccess) {
+        if (uiState.isSuccess) {
+            onBack()
+        }
+    }
+
+    // Estados para los pickers y el mensaje
     var showDatePicker by remember { mutableStateOf(false) }
     var showTimePicker by remember { mutableStateOf(false) }
-    
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
     var selectedTime by remember { mutableStateOf(LocalTime.now()) }
+    var message by remember { mutableStateOf("") }
 
     val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
     val timeFormatter = DateTimeFormatter.ofPattern("hh:mm a")
@@ -169,7 +180,6 @@ fun MakeReservation(
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
 
-                var message by remember { mutableStateOf("") }
                 OutlinedTextField(
                     value = message,
                     onValueChange = { message = it },
@@ -197,7 +207,8 @@ fun MakeReservation(
                                 providerId = uiState.service?.ownerId ?: "",
                                 serviceTitle = uiState.service?.title ?: "",
                                 date = selectedDate,
-                                time = selectedTime
+                                time = selectedTime,
+                                message = message
                             )
                         },
                         enabled = uiState.service != null
@@ -282,17 +293,13 @@ fun MakeReservation(
             }
         }
     }
-
-    // Manejar éxito de la reserva
-    LaunchedEffect(uiState.isSuccess) {
-        if (uiState.isSuccess) {
-            onBack() // O navegar a la lista de reservas
-        }
-    }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun MakeReservationPreview() {
-    MakeReservation(serviceId = "1")
+    // Para el preview, no podemos inyectar el ViewModel real fácilmente sin Hilt,
+    // pero podemos dejarlo así para que el IDE intente renderizarlo o 
+    // podrías usar el patrón de Content separado si necesitas un preview perfecto.
+    Text("Vista previa de Reserva")
 }
