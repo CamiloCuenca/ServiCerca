@@ -20,8 +20,8 @@ import androidx.compose.ui.unit.dp
 fun CardStatisticsUserManage(
     number : String,
     label : String,
-    colorAdd : Color = Color.Green,
-    colorPending : Color = Color.Red
+    colorAdd : Color = Color(0xFF074014),
+    colorPending : Color = Color(0xFFA81313)
 ) {
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
