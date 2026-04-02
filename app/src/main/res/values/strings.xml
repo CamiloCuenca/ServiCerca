@@ -218,6 +218,21 @@
     <string name="menu_option_see_profile">Ver Perfil</string>
     <string name="menu_option_suspend_profile">Suspender</string>
     <string name="menu_option_delete_profile">Eliminar</string>
+    <string name="label_search_user">Buscar por nombre o email...</string>
+    <string name="label_count_all_users">Total de usuarios</string>
+    <string name="label_count_active_users">Activos ahora</string>
+    <string name="label_count_new_users">Nuevos hoy</string>
+    <string name="label_count_pending_users">Pendientes de revisión</string>
+    <string name="username_manage_user1">Camilo Santiago Triviño</string>
+    <string name="username_manage_user2">Daniela Eliana Rodriguez</string>
+    <string name="username_manage_user3">Salomé María Alzate</string>
+    <string name="username_manage_user4">Federico Esneider Fonseca</string>
+    <string name="email_manage_user1">camsantri@email.com</string>
+    <string name="email_manage_user2">dani.rodri@email.com</string>
+    <string name="email_manage_user3">salom@email.com</string>
+    <string name="email_manage_user4">fede.esnfon@email.com</string>
+
+
 
 
 
