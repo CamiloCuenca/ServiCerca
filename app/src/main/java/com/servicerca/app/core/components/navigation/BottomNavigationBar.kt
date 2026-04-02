@@ -100,7 +100,7 @@ enum class Destination(
     val label: String,
     val icon: ImageVector,
 ) {
-    CHAT(DashboardRoutes.MessageList, "Chat", Icons.Default.ChatBubble),
+    CHAT(DashboardRoutes.ChatList, "Chat", Icons.Default.ChatBubble),
     SEARCH(DashboardRoutes.Search, "Buscar", Icons.Default.Search),
     HOME(DashboardRoutes.HomeUser, "Inicio", Icons.Default.Home),
     RESERVATION(DashboardRoutes.Reservation, "Reservas", Icons.Default.CalendarMonth),

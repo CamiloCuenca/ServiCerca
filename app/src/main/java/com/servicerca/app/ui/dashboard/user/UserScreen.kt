@@ -39,6 +39,8 @@ fun UserScreen(
         "QrService",
         "ListInteresting",
         "DetailService",
+        "Chat/{chatId}",
+        "DetailService",
         "com.servicerca.app.core.navigation.MainRoutes.MakeReservation"
     )
 
@@ -48,6 +50,8 @@ fun UserScreen(
         "QrScanner",
         "QrService",
         "ListInteresting",
+        "DetailService",
+        "Chat/{chatId}",
         "DetailService",
         "com.servicerca.app.core.navigation.MainRoutes.MakeReservation"
     )
@@ -62,7 +66,9 @@ fun UserScreen(
         "QrService",
         "ListInteresting",
         "DetailService",
-        "com.servicerca.app.core.navigation.MainRoutes.MakeReservation"
+        "com.servicerca.app.core.navigation.MainRoutes.MakeReservation",
+        "DetailService",
+        "Chat/{chatId}"
     )
 
     // Lógica para detectar si es una ruta con parámetros (como DetailService/{id})
