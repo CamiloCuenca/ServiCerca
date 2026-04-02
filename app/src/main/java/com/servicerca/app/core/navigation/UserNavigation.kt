@@ -8,9 +8,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.servicerca.app.ui.chat.ChatScreen
+import androidx.navigation.toRoute
 import com.servicerca.app.ui.search.SearchScreen
 import com.servicerca.app.ui.chat.ChatListScreen
 import com.servicerca.app.ui.dashboard.user.HomeUserScreen
+import com.servicerca.app.ui.dashboard.moderador.ModeratorPanelScreen
 import com.servicerca.app.ui.profile.DeleteProfileScreen
 import com.servicerca.app.ui.profile.EditProfileScreen
 import com.servicerca.app.ui.profile.InsigniasScreen
@@ -18,6 +20,7 @@ import com.servicerca.app.ui.profile.ProfileScreen
 import com.servicerca.app.ui.profile.UpdatePasswordScreen
 import com.servicerca.app.ui.qr.ProviderVerificationScreen
 import com.servicerca.app.ui.qr.ServiceVerificationScreen
+import com.servicerca.app.ui.reservation.DeleteReservationScreen
 import com.servicerca.app.ui.reservation.ReservationScreen
 import com.servicerca.app.ui.reservation.details.DetailsReservationScreen
 import com.servicerca.app.ui.services.ListInteresting.ListInteresting
@@ -41,14 +44,16 @@ fun UserNavigation(
 
         composable<DashboardRoutes.HomeUser> {
             HomeUserScreen(
-                onDetailClick = {
-                    navController.navigate("DetailService")
+                onDetailClick = { serviceId ->
+                    navController.navigate("DetailService/$serviceId")
                 }
             )
         }
 
-        composable("DetailService" ){
+        composable("DetailService/{serviceId}") { backStackEntry ->
+            val serviceId = backStackEntry.arguments?.getString("serviceId") ?: "1"
             DetailServiceScreen(
+                serviceId = serviceId,
                 onBack = { navController.popBackStack() }
             )
         }
@@ -116,8 +121,8 @@ fun UserNavigation(
 
         composable<DashboardRoutes.Reservation> {
             ReservationScreen(
-                onResevationDetails = {
-                    navController.navigate(MainRoutes.ReservationDetail)
+                onResevationDetails = { reservationId ->
+                    navController.navigate(MainRoutes.ReservationDetail(reservationId))
                 },
                 onQrScanner = {
                     navController.navigate("QrScanner")
@@ -126,9 +131,10 @@ fun UserNavigation(
             )
         }
 
-        composable<MainRoutes.ReservationDetail> {
-
+        composable<MainRoutes.ReservationDetail> { backStackEntry ->
+            val route: MainRoutes.ReservationDetail = backStackEntry.toRoute()
             DetailsReservationScreen(
+                reservationId = route.reservationId,
                 onBackClick = {
                     navController.popBackStack()
                 },

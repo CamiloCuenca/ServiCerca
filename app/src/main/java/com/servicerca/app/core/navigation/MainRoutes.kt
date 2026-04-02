@@ -36,7 +36,7 @@ sealed class MainRoutes {
     data object Map : MainRoutes()
 
     @Serializable
-    data object ReservationDetail : MainRoutes()
+    data class ReservationDetail(val reservationId: String) : MainRoutes()
 
 
 
@@ -54,7 +54,7 @@ sealed class MainRoutes {
     @Serializable
     data object Insignias : MainRoutes()
 
-
+    @Serializable
+    data class ServiceDetail(val serviceId: String) : MainRoutes()
 
 }
-

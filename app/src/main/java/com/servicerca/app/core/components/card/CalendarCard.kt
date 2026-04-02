@@ -16,10 +16,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,9 +28,15 @@ import com.kizitonwose.calendar.compose.rememberCalendarState
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
+import java.time.format.TextStyle
+import java.util.Locale
 
 @Composable
-fun CalendarCard(modifier: Modifier = Modifier) {
+fun CalendarCard(
+    selectedDate: LocalDate,
+    onDateSelected: (LocalDate) -> Unit,
+    modifier: Modifier = Modifier
+) {
 
     val currentMonth = remember { YearMonth.now() }
     val startMonth = remember { currentMonth.minusMonths(12) }
@@ -47,8 +50,6 @@ fun CalendarCard(modifier: Modifier = Modifier) {
         firstDayOfWeek = firstDayOfWeek
     )
 
-    var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
-
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),
@@ -58,8 +59,12 @@ fun CalendarCard(modifier: Modifier = Modifier) {
         Column(modifier = Modifier.padding(16.dp)) {
 
             // Mes actual
+            val monthTitle = state.firstVisibleMonth.yearMonth.month
+                .getDisplayName(TextStyle.FULL, Locale("es", "ES"))
+                .replaceFirstChar { it.uppercase() }
+            
             Text(
-                text = state.firstVisibleMonth.yearMonth.toString(),
+                text = "$monthTitle ${state.firstVisibleMonth.yearMonth.year}",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
@@ -84,7 +89,7 @@ fun CalendarCard(modifier: Modifier = Modifier) {
                                     Color.Transparent
                             )
                             .clickable {
-                                selectedDate = day.date
+                                onDateSelected(day.date)
                             },
                         contentAlignment = Alignment.Center
                     ) {
@@ -101,4 +106,3 @@ fun CalendarCard(modifier: Modifier = Modifier) {
         }
     }
 }
-
