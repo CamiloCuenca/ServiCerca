@@ -9,7 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.servicerca.app.ui.chat.ChatScreen
 import com.servicerca.app.ui.search.SearchScreen
-import com.servicerca.app.ui.chat.MessageListScreen
+import com.servicerca.app.ui.chat.ChatListScreen
 import com.servicerca.app.ui.dashboard.user.HomeUserScreen
 import com.servicerca.app.ui.profile.DeleteProfileScreen
 import com.servicerca.app.ui.profile.EditProfileScreen
@@ -106,8 +106,8 @@ fun UserNavigation(
         composable<DashboardRoutes.UserDetail> {
         }
 
-        composable<DashboardRoutes.MessageList> {
-            MessageListScreen(
+        composable<DashboardRoutes.ChatList> {
+            ChatListScreen(
                 onChatClick = { chatId ->
                     navController.navigate("Chat/$chatId")
                 }
