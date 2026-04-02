@@ -67,6 +67,15 @@ class EditProfileViewModel @Inject constructor(
         }
     }
 
+    private val _profilePictureUrl = MutableStateFlow("")
+    val profilePictureUrl: StateFlow<String> = _profilePictureUrl.asStateFlow()
+
+    private val _email = MutableStateFlow("")
+    val email: StateFlow<String> = _email.asStateFlow()
+
+    private val _role = MutableStateFlow("")
+    val role: StateFlow<String> = _role.asStateFlow()
+
     // ── Estado de la operación ────────────────────────────────────────────────
 
     private val _saveResult = MutableStateFlow<RequestResult?>(null)
@@ -93,6 +102,9 @@ class EditProfileViewModel @Inject constructor(
                         secondLastName.onChange(user.lastname2 ?: "")
                         address.onChange(user.address)
                         phone.onChange(user.phoneNumber)
+                        _profilePictureUrl.value = user.profilePictureUrl
+                        _email.value = user.email
+                        _role.value = user.role.name
                     }
                 }
             } catch (e: Exception) {
@@ -137,7 +149,8 @@ class EditProfileViewModel @Inject constructor(
                             lastname1 = firstLastName.value,
                             lastname2 = secondLastName.value.ifBlank { null },
                             address = address.value,
-                            phoneNumber = phone.value
+                            phoneNumber = phone.value,
+                            profilePictureUrl = _profilePictureUrl.value
                         )
                         userRepository.save(updatedUser)
                         _saveResult.value = RequestResult.Success("Perfil actualizado correctamente")
