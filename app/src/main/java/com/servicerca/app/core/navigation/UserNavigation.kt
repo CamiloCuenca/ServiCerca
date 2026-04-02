@@ -8,11 +8,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.servicerca.app.ui.chat.ChatScreen
-import com.servicerca.app.ui.chat.ChatScreenViewModel
 import com.servicerca.app.ui.search.SearchScreen
 import com.servicerca.app.ui.chat.MessageListScreen
 import com.servicerca.app.ui.dashboard.user.HomeUserScreen
-import com.servicerca.app.ui.dashboard.moderador.ModeratorPanelScreen
 import com.servicerca.app.ui.profile.DeleteProfileScreen
 import com.servicerca.app.ui.profile.EditProfileScreen
 import com.servicerca.app.ui.profile.InsigniasScreen
@@ -20,7 +18,6 @@ import com.servicerca.app.ui.profile.ProfileScreen
 import com.servicerca.app.ui.profile.UpdatePasswordScreen
 import com.servicerca.app.ui.qr.ProviderVerificationScreen
 import com.servicerca.app.ui.qr.ServiceVerificationScreen
-import com.servicerca.app.ui.reservation.DeleteReservationScreen
 import com.servicerca.app.ui.reservation.ReservationScreen
 import com.servicerca.app.ui.reservation.details.DetailsReservationScreen
 import com.servicerca.app.ui.services.ListInteresting.ListInteresting
