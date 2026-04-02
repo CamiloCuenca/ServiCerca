@@ -65,12 +65,14 @@ import com.servicerca.app.core.components.input.ReviewInputField
  *
  * @param serviceId ID del servicio a mostrar.
  * @param onBack Lambda para regresar a la pantalla anterior.
+ * @param onMakeReservation Lambda para navegar a la pantalla de reserva.
  * @param viewModel ViewModel inyectado automáticamente por Hilt.
  */
 @Composable
 fun DetailServiceScreen(
     serviceId: String,
     onBack: () -> Unit,
+    onMakeReservation: (String) -> Unit = {},
     viewModel: DetailServiceViewModel = hiltViewModel()
 ) {
     // Cargar servicio y comentarios cuando la pantalla se muestra
@@ -370,7 +372,7 @@ fun DetailServiceScreen(
         ) {
             PrimaryButton(
                 text = "SOLICITAR SERVICIO →",
-                onClick = { }
+                onClick = { onMakeReservation(serviceId) }
             )
         }
     }

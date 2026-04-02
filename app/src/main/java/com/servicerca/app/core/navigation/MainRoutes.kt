@@ -38,6 +38,8 @@ sealed class MainRoutes {
     @Serializable
     data class ReservationDetail(val reservationId: String) : MainRoutes()
 
+    @Serializable
+    data class MakeReservation(val serviceId: String) : MainRoutes()
 
 
     @Serializable

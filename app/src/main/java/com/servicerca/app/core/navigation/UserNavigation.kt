@@ -20,6 +20,7 @@ import com.servicerca.app.ui.profile.UpdatePasswordScreen
 import com.servicerca.app.ui.qr.ProviderVerificationScreen
 import com.servicerca.app.ui.qr.ServiceVerificationScreen
 import com.servicerca.app.ui.reservation.DeleteReservationScreen
+import com.servicerca.app.ui.reservation.MakeReservation
 import com.servicerca.app.ui.reservation.ReservationScreen
 import com.servicerca.app.ui.reservation.details.DetailsReservationScreen
 import com.servicerca.app.ui.services.ListInteresting.ListInteresting
@@ -53,7 +54,10 @@ fun UserNavigation(
             val serviceId = backStackEntry.arguments?.getString("serviceId") ?: "1"
             DetailServiceScreen(
                 serviceId = serviceId,
-                onBack = { navController.popBackStack() }
+                onBack = { navController.popBackStack() },
+                onMakeReservation = { id ->
+                    navController.navigate(MainRoutes.MakeReservation(id))
+                }
             )
         }
 
@@ -140,6 +144,15 @@ fun UserNavigation(
             )
 
         }
+
+        composable<MainRoutes.MakeReservation> { backStackEntry ->
+            val route: MainRoutes.MakeReservation = backStackEntry.toRoute()
+            MakeReservation(
+                serviceId = route.serviceId,
+                onBack = { navController.popBackStack() }
+            )
+        }
+
         composable("QrService"){
             ServiceVerificationScreen(
                 onBackClick = {
