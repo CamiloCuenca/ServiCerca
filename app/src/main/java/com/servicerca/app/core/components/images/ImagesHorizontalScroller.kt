@@ -10,11 +10,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import com.servicerca.app.core.components.card.CardServiceImage
 
 @Composable
-fun ImagesHorizontalScroller() {
+fun ImagesHorizontalScroller(
+    images: List<ByteArray>,
+    onAddImage: () -> Unit,
+    onRemoveAt: (index: Int) -> Unit
+) {
     ElevatedCard(
         modifier = Modifier
             .fillMaxWidth()
@@ -26,14 +30,19 @@ fun ImagesHorizontalScroller() {
             contentPadding = PaddingValues(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            // Ejemplo: 3 imágenes ya existentes
-            items(listOf(1, 2, 3, 4, 5, 6, 7, 8)) {
-                CardServiceImage()
+            // Mostrar las imágenes actuales
+            itemsIndexed(images) { index, bytes ->
+                CardServiceImage(
+                    imageBytes = bytes,
+                    onRemove = { onRemoveAt(index) }
+                )
             }
 
-            // ✅ Card final para "Añadir"
-            item {
-                CardServiceImage() // o tu CardAddImage()
+            // Card final para "Añadir" si aún no llegamos a 5
+            if (images.size < 5) {
+                item {
+                    CardServiceImage(onClick = onAddImage)
+                }
             }
         }
     }
