@@ -23,10 +23,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,8 +30,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun SendMessageChatComponent() {
-    var text by remember { mutableStateOf("") }
+fun SendMessageChatComponent(
+    message: String = "",
+    onMessageChange: (String) -> Unit = {},
+    onSendMessage: () -> Unit = {},
+    onAttachFile: () -> Unit = {},
+    onOpenCamera: () -> Unit = {}
+) {
 
     Box(
         modifier = Modifier
@@ -47,31 +48,33 @@ fun SendMessageChatComponent() {
         HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outline)
 
 
-        Row{
+        Row {
             TextField(
-                value = text,
-                onValueChange = { text = it },
+                value = message,
+                onValueChange = onMessageChange,
                 placeholder = {
                     Text("Escribe un mensaje...")
                 },
                 trailingIcon = {
-                    Row (
+                    Row(
                         modifier = Modifier
                             .padding(horizontal = 4.dp)
-                    ){
+                    ) {
                         IconButton(
-                            onClick = { },
+                            onClick = onAttachFile,
                             modifier = Modifier
                                 .size(40.dp)
                                 .align(Alignment.CenterVertically)
-                            ) {
+                        ) {
                             Icon(Icons.Default.AttachFile, null)
                         }
 
-                        IconButton(onClick = { },
+                        IconButton(
+                            onClick = onOpenCamera,
                             modifier = Modifier
                                 .size(40.dp)
-                                .align(Alignment.CenterVertically)) {
+                                .align(Alignment.CenterVertically)
+                        ) {
                             Icon(Icons.Default.PhotoCamera, null)
                         }
                     }
@@ -88,12 +91,14 @@ fun SendMessageChatComponent() {
             )
 
             IconButton(
-                onClick = {},
+                onClick = onSendMessage,
                 Modifier
                     .size(48.dp)
                     .align(Alignment.CenterVertically)
                     .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primary)
+                    .background(
+                        if (message.isNotBlank()) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline
+                    )
             ) {
                 Icon(
                     Icons.AutoMirrored.Default.Send,
