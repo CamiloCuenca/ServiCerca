@@ -18,7 +18,11 @@ import com.servicerca.app.R
 import com.servicerca.app.core.components.card.menu.MenuOptionUserManage
 
 @Composable
-fun CardMenuUserManage (){
+fun CardMenuUserManage (
+    onSeeProfile: () -> Unit = {},
+    onSuspendProfile: () -> Unit = {},
+    onDeleteProfile: () -> Unit = {}
+){
 
     ElevatedCard(
         modifier = Modifier
@@ -30,24 +34,18 @@ fun CardMenuUserManage (){
         MenuOptionUserManage(
             text = stringResource(R.string.menu_option_see_profile),
             icon = Icons.Default.RemoveRedEye,
-            onClick = {}
-
+            onClick = onSeeProfile
         )
-
         MenuOptionUserManage(
             text = stringResource(R.string.menu_option_suspend_profile),
             icon = Icons.Default.Block,
-            onClick = {}
-
+            onClick = onSuspendProfile
         )
-
         HorizontalDivider()
-
         MenuOptionUserManage(
             text = stringResource(R.string.menu_option_delete_profile),
             icon = Icons.Default.Delete,
-            onClick = {}
-
+            onClick = onDeleteProfile
         )
     }
 }

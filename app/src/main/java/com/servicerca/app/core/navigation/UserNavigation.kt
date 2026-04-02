@@ -7,9 +7,10 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.servicerca.app.ui.chat.ChatScreen
 import androidx.navigation.toRoute
 import com.servicerca.app.ui.search.SearchScreen
-import com.servicerca.app.ui.chat.MessageListScreen
+import com.servicerca.app.ui.chat.ChatListScreen
 import com.servicerca.app.ui.dashboard.user.HomeUserScreen
 import com.servicerca.app.ui.dashboard.moderador.ModeratorPanelScreen
 import com.servicerca.app.ui.profile.DeleteProfileScreen
@@ -110,8 +111,12 @@ fun UserNavigation(
         composable<DashboardRoutes.UserDetail> {
         }
 
-        composable<DashboardRoutes.MessageList> {
-            MessageListScreen()
+        composable<DashboardRoutes.ChatList> {
+            ChatListScreen(
+                onChatClick = { chatId ->
+                    navController.navigate("Chat/$chatId")
+                }
+            )
         }
 
         composable<DashboardRoutes.Reservation> {
@@ -186,6 +191,10 @@ fun UserNavigation(
         composable("editService") {
             EditServiceScreen(onBack = { navController.popBackStack() })
 
+        }
+
+        composable("Chat/{chatId}") {
+            ChatScreen(onBack = { navController.popBackStack()})
         }
 
 

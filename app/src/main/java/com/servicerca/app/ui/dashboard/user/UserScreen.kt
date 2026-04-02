@@ -38,7 +38,8 @@ fun UserScreen(
         "QrScanner",
         "QrService",
         "ListInteresting",
-        "DetailService"
+        "DetailService",
+        "Chat/{chatId}"
     )
 
     val hideBottomBarRoutes = setOf(
@@ -47,7 +48,8 @@ fun UserScreen(
         "QrScanner",
         "QrService",
         "ListInteresting",
-        "DetailService"
+        "DetailService",
+        "Chat/{chatId}"
     )
 
     val hideFabRoutes = setOf(
@@ -59,7 +61,8 @@ fun UserScreen(
         "QrScanner",
         "QrService",
         "ListInteresting",
-        "DetailService"
+        "DetailService",
+        "Chat/{chatId}"
     )
 
     val showTopBar = currentRoute !in hideTopBarRoutes
