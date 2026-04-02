@@ -17,7 +17,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.LocationOn
@@ -42,7 +42,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -100,7 +99,7 @@ fun DetailsReservationScreen(
             ) {
                 IconButton(onClick = onBackClick) {
                     Icon(
-                        imageVector = Icons.Filled.ArrowBack,
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onSurface
                     )
@@ -122,7 +121,7 @@ fun DetailsReservationScreen(
                 statusContainerColor = statusInfo.containerColor,
                 statusContentColor = statusInfo.contentColor,
                 serviceTitle = reservation.serviceTitle,
-                professionalName = provider?.name ?: "Cargando...",
+                professionalName = if (provider != null) "${provider.name1} ${provider.lastname1}" else "Cargando...",
                 professionalBadgeText = stringResource(R.string.reservation_profesional_certificado),
                 rating = "4.9"
             )

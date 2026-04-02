@@ -55,47 +55,33 @@ import com.servicerca.app.core.components.card.ServiceDescriptionSection
 import com.servicerca.app.core.components.card.ServiceDetailHeader
 import com.servicerca.app.core.components.input.ReviewInputField
 
-/**
- * Pantalla de detalle de un servicio.
- *
- * Muestra la información completa del servicio identificado por [serviceId] y la lista
- * de comentarios asociados, obtenidos desde [DetailServiceViewModel] a través del
- * [CommentRepository]. Los datos actuales son mock en memoria; la estructura está
- * preparada para conectarse a Firebase sin cambios en esta pantalla.
- *
- * @param serviceId ID del servicio a mostrar.
- * @param onBack Lambda para regresar a la pantalla anterior.
- * @param viewModel ViewModel inyectado automáticamente por Hilt.
- */
 @Composable
 fun DetailServiceScreen(
     serviceId: String,
     onBack: () -> Unit,
+    onMakeReservation: (String) -> Unit = {},
     viewModel: DetailServiceViewModel = hiltViewModel()
 ) {
-    // Cargar servicio y comentarios cuando la pantalla se muestra
     LaunchedEffect(serviceId) {
         viewModel.loadService(serviceId)
     }
 
     val service by viewModel.service.collectAsState()
+    val provider = viewModel.provider.collectAsState().value
     val comments by viewModel.comments.collectAsState()
     val averageRating by viewModel.averageRating.collectAsState()
 
-    // Estado local de UI
     var isSelectedLike by remember { mutableStateOf(false) }
     var isSelectedPin by remember { mutableStateOf(false) }
     var reviewText by remember { mutableStateOf("") }
     var selectedRating by remember { mutableIntStateOf(5) }
 
     Column(modifier = Modifier.fillMaxSize()) {
-        // ── Contenido con scroll ─────────────────────────────────────────────
         Column(
             modifier = Modifier
                 .weight(1f)
                 .verticalScroll(rememberScrollState())
         ) {
-            // ── Hero image ───────────────────────────────────────────────────
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -110,7 +96,6 @@ fun DetailServiceScreen(
                     modifier = Modifier.fillMaxSize()
                 )
 
-                // Botón Atrás
                 IconButton(
                     onClick = { onBack() },
                     modifier = Modifier
@@ -128,7 +113,6 @@ fun DetailServiceScreen(
                     )
                 }
 
-                // Botón Compartir
                 IconButton(
                     onClick = { },
                     modifier = Modifier
@@ -147,7 +131,6 @@ fun DetailServiceScreen(
                 }
             }
 
-            // ── Tarjeta de contenido ─────────────────────────────────────────
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -156,7 +139,6 @@ fun DetailServiceScreen(
             ) {
                 Spacer(modifier = Modifier.height(20.dp))
 
-                // Si el servicio aún no cargó, mostramos un indicador
                 if (service == null) {
                     Box(
                         modifier = Modifier
@@ -167,7 +149,6 @@ fun DetailServiceScreen(
                         CircularProgressIndicator()
                     }
                 } else {
-                    // Header: título, categoría, rango de precio
                     ServiceDetailHeader(
                         title = service!!.title,
                         subtitle = service!!.type,
@@ -178,7 +159,6 @@ fun DetailServiceScreen(
 
                     Spacer(modifier = Modifier.height(4.dp))
 
-                    // Botones de reacción (like / guardar)
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -213,9 +193,8 @@ fun DetailServiceScreen(
                         color = MaterialTheme.colorScheme.outlineVariant
                     )
 
-                    // Fila del proveedor (placeholder por ahora — se conectará con UserRepository)
                     ProviderRow(
-                        name = "Juan Pérez",
+                        name = if (provider != null) "${provider.name1} ${provider.lastname1}" else "Cargando...",
                         avatarRes = R.drawable.service,
                         level = "MAESTRO",
                         rating = averageRating.takeIf { it > 0f } ?: 0f,
@@ -228,7 +207,6 @@ fun DetailServiceScreen(
                         color = MaterialTheme.colorScheme.outlineVariant
                     )
 
-                    // Mapa de ubicación
                     MapBox(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -240,7 +218,6 @@ fun DetailServiceScreen(
                         color = MaterialTheme.colorScheme.outlineVariant
                     )
 
-                    // Descripción
                     ServiceDescriptionSection(description = service!!.description)
 
                     HorizontalDivider(
@@ -248,7 +225,6 @@ fun DetailServiceScreen(
                         color = MaterialTheme.colorScheme.outlineVariant
                     )
 
-                    // ── Sección de reseñas ───────────────────────────────────
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -272,7 +248,6 @@ fun DetailServiceScreen(
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    // Lista de comentarios del repositorio (datos mock)
                     if (comments.isEmpty()) {
                         Text(
                             text = "Aún no hay reseñas para este servicio.",
@@ -300,7 +275,6 @@ fun DetailServiceScreen(
 
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    // Selector de estrellas
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -336,7 +310,6 @@ fun DetailServiceScreen(
                         }
                     }
 
-                    // Campo para escribir reseña
                     ReviewInputField(
                         value = reviewText,
                         onValueChange = { reviewText = it },
@@ -350,7 +323,7 @@ fun DetailServiceScreen(
                                     text = reviewText
                                 )
                                 reviewText = ""
-                                selectedRating = 5 // Reset rating después de enviar
+                                selectedRating = 5
                             }
                         },
                         modifier = Modifier.padding(horizontal = 16.dp)
@@ -361,7 +334,6 @@ fun DetailServiceScreen(
             }
         }
 
-        // ── Botón fijo en la parte inferior ─────────────────────────────────
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -370,7 +342,7 @@ fun DetailServiceScreen(
         ) {
             PrimaryButton(
                 text = "SOLICITAR SERVICIO →",
-                onClick = { }
+                onClick = { onMakeReservation(serviceId) }
             )
         }
     }

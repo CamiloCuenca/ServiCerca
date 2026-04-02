@@ -1,8 +1,6 @@
 package com.servicerca.app.ui.profile
 
-import android.util.Log
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,67 +14,67 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.servicerca.app.R
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.automirrored.filled.Logout
-import androidx.compose.material.icons.filled.Bookmark
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Handyman
-import androidx.compose.material.icons.filled.HighlightOff
-import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Logout
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
+import com.servicerca.app.core.components.alertDialog.ConfirmAlertDialog
 import com.servicerca.app.core.components.button.ButtonIcon
 import com.servicerca.app.core.components.button.DeleteButton
 import com.servicerca.app.core.components.button.PasswordButton
-import com.servicerca.app.core.components.button.PrimaryButton
 import com.servicerca.app.core.components.card.CardLevel
 import com.servicerca.app.core.components.card.CardStatistics
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.Color
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.servicerca.app.core.components.alertDialog.ConfirmAlertDialog
 import com.servicerca.app.core.components.card.ManageServicesCard
 import com.servicerca.app.core.components.images.ProfileImage
 
 @Composable
 fun ProfileScreen(
-    onInsignias : () -> Unit,
-    onEditProflie:() -> Unit,
+    onInsignias: () -> Unit,
+    onEditProflie: () -> Unit,
     onUpdatePassword: () -> Unit,
     onDeleteProfile: () -> Unit,
-   onListService: () -> Unit,
+    onListService: () -> Unit,
     onListInteresting: () -> Unit,
-    onLogout: () -> Unit
-){
-
+    onLogout: () -> Unit,
+    viewModel: ProfileViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsState()
+    val user = uiState.user
     var showConfirmDialog by remember { mutableStateOf(false) }
 
+    if (uiState.isLoading) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+        }
+    } else {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -84,329 +82,153 @@ fun ProfileScreen(
                 .padding(24.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
+            // Botón de Cerrar Sesión
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 10.dp),
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End
             ) {
-                IconButton(
-                    onClick = { showConfirmDialog = true }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Logout,
-                        contentDescription = "Cerrar sesión"
-                    )
+                IconButton(onClick = { showConfirmDialog = true }) {
+                    Icon(imageVector = Icons.AutoMirrored.Filled.Logout, contentDescription = "Cerrar sesión")
                 }
             }
 
+            // Imagen de Perfil
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Box(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-
-
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Box(
-                            contentAlignment = Alignment.BottomEnd,
-                            modifier = Modifier.size(150.dp)
-                        ) {
-                            ProfileImage(
-                                url = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEga-7mA9kd7EnROYLMEYwURS2xlW1uWK8eWC8F6X3RFuCrJQLnd5eJ8KNOqXeVNuUVM0c4X31Uoz7NlQKJ4QxFfF6EDWAwgT6y1F_HgZ23As74U0wOHy14ClTNC9kP5KJHgPouBaogO5IpYsvxGmDCYlJ9do4tNb9eb6fYBMMSIG3zEcAN-7y2lIrvTwOyb/s320/WhatsApp%20Image%202026-03-04%20at%2023.04.58.jpeg"
-                            )
-                        }
-                    }
-                }
-            }
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    Text(
-                        text = stringResource(R.string.name_user),
-                        style = MaterialTheme.typography.headlineSmall,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center,
-
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                }
-            Box(
-                modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.LocationOn,
-                        contentDescription = "Ubicación",
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(25.dp)
-                    )
-
-                    Spacer(modifier = Modifier.width(8.dp))
-
-                    Text(
-                        text = stringResource(R.string.lacation_profile),
-                        style = MaterialTheme.typography.bodyLarge,
-                        textAlign = TextAlign.Center
-                    )
+                Box(modifier = Modifier.size(150.dp)) {
+                    ProfileImage(url = user?.profilePictureUrl ?: "")
                 }
             }
 
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                CardLevel()
-            }
-
-            ManageServicesCard(
-                onClick = {onListService()}
+            // Nombre del Usuario
+            Text(
+                text = if (user != null) "${user.name1} ${user.lastname1}" else "Usuario",
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
             )
 
+            // Ubicación
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.LocationOn,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(25.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = user?.city ?: "Ubicación no disponible",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
+
+            // Nivel y Gestión
+            CardLevel()
+
+            ManageServicesCard(onClick = onListService)
+
             ManageServicesCard(
-                onClick = { onListInteresting() },
+                onClick = onListInteresting,
                 color = MaterialTheme.colorScheme.surface,
-                borderColor= MaterialTheme.colorScheme.primary,
+                borderColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onSecondary,
-            borderWidth = 2.dp,
+                borderWidth = 2.dp,
                 title = "Publicaciones Interesantes",
                 description = "Ver tus servicios favoritos",
                 icon = Icons.Default.Bookmark
             )
 
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = stringResource(R.string.tittle_insignias),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
-                    )
+            // Insignias (Sección Estática por ahora)
+            InsigniasSection(onInsignias)
 
-                    Text(
-                        text = stringResource(R.string.ver_todas),
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.clickable {onInsignias()}
-                    )
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column(
-                        Modifier.padding(top = 8.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Image(painter = painterResource(id = R.drawable.insignia_verificado), contentDescription = null,
-                            modifier = Modifier
-                                .size(80.dp)
-                                .shadow(
-                                    elevation = 1.dp,
-                                    shape = CircleShape,
-                                    ambientColor = Color.Cyan,
-                                    spotColor = Color.Cyan
-                                )
-                        )
-                        Text(
-                            text = stringResource(R.string.insignia_verified),
-                            style = MaterialTheme.typography.bodyMedium,
-                            )
-                    }
-                    Column(
-                        Modifier.padding(top = 8.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Image(painter = painterResource(id = R.drawable.insignia_rapido), contentDescription = null,
-                            modifier = Modifier
-                                .size(80.dp)
-                                .shadow(
-                                    elevation = 1.dp,
-                                    shape = CircleShape,
-                                    ambientColor = Color(0xFF9C27B0),
-                                    spotColor = Color(0xFF9C27B0)
-                                )
-                        )
-                        Text(
-                            text = stringResource(R.string.insignia_fast),
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
-                    }
-                    Column(
-                        Modifier.padding(top = 8.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Image(painter = painterResource(id = R.drawable.insignia_top5), contentDescription = null,
-                            modifier = Modifier
-                                .size(80.dp)
-                                .shadow(
-                                    elevation = 1.dp,
-                                    shape = CircleShape,
-                                    ambientColor = Color(0xFFFFEB3B),
-                                    spotColor = Color(0xFFFFEB3B)
-                                )
-                        )
-                        Text(
-                            text = stringResource(R.string.insignia_top5),
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
-                    }
-                }
-            }
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 8.dp, bottom = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = stringResource(R.string.statistic),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    CardStatistics(
-                        imageRes = R.drawable.servicios_completados,
-                        number = stringResource(R.string.num_services),
-                        label = stringResource(R.string.services_completed)
-                    )
+            // Estadísticas
+            StatisticsSection()
 
-                    CardStatistics(
-                        imageRes = R.drawable.puntos_totales,
-                        number = stringResource(R.string.num_points),
-                        label = stringResource(R.string.total_points)
-                    )
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 10.dp, top = 30.dp, end = 10.dp, bottom = 10.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    CardStatistics(
-                        imageRes = R.drawable.calificacion,
-                        number = stringResource(R.string.qualification),
-                        label = stringResource(R.string.average_rating)
-                    )
-
-                    CardStatistics(
-                        imageRes = R.drawable.tiempo_miembro,
-                        number = stringResource(R.string.time),
-                        label = stringResource(R.string.member_time)
-                    )
-                }
-            }
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 20.dp)
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 8.dp, bottom = 15.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    ButtonIcon(
-                        text = stringResource(R.string.edit_account),
-                        onClick = { onEditProflie()},
-                        icon = {
-                            Icon(
-                                imageVector = Icons.Default.Edit, // Icono de Material
-                                contentDescription = null
-                            )
-                        }
-                    )
-                }
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 8.dp, bottom = 15.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    PasswordButton(
-                        text = stringResource(R.string.edit_password),
-                        onClick = { onUpdatePassword() },
-                        icon = {
-                            Icon(
-                                imageVector = Icons.Default.Lock, // Icono de Material
-                                contentDescription = null
-                            )
-                        }
-                    )
-                }
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 8.dp, bottom = 15.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    DeleteButton(
-                        text = stringResource(R.string.delete_account),
-                        onClick = {onDeleteProfile() },
-                        icon = {
-                            Icon(
-                                imageVector = Icons.Default.Delete, // Icono de Material
-                                contentDescription = null
-                            )
-                        }
-                    )
-                }
-            }
+            // Botones de Configuración
+            AccountSettingsSection(onEditProflie, onUpdatePassword, onDeleteProfile)
         }
+    }
+
     if (showConfirmDialog) {
         ConfirmAlertDialog(
             onShowExitDialogChange = { showConfirmDialog = it },
             onConfirm = {
+                viewModel.logout()
                 onLogout()
             }
         )
     }
+}
+
+@Composable
+fun InsigniasSection(onInsignias: () -> Unit) {
+    Column(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(text = stringResource(R.string.tittle_insignias), fontWeight = FontWeight.Bold)
+            Text(
+                text = stringResource(R.string.ver_todas),
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.clickable { onInsignias() }
+            )
+        }
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            InsigniaItem(R.drawable.insignia_verificado, R.string.insignia_verified, Color.Cyan)
+            InsigniaItem(R.drawable.insignia_rapido, R.string.insignia_fast, Color(0xFF9C27B0))
+            InsigniaItem(R.drawable.insignia_top5, R.string.insignia_top5, Color(0xFFFFEB3B))
+        }
     }
+}
 
+@Composable
+fun InsigniaItem(imageRes: Int, labelRes: Int, shadowColor: Color) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Image(
+            painter = painterResource(id = imageRes),
+            contentDescription = null,
+            modifier = Modifier.size(80.dp).shadow(1.dp, CircleShape, ambientColor = shadowColor, spotColor = shadowColor)
+        )
+        Text(text = stringResource(labelRes), style = MaterialTheme.typography.bodyMedium)
+    }
+}
 
+@Composable
+fun StatisticsSection() {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Text(text = stringResource(R.string.statistic), fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 8.dp, bottom = 8.dp))
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            CardStatistics(R.drawable.servicios_completados, stringResource(R.string.num_services), stringResource(R.string.services_completed))
+            CardStatistics(R.drawable.puntos_totales, stringResource(R.string.num_points), stringResource(R.string.total_points))
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            CardStatistics(R.drawable.calificacion, stringResource(R.string.qualification), stringResource(R.string.average_rating))
+            CardStatistics(R.drawable.tiempo_miembro, stringResource(R.string.time), stringResource(R.string.member_time))
+        }
+    }
+}
 
-@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun AccountSettingsSection(onEdit: () -> Unit, onUpdatePass: () -> Unit, onDelete: () -> Unit) {
+    Column(modifier = Modifier.fillMaxWidth().padding(bottom = 20.dp), verticalArrangement = Arrangement.spacedBy(15.dp)) {
+        ButtonIcon(text = stringResource(R.string.edit_account), onClick = onEdit, icon = { Icon(Icons.Default.Edit, null) })
+        PasswordButton(text = stringResource(R.string.edit_password), onClick = onUpdatePass, icon = { Icon(Icons.Default.Lock, null) })
+        DeleteButton(text = stringResource(R.string.delete_account), onClick = onDelete, icon = { Icon(Icons.Default.Delete, null) })
+    }
+}
+
+@Preview (showBackground = true)
 @Composable
 fun ProfileScreenPreview() {
     ProfileScreen(
@@ -415,7 +237,8 @@ fun ProfileScreenPreview() {
         onUpdatePassword = {},
         onDeleteProfile = {},
         onListService = {},
-        onLogout = {},
-        onListInteresting = {}
+        onListInteresting = {},
+        onLogout = {}
     )
+
 }

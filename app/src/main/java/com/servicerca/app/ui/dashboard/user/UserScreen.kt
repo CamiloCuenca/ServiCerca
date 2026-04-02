@@ -39,7 +39,9 @@ fun UserScreen(
         "QrService",
         "ListInteresting",
         "DetailService",
-        "Chat/{chatId}"
+        "Chat/{chatId}",
+        "DetailService",
+        "com.servicerca.app.core.navigation.MainRoutes.MakeReservation"
     )
 
     val hideBottomBarRoutes = setOf(
@@ -49,7 +51,9 @@ fun UserScreen(
         "QrService",
         "ListInteresting",
         "DetailService",
-        "Chat/{chatId}"
+        "Chat/{chatId}",
+        "DetailService",
+        "com.servicerca.app.core.navigation.MainRoutes.MakeReservation"
     )
 
     val hideFabRoutes = setOf(
@@ -62,12 +66,18 @@ fun UserScreen(
         "QrService",
         "ListInteresting",
         "DetailService",
+        "com.servicerca.app.core.navigation.MainRoutes.MakeReservation",
+        "DetailService",
         "Chat/{chatId}"
     )
 
-    val showTopBar = currentRoute !in hideTopBarRoutes
-    val showBottomBar = currentRoute !in hideBottomBarRoutes
-    val showFab = currentRoute !in hideFabRoutes
+    // Lógica para detectar si es una ruta con parámetros (como DetailService/{id})
+    val isDetailService = currentRoute?.startsWith("DetailService") ?: false
+    val isMakeReservation = currentRoute?.contains("MakeReservation") ?: false
+
+    val showTopBar = currentRoute !in hideTopBarRoutes && !isDetailService && !isMakeReservation
+    val showBottomBar = currentRoute !in hideBottomBarRoutes && !isDetailService && !isMakeReservation
+    val showFab = currentRoute !in hideFabRoutes && !isDetailService && !isMakeReservation
 
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
