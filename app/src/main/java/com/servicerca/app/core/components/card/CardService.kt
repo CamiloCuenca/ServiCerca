@@ -15,6 +15,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import coil3.compose.AsyncImage
+import android.graphics.BitmapFactory
+import androidx.compose.ui.graphics.asImageBitmap
+import android.util.Base64
+import android.util.Log
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -37,6 +42,7 @@ fun CardService( // TODO @CAMILOCUENCA luego de tener el firestorage ponerle el 
     rating: String = "4.9",
     isVerified: Boolean = true,
     level: String = "EXPERTO",
+    photoUrl: String? = null,
     onRequestClick: () -> Unit = {}
 ) {
 
@@ -56,18 +62,81 @@ fun CardService( // TODO @CAMILOCUENCA luego de tener el firestorage ponerle el 
         Column {
 
             // Imagen
+            val decodedBase64Bitmap = remember(photoUrl) {
+                photoUrl?.takeIf { it.startsWith("data:image") }?.let { dataUri ->
+                    runCatching {
+                        val base64Part = dataUri.substringAfter(",")
+                        val bytes = try {
+                            Base64.decode(base64Part, Base64.NO_WRAP)
+                        } catch (e1: Exception) {
+                            Base64.decode(base64Part, Base64.DEFAULT)
+                        }
+                        BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                    }.onFailure {
+                        android.util.Log.w("CardService", "failed to decode base64 image: ${it.message}")
+                    }.getOrNull()
+                }
+            }
+
+            val decodedFileBitmap = remember(photoUrl) {
+                photoUrl?.takeIf { it.startsWith("file://") }?.let { fileUri ->
+                    runCatching {
+                        val path = fileUri.removePrefix("file://")
+                        val fileBytes = java.io.File(path).readBytes()
+                        BitmapFactory.decodeByteArray(fileBytes, 0, fileBytes.size)
+                    }.onFailure {
+                        android.util.Log.w("CardService", "failed to read local file image: ${it.message}")
+                    }.getOrNull()
+                }
+            }
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(150.dp)
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.plumber),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
-                )
+                when {
+                    decodedBase64Bitmap != null -> {
+                        Log.d("CardService", "rendering decodedBase64Bitmap for title=$title")
+                        Image(
+                            bitmap = decodedBase64Bitmap.asImageBitmap(),
+                            contentDescription = title,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+                    decodedFileBitmap != null -> {
+                        Log.d("CardService", "rendering decodedFileBitmap for title=$title")
+                        Image(
+                            bitmap = decodedFileBitmap.asImageBitmap(),
+                            contentDescription = title,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+                    !photoUrl.isNullOrBlank() && !photoUrl.startsWith("data:image") && !photoUrl.startsWith("file://") -> {
+                        Log.d("CardService", "rendering remote/async image for title=$title model=$photoUrl")
+                        AsyncImage(
+                            model = photoUrl,
+                            contentDescription = title,
+                            contentScale = ContentScale.Crop,
+                            placeholder = painterResource(id = R.drawable.service),
+                            error = painterResource(id = R.drawable.service),
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+                    else -> {
+                        Log.d("CardService", "rendering fallback image for title=$title")
+                        Image(
+                            painter = painterResource(id = R.drawable.plumber),
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+                }
 
+                // Overlays dentro del mismo Box para que Modifier.align funcione correctamente
                 if (isVerified) {
                     Box(
                         modifier = Modifier
@@ -95,6 +164,7 @@ fun CardService( // TODO @CAMILOCUENCA luego de tener el firestorage ponerle el 
                         modifier = Modifier.size(20.dp)
                     )
                 }
+            }
             }
 
             Column(
@@ -247,7 +317,7 @@ fun CardService( // TODO @CAMILOCUENCA luego de tener el firestorage ponerle el 
             }
         }
     }
-}
+
 
 @Preview(showBackground = true)
 @Composable

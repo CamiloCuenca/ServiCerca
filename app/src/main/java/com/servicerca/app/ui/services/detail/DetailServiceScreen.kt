@@ -39,6 +39,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.foundation.Image
+import android.graphics.BitmapFactory
+import androidx.compose.ui.graphics.asImageBitmap
+import android.util.Base64
+import android.util.Log
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -87,14 +92,40 @@ fun DetailServiceScreen(
                     .fillMaxWidth()
                     .height(280.dp)
             ) {
-                AsyncImage(
-                    model = service?.photoUrl,
-                    contentDescription = service?.title,
-                    contentScale = ContentScale.Crop,
-                    placeholder = painterResource(id = R.drawable.service),
-                    error = painterResource(id = R.drawable.service),
-                    modifier = Modifier.fillMaxSize()
-                )
+                val s = service
+
+                // Decodificar base64 fuera de las llamadas composable
+                val decodedBitmap = remember(s?.photoUrl) {
+                    s?.photoUrl?.takeIf { it.startsWith("data:image") }?.let { dataUri ->
+                        runCatching {
+                            val base64Part = dataUri.substringAfter(",")
+                            val bytes = try {
+                                Base64.decode(base64Part, Base64.NO_WRAP)
+                            } catch (e1: Exception) {
+                                Base64.decode(base64Part, Base64.DEFAULT)
+                            }
+                            BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                        }.getOrNull()
+                    }
+                }
+
+                if (decodedBitmap != null) {
+                    Image(
+                        bitmap = decodedBitmap.asImageBitmap(),
+                        contentDescription = s?.title,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                } else {
+                    AsyncImage(
+                        model = s?.photoUrl,
+                        contentDescription = s?.title,
+                        contentScale = ContentScale.Crop,
+                        placeholder = painterResource(id = R.drawable.service),
+                        error = painterResource(id = R.drawable.service),
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
 
                 IconButton(
                     onClick = { onBack() },

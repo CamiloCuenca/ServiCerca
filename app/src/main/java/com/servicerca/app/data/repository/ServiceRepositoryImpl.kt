@@ -66,7 +66,7 @@ class ServiceRepositoryImpl @Inject constructor() : ServiceRepository {
                 priceMax = 80000.0,
                 status = ServiceStatus.PENDING,
                 type = "Plomería",
-                photoUrl = "https://picsum.photos/200?random=10",
+                photoUrl = "https://projectssdn.com/wp-content/uploads/elementor/thumbs/plomeria-en-general-qp5x9n6u64ze4tk30xqoxt57okaxdr7apr7hp13vds.png",
                 ownerId = "1"
             ),
             Service(
@@ -78,7 +78,7 @@ class ServiceRepositoryImpl @Inject constructor() : ServiceRepository {
                 priceMax = 150000.0,
                 status = ServiceStatus.IN_PROGRESS,
                 type = "Electricidad",
-                photoUrl = "https://picsum.photos/200?random=11",
+                photoUrl = "https://comfenalcoquindio.com/wp-content/uploads/2022/05/tecnico-electricista-en-construccion-residencial-1.jpg",
                 ownerId = "2"
             ),
             Service(
@@ -90,7 +90,7 @@ class ServiceRepositoryImpl @Inject constructor() : ServiceRepository {
                 priceMax = 200000.0,
                 status = ServiceStatus.RESOLVED,
                 type = "Limpieza",
-                photoUrl = "https://picsum.photos/200?random=12",
+                photoUrl = "https://extremecleangm.com/wp-content/uploads/2025/01/Lavado-de-Muebles-Iniciando-el-2025.jpg",
                 ownerId = "1"
             )
         )
