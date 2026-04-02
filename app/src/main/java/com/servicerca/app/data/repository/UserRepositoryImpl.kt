@@ -36,7 +36,10 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
         return listOf(
             User(
                 id = "1",
-                name = "Juan",
+                name1 = "Juan",
+                name2 = "Camilo",
+                lastname1 = "Cuenca",
+                lastname2 = "Sepulveda",
                 city = "Ciudad 1",
                 address = "Calle 123",
                 email = "juanc.cuencas@uqvirtual.edu.co",
@@ -45,7 +48,10 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
             ),
             User(
                 id = "2",
-                name = "Maria",
+                name1 = "Maria",
+                name2 = null,
+                lastname1 = "Martinez",
+                lastname2 = "Fernandez",
                 city = "Pereira",
                 address = "Calle 456",
                 email = "maria@email.com",
@@ -54,7 +60,10 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
             ),
             User(
                 id = "3",
-                name = "Diego Alexander Jimenez",
+                name1 = "Diego",
+                name2 = "Alexander",
+                lastname1 = "Jimenez",
+                lastname2 = null,
                 city = "Armenia",
                 address = "Calle 777",
                 email = "diego@gmail.com",
@@ -63,7 +72,10 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
             ),
             User(
                 id = "3",
-                name = "Carlos",
+                name1 = "Carlos",
+                name2 = null,
+                lastname1 = "Toro",
+                lastname2 = null,
                 city = "Armenia",
                 address = "Calle 789",
                 email = "carlos@email.com",

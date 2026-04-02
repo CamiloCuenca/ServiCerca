@@ -1,7 +1,6 @@
 package com.servicerca.app.ui.profile
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,12 +17,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -89,7 +88,7 @@ fun ProfileScreen(
                 horizontalArrangement = Arrangement.End
             ) {
                 IconButton(onClick = { showConfirmDialog = true }) {
-                    Icon(imageVector = Icons.Default.Logout, contentDescription = "Cerrar sesión")
+                    Icon(imageVector = Icons.AutoMirrored.Filled.Logout, contentDescription = "Cerrar sesión")
                 }
             }
 
@@ -105,7 +104,7 @@ fun ProfileScreen(
 
             // Nombre del Usuario
             Text(
-                text = user?.name ?: "Usuario",
+                text = if (user != null) "${user.name1} ${user.lastname1}" else "Usuario",
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,

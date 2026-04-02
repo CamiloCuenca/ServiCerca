@@ -67,7 +67,7 @@ fun DetailServiceScreen(
     }
 
     val service by viewModel.service.collectAsState()
-    val provider by viewModel.provider.collectAsState()
+    val provider = viewModel.provider.collectAsState().value
     val comments by viewModel.comments.collectAsState()
     val averageRating by viewModel.averageRating.collectAsState()
 
@@ -194,7 +194,7 @@ fun DetailServiceScreen(
                     )
 
                     ProviderRow(
-                        name = provider?.name ?: "Cargando...",
+                        name = if (provider != null) "${provider.name1} ${provider.lastname1}" else "Cargando...",
                         avatarRes = R.drawable.service,
                         level = "MAESTRO",
                         rating = averageRating.takeIf { it > 0f } ?: 0f,

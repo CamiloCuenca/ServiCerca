@@ -44,17 +44,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.servicerca.app.core.components.card.CardMakeReservation
-import com.servicerca.app.domain.model.Location
-import com.servicerca.app.domain.model.Service
-import com.servicerca.app.domain.model.ServiceStatus
-import com.servicerca.app.domain.model.User
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
@@ -121,9 +116,10 @@ fun MakeReservation(
                 )
             }
 
+            val provider = uiState.provider
             CardMakeReservation(
                 serviceTitle = uiState.service?.title,
-                professionalName = uiState.provider?.name,
+                professionalName = if (provider != null) "${provider.name1} ${provider.lastname1}" else null,
                 rating = if (uiState.service != null) "$${uiState.service!!.priceMin} - $${uiState.service!!.priceMax}" else null
             )
 
@@ -298,8 +294,5 @@ fun MakeReservation(
 @Preview(showBackground = true)
 @Composable
 fun MakeReservationPreview() {
-    // Para el preview, no podemos inyectar el ViewModel real fácilmente sin Hilt,
-    // pero podemos dejarlo así para que el IDE intente renderizarlo o 
-    // podrías usar el patrón de Content separado si necesitas un preview perfecto.
     Text("Vista previa de Reserva")
 }
