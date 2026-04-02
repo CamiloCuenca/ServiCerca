@@ -89,6 +89,7 @@ fun HomeUserScreen(
                     category = service.type,
                     priceRange = "$${service.priceMin.toInt()} - $${service.priceMax.toInt()}",
                     level = "EXPERTO",
+                    photoUrl = service.photoUrl,
                     onRequestClick = { onDetailClick(service.id) }
                 )
             }

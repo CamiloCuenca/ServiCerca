@@ -1,6 +1,5 @@
 package com.servicerca.app.ui.services.create
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,7 +41,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.LocalContext
+import android.util.Log
+import java.io.InputStream
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -52,6 +56,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.servicerca.app.R
 import com.servicerca.app.core.components.Map.MapBox
@@ -67,7 +72,7 @@ import com.servicerca.app.ui.theme.PrimaryLight
 fun CreateServiceScreen(
     onBack: () -> Unit,
     onServiceCreated: () -> Unit = {},
-    viewModel: CreateServiceViewModel = viewModel(),
+    viewModel: CreateServiceViewModel = hiltViewModel(),
 ) {
     val createResult by viewModel.createResult.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -81,7 +86,9 @@ fun CreateServiceScreen(
                 isError = false
                 snackbarHostState.showSnackbar(result.message)
                 viewModel.resetCreateResult()
+                // Notificar al caller y regresar a la pantalla anterior
                 onServiceCreated()
+                onBack()
             }
             is RequestResult.SuccessLogin -> Unit // No aplica en esta pantalla
             is RequestResult.Failure -> {
@@ -153,7 +160,35 @@ fun CreateServiceScreen(
 
                 Spacer(modifier = Modifier.height(2.dp))
 
-                ImagesHorizontalScroller()
+                val images by viewModel.images.collectAsState()
+
+                // Launcher para pickear imágenes desde el almacenamiento
+                val context = LocalContext.current
+                val launcher = rememberLauncherForActivityResult(
+                    contract = ActivityResultContracts.GetContent(),
+                    onResult = { uri ->
+                        if (uri != null) {
+                            // Convertir Uri a ByteArray
+                            try {
+                                val inputStream: InputStream? = context.contentResolver.openInputStream(uri)
+                                val bytes = inputStream?.readBytes()
+                                inputStream?.close()
+                                if (bytes != null) {
+                                    viewModel.addImage(bytes)
+                                }
+                                            } catch (e: Exception) {
+                                                // Log para depuración si la conversión falla
+                                                Log.w("CreateService", "failed to read image uri", e)
+                                            }
+                        }
+                    }
+                )
+
+                ImagesHorizontalScroller(
+                    images = images,
+                    onAddImage = { launcher.launch("image/*") },
+                    onRemoveAt = { idx: Int -> viewModel.removeImageAt(idx) }
+                )
 
                 Spacer(modifier = Modifier.height(10.dp))
 
@@ -344,8 +379,3 @@ fun CreateServiceScreen(
 
 }
 
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun CreateServicePreview() {
-    CreateServiceScreen(onBack = {})
-}
