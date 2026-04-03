@@ -48,8 +48,8 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
             ),
             User(
                 id = "2",
-                name1 = "Maria",
-                name2 = null,
+                name1 = "Lina",
+                name2 = "Maria",
                 lastname1 = "Martinez",
                 lastname2 = "Fernandez",
                 city = "Pereira",
@@ -68,7 +68,6 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
                 address = "Calle 777",
                 email = "diego@gmail.com",
                 password = "111111",
-                phoneNumber = "3001234567",
                 profilePictureUrl = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEga-7mA9kd7EnROYLMEYwURS2xlW1uWK8eWC8F6X3RFuCrJQLnd5eJ8KNOqXeVNuUVM0c4X31Uoz7NlQKJ4QxFfF6EDWAwgT6y1F_HgZ23As74U0wOHy14ClTNC9kP5KJHgPouBaogO5IpYsvxGmDCYlJ9do4tNb9eb6fYBMMSIG3zEcAN-7y2lIrvTwOyb/s320/WhatsApp%20Image%202026-03-04%20at%2023.04.58.jpeg"
             ),
             User(

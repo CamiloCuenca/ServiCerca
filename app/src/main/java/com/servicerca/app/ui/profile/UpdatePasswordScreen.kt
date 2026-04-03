@@ -29,9 +29,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -48,6 +53,8 @@ fun UpdatePasswordScreen(
 ) {
     val updateResult by viewModel.updateResult.collectAsState()
     val snackBarHostState = remember { SnackbarHostState() }
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
 
     LaunchedEffect(updateResult) {
         updateResult?.let { result ->
@@ -57,6 +64,8 @@ fun UpdatePasswordScreen(
                 else -> {}
             }
 
+            keyboardController?.hide()
+            focusManager.clearFocus()
             snackBarHostState.showSnackbar(
                 message = message as String,
                 duration = SnackbarDuration.Short
@@ -139,12 +148,23 @@ fun UpdatePasswordScreen(
                 )
             }
 
+            // Leyenda de campos obligatorios
+            Text(
+                text = buildAnnotatedString {
+                    withStyle(SpanStyle(color = MaterialTheme.colorScheme.error)) { append("*") }
+                    append(" Campos obligatorios")
+                },
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
             Column(Modifier.fillMaxWidth()) {
                 AppPasswordField(
                     password = viewModel.currentPassword.value,
                     onPasswordChange = { viewModel.currentPassword.onChange(it) },
                     label = stringResource(R.string.current_password),
-                    modifier = Modifier.padding(bottom = 4.dp)
+                    modifier = Modifier.padding(bottom = 4.dp),
+                    required = true
                 )
                 viewModel.currentPassword.error?.let { error ->
                     Text(
@@ -159,7 +179,8 @@ fun UpdatePasswordScreen(
                     password = viewModel.newPassword.value,
                     onPasswordChange = { viewModel.newPassword.onChange(it) },
                     label = stringResource(R.string.new_password),
-                    modifier = Modifier.padding(bottom = 4.dp)
+                    modifier = Modifier.padding(bottom = 4.dp),
+                    required = true
                 )
                 viewModel.newPassword.error?.let { error ->
                     Text(
@@ -174,7 +195,8 @@ fun UpdatePasswordScreen(
                     password = viewModel.confirmNewPassword.value,
                     onPasswordChange = { viewModel.confirmNewPassword.onChange(it) },
                     label = stringResource(R.string.confirm_new_password),
-                    modifier = Modifier.padding(bottom = 4.dp)
+                    modifier = Modifier.padding(bottom = 4.dp),
+                    required = true
                 )
                 viewModel.confirmNewPassword.error?.let { error ->
                     Text(

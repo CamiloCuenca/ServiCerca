@@ -45,6 +45,8 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import android.util.Log
 import java.io.InputStream
 import androidx.compose.ui.Modifier
@@ -78,12 +80,16 @@ fun CreateServiceScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     var isError by remember { mutableStateOf(false) }
     var expanded by remember { mutableStateOf(false) }
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
 
     // Reacciona al resultado de publicar el servicio
     LaunchedEffect(createResult) {
         when (val result = createResult) {
             is RequestResult.Success -> {
                 isError = false
+                keyboardController?.hide()
+                focusManager.clearFocus()
                 snackbarHostState.showSnackbar(result.message)
                 viewModel.resetCreateResult()
                 // Notificar al caller y regresar a la pantalla anterior
@@ -93,6 +99,8 @@ fun CreateServiceScreen(
             is RequestResult.SuccessLogin -> Unit // No aplica en esta pantalla
             is RequestResult.Failure -> {
                 isError = true
+                keyboardController?.hide()
+                focusManager.clearFocus()
                 snackbarHostState.showSnackbar(result.errorMessage)
                 viewModel.resetCreateResult()
             }

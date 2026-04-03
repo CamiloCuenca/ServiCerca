@@ -36,6 +36,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
@@ -63,6 +65,8 @@ fun RecoverPasswordScreen(
 
     val snackBarHostState = remember { SnackbarHostState() }
     val recoverResult by viewModel.recoverResult.collectAsState()
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
 
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.candado))
     val progress by animateLottieCompositionAsState(
@@ -79,6 +83,8 @@ fun RecoverPasswordScreen(
                 else -> {}
             }
 
+            keyboardController?.hide()
+            focusManager.clearFocus()
             // Muestra el snackbar y espera a que se oculte o descarte
             snackBarHostState.showSnackbar(
                 message = message as String,
