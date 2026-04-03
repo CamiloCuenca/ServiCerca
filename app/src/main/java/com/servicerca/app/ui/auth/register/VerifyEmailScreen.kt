@@ -33,6 +33,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
@@ -54,6 +56,8 @@ fun VerifyEmailScreen(
     val verifyResult by viewModel.verifyResult.collectAsState()
     val resendResult by viewModel.resendResult.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
 
     // true = error (rojo), false = éxito (verde/primary)
     var isError by remember { mutableStateOf(false) }
@@ -63,12 +67,16 @@ fun VerifyEmailScreen(
         when (val result = verifyResult) {
             is RequestResult.Success -> {
                 isError = false
+                keyboardController?.hide()
+                focusManager.clearFocus()
                 snackbarHostState.showSnackbar(result.message)
                 viewModel.resetVerifyResult()
                 onNavigateToLogin()
             }
             is RequestResult.Failure -> {
                 isError = true
+                keyboardController?.hide()
+                focusManager.clearFocus()
                 snackbarHostState.showSnackbar(result.errorMessage)
                 viewModel.resetVerifyResult()
             }
@@ -82,11 +90,15 @@ fun VerifyEmailScreen(
         when (val result = resendResult) {
             is RequestResult.Success -> {
                 isError = false
+                keyboardController?.hide()
+                focusManager.clearFocus()
                 snackbarHostState.showSnackbar(result.message)
                 viewModel.resetResendResult()
             }
             is RequestResult.Failure -> {
                 isError = true
+                keyboardController?.hide()
+                focusManager.clearFocus()
                 snackbarHostState.showSnackbar(result.errorMessage)
                 viewModel.resetResendResult()
             }

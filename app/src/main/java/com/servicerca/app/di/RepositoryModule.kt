@@ -4,7 +4,9 @@ import com.servicerca.app.data.repository.CommentRepositoryImpl
 import com.servicerca.app.data.repository.ReservationRepositoryImpl
 import com.servicerca.app.data.repository.ServiceRepositoryImpl
 import com.servicerca.app.data.repository.UserRepositoryImpl
+import com.servicerca.app.data.repository.NotificationRepositoryImpl
 import com.servicerca.app.domain.repository.CommentRepository
+import com.servicerca.app.domain.repository.NotificationRepository
 import com.servicerca.app.domain.repository.ReservationRepository
 import com.servicerca.app.domain.repository.ServiceRepository
 import com.servicerca.app.domain.repository.UserRepository
@@ -41,5 +43,11 @@ abstract class RepositoryModule {
     abstract fun bindReservationRepository(
         reservationRepositoryImpl: ReservationRepositoryImpl
     ): ReservationRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindNotificationRepository(
+        notificationRepositoryImpl: NotificationRepositoryImpl
+    ): NotificationRepository
 
 }

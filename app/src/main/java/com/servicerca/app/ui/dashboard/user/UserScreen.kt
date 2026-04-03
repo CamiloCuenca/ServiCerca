@@ -15,6 +15,8 @@ import androidx.navigation.compose.rememberNavController
 import com.servicerca.app.core.components.navigation.AppTopAppBar
 import com.servicerca.app.core.components.navigation.BottomNavigationBar
 import com.servicerca.app.core.navigation.UserNavigation
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.servicerca.app.ui.notifications.NotificationViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -22,7 +24,8 @@ fun UserScreen(
     onLogout: () -> Unit,
     onCreateService: () -> Unit,
     onNotificationClick: () -> Unit,
-    onMapClick: () -> Unit
+    onMapClick: () -> Unit,
+    viewModel: NotificationViewModel = hiltViewModel()
 ) {
 
     val navController = rememberNavController()
@@ -81,7 +84,8 @@ fun UserScreen(
 
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    var notificationCount by remember { mutableStateOf(5) }
+    val unreadCount by viewModel.unreadCount.collectAsState()
+    val notificationCount = unreadCount
 
 
     Scaffold(

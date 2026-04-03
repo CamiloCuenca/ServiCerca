@@ -44,6 +44,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -74,12 +76,16 @@ fun EditServiceScreen(
     var isError by remember { mutableStateOf(false) }
     var expanded by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
 
     // Resultado de guardar cambios
     LaunchedEffect(saveResult) {
         when (val result = saveResult) {
             is RequestResult.Success -> {
                 isError = false
+                keyboardController?.hide()
+                focusManager.clearFocus()
                 snackbarHostState.showSnackbar(result.message)
                 viewModel.resetSaveResult()
                 onSaveSuccess()
@@ -87,6 +93,8 @@ fun EditServiceScreen(
             is RequestResult.SuccessLogin -> Unit
             is RequestResult.Failure -> {
                 isError = true
+                keyboardController?.hide()
+                focusManager.clearFocus()
                 snackbarHostState.showSnackbar(result.errorMessage)
                 viewModel.resetSaveResult()
             }
@@ -99,6 +107,8 @@ fun EditServiceScreen(
         when (val result = deleteResult) {
             is RequestResult.Success -> {
                 isError = false
+                keyboardController?.hide()
+                focusManager.clearFocus()
                 snackbarHostState.showSnackbar(result.message)
                 viewModel.resetDeleteResult()
                 onDeleteSuccess()
@@ -106,6 +116,8 @@ fun EditServiceScreen(
             is RequestResult.SuccessLogin -> Unit
             is RequestResult.Failure -> {
                 isError = true
+                keyboardController?.hide()
+                focusManager.clearFocus()
                 snackbarHostState.showSnackbar(result.errorMessage)
                 viewModel.resetDeleteResult()
             }

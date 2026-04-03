@@ -8,12 +8,18 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.ContactMail
 import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -31,10 +37,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -143,29 +153,40 @@ fun RegisterScreen(
 
             }
 
-            // Formulario
+            // ── Formulario ────────────────────────────────────────────────
             Text(
-                text = "Únete a la comunidad y encuentra los mejores\n" +
-                        "servicios cerca de ti.",
+                text = "Únete a la comunidad y encuentra los mejores servicios cerca de ti.",
                 fontWeight = FontWeight.Light,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
 
-                )
+            // Leyenda de campos obligatorios
+            Text(
+                text = buildAnnotatedString {
+                    withStyle(SpanStyle(color = MaterialTheme.colorScheme.error)) { append("*") }
+                    append(" Campos obligatorios")
+                },
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
 
-            // --- Sección 1: Datos Personales ---
+            // ── Sección 1: Datos personales ─────────────────────────────
+            FormSectionHeader(icon = Icons.Default.Person, title = "Datos personales")
+
             Column(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 // Nombres
-                Row(
-                    modifier = Modifier.padding(bottom = 16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     Column(modifier = Modifier.weight(1F)) {
                         AppTextField(
                             value = viewModel.name.value,
                             onValueChange = { viewModel.name.onChange(it) },
                             label = stringResource(R.string.register_label_first_name),
-                            placeholder = stringResource(R.string.register_placeholder_example_name)
+                            placeholder = stringResource(R.string.register_placeholder_example_name),
+                            required = true
                         )
                     }
                     Column(modifier = Modifier.weight(1F)) {
@@ -173,22 +194,21 @@ fun RegisterScreen(
                             value = viewModel.SecondName.value,
                             onValueChange = { viewModel.SecondName.onChange(it) },
                             label = stringResource(R.string.register_label_second_name),
-                            placeholder = stringResource(R.string.register_placeholder_example_name)
+                            placeholder = stringResource(R.string.register_placeholder_example_name),
+                            required = true
                         )
                     }
                 }
 
                 // Apellidos
-                Row(
-                    modifier = Modifier.padding(bottom = 16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     Column(modifier = Modifier.weight(1F)) {
                         AppTextField(
                             value = viewModel.Lastname.value,
                             onValueChange = { viewModel.Lastname.onChange(it) },
                             label = stringResource(R.string.register_label_first_lastname),
-                            placeholder = stringResource(R.string.register_placeholder_example_name)
+                            placeholder = stringResource(R.string.register_placeholder_example_name),
+                            required = true
                         )
                     }
                     Column(modifier = Modifier.weight(1F)) {
@@ -196,22 +216,26 @@ fun RegisterScreen(
                             value = viewModel.SecondLastname.value,
                             onValueChange = { viewModel.SecondLastname.onChange(it) },
                             label = stringResource(R.string.register_label_second_lastname),
-                            placeholder = stringResource(R.string.register_placeholder_example_name)
+                            placeholder = stringResource(R.string.register_placeholder_example_name),
+                            required = true
                         )
                     }
                 }
             }
 
-            // --- Sección 2: Contacto y Detalles ---
+            // ── Sección 2: Contacto ──────────────────────────────────────
+            FormSectionHeader(icon = Icons.Default.ContactMail, title = "Contacto")
+
             Column(
                 modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 AppTextField(
                     value = viewModel.email.value,
-                    onValueChange = { viewModel.email.onChange(it)},
+                    onValueChange = { viewModel.email.onChange(it) },
                     label = stringResource(R.string.emailLabel),
                     placeholder = stringResource(R.string.placeholderEmail),
+                    required = true
                 )
 
                 AppExposedDropdownMenu(
@@ -224,35 +248,38 @@ fun RegisterScreen(
 
                 AppTextField(
                     value = viewModel.address.value,
-                    onValueChange = { viewModel.address.onChange(it)},
+                    onValueChange = { viewModel.address.onChange(it) },
                     label = "Dirección",
-                    placeholder = "Dirección de servicio"
+                    placeholder = "Dirección de servicio",
+                    required = true
                 )
             }
 
-            Spacer(modifier = Modifier.padding(4.dp))
+            // ── Sección 3: Seguridad ─────────────────────────────────────
+            FormSectionHeader(icon = Icons.Default.Lock, title = "Seguridad")
 
-            // --- Sección 3: Seguridad ---
             Column(
                 modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 AppPasswordField(
                     password = viewModel.password.value,
-                    onPasswordChange = { viewModel.password.onChange(it)},
-                    label = stringResource(R.string.passwordLabel)
+                    onPasswordChange = { viewModel.password.onChange(it) },
+                    label = stringResource(R.string.passwordLabel),
+                    required = true
                 )
 
                 AppPasswordField(
                     password = viewModel.confirmPassword.value,
-                    onPasswordChange = { viewModel.confirmPassword.onChange(it)},
-                    label = stringResource(R.string.register_confirm_password)
+                    onPasswordChange = { viewModel.confirmPassword.onChange(it) },
+                    label = stringResource(R.string.register_confirm_password),
+                    required = true
                 )
             }
 
-            Spacer(modifier = Modifier.padding(8.dp))
+            Spacer(modifier = Modifier.height(4.dp))
 
-            // -- Botón principal --
+            // ── Botón principal ───────────────────────────────────────────
             PrimaryButton(
                 text = stringResource(R.string.registrarse),
                 onClick = { viewModel.register() },
@@ -334,4 +361,37 @@ fun RegisterScreen(
 @Composable
 fun RegisterScreenPreview() {
     RegisterScreen( onNavigateToLogin = {} , onBackClick = {}, onVerifyEmail = {})
+}
+
+/**
+ * Encabezado visual de sección del formulario.
+ * Muestra un ícono y título en negrita seguidos de un divisor sutil.
+ */
+@Composable
+private fun FormSectionHeader(icon: ImageVector, title: String) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.padding(bottom = 8.dp)
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(18.dp)
+            )
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.primary
+            )
+        }
+        HorizontalDivider(
+            color = MaterialTheme.colorScheme.outlineVariant,
+            thickness = 1.dp
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+    }
 }

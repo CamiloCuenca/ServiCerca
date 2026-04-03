@@ -41,6 +41,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -69,17 +71,23 @@ fun EditProfileScreen(
     val email by viewModel.email.collectAsState()
     val role by viewModel.role.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
 
     // Reacciona al resultado de guardar
     LaunchedEffect(saveResult) {
         val result = saveResult ?: return@LaunchedEffect
         when (result) {
             is RequestResult.Success -> {
+                keyboardController?.hide()
+                focusManager.clearFocus()
                 snackbarHostState.showSnackbar(result.message)
                 viewModel.resetSaveResult()
                 onSaveSuccess()
             }
             is RequestResult.Failure -> {
+                keyboardController?.hide()
+                focusManager.clearFocus()
                 snackbarHostState.showSnackbar(result.errorMessage)
                 viewModel.resetSaveResult()
             }
@@ -277,25 +285,6 @@ fun EditProfileScreen(
                                 label = stringResource(R.string.address),
                                 isError = viewModel.address.error != null,
                                 supportingText = viewModel.address.error?.let { msg -> { Text(msg) } }
-                            )
-                        }
-
-                        // Teléfono
-                        Column(modifier = Modifier.padding(bottom = 20.dp)) {
-                            AppTextField(
-                                value = viewModel.phone.value,
-                                onValueChange = { input ->
-                                    viewModel.phone.onChange(input.filter { it.isDigit() })
-                                },
-                                label = stringResource(R.string.number_tel),
-                                isError = viewModel.phone.error != null,
-                                supportingText = viewModel.phone.error?.let { msg -> { Text(msg) } },
-                                leadingIcon = {
-                                    Icon(
-                                        imageVector = Icons.Default.Phone,
-                                        contentDescription = "Teléfono"
-                                    )
-                                }
                             )
                         }
                     }

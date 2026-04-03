@@ -30,10 +30,13 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 
 /**
@@ -52,12 +55,30 @@ fun AppTextField(
     leadingIcon: (@Composable (() -> Unit))? = null,
     trailingIcon: (@Composable (() -> Unit))? = null,
     isError: Boolean = false,
-    supportingText: (@Composable (() -> Unit))? = null
+    supportingText: (@Composable (() -> Unit))? = null,
+    required: Boolean = false
 ) {
+    val errorColor = MaterialTheme.colorScheme.error
+    val labelComposable: (@Composable () -> Unit)? = if (label.isNotEmpty()) {
+        {
+            if (required) {
+                Text(
+                    text = buildAnnotatedString {
+                        append(label)
+                        append(" ")
+                        withStyle(SpanStyle(color = errorColor)) { append("*") }
+                    }
+                )
+            } else {
+                Text(label)
+            }
+        }
+    } else null
+
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
-        label = if (label.isNotEmpty()) { { Text(label) } } else null,
+        label = labelComposable,
         placeholder = placeholder?.let { { Text(it) } },
         keyboardOptions = keyboardOptions,
         visualTransformation = if (isPassword)
@@ -87,16 +108,31 @@ fun AppPasswordField(
     placeholder: String? = "••••••••",
     singleLine: Boolean = true,
     leadingIcon: (@Composable (() -> Unit))? = null,
-    showVisibilityToggle: Boolean = true
+    showVisibilityToggle: Boolean = true,
+    required: Boolean = false
 ) {
     var passwordVisible by remember { mutableStateOf(false) }
+    val errorColor = MaterialTheme.colorScheme.error
+    val labelComposable: (@Composable () -> Unit)? = if (label.isNotEmpty()) {
+        {
+            if (required) {
+                Text(
+                    text = buildAnnotatedString {
+                        append(label)
+                        append(" ")
+                        withStyle(SpanStyle(color = errorColor)) { append("*") }
+                    }
+                )
+            } else {
+                Text(label)
+            }
+        }
+    } else null
 
     OutlinedTextField(
         value = password,
         onValueChange = onPasswordChange,
-        label = if (label.isNotEmpty()) {
-            { Text(label) }
-        } else null,
+        label = labelComposable,
         singleLine = singleLine,
         placeholder = if (placeholder != null) {
             { Text(placeholder) }

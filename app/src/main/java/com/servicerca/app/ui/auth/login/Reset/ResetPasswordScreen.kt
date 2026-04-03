@@ -37,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.material.icons.filled.Visibility
@@ -51,6 +52,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -76,6 +80,8 @@ fun ResetPassword(
     var passwordVisible by remember { mutableStateOf(false) }
     val snackBarHostState = remember { SnackbarHostState() }
     val resetResult by viewModel.resetResult.collectAsState()
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
 
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.candado))
     val progress by animateLottieCompositionAsState(
@@ -92,6 +98,8 @@ fun ResetPassword(
                 else -> {}
             }
 
+            keyboardController?.hide()
+            focusManager.clearFocus()
             // Muestra el snackbar y espera a que se oculte o descarte
             snackBarHostState.showSnackbar(
                 message = message as String,
@@ -183,20 +191,27 @@ fun ResetPassword(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-            // — Campo: Código de recuperación —
+            // Leyenda de campos obligatorios
             Text(
-                text = "Código de recuperación",
-                style = MaterialTheme.typography.labelMedium
+                text = buildAnnotatedString {
+                    withStyle(SpanStyle(color = MaterialTheme.colorScheme.error)) { append("*") }
+                    append(" Campos obligatorios")
+                },
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
+            // — Campo: Código de recuperación —
             AppTextField(
                 value = viewModel.codeReset.value,
                 onValueChange = { viewModel.codeReset.onChange(it) },
+                label = "Código de recuperación",
                 placeholder = "Ej: 123456",
+                required = true,
                 modifier = Modifier
                     .fillMaxWidth(),
                 singleLine = true,
@@ -215,17 +230,12 @@ fun ResetPassword(
             Spacer(modifier = Modifier.height(16.dp))
 
             // — Campo: Nueva contraseña —
-            Text(
-                text = "Nueva contraseña",
-                style = MaterialTheme.typography.labelMedium
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
             AppTextField(
                 value = viewModel.newPassword.value,
                 onValueChange = { viewModel.newPassword.onChange(it) },
+                label = "Nueva contraseña",
                 placeholder = "Mínimo 8 caracteres",
+                required = true,
                 isPassword = !passwordVisible,
                 trailingIcon = {
                     IconButton(onClick = { passwordVisible = !passwordVisible }) {
