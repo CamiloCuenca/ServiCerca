@@ -1,0 +1,103 @@
+package com.servicerca.app.data.repository
+
+import com.servicerca.app.R
+import com.servicerca.app.domain.model.Notification
+import com.servicerca.app.domain.repository.NotificationRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import javax.inject.Inject
+import javax.inject.Singleton
+
+@Singleton
+class NotificationRepositoryImpl @Inject constructor() : NotificationRepository {
+
+    private val _notifications = MutableStateFlow<List<Notification>>(emptyList())
+    override val notifications: StateFlow<List<Notification>> = _notifications.asStateFlow()
+
+    init {
+        _notifications.value = fetchInitialNotifications()
+    }
+
+    override suspend fun markAsRead(id: String) {
+        _notifications.value = _notifications.value.map {
+            if (it.id == id) it.copy(isRead = true) else it
+        }
+    }
+
+    override suspend fun markAllAsRead() {
+        _notifications.value = _notifications.value.map {
+            it.copy(isRead = true)
+        }
+    }
+
+    override suspend fun deleteNotification(id: String) {
+        _notifications.value = _notifications.value.filter { it.id != id }
+    }
+
+    override suspend fun clearAll() {
+        _notifications.value = emptyList()
+    }
+
+    private fun fetchInitialNotifications(): List<Notification> {
+        return listOf(
+            Notification(
+                id = "1",
+                title = "Nueva solicitud de servicio",
+                message = "Has recibido una nueva propuesta para el proyecto \"Reparación Eléctrica\".",
+                date = "5 min",
+                imageRes = R.drawable.nueva_solicitud_servicio,
+                isRead = false
+            ),
+            Notification(
+                id = "2",
+                title = "Comentario recibido",
+                message = "\"Excelente trabajo, muy profesional y a tiempo.\"",
+                date = "2 h",
+                imageRes = R.drawable.comentario_recibido,
+                isRead = false
+            ),
+            Notification(
+                id = "3",
+                title = "Servicio verificado",
+                message = "El usuario @juan_perez ha confirmado tu servicio \"Plomería general\".",
+                date = "Ayer",
+                imageRes = R.drawable.servicio_verificado,
+                isRead = true
+            ),
+            Notification(
+                id = "4",
+                title = "Publicación rechazada",
+                message = "Tu publicación \"Jardinería\" no cumple con las normativas.",
+                date = "12 oct",
+                imageRes = R.drawable.publicacion_rechazada,
+                isRead = true
+            ),
+            Notification(
+                id = "5",
+                title = "Nueva publicación",
+                message = "¡Tu publicación \"Mantenimiento de PC\" ya está disponible!",
+                date = "10 oct",
+                imageRes = R.drawable.nueva_publicacion,
+                isRead = true
+            ),
+            Notification(
+                id = "6",
+                title = "Nueva publicación",
+                message = "¡Tu publicación \"Mantenimiento de PC\" ya está disponible! Notification(\n" +
+                        "                id = \"5\",\n" +
+                        "                title = \"Nueva publicación\",\n" +
+                        "                message = \"¡Tu publicación \\\"Mantenimiento de PC\\\" ya está disponible!\",\n" +
+                        "                date = \"10 oct\",\n" +
+                        "                imageRes = R.drawable.nueva_publicacion,\n" +
+                        "                isRead = true\n" +
+                        "            )PRUEBA",
+                date = "10 oct",
+                imageRes = R.drawable.nueva_publicacion,
+                isRead = true
+            )
+
+
+        )
+    }
+}

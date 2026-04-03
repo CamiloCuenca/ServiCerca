@@ -25,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.servicerca.app.R
+import androidx.compose.foundation.clickable
 
 @Composable
 fun ContainerNotifications(
@@ -32,12 +33,15 @@ fun ContainerNotifications(
     tittleNotification: String,
     content: String,
     date: String,
-    @DrawableRes imageRes2: Int? = null
+    @DrawableRes imageRes2: Int? = null,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.background)
+            .clickable { onClick() }
             .padding(vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

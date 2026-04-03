@@ -22,13 +22,17 @@ import com.servicerca.app.core.components.navigation.BottomNavigationBar
 import com.servicerca.app.core.components.navigation.BottomNavigationBarModerator
 import com.servicerca.app.core.navigation.ModeratorNavigation
 import com.servicerca.app.core.navigation.UserNavigation
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.servicerca.app.ui.notifications.NotificationViewModel
+import androidx.compose.runtime.collectAsState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ModeratorScreen(
-                    onLogout: () -> Unit,
-                    onCreateService: () -> Unit,
-                    onNotificationClick: () -> Unit
+    onLogout: () -> Unit,
+    onCreateService: () -> Unit,
+    onNotificationClick: () -> Unit,
+    viewModel: NotificationViewModel = hiltViewModel()
 ) {
 
     val navController = rememberNavController()
@@ -47,7 +51,9 @@ fun ModeratorScreen(
 
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    var notificationCount by remember { mutableStateOf(5) }
+
+    val unreadCount by viewModel.unreadCount.collectAsState()
+    val notificationCount = unreadCount
 
 
     Scaffold(
