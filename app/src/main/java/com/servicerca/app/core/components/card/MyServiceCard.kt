@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import coil3.compose.AsyncImage
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -52,14 +53,28 @@ fun MyServiceCard(
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp)
     ) {
         Column {
-            Image(
-                painter = painterResource(id = service.imageRes),
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(160.dp),
-                contentScale = ContentScale.Crop
-            )
+            // Mostrar imagen remota si existe imageUrl; si no usar recurso local
+            if (!service.imageUrl.isNullOrBlank()) {
+                AsyncImage(
+                    model = service.imageUrl,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(160.dp),
+                    contentScale = ContentScale.Crop,
+                    placeholder = painterResource(id = R.drawable.service),
+                    error = painterResource(id = R.drawable.service)
+                )
+            } else {
+                Image(
+                    painter = painterResource(id = service.imageRes),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(160.dp),
+                    contentScale = ContentScale.Crop
+                )
+            }
             Column(
                 modifier = Modifier.padding(16.dp)
             ) {
