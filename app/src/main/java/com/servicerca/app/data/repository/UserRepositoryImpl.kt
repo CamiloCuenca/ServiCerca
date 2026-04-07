@@ -83,17 +83,20 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
                 memberSince = 2
             ),
             User(
-                id = "3",
+                id = "4",
                 name1 = "Carlos",
-                name2 = null,
+                name2 = "Scott",
                 lastname1 = "Toro",
-                lastname2 = null,
+                lastname2 = "Kennedy",
                 city = "Armenia",
                 address = "Calle 789",
                 email = "carlos@email.com",
                 password = "333333",
-                profilePictureUrl = "https://picsum.photos/200?random=3",
-                role = UserRole.ADMIN
+                profilePictureUrl = "https://i.pinimg.com/originals/ae/90/f5/ae90f5c41e36d420e8175f072367ead9.jpg",
+                role = UserRole.ADMIN,
+                pendingReviews = 12,
+                approvedReviews = 20,
+                rejectReviews = 6
             )
         )
     }
