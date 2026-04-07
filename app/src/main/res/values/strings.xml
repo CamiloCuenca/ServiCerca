@@ -184,6 +184,7 @@
     <string name="reservation_profesional_certificado">Profesional Certificado</string>
 
     <!-- Moderator Panel Screen -->
+    <string name="no_services_found">No hay servicios en esta categoría</string>
     <string name="type_service_moderation_panel">MANTENIMIENTO / HOGAR</string>
     <string name="title_service_moderation_panel">Instalaciones Eléctricas Residenciales</string>
     <string name="description_service_moderation_panel">Electricista especializado en instalaciones

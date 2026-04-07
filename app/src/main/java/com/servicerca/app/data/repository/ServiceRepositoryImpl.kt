@@ -1,12 +1,17 @@
 package com.servicerca.app.data.repository
 
+
 import com.servicerca.app.domain.model.Location
 import com.servicerca.app.domain.model.Service
 import com.servicerca.app.domain.model.ServiceStatus
 import com.servicerca.app.domain.repository.ServiceRepository
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -46,8 +51,13 @@ class ServiceRepositoryImpl @Inject constructor() : ServiceRepository {
     }
 
     override fun findByStatus(status: ServiceStatus): StateFlow<List<Service>> {
-        val filtered = _services.value.filter { it.status == status }
-        return MutableStateFlow(filtered).asStateFlow()
+        return _services.map { list ->
+            list.filter { it.status == status }
+        }.stateIn(
+            scope = GlobalScope, // O un scope manejado
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = _services.value.filter { it.status == status }
+        )
     }
 
     override fun findByType(type: String): StateFlow<List<Service>> {

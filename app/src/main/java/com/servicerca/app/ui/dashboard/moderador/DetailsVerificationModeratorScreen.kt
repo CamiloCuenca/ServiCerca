@@ -45,6 +45,7 @@ import com.servicerca.app.core.components.card.CardRevisionUserService
 
 @Composable
 fun DetailsVerificationModeratorScreen(
+    serviceId: String?,
     onBack: () -> Unit,
     onRejectClick: () -> Unit
 ){
@@ -200,6 +201,7 @@ fun DetailsVerificationModeratorScreen(
 @Composable
 fun DetailsVerificationModeratorPreview (){
     DetailsVerificationModeratorScreen(
+        serviceId = null,
         onBack = {},
         onRejectClick = {}
     )

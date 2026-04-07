@@ -31,12 +31,19 @@ fun ModeratorNavigation(
                 onBack = { navController.popBackStack() }
             )
         }
-        composable("detailsServicesModerator") {
-            DetailsVerificationModeratorScreen(onBack = { navController.popBackStack() }, onRejectClick = { navController.navigate("rejectReason") })
-
+        composable("detailsServicesModerator/{serviceId}") { backStackEntry ->
+            val serviceId = backStackEntry.arguments?.getString("serviceId")
+            DetailsVerificationModeratorScreen(
+                serviceId = serviceId, // Pasa el ID a la pantalla
+                onBack = { navController.popBackStack() },
+                onRejectClick = { navController.navigate("rejectReason/$serviceId") }
+            )
         }
-        composable("rejectReason") {
+
+        composable("rejectReason/{serviceId}") { backStackEntry ->
+            val serviceId = backStackEntry.arguments?.getString("serviceId")
             RejectReasonScreen(
+                serviceId = serviceId, // Pasa el ID a la pantalla
                 onBack = { navController.popBackStack() }
             )
         }
