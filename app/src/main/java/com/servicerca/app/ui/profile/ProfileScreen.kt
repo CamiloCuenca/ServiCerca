@@ -88,7 +88,7 @@ fun ProfileScreen(
                 horizontalArrangement = Arrangement.End
             ) {
                 IconButton(onClick = { showConfirmDialog = true }) {
-                    Icon(imageVector = Icons.AutoMirrored.Filled.Logout, contentDescription = "Cerrar sesión")
+                    Icon(imageVector = Icons.AutoMirrored.Filled.Logout, contentDescription = stringResource(R.string.logout_content_description))
                 }
             }
 
@@ -104,7 +104,7 @@ fun ProfileScreen(
 
             // Nombre del Usuario
             Text(
-                text = if (user != null) "${user.name1} ${user.lastname1}" else "Usuario",
+                text = if (user != null) "${user.name1} ${user.lastname1}" else stringResource(R.string.profile_fallback_name),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
@@ -125,7 +125,7 @@ fun ProfileScreen(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = user?.city ?: "Ubicación no disponible",
+                    text = user?.city ?: stringResource(R.string.location_not_available),
                     style = MaterialTheme.typography.bodyLarge
                 )
             }
@@ -141,8 +141,8 @@ fun ProfileScreen(
                 borderColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onSecondary,
                 borderWidth = 2.dp,
-                title = "Publicaciones Interesantes",
-                description = "Ver tus servicios favoritos",
+                title = stringResource(R.string.interesting_posts_title),
+                description = stringResource(R.string.interesting_posts_description),
                 icon = Icons.Default.Bookmark
             )
 
@@ -150,7 +150,7 @@ fun ProfileScreen(
             InsigniasSection(onInsignias)
 
             // Estadísticas
-            StatisticsSection()
+            StatisticsSection(user)
 
             // Botones de Configuración
             AccountSettingsSection(onEditProflie, onUpdatePassword, onDeleteProfile)
@@ -204,17 +204,33 @@ fun InsigniaItem(imageRes: Int, labelRes: Int, shadowColor: Color) {
 }
 
 @Composable
-fun StatisticsSection() {
+fun StatisticsSection(user: com.servicerca.app.domain.model.User?) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(text = stringResource(R.string.statistic), fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 8.dp, bottom = 8.dp))
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            CardStatistics(R.drawable.servicios_completados, stringResource(R.string.num_services), stringResource(R.string.services_completed))
-            CardStatistics(R.drawable.puntos_totales, stringResource(R.string.num_points), stringResource(R.string.total_points))
+            CardStatistics(
+                R.drawable.servicios_completados,
+                user?.completedServices?.toString() ?: "0",
+                stringResource(R.string.services_completed)
+            )
+            CardStatistics(
+                R.drawable.puntos_totales,
+                user?.totalPoints?.toString() ?: "0",
+                stringResource(R.string.total_points)
+            )
         }
         Spacer(modifier = Modifier.height(16.dp))
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            CardStatistics(R.drawable.calificacion, stringResource(R.string.qualification), stringResource(R.string.average_rating))
-            CardStatistics(R.drawable.tiempo_miembro, stringResource(R.string.time), stringResource(R.string.member_time))
+            CardStatistics(
+                R.drawable.calificacion,
+                user?.rating?.toString() ?: "0.0",
+                stringResource(R.string.average_rating)
+            )
+            CardStatistics(
+                R.drawable.tiempo_miembro,
+                if (user != null) stringResource(R.string.member_time_format, user.memberSince) else "-",
+                stringResource(R.string.member_time)
+            )
         }
     }
 }

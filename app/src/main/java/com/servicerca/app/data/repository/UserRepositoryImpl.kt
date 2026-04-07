@@ -44,7 +44,11 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
                 address = "Calle 123",
                 email = "juanc.cuencas@uqvirtual.edu.co",
                 password = "123456",
-                profilePictureUrl = "https://m.media-amazon.com/images/I/41g6jROgo0L.png"
+                profilePictureUrl = "https://m.media-amazon.com/images/I/41g6jROgo0L.png",
+                completedServices = 12,
+                totalPoints = 1250,
+                rating = 4.5,
+                memberSince = 2
             ),
             User(
                 id = "2",
@@ -56,7 +60,11 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
                 address = "Calle 456",
                 email = "maria@email.com",
                 password = "222222",
-                profilePictureUrl = "https://picsum.photos/200?random=2"
+                profilePictureUrl = "https://picsum.photos/200?random=2",
+                completedServices = 15,
+                totalPoints = 1650,
+                rating = 4.7,
+                memberSince = 3
             ),
             User(
                 id = "3",
@@ -68,7 +76,11 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
                 address = "Calle 777",
                 email = "diego@gmail.com",
                 password = "111111",
-                profilePictureUrl = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEga-7mA9kd7EnROYLMEYwURS2xlW1uWK8eWC8F6X3RFuCrJQLnd5eJ8KNOqXeVNuUVM0c4X31Uoz7NlQKJ4QxFfF6EDWAwgT6y1F_HgZ23As74U0wOHy14ClTNC9kP5KJHgPouBaogO5IpYsvxGmDCYlJ9do4tNb9eb6fYBMMSIG3zEcAN-7y2lIrvTwOyb/s320/WhatsApp%20Image%202026-03-04%20at%2023.04.58.jpeg"
+                profilePictureUrl = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEga-7mA9kd7EnROYLMEYwURS2xlW1uWK8eWC8F6X3RFuCrJQLnd5eJ8KNOqXeVNuUVM0c4X31Uoz7NlQKJ4QxFfF6EDWAwgT6y1F_HgZ23As74U0wOHy14ClTNC9kP5KJHgPouBaogO5IpYsvxGmDCYlJ9do4tNb9eb6fYBMMSIG3zEcAN-7y2lIrvTwOyb/s320/WhatsApp%20Image%202026-03-04%20at%2023.04.58.jpeg",
+                completedServices = 7,
+                totalPoints = 1000,
+                rating = 4.9,
+                memberSince = 2
             ),
             User(
                 id = "3",
