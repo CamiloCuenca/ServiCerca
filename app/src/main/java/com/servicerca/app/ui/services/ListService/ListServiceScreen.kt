@@ -17,6 +17,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.platform.LocalInspectionMode
 import com.servicerca.app.R
 import com.servicerca.app.core.components.card.MyServiceCard
 import com.servicerca.app.core.components.navigation.TabItemApp
@@ -28,28 +31,52 @@ import com.servicerca.app.ui.theme.ServiCercaTheme
 fun ListServiceScreen(
     onBackClick: () -> Unit = {},
     onEditService: () -> Unit = {},
+    viewModel: ListServiceViewModel? = null
 ) {
 
     var showDeleteModal by remember { mutableStateOf(false) }
     var selectedServiceId by remember { mutableStateOf<String?>(null) }
     var selectedTab by remember { mutableStateOf(0) }
 
-    val services = listOf(
-        MyServiceItem(
-            id = "1",
-            title = "Plomería Residencial",
-            description = "Reparación experta de tuberías, grifería y filtraciones en hogares.",
-            status = "Activo",
-            imageRes = R.drawable.plumber
-        ),
-        MyServiceItem(
-            id = "2",
-            title = "Electricista Certificado",
-            description = "Mantenimiento preventivo e instalaciones eléctricas...",
-            status = "Activo",
-            imageRes = R.drawable.service
+    val isInPreview = LocalInspectionMode.current
+
+    val services: List<MyServiceItem> = if (!isInPreview) {
+        // Use the provided ViewModel or obtain one via Hilt
+        val actualViewModel = viewModel ?: hiltViewModel<ListServiceViewModel>()
+        val servicesDomain by actualViewModel.services.collectAsState()
+        servicesDomain.map { s ->
+            MyServiceItem(
+                id = s.id,
+                title = s.title,
+                description = s.description,
+                status = when (s.status) {
+                    com.servicerca.app.domain.model.ServiceStatus.PENDING -> "Pendiente"
+                    com.servicerca.app.domain.model.ServiceStatus.IN_PROGRESS -> "En progreso"
+                    com.servicerca.app.domain.model.ServiceStatus.RESOLVED -> "Resuelto"
+                },
+                imageRes = R.drawable.service,
+                imageUrl = s.photoUrl
+            )
+        }
+    } else {
+        // Datos de ejemplo para preview
+        listOf(
+            MyServiceItem(
+                id = "1",
+                title = "Plomería Residencial",
+                description = "Reparación experta de tuberías, grifería y filtraciones en hogares.",
+                status = "Activo",
+                imageRes = R.drawable.plumber
+            ),
+            MyServiceItem(
+                id = "2",
+                title = "Electricista Certificado",
+                description = "Mantenimiento preventivo e instalaciones eléctricas...",
+                status = "Activo",
+                imageRes = R.drawable.service
+            )
         )
-    )
+    }
 
     Column(
         modifier = Modifier
@@ -96,6 +123,9 @@ fun ListServiceScreen(
 
             items(services) { service ->
 
+                // Obtener el ViewModel real para manejar acciones (si no estamos en preview)
+                val actualViewModel = if (!isInPreview) (viewModel ?: hiltViewModel<ListServiceViewModel>()) else null
+
                 MyServiceCard(
                     service = service,
                     onEdit = { onEditService() },
@@ -116,8 +146,16 @@ fun ListServiceScreen(
             onDismiss = { showDeleteModal = false },
 
             onConfirm = {
+                // Si tenemos un ViewModel real y un id seleccionado, eliminamos
+                if (!isInPreview) {
+                    val actualViewModel = viewModel ?: hiltViewModel<ListServiceViewModel>()
+                    selectedServiceId?.let { id ->
+                        actualViewModel.deleteService(id)
+                    }
+                }
 
                 showDeleteModal = false
+                selectedServiceId = null
             },
 
             title = "¿Eliminar servicio?",
@@ -133,8 +171,10 @@ data class MyServiceItem(
     val title: String,
     val description: String,
     val status: String,
-    val imageRes: Int
+    val imageRes: Int,
+    val imageUrl: String? = null
 )
+
 
 @Composable
 fun ServiceTabRow(
