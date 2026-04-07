@@ -109,19 +109,19 @@ fun ServiceTabRow(
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
             TabItemApp(
-                text = "Pendientes",
+                text = stringResource(R.string.tab_pending_moderator),
                 isSelected = selectedTabIndex == 0,
                 onClick = { onTabSelected(0) },
                 modifier = Modifier.weight(1f)
             )
             TabItemApp(
-                text = "En revición",
+                text = stringResource(R.string.tab_in_review_moderator),
                 isSelected = selectedTabIndex == 1,
                 onClick = { onTabSelected(1) },
                 modifier = Modifier.weight(1f)
             )
             TabItemApp(
-                text = "Urgentes",
+                text = stringResource(R.string.tab_urgent_moderator),
                 isSelected = selectedTabIndex == 2,
                 onClick = { onTabSelected(2) },
                 modifier = Modifier.weight(1f)

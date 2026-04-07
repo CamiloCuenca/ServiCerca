@@ -321,4 +321,10 @@
     <!-- Chat Screen -->
     <string name="name_profile">Diego Alexander Jimenez</string>
 
+    <string name="tab_pending_moderator">Pendientes</string>
+    <string name="tab_in_review_moderator">En revisión</string>
+    <string name="tab_urgent_moderator">Urgentes</string>
+    <string name="budget_range_format">$%1$.0f - $%2$.0f</string>
+    <string name="status_in_review">EN REVISIÓN</string>
+    <string name="status_resolved">RESUELTO</string>
 </resources>
