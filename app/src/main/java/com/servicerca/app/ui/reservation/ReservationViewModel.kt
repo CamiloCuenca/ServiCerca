@@ -2,6 +2,7 @@ package com.servicerca.app.ui.reservation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.servicerca.app.data.datastore.SessionDataStore
 import com.servicerca.app.domain.model.Reservation
 import com.servicerca.app.domain.repository.ReservationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,7 +17,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ReservationViewModel @Inject constructor(
-    private val reservationRepository: ReservationRepository
+    private val reservationRepository: ReservationRepository,
+    private val sessionDataStore: SessionDataStore
 ) : ViewModel() {
 
     private val _allReservations = MutableStateFlow<List<Reservation>>(emptyList())
@@ -30,11 +32,25 @@ class ReservationViewModel @Inject constructor(
     private val _filteredReservations = MutableStateFlow<List<Reservation>>(emptyList())
     val reservations: StateFlow<List<Reservation>> = _filteredReservations.asStateFlow()
 
+    private var currentUserId: String? = null
+
     init {
-        observeReservations()
+        loadSessionAndObserve()
     }
 
-    private fun observeReservations() {
+    private fun loadSessionAndObserve() {
+        viewModelScope.launch {
+            sessionDataStore.sessionFlow.collect { session ->
+                currentUserId = session?.userId
+                currentUserId?.let { userId ->
+                    observeFilteredReservations(userId)
+                    loadAllReservations(userId)
+                }
+            }
+        }
+    }
+
+    private fun observeFilteredReservations(userId: String) {
         viewModelScope.launch {
             combine(
                 _allReservations,
@@ -43,13 +59,13 @@ class ReservationViewModel @Inject constructor(
             ) { all, tab, date ->
                 all.filter { reservation ->
                     val isCorrectRole = if (tab == 0) {
-                        reservation.userId == "current_user"
+                        reservation.userId == userId
                     } else {
-                        reservation.providerId == "current_user"
+                        reservation.providerId == userId
                     }
                     
                     val reservationLocalDate = reservation.date.toInstant()
-                        .atZone(ZoneId.systemDefault())
+                        .atZone(java.time.ZoneId.of("UTC"))
                         .toLocalDate()
                     
                     val isCorrectDate = reservationLocalDate == date
@@ -60,14 +76,16 @@ class ReservationViewModel @Inject constructor(
                 _filteredReservations.value = it
             }
         }
-        
-        // Carga inicial
-        loadAllReservations()
     }
 
-    private fun loadAllReservations() {
+    private fun loadAllReservations(userId: String) {
         viewModelScope.launch {
-            reservationRepository.getReservationsByUser("current_user").collect {
+            combine(
+                reservationRepository.getReservationsByUser(userId),
+                reservationRepository.getReservationsByProvider(userId)
+            ) { asUser, asProvider ->
+                (asUser + asProvider).distinctBy { it.id }
+            }.collect {
                 _allReservations.value = it
             }
         }

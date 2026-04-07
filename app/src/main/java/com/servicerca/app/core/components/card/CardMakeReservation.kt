@@ -34,10 +34,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.servicerca.app.R
 
+import coil3.compose.AsyncImage
+
 @Composable
 fun CardMakeReservation(
     modifier: Modifier = Modifier,
-    @DrawableRes serviceImageRes: Int = R.drawable.plumber,
+    serviceImageUrl: String? = null,
     serviceRequestedLabel: String? = null,
     statusText: String? = null,
     serviceTitle: String? = null,
@@ -67,10 +69,12 @@ fun CardMakeReservation(
                     .fillMaxWidth()
                     .height(200.dp)
             ) {
-                Image(
-                    painter = painterResource(id = serviceImageRes),
+                AsyncImage(
+                    model = serviceImageUrl,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
+                    placeholder = painterResource(id = R.drawable.service),
+                    error = painterResource(id = R.drawable.service),
                     modifier = Modifier.fillMaxSize()
                 )
             }

@@ -1,7 +1,5 @@
 package com.servicerca.app.core.components.card
 
-import androidx.annotation.DrawableRes
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,14 +32,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.compose.AsyncImage
 import com.servicerca.app.R
 import com.servicerca.app.core.components.tag.CategoryTag
 
 @Composable
 fun CardDetailsReservation(
     modifier: Modifier = Modifier,
-    @DrawableRes serviceImageRes: Int = R.drawable.plumber,
-    @DrawableRes profileImageRes: Int = R.drawable.foto_usuario,
+    serviceImageUrl: String? = null,
+    profileImageUrl: String? = null,
     serviceRequestedLabel: String? = null,
     statusText: String? = null,
     statusContainerColor: Color = Color(0xFFD1FADF),
@@ -52,7 +51,6 @@ fun CardDetailsReservation(
     rating: String? = null
 ) {
 
-    // Valores de prueba
     val serviceRequestedLabelFinal = serviceRequestedLabel ?: stringResource(R.string.reservation_servicio_solicitado)
     val statusTextFinal = statusText ?: stringResource(R.string.reservation_status_confirmed)
     val serviceTitleFinal = serviceTitle ?: stringResource(R.string.reservation_service_plumber)
@@ -76,11 +74,13 @@ fun CardDetailsReservation(
                     .fillMaxWidth()
                     .height(200.dp)
             ) {
-                Image(
-                    painter = painterResource(id = serviceImageRes),
+                AsyncImage(
+                    model = serviceImageUrl ?: R.drawable.plumber,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
+                    error = painterResource(R.drawable.plumber),
+                    placeholder = painterResource(R.drawable.plumber)
                 )
             }
 
@@ -100,8 +100,6 @@ fun CardDetailsReservation(
                         color = MaterialTheme.colorScheme.onSurface,
                         letterSpacing = 1.sp
                     )
-
-
 
                     CategoryTag(
                         text = statusTextFinal,
@@ -127,13 +125,15 @@ fun CardDetailsReservation(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Image(
-                        painter = painterResource(id = profileImageRes),
+                    AsyncImage(
+                        model = profileImageUrl ?: R.drawable.foto_usuario,
                         contentDescription = null,
                         modifier = Modifier
                             .size(48.dp)
                             .clip(CircleShape),
-                        contentScale = ContentScale.Crop
+                        contentScale = ContentScale.Crop,
+                        error = painterResource(R.drawable.foto_usuario),
+                        placeholder = painterResource(R.drawable.foto_usuario)
                     )
 
                     Spacer(modifier = Modifier.width(12.dp))

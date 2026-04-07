@@ -31,11 +31,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.servicerca.app.R
 
+import coil3.compose.AsyncImage
+
 @Composable
 fun ProviderRow(
     modifier: Modifier = Modifier,
     name: String,
-    avatarRes: Int,
+    avatarUrl: String?,
     level: String = "MAESTRO",
     rating: Float = 4.8f,
     reviewCount: Int = 120,
@@ -50,10 +52,12 @@ fun ProviderRow(
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             // Avatar
-            Image(
-                painter = painterResource(id = avatarRes),
+            AsyncImage(
+                model = avatarUrl,
                 contentDescription = name,
                 contentScale = ContentScale.Crop,
+                placeholder = painterResource(id = R.drawable.foto_usuario),
+                error = painterResource(id = R.drawable.foto_usuario),
                 modifier = Modifier
                     .size(48.dp)
                     .clip(CircleShape)
@@ -117,7 +121,7 @@ fun ProviderRow(
 fun ProviderRowPreview() {
     ProviderRow(
         name = "Juan Pérez",
-        avatarRes = R.drawable.service,
+        avatarUrl = null,
         level = "MAESTRO",
         rating = 4.8f,
         reviewCount = 120
