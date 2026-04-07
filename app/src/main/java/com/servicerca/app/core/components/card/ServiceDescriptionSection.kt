@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -62,7 +63,7 @@ fun ServiceDescriptionSection(
         Text(
             text = annotated,
             fontSize = 14.sp,
-            color = Color(0xFF555555),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             lineHeight = 22.sp,
             modifier = Modifier.clickable { expanded = !expanded }
         )

@@ -145,7 +145,7 @@ class ServiceRepositoryImpl @Inject constructor() : ServiceRepository {
             Service(
                 id = "6",
                 title = "Desarrollador de páginas web",
-                description = "Ofrecemos servicio de desarrollo de páginas web modernas, funcionales y adaptadas a las necesidades " +
+                description = "Ofrezco servicio de desarrollo de páginas web modernas, funcionales y adaptadas a las necesidades " +
                         "de cada cliente. Diseñamos sitios web profesionales para empresas, emprendimientos y proyectos personales," +
                         " optimizados para dispositivos móviles y con una navegación rápida y segura. Nuestro objetivo es ayudarte " +
                         "a fortalecer tu presencia en internet y atraer más clientes a través de una plataforma digital atractiva y " +
