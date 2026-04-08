@@ -1,7 +1,5 @@
 package com.servicerca.app.core.components.card
 
-import androidx.annotation.DrawableRes
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -18,11 +16,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
 import com.servicerca.app.R
 
 @Composable
 fun CardRevisionUserService(
-    @DrawableRes imageRes: Int,
+    imageUrl: String?,
     label: String,
     username: String,
     qualification: String
@@ -45,13 +44,15 @@ fun CardRevisionUserService(
                 modifier = Modifier.weight(1f),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Image(
-                    painter = painterResource(id = imageRes),
+                AsyncImage(
+                    model = imageUrl,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .size(48.dp)
-                        .clip(CircleShape)
+                        .clip(CircleShape),
+                    placeholder = painterResource(id = R.drawable.foto_usuario),
+                    error = painterResource(id = R.drawable.foto_usuario)
                 )
 
                 Column(
@@ -107,7 +108,7 @@ fun CardRevisionUserService(
 @Composable
 fun CardRevisionUserServicePreview() {
     CardRevisionUserService(
-        imageRes = R.drawable.foto_usuario,
+        imageUrl = null,
         label = stringResource(R.string.label_revision),
         username = stringResource(R.string.username_revision),
         qualification = stringResource(R.string.qualification_user)

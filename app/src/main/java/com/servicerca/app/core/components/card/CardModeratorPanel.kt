@@ -34,6 +34,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.compose.AsyncImage
 import com.servicerca.app.R
 import com.servicerca.app.core.components.button.ButtonIcon
 import com.servicerca.app.core.components.button.ButtonIconDecline
@@ -42,7 +43,7 @@ import com.servicerca.app.core.components.tag.NewServiceTag
 @Composable
 fun CardModeratorPanelScreen (
     isNewService: Boolean = true,
-    @DrawableRes imageRes: Int,
+    imageUrl: String,
     type: String,
     tittle: String,
     description: String,
@@ -67,11 +68,15 @@ fun CardModeratorPanelScreen (
                     .fillMaxWidth()
                     .height(150.dp)
             ) {
-                Image(
-                    painter = painterResource(id = imageRes),
+                AsyncImage(
+                    model = imageUrl,
                     contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(150.dp),
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
+                    placeholder = painterResource(R.drawable.electrician), // Imagen por defecto mientras carga
+                    error = painterResource(R.drawable.electrician)       // Imagen si falla la carga
                 )
 
                 if (isNewService) {
@@ -148,7 +153,7 @@ fun CardModeratorPanelScreen (
 @Composable
 fun CardModeratorPanelPreview(){
     CardModeratorPanelScreen(
-        imageRes = R.drawable.electrician,
+        imageUrl = "https://projectssdn.com/wp-content/uploads/elementor/thumbs/plomeria-en-general-qp5x9n6u64ze4tk30xqoxt57okaxdr7apr7hp13vds.png",
         type = "Tipo",
         tittle = "Título",
         description = "Descripción",

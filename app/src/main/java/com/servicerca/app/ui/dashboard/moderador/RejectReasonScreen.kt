@@ -44,6 +44,7 @@ import com.servicerca.app.core.components.button.ButtonIconDecline
 
 @Composable
 fun RejectReasonScreen(
+    serviceId: String?,
     onBack: () -> Unit
 ) {
     Scaffold(
@@ -224,6 +225,7 @@ fun RejectReasonScreen(
 @Composable
 fun RejectReasonScreenPreview(){
     RejectReasonScreen(
+        serviceId = null,
         onBack = {}
     )
 }

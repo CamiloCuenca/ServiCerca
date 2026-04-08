@@ -30,6 +30,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.layout.ContentScale
+import coil3.compose.AsyncImage
 import com.servicerca.app.R
 import com.servicerca.app.domain.model.Reservation
 
@@ -70,9 +73,13 @@ fun ReservationItem(
                     color = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)
                 ) {
                     Box(contentAlignment = Alignment.Center) {
-                        Image(
-                            painter = painterResource(R.drawable.service),
+                        AsyncImage(
+                            model = reservation.serviceImageUrl,
                             contentDescription = null,
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop,
+                            placeholder = painterResource(R.drawable.service),
+                            error = painterResource(R.drawable.service)
                         )
                     }
                 }

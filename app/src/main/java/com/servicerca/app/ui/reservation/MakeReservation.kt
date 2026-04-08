@@ -118,6 +118,7 @@ fun MakeReservation(
 
             val provider = uiState.provider
             CardMakeReservation(
+                serviceImageUrl = uiState.service?.photoUrl,
                 serviceTitle = uiState.service?.title,
                 professionalName = if (provider != null) "${provider.name1} ${provider.lastname1}" else null,
                 rating = if (uiState.service != null) "$${uiState.service!!.priceMin} - $${uiState.service!!.priceMax}" else null
@@ -202,6 +203,7 @@ fun MakeReservation(
                                 serviceId = serviceId,
                                 providerId = uiState.service?.ownerId ?: "",
                                 serviceTitle = uiState.service?.title ?: "",
+                                serviceImageUrl = uiState.service?.photoUrl,
                                 date = selectedDate,
                                 time = selectedTime,
                                 message = message
@@ -233,7 +235,10 @@ fun MakeReservation(
             confirmButton = {
                 TextButton(onClick = {
                     datePickerState.selectedDateMillis?.let {
-                        selectedDate = Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate()
+                        // Usamos UTC para evitar el desfase de zona horaria
+                        selectedDate = Instant.ofEpochMilli(it)
+                            .atZone(ZoneId.of("UTC"))
+                            .toLocalDate()
                     }
                     showDatePicker = false
                 }) {
