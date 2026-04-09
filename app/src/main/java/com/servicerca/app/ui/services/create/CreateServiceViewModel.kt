@@ -1,9 +1,7 @@
 package com.servicerca.app.ui.services.create
 
 import android.content.Context
-import android.util.Base64
-import dagger.hilt.android.qualifiers.ApplicationContext
-import java.io.File
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.servicerca.app.core.utils.RequestResult
@@ -14,12 +12,13 @@ import com.servicerca.app.domain.model.Service
 import com.servicerca.app.domain.model.ServiceStatus
 import com.servicerca.app.domain.repository.ServiceRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import android.util.Log
+import java.io.File
 import java.util.UUID
 import javax.inject.Inject
 

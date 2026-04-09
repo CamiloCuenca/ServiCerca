@@ -14,10 +14,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.servicerca.app.data.model.UserSession
 import com.servicerca.app.domain.model.UserRole
 import com.servicerca.app.ui.Map.MapScreen
@@ -26,17 +28,13 @@ import com.servicerca.app.ui.auth.login.LoginScreen
 import com.servicerca.app.ui.auth.login.Recover.RecoverPasswordScreen
 import com.servicerca.app.ui.auth.login.Reset.ResetPassword
 import com.servicerca.app.ui.auth.register.RegisterScreen
+import com.servicerca.app.ui.auth.register.RegisterViewModel
 import com.servicerca.app.ui.auth.register.VerifyEmailScreen
 import com.servicerca.app.ui.dashboard.moderador.ModeratorScreen
 import com.servicerca.app.ui.dashboard.user.UserScreen
 import com.servicerca.app.ui.notifications.NotificationsScreen
 import com.servicerca.app.ui.services.create.CreateServiceScreen
 import com.servicerca.app.ui.services.detail.DetailServiceScreen
-import androidx.navigation.navOptions
-import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.toRoute
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.servicerca.app.ui.auth.register.RegisterViewModel
 
 
 @Composable
