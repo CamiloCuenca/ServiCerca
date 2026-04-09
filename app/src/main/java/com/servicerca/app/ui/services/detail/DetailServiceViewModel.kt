@@ -8,10 +8,12 @@ import com.servicerca.app.domain.model.User
 import com.servicerca.app.domain.repository.CommentRepository
 import com.servicerca.app.domain.repository.ServiceRepository
 import com.servicerca.app.domain.repository.UserRepository
+import com.servicerca.app.data.datastore.SessionDataStore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
@@ -20,7 +22,8 @@ import javax.inject.Inject
 class DetailServiceViewModel @Inject constructor(
     private val serviceRepository: ServiceRepository,
     private val userRepository: UserRepository,
-    private val commentRepository: CommentRepository
+    private val commentRepository: CommentRepository,
+    private val sessionDataStore: SessionDataStore
 ) : ViewModel() {
 
     private val _service = MutableStateFlow<Service?>(null)
@@ -56,27 +59,31 @@ class DetailServiceViewModel @Inject constructor(
     }
 
     fun addComment(
-        userId: String,
-        userName: String,
-        userAvatar: String,
         rating: Int,
         text: String
     ) {
         val serviceId = _service.value?.id ?: return
-        val comment = Comment(
-            id = UUID.randomUUID().toString(),
-            userId = userId,
-            serviceId = serviceId,
-            userName = userName,
-            userAvatar = userAvatar,
-            rating = rating,
-            text = text,
-            date = System.currentTimeMillis(),
-            timeAgo = "Ahora"
-        )
         viewModelScope.launch {
-            commentRepository.save(comment)
-            loadComments(serviceId)
+            val session = sessionDataStore.sessionFlow.firstOrNull()
+            if (session != null) {
+                val currentUser = userRepository.findById(session.userId)
+                if (currentUser != null) {
+                    val fallbackAvatar = "https://picsum.photos/200?random=${currentUser.id.hashCode() % 100}"
+                    val comment = Comment(
+                        id = UUID.randomUUID().toString(),
+                        userId = currentUser.id,
+                        serviceId = serviceId,
+                        userName = "${currentUser.name1} ${currentUser.lastname1}",
+                        userAvatar = currentUser.profilePictureUrl.ifEmpty { fallbackAvatar },
+                        rating = rating,
+                        text = text,
+                        date = System.currentTimeMillis(),
+                        timeAgo = "Ahora"
+                    )
+                    commentRepository.save(comment)
+                    loadComments(serviceId)
+                }
+            }
         }
     }
 
