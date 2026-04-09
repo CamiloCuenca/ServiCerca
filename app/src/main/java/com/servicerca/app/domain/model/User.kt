@@ -11,4 +11,11 @@ data class User (val id: String,
                  val password: String,
                  val phoneNumber: String = "",
                  val profilePictureUrl: String = "",
-                 val role: UserRole = UserRole.USER)
+                 val role: UserRole = UserRole.USER,
+                 val completedServices: Int = 0,
+                 val totalPoints: Int = 0,
+                 val rating: Double = 0.0,
+                 val memberSince: Int = 0,
+                 val pendingReviews: Int = 0,
+                 val approvedReviews: Int = 0,
+                 val rejectReviews: Int = 0)

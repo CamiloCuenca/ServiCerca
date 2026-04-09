@@ -12,11 +12,14 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Logout
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,6 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -38,137 +42,150 @@ import com.servicerca.app.core.components.card.CardMenuModerator
 import com.servicerca.app.core.components.card.CardProfileModerator
 import com.servicerca.app.core.components.images.ProfileImage
 import com.servicerca.app.core.navigation.DashboardRoutes
+import com.servicerca.app.ui.profile.ProfileViewModel
 
 @Composable
 fun ProfileModerator (
     navController: NavHostController,
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    viewModel: ProfileViewModel = hiltViewModel()
 ){
+    val uiState by viewModel.uiState.collectAsState()
+    val user = uiState.user
+
     var showConfirmDialog by remember { mutableStateOf(false) }
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(24.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 10.dp),
-            horizontalArrangement = Arrangement.End
-        ) {
-            IconButton(
-                onClick = { showConfirmDialog = true }
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Logout,
-                    contentDescription = "Cerrar sesión"
-                )
-            }
-        }
 
+    if (uiState.isLoading) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+        }
+    } else {
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Box(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-
-
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Box(
-                        contentAlignment = Alignment.BottomEnd,
-                        modifier = Modifier.size(150.dp)
-                    ) {
-                        ProfileImage(
-                            url = "https://i.pinimg.com/originals/ae/90/f5/ae90f5c41e36d420e8175f072367ead9.jpg"
-                        )
-                    }
-                }
-            }
-        }
-        Box(
             modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            Text(
-                text = stringResource(R.string.name_moderator),
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-
-                modifier = Modifier.align(Alignment.Center)
-            )
-        }
-        Box(
-            modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.Center
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(24.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 10.dp),
+                horizontalArrangement = Arrangement.End
             ) {
+                IconButton(
+                    onClick = { showConfirmDialog = true }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Logout,
+                        contentDescription = "Cerrar sesión"
+                    )
+                }
+            }
 
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Box(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+
+
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Box(
+                            contentAlignment = Alignment.BottomEnd,
+                            modifier = Modifier.size(150.dp)
+                        ) {
+                            ProfileImage(
+                                url = user?.profilePictureUrl ?: "",
+                            )
+                        }
+                    }
+                }
+            }
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
                 Text(
-                    text = stringResource(R.string.position_moderator),
-                    style = MaterialTheme.typography.bodyLarge,
-                    textAlign = TextAlign.Center
+                    text = if (user != null) "${user.name1} ${user.name2 ?: ""} ${user.lastname1}" else stringResource(R.string.profile_fallback_name),
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+
+                    modifier = Modifier.align(Alignment.Center)
                 )
             }
-        }
-        CardProfileModerator(
-            title = stringResource(R.string.pending_profile_moderator),
-            label = stringResource(R.string.pending_number),
-            color = Color(0xFFDB9C16)
-        )
-        CardProfileModerator(
-            title = stringResource(R.string.approved_profile_moderator),
-            label = stringResource(R.string.approved_number),
-            color = Color(0xFF3CA834)
-        )
-        CardProfileModerator(
-            title = stringResource(R.string.rejected_profile_moderator),
-            label = stringResource(R.string.rejected_number),
-            color = Color(0xFFC72E2E)
-        )
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
 
-        Text(
-            text = stringResource(R.string.pending_profile_moderator),
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center,
-        )
-
-        CardMenuModerator(
-            onValidateClick = {
-                navController.navigate(DashboardRoutes.HomeModerator) {
-                    popUpTo(navController.graph.findStartDestination().id) {
-                        saveState = true
-                    }
-                    launchSingleTop = true
-                    restoreState = true
-                }
-            },
-            onHistoryClick = {
-                navController.navigate(DashboardRoutes.Historial) {
-                    popUpTo(navController.graph.findStartDestination().id) {
-                        saveState = true
-                    }
-                    launchSingleTop = true
-                    restoreState = true
+                    Text(
+                        text = user?.role?.name ?: "",
+                        style = MaterialTheme.typography.bodyLarge,
+                        textAlign = TextAlign.Center
+                    )
                 }
             }
-        )
+            CardProfileModerator(
+                title = stringResource(R.string.pending_profile_moderator),
+                label = user?.pendingReviews?.toString() ?: "0",
+                color = Color(0xFFDB9C16)
+            )
+            CardProfileModerator(
+                title = stringResource(R.string.approved_profile_moderator),
+                label = user?.approvedReviews?.toString() ?: "0",
+                color = Color(0xFF3CA834)
+            )
+            CardProfileModerator(
+                title = stringResource(R.string.rejected_profile_moderator),
+                label = user?.rejectReviews?.toString() ?: "0",
+                color = Color(0xFFC72E2E)
+            )
+
+            Text(
+                text = stringResource(R.string.title_panel_moderator),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+            )
+
+            CardMenuModerator(
+                onValidateClick = {
+                    navController.navigate(DashboardRoutes.HomeModerator) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                },
+                onHistoryClick = {
+                    navController.navigate(DashboardRoutes.Historial) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                }
+            )
+        }
     }
     if (showConfirmDialog) {
         ConfirmAlertDialog(
             onShowExitDialogChange = { showConfirmDialog = it },
             onConfirm = {
+                viewModel.logout()
                 onLogout()
             }
         )

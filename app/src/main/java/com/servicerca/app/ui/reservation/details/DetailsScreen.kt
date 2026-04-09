@@ -79,6 +79,7 @@ fun DetailsReservationScreen(
         val reservation = uiState.reservation!!
         val service = uiState.service
         val provider = uiState.provider
+        val customer = uiState.customer
 
         Column(
             modifier = Modifier
@@ -116,6 +117,8 @@ fun DetailsReservationScreen(
             val statusInfo = getStatusInfo(reservation.status)
 
             CardDetailsReservation(
+                serviceImageUrl = reservation.serviceImageUrl ?: service?.photoUrl,
+                profileImageUrl = provider?.profilePictureUrl,
                 serviceRequestedLabel = stringResource(R.string.reservation_servicio_solicitado),
                 statusText = statusInfo.text,
                 statusContainerColor = statusInfo.containerColor,
@@ -158,7 +161,7 @@ fun DetailsReservationScreen(
                     InfoItem(
                         icon = Icons.Default.LocationOn,
                         label = "Ubicación",
-                        value = provider?.city ?: "Ubicación no disponible"
+                        value = customer?.city ?: "Ubicación no disponible"
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))

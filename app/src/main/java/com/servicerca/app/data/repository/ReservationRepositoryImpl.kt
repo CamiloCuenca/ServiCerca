@@ -1,19 +1,37 @@
 package com.servicerca.app.data.repository
 
+import com.servicerca.app.data.datastore.SessionDataStore
 import com.servicerca.app.domain.model.Reservation
 import com.servicerca.app.domain.model.ReservationStatus
 import com.servicerca.app.domain.repository.ReservationRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import java.util.Date
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class ReservationRepositoryImpl @Inject constructor() : ReservationRepository {
+class ReservationRepositoryImpl @Inject constructor(
+    private val sessionDataStore: SessionDataStore
+) : ReservationRepository {
 
-    private val _reservations = MutableStateFlow<List<Reservation>>(fetchInitialReservations())
+    private val _reservations = MutableStateFlow<List<Reservation>>(emptyList())
+
+    init {
+        CoroutineScope(Dispatchers.IO).launch {
+            sessionDataStore.sessionFlow.collect { session ->
+                val userId = session?.userId ?: return@collect
+                _reservations.update { current ->
+                    if (current.isEmpty()) fetchInitialReservations(userId) else current
+                }
+            }
+        }
+    }
 
     override fun getReservationsByUser(userId: String): Flow<List<Reservation>> {
         return _reservations.map { list -> list.filter { it.userId == userId } }
@@ -47,13 +65,14 @@ class ReservationRepositoryImpl @Inject constructor() : ReservationRepository {
         _reservations.value = _reservations.value.filter { it.id != reservationId }
     }
 
-    private fun fetchInitialReservations(): List<Reservation> {
+    private fun fetchInitialReservations(userId: String): List<Reservation> {
         return listOf(
             Reservation(
                 id = "1",
                 serviceId = "1",
                 serviceTitle = "Plomería General",
-                userId = "current_user",
+                serviceImageUrl = "https://projectssdn.com/wp-content/uploads/elementor/thumbs/plomeria-en-general-qp5x9n6u64ze4tk30xqoxt57okaxdr7apr7hp13vds.png",
+                userId = userId,
                 providerId = "1",
                 date = Date(),
                 time = "10:00 AM",
@@ -63,7 +82,8 @@ class ReservationRepositoryImpl @Inject constructor() : ReservationRepository {
                 id = "2",
                 serviceId = "2",
                 serviceTitle = "Electricista Residencial",
-                userId = "current_user",
+                serviceImageUrl = "https://comfenalcoquindio.com/wp-content/uploads/2022/05/tecnico-electricista-en-construccion-residencial-1.jpg",
+                userId = userId,
                 providerId = "2",
                 date = Date(),
                 time = "02:30 PM",
@@ -73,7 +93,8 @@ class ReservationRepositoryImpl @Inject constructor() : ReservationRepository {
                 id = "3",
                 serviceId = "3",
                 serviceTitle = "Limpieza de Muebles",
-                userId = "current_user",
+                serviceImageUrl = "https://extremecleangm.com/wp-content/uploads/2025/01/Lavado-de-Muebles-Iniciando-el-2025.jpg",
+                userId = userId,
                 providerId = "3",
                 date = Date(),
                 time = "03:00 PM",

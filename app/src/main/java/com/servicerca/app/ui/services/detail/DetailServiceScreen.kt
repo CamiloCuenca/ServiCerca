@@ -226,7 +226,7 @@ fun DetailServiceScreen(
 
                     ProviderRow(
                         name = if (provider != null) "${provider.name1} ${provider.lastname1}" else "Cargando...",
-                        avatarRes = R.drawable.service,
+                        avatarUrl = provider?.profilePictureUrl,
                         level = "MAESTRO",
                         rating = averageRating.takeIf { it > 0f } ?: 0f,
                         reviewCount = comments.size,

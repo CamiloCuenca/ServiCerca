@@ -194,7 +194,7 @@ fun DeleteReservationScreen (
 @Composable
 fun ConfirmActionModal(
     onDismiss: () -> Unit,
-    onConfirm: () -> Unit,
+    onConfirm: @Composable () -> Unit,
     title: String,
     textPrimary: String,
     textSecondary: String
@@ -246,7 +246,7 @@ fun ConfirmActionModal(
 
             DeleteButton(
                 text = textSecondary,
-                onClick = onConfirm,
+                onClick = {},
                 icon = {
                     Icon(Icons.Default.Delete, null)
                 }

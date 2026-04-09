@@ -19,6 +19,7 @@ data class ReservationDetailsUiState(
     val reservation: Reservation? = null,
     val service: Service? = null,
     val provider: User? = null,
+    val customer: User? = null,
     val isLoading: Boolean = false
 )
 
@@ -40,11 +41,13 @@ class ReservationDetailsViewModel @Inject constructor(
             if (reservation != null) {
                 val service = serviceRepository.findById(reservation.serviceId)
                 val provider = userRepository.findById(reservation.providerId)
+                val customer = userRepository.findById(reservation.userId)
                 
                 _uiState.value = _uiState.value.copy(
                     reservation = reservation,
                     service = service,
                     provider = provider,
+                    customer = customer,
                     isLoading = false
                 )
             } else {

@@ -2,6 +2,7 @@ package com.servicerca.app.ui.reservation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.servicerca.app.data.datastore.SessionDataStore
 import com.servicerca.app.domain.model.Reservation
 import com.servicerca.app.domain.model.ReservationStatus
 import com.servicerca.app.domain.model.Service
@@ -13,6 +14,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
@@ -33,7 +35,8 @@ data class MakeReservationUiState(
 class MakeReservationViewModel @Inject constructor(
     private val serviceRepository: ServiceRepository,
     private val userRepository: UserRepository,
-    private val reservationRepository: ReservationRepository
+    private val reservationRepository: ReservationRepository,
+    private val sessionDataStore: SessionDataStore
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MakeReservationUiState())
@@ -70,6 +73,7 @@ class MakeReservationViewModel @Inject constructor(
         serviceId: String,
         providerId: String,
         serviceTitle: String,
+        serviceImageUrl: String?,
         date: LocalDate,
         time: LocalTime,
         message: String
@@ -77,12 +81,16 @@ class MakeReservationViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
             try {
+                val session = sessionDataStore.sessionFlow.first()
+                val currentUserId = session?.userId ?: "unknown_user"
+                
                 val reservationDate = Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())
                 val reservation = Reservation(
                     id = UUID.randomUUID().toString(),
                     serviceId = serviceId,
                     serviceTitle = serviceTitle,
-                    userId = "current_user",
+                    serviceImageUrl = serviceImageUrl,
+                    userId = currentUserId,
                     providerId = providerId,
                     date = reservationDate,
                     time = time.toString(),
