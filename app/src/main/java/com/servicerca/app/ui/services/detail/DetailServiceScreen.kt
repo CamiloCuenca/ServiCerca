@@ -347,9 +347,6 @@ fun DetailServiceScreen(
                         onSend = {
                             if (reviewText.isNotBlank()) {
                                 viewModel.addComment(
-                                    userId = "guest",
-                                    userName = "Usuario",
-                                    userAvatar = "https://picsum.photos/200?random=99",
                                     rating = selectedRating,
                                     text = reviewText
                                 )
