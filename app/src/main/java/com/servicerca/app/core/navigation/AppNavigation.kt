@@ -19,7 +19,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.toRoute
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.servicerca.app.data.model.UserSession
 import com.servicerca.app.domain.model.UserRole
 import com.servicerca.app.ui.Map.MapScreen
@@ -28,13 +28,15 @@ import com.servicerca.app.ui.auth.login.LoginScreen
 import com.servicerca.app.ui.auth.login.Recover.RecoverPasswordScreen
 import com.servicerca.app.ui.auth.login.Reset.ResetPassword
 import com.servicerca.app.ui.auth.register.RegisterScreen
-import com.servicerca.app.ui.auth.register.RegisterViewModel
 import com.servicerca.app.ui.auth.register.VerifyEmailScreen
 import com.servicerca.app.ui.dashboard.moderador.ModeratorScreen
 import com.servicerca.app.ui.dashboard.user.UserScreen
 import com.servicerca.app.ui.notifications.NotificationsScreen
 import com.servicerca.app.ui.services.create.CreateServiceScreen
 import com.servicerca.app.ui.services.detail.DetailServiceScreen
+import androidx.navigation.toRoute
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.servicerca.app.ui.auth.register.RegisterViewModel
 
 
 @Composable
@@ -45,7 +47,7 @@ fun AppNavigation(
     val sessionState by sessionViewModel.sessionState.collectAsState()
     // Estado local para forzar la navegación inmediatamente después del login,
     // mientras DataStore/SessionViewModel actualizan su flujo.
-    var forcedSession by remember { mutableStateOf<com.servicerca.app.data.model.UserSession?>(null) }
+    var forcedSession by remember { mutableStateOf<UserSession?>(null) }
 
     Surface(modifier = Modifier.fillMaxSize()) {
         when (val state = sessionState) {
@@ -59,6 +61,7 @@ fun AppNavigation(
                 // Si ya forzamos una sesión localmente (por ejemplo justo después del login), mostrar MainNavigation
                 if (forcedSession != null) {
                     MainNavigation(session = forcedSession!!, onLogout = {
+                        // Aseguramos limpiar tanto DataStore como la sesión forzada
                         sessionViewModel.logout()
                         forcedSession = null
                     })
@@ -67,14 +70,19 @@ fun AppNavigation(
                         Log.d("AppNavigation", "onLoginSuccess received: userId=$userId, role=$role")
                         // Guardar en DataStore y forzar navegación inmediata
                         sessionViewModel.login(userId, role)
-                        forcedSession = com.servicerca.app.data.model.UserSession(userId = userId, role = role)
+                        forcedSession = UserSession(userId = userId, role = role)
                         Log.d("AppNavigation", "forcedSession set: $forcedSession")
                     })
                 }
             }
             is SessionState.Authenticated -> MainNavigation(
                 session = state.session,
-                onLogout = sessionViewModel::logout
+                // Cuando estamos realmente autenticados, al hacer logout limpiamos también la sesión forzada
+                onLogout = {
+                    // Evitar que una forcedSession previa mantenga la UI del dashboard
+                    forcedSession = null
+                    sessionViewModel.logout()
+                }
             )
         }
     }
@@ -83,7 +91,7 @@ fun AppNavigation(
 
 
 @Composable
-private fun AuthNavigation(onLoginSuccess: (String, com.servicerca.app.domain.model.UserRole) -> Unit) {
+private fun AuthNavigation(onLoginSuccess: (String, UserRole) -> Unit) {
     val navController = rememberNavController()
 
     NavHost(
