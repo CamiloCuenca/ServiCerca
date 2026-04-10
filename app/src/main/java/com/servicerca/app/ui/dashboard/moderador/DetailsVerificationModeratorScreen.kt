@@ -146,8 +146,8 @@ fun DetailsVerificationModeratorScreen(
                                 Text(
                                     text = when (service?.status) {
                                         ServiceStatus.PENDING -> stringResource(R.string.pending_revision)
-                                        ServiceStatus.IN_PROGRESS -> stringResource(R.string.status_in_review)
-                                        ServiceStatus.RESOLVED -> stringResource(R.string.status_resolved)
+                                        ServiceStatus.APPROVED -> stringResource(R.string.approved_profile_moderator)
+                                        ServiceStatus.REJECTED -> stringResource(R.string.rejected_profile_moderator)
                                         else -> stringResource(R.string.pending_revision)
                                     },
                                     textAlign = TextAlign.Start,

@@ -95,7 +95,7 @@ class ServiceRepositoryImpl @Inject constructor() : ServiceRepository {
                 location = Location(4.535000, -75.675000),
                 priceMin = 45000.0,
                 priceMax = 150000.0,
-                status = ServiceStatus.IN_PROGRESS,
+                status = ServiceStatus.PENDING,
                 type = "Electricidad",
                 photoUrl = "https://comfenalcoquindio.com/wp-content/uploads/2022/05/tecnico-electricista-en-construccion-residencial-1.jpg",
                 ownerId = "2"
@@ -107,7 +107,7 @@ class ServiceRepositoryImpl @Inject constructor() : ServiceRepository {
                 location = Location(4.540000, -75.660000),
                 priceMin = 60000.0,
                 priceMax = 200000.0,
-                status = ServiceStatus.RESOLVED,
+                status = ServiceStatus.APPROVED,
                 type = "Limpieza",
                 photoUrl = "https://extremecleangm.com/wp-content/uploads/2025/01/Lavado-de-Muebles-Iniciando-el-2025.jpg",
                 ownerId = "1"
@@ -137,7 +137,7 @@ class ServiceRepositoryImpl @Inject constructor() : ServiceRepository {
                 location = Location(4.535000, -75.675000),
                 priceMin = 500000.0,
                 priceMax = 1800000.0,
-                status = ServiceStatus.RESOLVED,
+                status = ServiceStatus.REJECTED,
                 type = "Decoraciones",
                 photoUrl = "https://cdn.pixabay.com/photo/2018/09/05/08/05/party-3655712_1280.jpg",
                 ownerId = "2"
@@ -153,7 +153,7 @@ class ServiceRepositoryImpl @Inject constructor() : ServiceRepository {
                 location = Location(4.511738004282885, -75.69229701639676),
                 priceMin = 1000000.0,
                 priceMax = 2500000.0,
-                status = ServiceStatus.IN_PROGRESS,
+                status = ServiceStatus.APPROVED,
                 type = "Tecnología",
                 photoUrl = "https://cdn.pixabay.com/photo/2025/09/09/08/52/design-9824072_1280.jpg",
                 ownerId = "3"

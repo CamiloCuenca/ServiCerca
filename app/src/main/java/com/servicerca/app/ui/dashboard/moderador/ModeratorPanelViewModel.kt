@@ -40,8 +40,8 @@ class ModeratorPanelViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = true) }
             val status = when (tabIndex) {
                 0 -> ServiceStatus.PENDING
-                1 -> ServiceStatus.IN_PROGRESS
-                2 -> ServiceStatus.RESOLVED
+                1 -> ServiceStatus.APPROVED
+                2 -> ServiceStatus.REJECTED
                 else -> ServiceStatus.PENDING
             }
             serviceRepository.findByStatus(status).collectLatest { servicesList ->

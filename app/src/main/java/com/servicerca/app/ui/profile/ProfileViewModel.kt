@@ -4,11 +4,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.servicerca.app.data.datastore.SessionDataStore
 import com.servicerca.app.domain.model.User
+import com.servicerca.app.domain.model.ServiceStatus
+import com.servicerca.app.domain.repository.ServiceRepository
 import com.servicerca.app.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -16,12 +19,16 @@ import javax.inject.Inject
 data class ProfileUiState(
     val user: User? = null,
     val isLoading: Boolean = false,
-    val error: String? = null
+    val error: String? = null,
+    val pendingCount: Int = 0,
+    val approvedCount: Int = 0,
+    val rejectedCount: Int = 0
 )
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val userRepository: UserRepository,
+    private val serviceRepository: ServiceRepository,
     private val sessionDataStore: SessionDataStore
 ) : ViewModel() {
 
@@ -30,6 +37,19 @@ class ProfileViewModel @Inject constructor(
 
     init {
         loadUserProfile()
+        observeServiceCounts()
+    }
+
+    private fun observeServiceCounts() {
+        viewModelScope.launch {
+            serviceRepository.services.collectLatest { services ->
+                _uiState.value = _uiState.value.copy(
+                    pendingCount = services.count { it.status == ServiceStatus.PENDING },
+                    approvedCount = services.count { it.status == ServiceStatus.APPROVED },
+                    rejectedCount = services.count { it.status == ServiceStatus.REJECTED }
+                )
+            }
+        }
     }
 
     fun loadUserProfile() {

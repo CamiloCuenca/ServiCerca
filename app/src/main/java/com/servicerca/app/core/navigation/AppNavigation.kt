@@ -211,6 +211,7 @@ private fun MainNavigation(
     val startDestination = when (session.role) {
         UserRole.ADMIN -> DashboardRoutes.HomeModerator
         UserRole.USER -> DashboardRoutes.HomeUser
+        else -> {}
     }
 
     NavHost(

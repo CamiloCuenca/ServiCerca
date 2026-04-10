@@ -48,7 +48,7 @@ class DetailsVerificationViewModel @Inject constructor(
     fun approveService() {
         val currentService = _uiState.value.service ?: return
         viewModelScope.launch {
-            val updatedService = currentService.copy(status = ServiceStatus.RESOLVED)
+            val updatedService = currentService.copy(status = ServiceStatus.APPROVED)
             serviceRepository.update(updatedService)
             _uiState.update { it.copy(isSuccess = true, service = updatedService) }
         }

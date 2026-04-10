@@ -18,6 +18,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -137,17 +138,17 @@ fun ProfileModerator (
             }
             CardProfileModerator(
                 title = stringResource(R.string.pending_profile_moderator),
-                label = user?.pendingReviews?.toString() ?: "0",
+                label = uiState.pendingCount.toString(),
                 color = Color(0xFFDB9C16)
             )
             CardProfileModerator(
                 title = stringResource(R.string.approved_profile_moderator),
-                label = user?.approvedReviews?.toString() ?: "0",
+                label = uiState.approvedCount.toString(),
                 color = Color(0xFF3CA834)
             )
             CardProfileModerator(
                 title = stringResource(R.string.rejected_profile_moderator),
-                label = user?.rejectReviews?.toString() ?: "0",
+                label = uiState.rejectedCount.toString(),
                 color = Color(0xFFC72E2E)
             )
 

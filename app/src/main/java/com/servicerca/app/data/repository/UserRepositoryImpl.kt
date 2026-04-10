@@ -80,7 +80,11 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
                 completedServices = 7,
                 totalPoints = 1000,
                 rating = 4.9,
-                memberSince = 2
+                memberSince = 2,
+                role = UserRole.MODERATOR,
+                pendingReviews = 8,
+                approvedReviews = 15,
+                rejectReviews = 3
             ),
             User(
                 id = "4",
