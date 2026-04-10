@@ -1,13 +1,9 @@
 package com.servicerca.app.core.components.navigation
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.HelpOutline
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.HelpOutline
 import androidx.compose.material.icons.outlined.HelpOutline
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material3.CenterAlignedTopAppBar

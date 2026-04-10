@@ -1,6 +1,5 @@
 package com.servicerca.app.ui.auth.login.Reset
 
-import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import com.servicerca.app.core.utils.RequestResult
 import com.servicerca.app.core.utils.ValidatedField

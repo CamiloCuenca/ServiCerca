@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.servicerca.app.core.utils.RequestResult
 import com.servicerca.app.core.utils.ValidatedField
 import com.servicerca.app.data.datastore.SessionDataStore
-import com.servicerca.app.domain.model.User
 import com.servicerca.app.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

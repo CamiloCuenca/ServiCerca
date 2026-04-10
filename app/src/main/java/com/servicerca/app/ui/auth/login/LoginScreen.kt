@@ -30,14 +30,6 @@ import com.servicerca.app.core.components.input.AppTextField
 import com.servicerca.app.core.utils.RequestResult
 import kotlinx.coroutines.delay
 
-/**
- * Pantalla de inicio de sesión de la aplicación.
- * 
- * @param viewModel Instancia del [LoginViewModel] para manejar el estado.
- * @param onNavigateToRegister Callback para navegar a la pantalla de registro.
- * @param onNavigateToUsers Callback para navegar a la pantalla principal tras un login exitoso.
- * @param onRecoverPassword Callback para navegar a la recuperación de contraseña.
- */
 @Composable
 fun LoginScreen(
     viewModel: LoginViewModel = hiltViewModel(),
