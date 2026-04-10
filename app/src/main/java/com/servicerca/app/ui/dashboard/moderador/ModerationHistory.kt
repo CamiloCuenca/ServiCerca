@@ -24,68 +24,45 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.servicerca.app.core.components.card.CardModerationHistory
 import com.servicerca.app.core.components.navigation.TabItemApp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.runtime.collectAsState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 
 @Composable
-fun ModerationHistory (){
-    var selectedTab by remember { mutableStateOf(0) }
+fun ModerationHistory (viewModel: ModerationHistoryViewModel = viewModel()){
+    val selectedTab by viewModel.selectedTab.collectAsState()
 
-    Column(
+    val historyItems by viewModel.filteredHistory.collectAsState()
+
+
+    LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top= 20.dp , bottom = 20.dp)
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 24.dp),
+            .padding(top = 20.dp, bottom = 20.dp)
+            .padding(horizontal =24.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
-    ){
-        ServiceTabRowHistory(
-            selectedTabIndex = selectedTab,
-            onTabSelected = { selectedTab = it }
-        )
-        CardModerationHistory(
-            tittle = stringResource(R.string.history_tittle1),
-            result = stringResource(R.string.history_result1),
-            userName = stringResource(R.string.history_username1),
-            actionPerformed = stringResource(R.string.history_actionPerformed1),
-            reason = stringResource(R.string.history_reason1),
-            date = stringResource(R.string.history_date1),
-            time = stringResource(R.string.history_time1)
-        )
-        CardModerationHistory(
-            tittle = stringResource(R.string.history_tittle2),
-            result = stringResource(R.string.history_result2),
-            userName = stringResource(R.string.history_username2),
-            actionPerformed = stringResource(R.string.history_actionPerformed2),
-            reason = stringResource(R.string.history_reason2),
-            date = stringResource(R.string.history_date2),
-            time = stringResource(R.string.history_time2)
-        )
-        CardModerationHistory(
-            tittle = stringResource(R.string.history_tittle3),
-            result = stringResource(R.string.history_result3),
-            userName = stringResource(R.string.history_username3),
-            actionPerformed = stringResource(R.string.history_actionPerformed3),
-            reason = stringResource(R.string.history_reason3),
-            date = stringResource(R.string.history_date3),
-            time = stringResource(R.string.history_time3)
-        )
-        CardModerationHistory(
-            tittle = stringResource(R.string.history_tittle4),
-            result = stringResource(R.string.history_result4),
-            userName = stringResource(R.string.history_username4),
-            actionPerformed = stringResource(R.string.history_actionPerformed4),
-            reason = stringResource(R.string.history_reason4),
-            date = stringResource(R.string.history_date4),
-            time = stringResource(R.string.history_time4)
-        )
-        CardModerationHistory(
-            tittle = stringResource(R.string.history_tittle5),
-            result = stringResource(R.string.history_result5),
-            userName = stringResource(R.string.history_username5),
-            actionPerformed = stringResource(R.string.history_actionPerformed5),
-            reason = stringResource(R.string.history_reason5),
-            date = stringResource(R.string.history_date5),
-            time = stringResource(R.string.history_time5)
-        )
+    ) {
+        // 1. Ponemos el TabRow como un item de la lista (o fuera si quieres que sea fijo)
+        item {
+            ServiceTabRowHistory(
+                selectedTabIndex = selectedTab,
+                onTabSelected = { viewModel.onTabSelected(it) }
+            )
+        }
+
+        // 2. Renderizamos la lista de items dinámicamente
+        items(historyItems) { item ->
+            CardModerationHistory(
+                tittle = item.title,
+                result = item.resultado, // Usamos los campos de tu data class
+                userName = item.userName,
+                actionPerformed = item.actionPerformed,
+                reason = item.reason,
+                date = item.date,
+                time = item.time
+            )
+        }
     }
 
 }
