@@ -4,27 +4,55 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.servicerca.app.domain.model.ModerationItem
 import com.servicerca.app.domain.model.ModerationStatus
+import com.servicerca.app.domain.model.ServiceStatus
+import com.servicerca.app.domain.repository.ServiceRepository
+import com.servicerca.app.domain.repository.UserRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import javax.inject.Inject
 
-class ModerationHistoryViewModel : ViewModel() {
+@HiltViewModel
+class ModerationHistoryViewModel @Inject constructor(
+    private val serviceRepository: ServiceRepository,
+    private val userRepository: UserRepository
+) : ViewModel() {
 
     // Estado para la pestaña seleccionada (0: Todos, 1: Aprobados, 2: Rechazados)
     private val _selectedTab = MutableStateFlow(0)
     val selectedTab: StateFlow<Int> = _selectedTab.asStateFlow()
 
-    // Fuente de datos completa (esto vendría de un Repositorio o API en el futuro)
-    private val _allHistoryItems = MutableStateFlow<List<ModerationItem>>(emptyList())
-
-    // Flujo que combina la lista y el filtro de la pestaña para obtener la lista filtrada
+    // Fuente de datos real desde el repositorio
     val filteredHistory: StateFlow<List<ModerationItem>> = combine(
-        _allHistoryItems,
+        serviceRepository.services,
+        userRepository.users,
         _selectedTab
-    ) { items, tab ->
+    ) { services, users, tab ->
+        // Filtramos para obtener solo los servicios que ya fueron procesados (NO están en PENDING)
+        val historyServices = services.filter { it.status != ServiceStatus.PENDING }
+        
+        val items = historyServices.map { service ->
+            val owner = users.find { it.id == service.ownerId }
+            val status = if (service.status == ServiceStatus.APPROVED) ModerationStatus.APRBADA else ModerationStatus.RECHAZADA
+            
+            ModerationItem(
+                title = service.title,
+                resultado = if (status == ModerationStatus.APRBADA) "APROBADA" else "RECHAZADA",
+                userName = "${owner?.name1 ?: ""} ${owner?.lastname1 ?: ""}".trim(),
+                actionPerformed = "Moderación de Servicio",
+                reason = if (status == ModerationStatus.APRBADA) "Cumple con las políticas" else "No cumple con las políticas",
+                date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+                time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")),
+                status = status
+            )
+        }
+
         when (tab) {
             1 -> items.filter { it.status == ModerationStatus.APRBADA }
             2 -> items.filter { it.status == ModerationStatus.RECHAZADA }
@@ -36,48 +64,7 @@ class ModerationHistoryViewModel : ViewModel() {
         initialValue = emptyList()
     )
 
-    init {
-        loadModerationHistory()
-    }
-
     fun onTabSelected(index: Int) {
         _selectedTab.value = index
-    }
-
-    private fun loadModerationHistory() {
-        // Simulamos la carga de datos. Aquí es donde conectarías con tu servicio.
-        // Nota: He usado 'resultado' y 'status' según tu modelo ModerationItem.kt
-        _allHistoryItems.value = listOf(
-            ModerationItem(
-                title = "Servicio de Limpieza",
-                resultado = "APROBADA",
-                userName = "Juan Pérez",
-                actionPerformed = "Verificación de Antecedentes",
-                reason = "Documentación completa y verificada",
-                date = "24/05/2024",
-                time = "10:30 AM",
-                status = ModerationStatus.APRBADA
-            ),
-            ModerationItem(
-                title = "Plomería Express",
-                resultado = "RECHAZADA",
-                userName = "Maria Garcia",
-                actionPerformed = "Revisión de Perfil",
-                reason = "Certificado de identidad ilegible",
-                date = "23/05/2024",
-                time = "03:15 PM",
-                status = ModerationStatus.RECHAZADA
-            ),
-            ModerationItem(
-                title = "Electricista Certificado",
-                resultado = "APROBADA",
-                userName = "Carlos Ruiz",
-                actionPerformed = "Validación de Título",
-                reason = "Experiencia comprobada",
-                date = "22/05/2024",
-                time = "09:00 AM",
-                status = ModerationStatus.APRBADA
-            )
-        )
     }
 }

@@ -55,6 +55,7 @@ fun DetailsVerificationModeratorScreen(
     serviceId: String?,
     onBack: () -> Unit,
     onRejectClick: () -> Unit,
+    onApproveSuccess: () -> Unit = {},
     viewModel: DetailsVerificationViewModel = hiltViewModel()
 ){
     val uiState by viewModel.uiState.collectAsState()
@@ -62,6 +63,12 @@ fun DetailsVerificationModeratorScreen(
 
     LaunchedEffect(serviceId) {
         serviceId?.let { viewModel.loadService(it) }
+    }
+
+    LaunchedEffect(uiState.isSuccess) {
+        if (uiState.isSuccess) {
+            onApproveSuccess()
+        }
     }
 
     Scaffold(
