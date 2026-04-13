@@ -8,4 +8,5 @@ interface UserRepository {
     fun save(user: User)
     fun findById(id: String): User?
     fun login(email: String, password: String): User?
-}
+    suspend fun deleteAccount(userId: String): Result<Unit>
+}

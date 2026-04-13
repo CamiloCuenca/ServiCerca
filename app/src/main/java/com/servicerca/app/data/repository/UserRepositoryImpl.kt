@@ -1,5 +1,6 @@
 package com.servicerca.app.data.repository
 
+import android.util.Log
 import com.servicerca.app.domain.model.User
 import com.servicerca.app.domain.model.UserRole
 import com.servicerca.app.domain.repository.UserRepository
@@ -31,6 +32,26 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
     override fun login(email: String, password: String): User? {
         return _users.value.firstOrNull { it.email == email && it.password == password }
     }
+
+    override suspend fun deleteAccount(userId: String): Result<Unit> {
+        Log.d("UserRepository", "Intentando eliminar usuario con ID: $userId")
+        return try {
+            val user = _users.value.firstOrNull { it.id == userId }
+            if (user != null) {
+                _users.value = _users.value.filter { it.id != userId }
+                Log.d("UserRepository", "Usuario eliminado. Nueva lista size: ${_users.value.size}")
+                Result.success(Unit)
+            } else {
+                Log.w("UserRepository", "No se encontró el usuario para eliminar")
+                Result.failure(Exception("Usuario no encontrado"))
+            }
+        } catch (e: Exception) {
+            Log.e("UserRepository", "Error al borrar usuario", e)
+            Result.failure(e)
+        }
+    }
+
+
 
     private fun fetchUsers(): List<User> {
         return listOf(
