@@ -18,4 +18,6 @@ data class User (val id: String,
                  val memberSince: Int = 0,
                  val pendingReviews: Int = 0,
                  val approvedReviews: Int = 0,
-                 val rejectReviews: Int = 0)
+                 val rejectReviews: Int = 0,
+                 val isEmailVerified: Boolean = false)
+

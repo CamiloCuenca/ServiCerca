@@ -107,6 +107,15 @@
     <string name="option3">Suscripciones canceladas</string>
     <string name="no_delete_account">Mantener mi cuenta</string>
     <string name="delete_account_permanently">Eliminar cuenta definitivamente.</string>
+    <string name="delete_account_confirmation_title">¿Confirmar eliminación?</string>
+    <string name="delete_account_password_label">Contraseña</string>
+    <string name="delete_account_reauth_message">Por tu seguridad, introduce tu contraseña para confirmar la eliminación de la cuenta.</string>
+    <string name="delete_account_confirm_button">Eliminar definitivamente</string>
+    <string name="delete_account_cancel_button">Cancelar</string>
+    <string name="error_incorrect_password">La contraseña es incorrecta</string>
+    <string name="account_deleted_success">Tu cuenta ha sido eliminada correctamente. Serás redirigido en unos segundos.</string>
+
+
 
     <!-- Update Password Screen -->
     <string name="change_password">Cambiar contraseña</string>
@@ -152,7 +161,9 @@
     <string name="register_label_second_name">Segundo Nombre</string>
     <string name="register_label_first_lastname">Primer Apellido</string>
     <string name="register_label_second_lastname">Segundo Apellido</string>
+    <string name="register_label_city">Ciudad</string>
     <string name="title_create_service">Nuevo Servicio</string>
+
 
 
 

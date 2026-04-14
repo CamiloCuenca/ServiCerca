@@ -8,7 +8,15 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class VerifyEmailViewModel : ViewModel() {
+import com.servicerca.app.domain.repository.UserRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+
+@HiltViewModel
+class VerifyEmailViewModel @Inject constructor(
+    private val userRepository: UserRepository
+) : ViewModel() {
+
 
     // ── Estado del código OTP ingresado ──────────────────────────────────────
     private val _otpCode = MutableStateFlow("")
@@ -35,7 +43,7 @@ class VerifyEmailViewModel : ViewModel() {
      * Simula la verificación del código OTP.
      * En una implementación real aquí iría la llamada al repositorio / Firebase.
      */
-    fun verifyEmail() {
+    fun verifyEmail(email: String) {
         if (_otpCode.value.length < 6) {
             _verifyResult.value = RequestResult.Failure("Ingresa el código completo de 6 dígitos")
             return
@@ -44,8 +52,13 @@ class VerifyEmailViewModel : ViewModel() {
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                // TODO: llamar al repositorio cuando se implemente la lógica real
-                _verifyResult.value = RequestResult.Success("¡Cuenta activada! Redirigiendo al inicio de sesión…")
+                val result = userRepository.verifyEmail(email, _otpCode.value)
+                if (result.isSuccess) {
+                    _verifyResult.value = RequestResult.Success("¡Cuenta activada! Redirigiendo al inicio de sesión…")
+                } else {
+                    _verifyResult.value = RequestResult.Failure(result.exceptionOrNull()?.message ?: "Error al verificar")
+                }
+
             } catch (e: Exception) {
                 _verifyResult.value = RequestResult.Failure("Error al verificar: ${e.message}")
             } finally {

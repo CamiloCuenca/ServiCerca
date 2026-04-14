@@ -8,7 +8,17 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class RecoverPasswordViewModel : ViewModel( ){
+import com.servicerca.app.domain.repository.UserRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
+
+@HiltViewModel
+class RecoverPasswordViewModel @Inject constructor(
+    private val userRepository: UserRepository
+) : ViewModel( ){
+
 
     private val _recoverResult = MutableStateFlow<RequestResult?>(null)
 
@@ -31,12 +41,18 @@ class RecoverPasswordViewModel : ViewModel( ){
             _recoverResult.value =
                 RequestResult.Failure("Por favor, completa los campos correctamente")
             return
-        } else {
-            _recoverResult.value =
-                RequestResult.Success("¡Instrucciones enviadas!")
         }
 
+        viewModelScope.launch {
+            val result = userRepository.initiatePasswordRecovery(email.value.trim())
+            if (result.isSuccess) {
+                _recoverResult.value = RequestResult.Success("¡Instrucciones enviadas!")
+            } else {
+                _recoverResult.value = RequestResult.Failure(result.exceptionOrNull()?.message ?: "Error al procesar la solicitud")
+            }
+        }
     }
+
 
     fun resetRecoverResult(){
         _recoverResult.value = null

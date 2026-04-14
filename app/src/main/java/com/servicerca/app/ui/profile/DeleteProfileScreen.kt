@@ -16,10 +16,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -35,16 +38,109 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.servicerca.app.R
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.LaunchedEffect
+import kotlinx.coroutines.delay
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.servicerca.app.core.components.button.ButtonIcon
 import com.servicerca.app.core.components.button.DeleteButton
 import com.servicerca.app.core.components.card.CardInfoDeleteProfile
 
 @Composable
 fun DeleteProfileScreen (
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onDeleteSuccess: () -> Unit,
+    viewModel: DeleteProfileViewModel = hiltViewModel()
 ){
+    val uiState by viewModel.uiState.collectAsState()
+    var password by remember { mutableStateOf("") }
+    val snackbarHostState = remember { SnackbarHostState() }
+    val successMessage = stringResource(R.string.account_deleted_success)
+
+    // Redirigir si la eliminación fue exitosa con retraso y mensaje
+    LaunchedEffect(uiState.isSuccess) {
+        if (uiState.isSuccess) {
+            snackbarHostState.showSnackbar(successMessage)
+            delay(2000) // Esperar 2 segundos
+            onDeleteSuccess()
+        }
+    }
+
+    // Diálogo de confirmación inicial
+    if (uiState.showConfirmationDialog) {
+        AlertDialog(
+            onDismissRequest = { viewModel.onDismissConfirmationDialog() },
+            title = { Text(text = stringResource(R.string.delete_account_confirmation_title)) },
+            text = { Text(text = stringResource(R.string.question_confirm_delete_profile)) },
+            confirmButton = {
+                TextButton(onClick = { viewModel.onConfirmDelete() }) {
+                    Text(text = stringResource(R.string.delete_button))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { viewModel.onDismissConfirmationDialog() }) {
+                    Text(text = stringResource(R.string.delete_account_cancel_button))
+                }
+            }
+        )
+    }
+
+    // Diálogo de re-autenticación (Contraseña)
+    if (uiState.showReAuthDialog) {
+        AlertDialog(
+            onDismissRequest = { viewModel.onDismissReAuthDialog() },
+            title = { Text(text = stringResource(R.string.delete_account_password_label)) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(text = stringResource(R.string.delete_account_reauth_message))
+                    OutlinedTextField(
+                        value = password,
+                        onValueChange = { password = it },
+                        label = { Text(stringResource(R.string.passwordLabel)) },
+                        visualTransformation = PasswordVisualTransformation(),
+                        modifier = Modifier.fillMaxWidth(),
+                        isError = uiState.error != null
+                    )
+                    if (uiState.error != null) {
+                        Text(
+                            text = uiState.error ?: "",
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = { viewModel.deleteAccount(password) },
+                    enabled = !uiState.isLoading && password.isNotBlank()
+                ) {
+                    if (uiState.isLoading) {
+                        CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                    } else {
+                        Text(text = stringResource(R.string.delete_account_confirm_button))
+                    }
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { viewModel.onDismissReAuthDialog() }) {
+                    Text(text = stringResource(R.string.delete_account_cancel_button))
+                }
+            }
+        )
+    }
+
     Scaffold(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -170,7 +266,7 @@ fun DeleteProfileScreen (
             )
             DeleteButton(
                 text = stringResource(R.string.delete_account_permanently),
-                onClick = { },
+                onClick = { viewModel.onShowConfirmationDialog() },
                 icon = {
                     Icon(
                         imageVector = Icons.Default.Delete, // Icono de Material
@@ -178,6 +274,7 @@ fun DeleteProfileScreen (
                     )
                 }
             )
+
         }
     }
 }
@@ -187,6 +284,7 @@ fun DeleteProfileScreen (
 @Composable
 fun DeleteProfileScreenPreview(){
     DeleteProfileScreen(
-        onBack = {}
+        onBack = {},
+        onDeleteSuccess = {}
     )
 }

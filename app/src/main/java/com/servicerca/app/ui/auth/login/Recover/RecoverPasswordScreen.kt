@@ -41,7 +41,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
+
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
@@ -55,11 +56,12 @@ import kotlinx.coroutines.delay
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecoverPasswordScreen(
-    viewModel: RecoverPasswordViewModel = viewModel(),
+    viewModel: RecoverPasswordViewModel = hiltViewModel(),
     onBackClick: () -> Unit,
     onNavigateToLogin: () -> Unit,
-    onNavigateToResetPassword: () -> Unit
+    onNavigateToResetPassword: (String) -> Unit
 ) {
+
 
 
     val snackBarHostState = remember { SnackbarHostState() }
@@ -94,7 +96,8 @@ fun RecoverPasswordScreen(
             if (result is RequestResult.Success) {
                 delay(300)
 
-                onNavigateToResetPassword()
+                onNavigateToResetPassword(viewModel.email.value.trim())
+
             }
 
             // Limpiamos el resultado en el ViewModel para evitar que el efecto se dispare de nuevo innecesariamente
