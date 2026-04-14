@@ -35,8 +35,8 @@ sealed class DashboardRoutes {
     @Serializable
     data object Historial : DashboardRoutes()
 
-
-
+    @Serializable
+    data object ManageUser : DashboardRoutes()
 
 }
 
