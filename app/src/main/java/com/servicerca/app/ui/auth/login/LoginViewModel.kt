@@ -32,12 +32,14 @@ class LoginViewModel @Inject constructor(
      * Campo validado para el correo electrónico.
      */
     val email = ValidatedField("") { value ->
+        val trimmedValue = value.trim()
         when {
-            value.isEmpty() -> "El email es obligatorio"
-            !Patterns.EMAIL_ADDRESS.matcher(value).matches() -> "Ingresa un email válido"
+            trimmedValue.isEmpty() -> "El email es obligatorio"
+            !Patterns.EMAIL_ADDRESS.matcher(trimmedValue).matches() -> "Ingresa un email válido"
             else -> null
         }
     }
+
 
     /**
      * Campo validado para la contraseña.
@@ -68,17 +70,23 @@ class LoginViewModel @Inject constructor(
             return
         }
 
-        val user = repository.login(email.value, password.value)
-        _loginResult.value = if (user != null) {
-            // Si el usuario es ADMIN navegamos al panel de moderador
-            if (user.role == UserRole.ADMIN) {
-                RequestResult.SuccessLogin(user.id, user.role)
+        val user = repository.login(email.value.trim(), password.value)
+
+        if (user != null) {
+            if (!user.isEmailVerified) {
+                _loginResult.value = RequestResult.Failure("Por favor, verifica tu correo electrónico antes de iniciar sesión.")
             } else {
-                RequestResult.SuccessLogin(user.id, user.role)
+                // Si el usuario es ADMIN navegamos al panel de moderador
+                if (user.role == UserRole.ADMIN) {
+                    _loginResult.value = RequestResult.SuccessLogin(user.id, user.role)
+                } else {
+                    _loginResult.value = RequestResult.SuccessLogin(user.id, user.role)
+                }
             }
         } else {
-            RequestResult.Failure("Credenciales inválidas")
+            _loginResult.value = RequestResult.Failure("Credenciales inválidas")
         }
+
     }
 
     /**

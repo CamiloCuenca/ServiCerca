@@ -1,5 +1,6 @@
 package com.servicerca.app.data.repository
 
+import android.util.Log
 import com.servicerca.app.domain.model.User
 import com.servicerca.app.domain.model.UserRole
 import com.servicerca.app.domain.repository.UserRepository
@@ -32,7 +33,63 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
         return _users.value.firstOrNull { it.email == email && it.password == password }
     }
 
+    override suspend fun deleteAccount(userId: String): Result<Unit> {
+        Log.d("UserRepository", "Intentando eliminar usuario con ID: $userId")
+        return try {
+            val user = _users.value.firstOrNull { it.id == userId }
+            if (user != null) {
+                _users.value = _users.value.filter { it.id != userId }
+                Log.d("UserRepository", "Usuario eliminado. Nueva lista size: ${_users.value.size}")
+                Result.success(Unit)
+            } else {
+                Log.w("UserRepository", "No se encontró el usuario para eliminar")
+                Result.failure(Exception("Usuario no encontrado"))
+            }
+        } catch (e: Exception) {
+            Log.e("UserRepository", "Error al borrar usuario", e)
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun verifyEmail(email: String, otpCode: String): Result<Boolean> {
+        val trimmedEmail = email.trim()
+        val userIndex = _users.value.indexOfFirst { it.email == trimmedEmail }
+
+        if (userIndex != -1) {
+            val updatedList = _users.value.toMutableList()
+            val user = updatedList[userIndex]
+            updatedList[userIndex] = user.copy(isEmailVerified = true)
+            _users.value = updatedList
+            return Result.success(true)
+        }
+        return Result.failure(Exception("Usuario no encontrado"))
+    }
+
+    override suspend fun initiatePasswordRecovery(email: String): Result<Unit> {
+        val trimmedEmail = email.trim()
+        val user = _users.value.find { it.email == trimmedEmail }
+        return if (user != null) {
+            Result.success(Unit)
+        } else {
+            Result.failure(Exception("No existe una cuenta asociada a este correo"))
+        }
+    }
+
+    override suspend fun resetPassword(email: String, code: String, newPassword: String): Result<Unit> {
+        val trimmedEmail = email.trim()
+        val userIndex = _users.value.indexOfFirst { it.email == trimmedEmail }
+        if (userIndex != -1) {
+            val updatedList = _users.value.toMutableList()
+            updatedList[userIndex] = updatedList[userIndex].copy(password = newPassword)
+            _users.value = updatedList
+            return Result.success(Unit)
+        }
+        return Result.failure(Exception("Error al restablecer contraseña: Usuario no encontrado"))
+    }
+
     private fun fetchUsers(): List<User> {
+
+
         return listOf(
             User(
                 id = "1",
@@ -48,8 +105,10 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
                 completedServices = 12,
                 totalPoints = 1250,
                 rating = 4.5,
-                memberSince = 2
+                memberSince = 2,
+                isEmailVerified = true
             ),
+
             User(
                 id = "2",
                 name1 = "Lina",
@@ -64,8 +123,10 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
                 completedServices = 15,
                 totalPoints = 1650,
                 rating = 4.7,
-                memberSince = 3
+                memberSince = 3,
+                isEmailVerified = true
             ),
+
             User(
                 id = "3",
                 name1 = "Diego",
@@ -84,7 +145,9 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
                 pendingReviews = 8,
                 approvedReviews = 15,
                 rejectReviews = 3
+                isEmailVerified = true
             ),
+
             User(
                 id = "4",
                 name1 = "Carlos",
@@ -99,8 +162,10 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
                 role = UserRole.ADMIN,
                 pendingReviews = 12,
                 approvedReviews = 20,
-                rejectReviews = 6
+                rejectReviews = 6,
+                isEmailVerified = true
             )
+
         )
     }
 }

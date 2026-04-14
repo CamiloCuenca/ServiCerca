@@ -195,9 +195,12 @@ fun UserNavigation(
 
         }
         composable("deleteProfile") {
-            DeleteProfileScreen(onBack = { navController.popBackStack() })
-
+            DeleteProfileScreen(
+                onBack = { navController.popBackStack() },
+                onDeleteSuccess = { onLogout() }
+            )
         }
+
 
         composable("editService") {
             EditServiceScreen(onBack = { navController.popBackStack() })

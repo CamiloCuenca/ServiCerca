@@ -48,7 +48,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.servicerca.app.R
 import com.servicerca.app.core.components.button.PrimaryButton
 import com.servicerca.app.core.components.button.SocialButton
@@ -65,7 +65,7 @@ fun RegisterScreen(
     onNavigateToLogin: () -> Unit,
     onBackClick: () -> Unit,
     onVerifyEmail: () -> Unit,
-    viewModel: RegisterViewModel = viewModel(),
+    viewModel: RegisterViewModel = hiltViewModel(),
 
     ) {
 
@@ -81,18 +81,22 @@ fun RegisterScreen(
             val message = when (result) {
                 is RequestResult.Success -> result.message
                 is RequestResult.Failure -> result.errorMessage
-                else -> {}
+                else -> ""
             }
-            //snackbarHostState.showSnackbar(message) // Mostrar el snackbar con el mensaje
+
+            if (message.toString().isNotEmpty()) {
+                snackbarHostState.showSnackbar(message.toString())
+            }
 
             // Navegar a la pantalla de usuarios si el login fue exitoso. Se puede agregar un delay para que el usuario alcance a ver el mensaje
             if (result is RequestResult.Success) {
-                delay(1000) // 2 segundos
+                delay(1000) // 1 segundo
                 onVerifyEmail()
             }
 
             // Reseta el estado del loginResult en el ViewModel después de mostrar el mensaje
             viewModel.resetLoginResult()
+
         }
     }
 
@@ -186,18 +190,25 @@ fun RegisterScreen(
                             onValueChange = { viewModel.name.onChange(it) },
                             label = stringResource(R.string.register_label_first_name),
                             placeholder = stringResource(R.string.register_placeholder_example_name),
-                            required = true
+                            required = true,
+                            isError = viewModel.name.error != null,
+                            supportingText = viewModel.name.error?.let { { Text(it) } }
                         )
+
                     }
                     Column(modifier = Modifier.weight(1F)) {
                         AppTextField(
                             value = viewModel.SecondName.value,
                             onValueChange = { viewModel.SecondName.onChange(it) },
                             label = stringResource(R.string.register_label_second_name),
-                            placeholder = stringResource(R.string.register_placeholder_example_name),
-                            required = true
+                            placeholder = "Opcional",
+                            required = false,
+                            isError = viewModel.SecondName.error != null,
+                            supportingText = viewModel.SecondName.error?.let { { Text(it) } }
                         )
+
                     }
+
                 }
 
                 // Apellidos
@@ -208,8 +219,11 @@ fun RegisterScreen(
                             onValueChange = { viewModel.Lastname.onChange(it) },
                             label = stringResource(R.string.register_label_first_lastname),
                             placeholder = stringResource(R.string.register_placeholder_example_name),
-                            required = true
+                            required = true,
+                            isError = viewModel.Lastname.error != null,
+                            supportingText = viewModel.Lastname.error?.let { { Text(it) } }
                         )
+
                     }
                     Column(modifier = Modifier.weight(1F)) {
                         AppTextField(
@@ -217,9 +231,14 @@ fun RegisterScreen(
                             onValueChange = { viewModel.SecondLastname.onChange(it) },
                             label = stringResource(R.string.register_label_second_lastname),
                             placeholder = stringResource(R.string.register_placeholder_example_name),
-                            required = true
+                            required = true,
+                            isError = viewModel.SecondLastname.error != null,
+                            supportingText = viewModel.SecondLastname.error?.let { { Text(it) } }
                         )
+
                     }
+
+
                 }
             }
 
@@ -235,8 +254,11 @@ fun RegisterScreen(
                     onValueChange = { viewModel.email.onChange(it) },
                     label = stringResource(R.string.emailLabel),
                     placeholder = stringResource(R.string.placeholderEmail),
-                    required = true
+                    required = true,
+                    isError = viewModel.email.error != null,
+                    supportingText = viewModel.email.error?.let { { Text(it) } }
                 )
+
 
                 AppExposedDropdownMenu(
                     label = "Categoría",
@@ -251,9 +273,23 @@ fun RegisterScreen(
                     onValueChange = { viewModel.address.onChange(it) },
                     label = "Dirección",
                     placeholder = "Dirección de servicio",
-                    required = true
+                    required = true,
+                    isError = viewModel.address.error != null,
+                    supportingText = viewModel.address.error?.let { { Text(it) } }
                 )
+
+                AppTextField(
+                    value = viewModel.city.value,
+                    onValueChange = { viewModel.city.onChange(it) },
+                    label = stringResource(R.string.register_label_city),
+                    placeholder = "Ciudad de residencia",
+                    required = true,
+                    isError = viewModel.city.error != null,
+                    supportingText = viewModel.city.error?.let { { Text(it) } }
+                )
+
             }
+
 
             // ── Sección 3: Seguridad ─────────────────────────────────────
             FormSectionHeader(icon = Icons.Default.Lock, title = "Seguridad")
@@ -268,6 +304,15 @@ fun RegisterScreen(
                     label = stringResource(R.string.passwordLabel),
                     required = true
                 )
+                if (viewModel.password.error != null) {
+                    Text(
+                        text = viewModel.password.error!!,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(start = 16.dp)
+                    )
+                }
+
 
                 AppPasswordField(
                     password = viewModel.confirmPassword.value,
@@ -275,6 +320,15 @@ fun RegisterScreen(
                     label = stringResource(R.string.register_confirm_password),
                     required = true
                 )
+                if (viewModel.confirmPassword.error != null) {
+                    Text(
+                        text = viewModel.confirmPassword.error!!,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(start = 16.dp)
+                    )
+                }
+
             }
 
             Spacer(modifier = Modifier.height(4.dp))

@@ -7,7 +7,21 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class ResetPasswordViewModel : ViewModel( ) {
+import com.servicerca.app.domain.repository.UserRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
+
+@HiltViewModel
+class ResetPasswordViewModel @Inject constructor(
+    private val userRepository: UserRepository,
+    savedStateHandle: SavedStateHandle
+) : ViewModel( ) {
+
+    private val email: String = checkNotNull(savedStateHandle["email"])
+
 
 
     private val _resetyResult = MutableStateFlow<RequestResult?>(null)
@@ -42,11 +56,17 @@ class ResetPasswordViewModel : ViewModel( ) {
                 RequestResult.Failure("Por favor, completa los campos correctamente")
             return
         }
-         else {
-            _resetyResult.value =
-                RequestResult.Success("¡Contraseña restablecida!")
+
+        viewModelScope.launch {
+            val result = userRepository.resetPassword(email, codeReset.value, newPassword.value)
+            if (result.isSuccess) {
+                _resetyResult.value = RequestResult.Success("¡Contraseña restablecida!")
+            } else {
+                _resetyResult.value = RequestResult.Failure(result.exceptionOrNull()?.message ?: "Error al restablecer contraseña")
+            }
         }
     }
+
 
     fun resetResult(){
         _resetyResult.value = null

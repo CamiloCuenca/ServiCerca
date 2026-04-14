@@ -24,7 +24,8 @@ sealed class MainRoutes {
 
 
     @Serializable
-    data object Reset : MainRoutes()
+    data class Reset(val email: String) : MainRoutes()
+
 
     @Serializable
     data object Perfil : MainRoutes()

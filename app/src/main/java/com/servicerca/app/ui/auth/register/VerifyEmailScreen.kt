@@ -39,8 +39,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.servicerca.app.core.components.button.PrimaryButton
+
 import com.servicerca.app.core.components.input.OtpTextField
 import com.servicerca.app.core.utils.RequestResult
 import com.servicerca.app.ui.theme.Error
@@ -50,8 +51,9 @@ import com.servicerca.app.ui.theme.PrimaryLight
 fun VerifyEmailScreen(
     email: String,
     onNavigateToLogin: () -> Unit,
-    viewModel: VerifyEmailViewModel = viewModel()
+    viewModel: VerifyEmailViewModel = hiltViewModel()
 ) {
+
     val otpCode by viewModel.otpCode.collectAsState()
     val verifyResult by viewModel.verifyResult.collectAsState()
     val resendResult by viewModel.resendResult.collectAsState()
@@ -179,8 +181,9 @@ fun VerifyEmailScreen(
 
             PrimaryButton(
                 text = "Ir a inicio de sesión",
-                onClick = { viewModel.verifyEmail() }
+                onClick = { viewModel.verifyEmail(email) }
             )
+
 
             Spacer(modifier = Modifier.height(16.dp))
 
