@@ -18,7 +18,7 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(na
 
 @Singleton
 class SessionDataStore @Inject constructor(
-    @param:ApplicationContext private val context: Context
+    @param:ApplicationContext val context: Context
 ) {
     // Claves para las preferencias
     private object Keys {

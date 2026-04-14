@@ -99,13 +99,22 @@ class DetailServiceViewModel @Inject constructor(
                     commentRepository.save(comment)
                     
                     // Enviar notificación al dueño del servicio
+                    val context = sessionDataStore.context
+                    val title = context.getString(com.servicerca.app.R.string.new_comment_title)
+                    val message = context.getString(
+                        com.servicerca.app.R.string.new_comment_message_format,
+                        currentUser.name1,
+                        text,
+                        rating
+                    )
+
                     val notification = Notification(
                         id = UUID.randomUUID().toString(),
                         userId = ownerId,
-                        title = "Nuevo comentario recibido",
-                        message = "${currentUser.name1} ha comentado: \"$text\" y te dio $rating estrellas.",
+                        title = title,
+                        message = message,
                         date = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date()),
-                        imageRes = com.servicerca.app.R.drawable.insignia_chat, // O un icono adecuado
+                        imageRes = com.servicerca.app.R.drawable.insignia_chat,
                         isRead = false
                     )
                     notificationRepository.addNotification(notification)

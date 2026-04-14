@@ -92,6 +92,8 @@
     <string name="profile_type">Tipo de perfil</string>
     <string name="user_type">Cliente</string>
     <string name="btn_edit_profile">Guardar cambios</string>
+    <string name="tittle_update_profile">Perfil actualizado</string>
+    <string name="message_update_profile">Tus datos han sido actualizados correctamente.</string>
 
     <!-- Delete Profile Screen -->
     <string name="delete_profile">Eliminar cuenta</string>
@@ -341,4 +343,8 @@
     <string name="budget_range_format">$%1$.0f - $%2$.0f</string>
     <string name="status_in_review">EN REVISIÓN</string>
     <string name="status_resolved">RESUELTO</string>
+
+    <!-- Notification Messages -->
+    <string name="new_comment_title">Nuevo comentario recibido</string>
+    <string name="new_comment_message_format">%1$s ha comentado: \"%2$s\" y te dio %3$d estrellas.</string>
 </resources>
