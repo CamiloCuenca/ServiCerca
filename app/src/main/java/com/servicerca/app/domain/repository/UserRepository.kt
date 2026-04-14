@@ -10,5 +10,6 @@ interface UserRepository {
     fun login(email: String, password: String): User?
     suspend fun deleteAccount(userId: String): Result<Unit>
     suspend fun verifyEmail(email: String, otpCode: String): Result<Boolean>
-
-}
+    suspend fun initiatePasswordRecovery(email: String): Result<Unit>
+    suspend fun resetPassword(email: String, code: String, newPassword: String): Result<Unit>
+}

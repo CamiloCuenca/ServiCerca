@@ -50,8 +50,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.airbnb.lottie.compose.LottieAnimation
+
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
@@ -64,10 +65,12 @@ import kotlinx.coroutines.delay
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ResetPassword(
-    viewModel: ResetPasswordViewModel = viewModel(),
+    email: String,
+    viewModel: ResetPasswordViewModel = hiltViewModel(),
     onNavigateToLogin: () -> Unit,
     onBackClick: () -> Unit
 ) {
+
     // Estado para el icono de visibilizacion de contraseña
     var passwordVisible by remember { mutableStateOf(false) }
     val snackBarHostState = remember { SnackbarHostState() }
@@ -178,10 +181,11 @@ fun ResetPassword(
 
             // — Descripción —
             Text(
-                text = "Introduce el código de recuperación que recibiste y define tu nueva contraseña.",
+                text = "Introduce el código de recuperación enviado a $email y define tu nueva contraseña.",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
+
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -332,7 +336,8 @@ fun validatePassword(password: String): String? {
 @Preview(showBackground = true, showSystemUi = true)
 fun ResetPasswordPreview() {
     ResetPassword(
+        email = "usuario@ejemplo.com",
         onNavigateToLogin = {},
         onBackClick = {}
     )
-}
+}

@@ -65,7 +65,30 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
         return Result.failure(Exception("Usuario no encontrado"))
     }
 
+    override suspend fun initiatePasswordRecovery(email: String): Result<Unit> {
+        val trimmedEmail = email.trim()
+        val user = _users.value.find { it.email == trimmedEmail }
+        return if (user != null) {
+            Result.success(Unit)
+        } else {
+            Result.failure(Exception("No existe una cuenta asociada a este correo"))
+        }
+    }
+
+    override suspend fun resetPassword(email: String, code: String, newPassword: String): Result<Unit> {
+        val trimmedEmail = email.trim()
+        val userIndex = _users.value.indexOfFirst { it.email == trimmedEmail }
+        if (userIndex != -1) {
+            val updatedList = _users.value.toMutableList()
+            updatedList[userIndex] = updatedList[userIndex].copy(password = newPassword)
+            _users.value = updatedList
+            return Result.success(Unit)
+        }
+        return Result.failure(Exception("Error al restablecer contraseña: Usuario no encontrado"))
+    }
+
     private fun fetchUsers(): List<User> {
+
 
         return listOf(
             User(

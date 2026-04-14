@@ -159,19 +159,20 @@ private fun AuthNavigation(onLoginSuccess: (String, UserRole) -> Unit) {
                 , onBackClick = {
                     navController.popBackStack()
                 },
-                onNavigateToResetPassword = {
-                    navController.navigate(MainRoutes.Reset)
-
-
+                onNavigateToResetPassword = { email ->
+                    navController.navigate(MainRoutes.Reset(email = email))
                 }
             )
         }
 
 
 
-        composable<MainRoutes.Reset> {
+        composable<MainRoutes.Reset> { backStackEntry ->
+            val route = backStackEntry.toRoute<MainRoutes.Reset>()
             ResetPassword(
+                email = route.email,
                 onNavigateToLogin = {
+
                     navController.navigate(MainRoutes.Login) {
                         popUpTo(navController.graph.findStartDestination().id) { inclusive = true }
                     }
