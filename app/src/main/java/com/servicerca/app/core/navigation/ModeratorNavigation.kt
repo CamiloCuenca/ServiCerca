@@ -12,6 +12,7 @@ import com.servicerca.app.ui.dashboard.moderador.ModerationHistory
 import com.servicerca.app.ui.dashboard.moderador.ModeratorPanelScreen
 import com.servicerca.app.ui.dashboard.moderador.ProfileModerator
 import com.servicerca.app.ui.dashboard.moderador.RejectReasonScreen
+import com.servicerca.app.ui.profile.UpdatePasswordScreen
 
 @Composable
 fun ModeratorNavigation(
@@ -59,14 +60,18 @@ fun ModeratorNavigation(
         }
 
         composable<DashboardRoutes.ProfileModerator> {
-            ProfileModerator(navController = navController,
-                onLogout = {
-                    // Delegar la acción de logout al callback pasado desde la pantalla raíz
-                    onLogout()
-                }
-
+            ProfileModerator(
+                navController = navController,
+                onLogout = { onLogout() },
+                onUpdatePassword = { navController.navigate("updatePassword") }
             )
+        }
 
+        composable("updatePassword") {
+            UpdatePasswordScreen(
+                onBack = { navController.popBackStack() },
+                onLogout = { onLogout() }
+            )
         }
 
         composable<DashboardRoutes.Historial> {

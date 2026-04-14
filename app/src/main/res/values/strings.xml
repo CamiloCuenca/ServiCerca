@@ -125,6 +125,9 @@
     <string name="new_password">Nueva contraseña</string>
     <string name="confirm_new_password">Confirmar nueva contraseña</string>
     <string name="btn_update_password">Actualizar contraseña</string>
+    <string name="tittle_message_change_password">Contraseña actualizada</string>
+    <string name="message_change_password_success">Tu contraseña ha sido actualizada correctamente.
+        Por seguridad, se cerrará la sesión actual.</string>
 
     <!-- Notifications Screen -->
     <string name="notifications">Notificaciones</string>

@@ -48,6 +48,7 @@ import com.servicerca.app.ui.profile.ProfileViewModel
 fun ProfileModerator (
     navController: NavHostController,
     onLogout: () -> Unit,
+    onUpdatePassword: () -> Unit,
     viewModel: ProfileViewModel = hiltViewModel()
 ){
     val uiState by viewModel.uiState.collectAsState()
@@ -195,6 +196,10 @@ fun ProfileModerator (
 @Preview(showBackground = true)
 @Composable
 fun ProfileModeratorPreview(){
-    ProfileModerator(navController = rememberNavController() , onLogout = {})
+    ProfileModerator(
+        navController = rememberNavController(),
+        onLogout = {},
+        onUpdatePassword = {}
+    )
 }
 

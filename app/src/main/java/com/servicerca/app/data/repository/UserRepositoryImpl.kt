@@ -87,6 +87,27 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
         return Result.failure(Exception("Error al restablecer contraseña: Usuario no encontrado"))
     }
 
+    override suspend fun updatePassword(
+        userId: String,
+        currentPassword: String,
+        newPassword: String
+    ): Result<Unit> {
+        val userIndex = _users.value.indexOfFirst { it.id == userId }
+        if (userIndex == -1) {
+            return Result.failure(Exception("Usuario no encontrado"))
+        }
+
+        val user = _users.value[userIndex]
+        if (user.password != currentPassword) {
+            return Result.failure(Exception("La contraseña actual es incorrecta"))
+        }
+
+        val updatedList = _users.value.toMutableList()
+        updatedList[userIndex] = user.copy(password = newPassword)
+        _users.value = updatedList
+        return Result.success(Unit)
+    }
+
     private fun fetchUsers(): List<User> {
 
 
@@ -144,7 +165,7 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
                 memberSince = 2,
                 pendingReviews = 8,
                 approvedReviews = 15,
-                rejectReviews = 3
+                rejectReviews = 3,
                 isEmailVerified = true
             ),
 

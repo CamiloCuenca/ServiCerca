@@ -191,8 +191,10 @@ fun UserNavigation(
         }
 
         composable("updatePassword") {
-            UpdatePasswordScreen(onBack = { navController.popBackStack() })
-
+            UpdatePasswordScreen(
+                onBack = { navController.popBackStack() },
+                onLogout = { onLogout() }
+            )
         }
         composable("deleteProfile") {
             DeleteProfileScreen(
