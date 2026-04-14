@@ -50,6 +50,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.servicerca.app.R
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import com.servicerca.app.core.components.alertDialog.SuccessAlertDialog
 import com.servicerca.app.core.components.button.PrimaryButton
 import com.servicerca.app.core.components.card.CardInfoprofile
 import com.servicerca.app.core.components.input.AppTextField
@@ -68,6 +71,7 @@ fun EditProfileScreen(
     val profilePictureUrl by viewModel.profilePictureUrl.collectAsState()
     val email by viewModel.email.collectAsState()
     val role by viewModel.role.collectAsState()
+    var showSuccessDialog by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
@@ -79,9 +83,8 @@ fun EditProfileScreen(
             is RequestResult.Success -> {
                 keyboardController?.hide()
                 focusManager.clearFocus()
-                snackbarHostState.showSnackbar(result.message)
+                showSuccessDialog = true
                 viewModel.resetSaveResult()
-                onSaveSuccess()
             }
             is RequestResult.Failure -> {
                 keyboardController?.hide()
@@ -93,6 +96,21 @@ fun EditProfileScreen(
                 viewModel.resetSaveResult()
             }
         }
+    }
+
+    if (showSuccessDialog) {
+        SuccessAlertDialog(
+            onDismissRequest = { 
+                showSuccessDialog = false
+                onSaveSuccess()
+            },
+            onConfirm = {
+                showSuccessDialog = false
+                onSaveSuccess()
+            },
+            title = stringResource(R.string.tittle_update_profile),
+            message = stringResource(R.string.message_update_profile)
+        )
     }
 
     Scaffold(
@@ -283,6 +301,17 @@ fun EditProfileScreen(
                                 label = stringResource(R.string.address),
                                 isError = viewModel.address.error != null,
                                 supportingText = viewModel.address.error?.let { msg -> { Text(msg) } }
+                            )
+                        }
+
+                        // Ciudad
+                        Column(modifier = Modifier.padding(bottom = 20.dp)) {
+                            AppTextField(
+                                value = viewModel.city.value,
+                                onValueChange = { viewModel.city.onChange(it) },
+                                label = "Ciudad",
+                                isError = viewModel.city.error != null,
+                                supportingText = viewModel.city.error?.let { msg -> { Text(msg) } }
                             )
                         }
                     }

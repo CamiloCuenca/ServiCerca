@@ -59,11 +59,12 @@ class EditProfileViewModel @Inject constructor(
     }
 
     val phone = ValidatedField("") { value ->
-        when {
-            value.isBlank() -> "El teléfono es obligatorio"
-            value.length < 7 -> "Ingresa un número de teléfono válido"
-            else -> null
-        }
+        // Teléfono ahora es opcional
+        if (value.isNotBlank() && value.length < 7) "Ingresa un número de teléfono válido" else null
+    }
+
+    val city = ValidatedField("") { value ->
+        if (value.isBlank()) "La ciudad es obligatoria" else null
     }
 
     private val _profilePictureUrl = MutableStateFlow("")
@@ -95,12 +96,13 @@ class EditProfileViewModel @Inject constructor(
                 if (session != null) {
                     val user = userRepository.findById(session.userId)
                     if (user != null) {
-                        firstName.onChange(user.name1)
-                        middleName.onChange(user.name2 ?: "")
-                        firstLastName.onChange(user.lastname1)
-                        secondLastName.onChange(user.lastname2 ?: "")
-                        address.onChange(user.address)
-                        phone.onChange(user.phoneNumber)
+                        firstName.loadInitialValue(user.name1)
+                        middleName.loadInitialValue(user.name2 ?: "")
+                        firstLastName.loadInitialValue(user.lastname1)
+                        secondLastName.loadInitialValue(user.lastname2 ?: "")
+                        address.loadInitialValue(user.address)
+                        phone.loadInitialValue(user.phoneNumber)
+                        city.loadInitialValue(user.city)
                         _profilePictureUrl.value = user.profilePictureUrl
                         _email.value = user.email
                         _role.value = user.role.name
@@ -118,17 +120,15 @@ class EditProfileViewModel @Inject constructor(
 
     val isFormValid: Boolean
         get() = firstName.isValid
-                && middleName.isValid
                 && firstLastName.isValid
-                && secondLastName.isValid
                 && address.isValid
-                && phone.isValid
+                && city.isValid
 
     fun saveProfile() {
         firstName.touch()
         firstLastName.touch()
         address.touch()
-        phone.touch()
+        city.touch()
 
         if (!isFormValid) {
             _saveResult.value = RequestResult.Failure("Completa los campos obligatorios correctamente")
@@ -149,6 +149,7 @@ class EditProfileViewModel @Inject constructor(
                             lastname2 = secondLastName.value.ifBlank { null },
                             address = address.value,
                             phoneNumber = phone.value,
+                            city = city.value,
                             profilePictureUrl = _profilePictureUrl.value
                         )
                         userRepository.save(updatedUser)
@@ -165,5 +166,9 @@ class EditProfileViewModel @Inject constructor(
 
     fun resetSaveResult() {
         _saveResult.value = null
+    }
+
+    fun onPictureChanged(url: String) {
+        _profilePictureUrl.value = url
     }
 }

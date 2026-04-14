@@ -30,6 +30,12 @@ class ValidatedField<T>(
         showError = true
     }
 
+    // Nueva función para cargar valores iniciales sin disparar errores
+    fun loadInitialValue(newValue: T) {
+        value = newValue
+        showError = false
+    }
+
     // Función para resetear el campo a su valor inicial
     fun reset() {
         value = initialValue

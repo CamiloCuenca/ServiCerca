@@ -22,7 +22,14 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
     }
 
     override fun save(user: User) {
-        _users.value += user
+        val userIndex = _users.value.indexOfFirst { it.id == user.id }
+        if (userIndex != -1) {
+            val updatedList = _users.value.toMutableList()
+            updatedList[userIndex] = user
+            _users.value = updatedList
+        } else {
+            _users.value += user
+        }
     }
 
     override fun findById(id: String): User? {

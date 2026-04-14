@@ -186,8 +186,10 @@ fun UserNavigation(
         }
 
         composable("editProfile") {
-            EditProfileScreen(onBack = { navController.popBackStack() })
-
+            EditProfileScreen(
+                onBack = { navController.popBackStack() },
+                onSaveSuccess = { navController.popBackStack() }
+            )
         }
 
         composable("updatePassword") {
