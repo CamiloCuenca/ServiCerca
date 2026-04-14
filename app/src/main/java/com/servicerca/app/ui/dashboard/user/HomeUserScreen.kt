@@ -72,14 +72,15 @@ fun HomeUserScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            items(services) { service ->
+            items(services) { serviceWithRating ->
                 CardService(
-                    title = service.title,
-                    category = service.type,
-                    priceRange = "$${service.priceMin.toInt()} - $${service.priceMax.toInt()}",
+                    title = serviceWithRating.service.title,
+                    category = serviceWithRating.service.type,
+                    priceRange = "$${serviceWithRating.service.priceMin.toInt()} - $${serviceWithRating.service.priceMax.toInt()}",
+                    rating = String.format("%.1f", serviceWithRating.averageRating),
                     level = "EXPERTO",
-                    photoUrl = service.photoUrl,
-                    onRequestClick = { onDetailClick(service.id) }
+                    photoUrl = serviceWithRating.service.photoUrl,
+                    onRequestClick = { onDetailClick(serviceWithRating.service.id) }
                 )
             }
         }

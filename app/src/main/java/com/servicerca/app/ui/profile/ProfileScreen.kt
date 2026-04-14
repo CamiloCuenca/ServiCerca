@@ -150,7 +150,7 @@ fun ProfileScreen(
             InsigniasSection(onInsignias)
 
             // Estadísticas
-            StatisticsSection(user)
+            StatisticsSection(uiState)
 
             // Botones de Configuración
             AccountSettingsSection(onEditProflie, onUpdatePassword, onDeleteProfile)
@@ -204,7 +204,8 @@ fun InsigniaItem(imageRes: Int, labelRes: Int, shadowColor: Color) {
 }
 
 @Composable
-fun StatisticsSection(user: com.servicerca.app.domain.model.User?) {
+fun StatisticsSection(uiState: ProfileUiState) {
+    val user = uiState.user
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(text = stringResource(R.string.statistic), fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 8.dp, bottom = 8.dp))
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
@@ -223,7 +224,7 @@ fun StatisticsSection(user: com.servicerca.app.domain.model.User?) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             CardStatistics(
                 R.drawable.calificacion,
-                user?.rating?.toString() ?: "0.0",
+                String.format("%.1f", uiState.averageRating),
                 stringResource(R.string.average_rating)
             )
             CardStatistics(
