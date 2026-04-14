@@ -47,6 +47,7 @@ fun ReservationScreen(
     val reservations by viewModel.reservations.collectAsState()
     val selectedTab by viewModel.selectedTab.collectAsState()
     val selectedDate by viewModel.selectedDate.collectAsState()
+    val markedDates by viewModel.markedDates.collectAsState()
 
     // Formatear la fecha seleccionada para el título
     val dateTitle = remember(selectedDate) {
@@ -78,7 +79,8 @@ fun ReservationScreen(
         item {
             CalendarCard(
                 selectedDate = selectedDate,
-                onDateSelected = { viewModel.onDateSelected(it) }
+                onDateSelected = { viewModel.onDateSelected(it) },
+                markedDates = markedDates
             )
         }
 
