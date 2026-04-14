@@ -1,5 +1,6 @@
 package com.servicerca.app.ui.profile
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -7,10 +8,12 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -25,7 +28,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,46 +44,56 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.servicerca.app.R
+import com.servicerca.app.core.components.alertDialog.SuccessAlertDialog
 import com.servicerca.app.core.components.button.PrimaryButton
 import com.servicerca.app.core.components.input.AppPasswordField
 import com.servicerca.app.core.utils.RequestResult
-import kotlinx.coroutines.delay
 
 @Composable
 fun UpdatePasswordScreen(
     onBack: () -> Unit,
-    viewModel: UpdatePasswordViewModel = viewModel()
+    onLogout: () -> Unit,
+    viewModel: UpdatePasswordViewModel = hiltViewModel()
 ) {
     val updateResult by viewModel.updateResult.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
+    var showSuccessDialog by remember { mutableStateOf(false) }
     val snackBarHostState = remember { SnackbarHostState() }
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
     LaunchedEffect(updateResult) {
         updateResult?.let { result ->
-            val message = when (result) {
-                is RequestResult.Success -> result.message
-                is RequestResult.Failure -> result.errorMessage
-                else -> {}
-            }
-
             keyboardController?.hide()
             focusManager.clearFocus()
-            snackBarHostState.showSnackbar(
-                message = message as String,
-                duration = SnackbarDuration.Short
-            )
 
             if (result is RequestResult.Success) {
-                delay(300)
-                viewModel.resetForm()
-                onBack()
+                showSuccessDialog = true
+            } else if (result is RequestResult.Failure) {
+                snackBarHostState.showSnackbar(
+                    message = result.errorMessage,
+                    duration = SnackbarDuration.Short
+                )
+                viewModel.resetUpdateResult()
             }
-
-            viewModel.resetUpdateResult()
         }
+    }
+
+    if (showSuccessDialog) {
+        SuccessAlertDialog(
+            onDismissRequest = { },
+            onConfirm = {
+                showSuccessDialog = false
+                viewModel.logout()
+                onLogout()
+            },
+            title = stringResource(R.string.tittle_message_change_password),
+            message = stringResource(R.string.message_change_password_success),
+        )
     }
 
     Scaffold(
@@ -96,6 +111,22 @@ fun UpdatePasswordScreen(
             }
         }
     ) { paddingValues ->
+        if (isLoading) {
+            Dialog(
+                onDismissRequest = {},
+                properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
+            ) {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .size(100.dp)
+                        .background(MaterialTheme.colorScheme.surface, shape = MaterialTheme.shapes.medium)
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -226,6 +257,7 @@ fun UpdatePasswordScreen(
 @Composable
 fun UpdatePasswordScreenPreview() {
     UpdatePasswordScreen(
-        onBack = {}
+        onBack = {},
+        onLogout = {}
     )
 }

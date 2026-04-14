@@ -35,7 +35,8 @@ import java.util.Locale
 fun CalendarCard(
     selectedDate: LocalDate,
     onDateSelected: (LocalDate) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    markedDates: Set<LocalDate> = emptySet()
 ) {
 
     val currentMonth = remember { YearMonth.now() }
@@ -76,6 +77,7 @@ fun CalendarCard(
                 dayContent = { day ->
 
                     val isSelected = selectedDate == day.date
+                    val isMarked = markedDates.contains(day.date)
 
                     Box(
                         modifier = Modifier
@@ -93,13 +95,27 @@ fun CalendarCard(
                             },
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(
-                            text = day.date.dayOfMonth.toString(),
-                            color = if (isSelected)
-                                Color.White
-                            else
-                                MaterialTheme.colorScheme.onSurface
-                        )
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(
+                                text = day.date.dayOfMonth.toString(),
+                                color = if (isSelected)
+                                    Color.White
+                                else
+                                    MaterialTheme.colorScheme.onSurface
+                            )
+                            if (isMarked && !isSelected) {
+                                Box(
+                                    modifier = Modifier
+                                        .padding(top = 2.dp)
+                                        .height(4.dp)
+                                        .aspectRatio(1f)
+                                        .background(
+                                            MaterialTheme.colorScheme.primary,
+                                            shape = CircleShape
+                                        )
+                                )
+                            }
+                        }
                     }
                 }
             )

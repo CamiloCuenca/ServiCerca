@@ -42,11 +42,29 @@ import androidx.compose.ui.unit.dp
 import com.servicerca.app.R
 import com.servicerca.app.core.components.button.ButtonIconDecline
 
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.hilt.navigation.compose.hiltViewModel
+
 @Composable
 fun RejectReasonScreen(
     serviceId: String?,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onRejectSuccess: () -> Unit = {},
+    viewModel: RejectReasonViewModel = hiltViewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(serviceId) {
+        serviceId?.let { viewModel.loadService(it) }
+    }
+
+    LaunchedEffect(uiState.isSuccess) {
+        if (uiState.isSuccess) {
+            onRejectSuccess()
+        }
+    }
+
     Scaffold(
         modifier = Modifier.fillMaxSize()
     ) { paddingValues ->
@@ -194,7 +212,7 @@ fun RejectReasonScreen(
                 Column() {
                     ButtonIconDecline(
                         text = "Confirmar rechazo",
-                        onClick = { },
+                        onClick = { viewModel.rejectService(description) },
                         icon = {
                             Icon(
                                 imageVector = Icons.Default.Block, // Icono de Material
