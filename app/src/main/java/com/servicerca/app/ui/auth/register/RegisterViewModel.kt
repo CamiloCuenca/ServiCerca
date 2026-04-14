@@ -4,13 +4,24 @@ import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import com.servicerca.app.core.utils.RequestResult
 import com.servicerca.app.core.utils.ValidatedField
+import com.servicerca.app.domain.model.User
+import com.servicerca.app.domain.repository.UserRepository
+import com.servicerca.app.domain.model.UserRole
+import dagger.hilt.android.lifecycle.HiltViewModel
+
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import java.util.UUID
+import javax.inject.Inject
 
-class RegisterViewModel : ViewModel() {
+@HiltViewModel
+class RegisterViewModel @Inject constructor(
+    private val userRepository: UserRepository
+) : ViewModel() {
+
 
 
     private val _RegisterResult = MutableStateFlow<RequestResult?>(null)
@@ -23,12 +34,14 @@ class RegisterViewModel : ViewModel() {
 
 
     val email = ValidatedField("") { value ->
+        val trimmedValue = value.trim()
         when {
-            value.isEmpty() -> "El email es obligatorio"
-            !Patterns.EMAIL_ADDRESS.matcher(value).matches() -> "Ingresa un email válido"
+            trimmedValue.isEmpty() -> "El email es obligatorio"
+            !Patterns.EMAIL_ADDRESS.matcher(trimmedValue).matches() -> "Ingresa un email válido"
             else -> null
         }
     }
+
 
     val password = ValidatedField("") { value ->
         when {
@@ -57,11 +70,12 @@ class RegisterViewModel : ViewModel() {
 
     val SecondName = ValidatedField("") { value ->
         when {
-            value.isEmpty() -> "El segundo nombre es obligatorio"
+            value.isEmpty() -> null // Opcional
             !value.matches(Regex("[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ ]+")) -> "El nombre solo puede contener letras"
             else -> null
         }
     }
+
 
     val Lastname = ValidatedField("") { value ->
         when {
@@ -79,6 +93,8 @@ class RegisterViewModel : ViewModel() {
         }
     }
 
+
+
     val address = ValidatedField("") { value ->
         when{
             value.isEmpty() -> "La dirección es obligatoria"
@@ -86,7 +102,15 @@ class RegisterViewModel : ViewModel() {
         }
     }
 
+    val city = ValidatedField("") { value ->
+        when {
+            value.isEmpty() -> "La ciudad es obligatoria"
+            else -> null
+        }
+    }
+
     val category = ValidatedField("") { value ->
+
         when {
             value.isEmpty() -> "La categoría es obligatoria"
             else -> null
@@ -100,6 +124,7 @@ class RegisterViewModel : ViewModel() {
         Lastname.touch()
         SecondLastname.touch()
         address.touch()
+        city.touch()
         category.touch()
         email.touch()
         password.touch()
@@ -117,6 +142,26 @@ class RegisterViewModel : ViewModel() {
 
         viewModelScope.launch {
             try {
+                val newUser = User(
+                    id = UUID.randomUUID().toString(),
+                    name1 = name.value,
+                    name2 = SecondName.value,
+                    lastname1 = Lastname.value,
+                    lastname2 = SecondLastname.value,
+                    email = email.value.trim(),
+
+                    password = password.value,
+                    address = address.value,
+                    city = city.value,
+                    profilePictureUrl = "https://cdn-icons-png.flaticon.com/512/149/149071.png", // Avatar por defecto
+                    memberSince = 2024, // Año de ingreso
+                    role = UserRole.USER,
+                    completedServices = 0,
+                    totalPoints = 0,
+                    rating = 0.0
+                )
+
+                userRepository.save(newUser)
                 _RegisterResult.value = RequestResult.Success("Registro exitoso")
             } catch (e: Exception) {
                 _RegisterResult.value = RequestResult.Failure("Error al registrarse: ${e.message}")
@@ -137,7 +182,9 @@ class RegisterViewModel : ViewModel() {
                 && Lastname.isValid
                 && SecondLastname.isValid
                 && address.isValid
+                && city.isValid
                 && category.isValid
+
 
     // Es útil para resetear el formulario después de un login exitoso
     fun resetForm() {

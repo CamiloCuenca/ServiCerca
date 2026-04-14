@@ -135,7 +135,7 @@ private fun AuthNavigation(onLoginSuccess: (String, UserRole) -> Unit) {
 
 
             composable<MainRoutes.Register> {
-                val registerViewModel: RegisterViewModel = viewModel()
+                val registerViewModel: RegisterViewModel = hiltViewModel()
                 RegisterScreen(
                     viewModel = registerViewModel,
                     onNavigateToLogin = {
@@ -145,7 +145,8 @@ private fun AuthNavigation(onLoginSuccess: (String, UserRole) -> Unit) {
                         navController.popBackStack()
                     },
                     onVerifyEmail = {
-                        navController.navigate(MainRoutes.VerifyEmail(email = registerViewModel.email.value))
+                        navController.navigate(MainRoutes.VerifyEmail(email = registerViewModel.email.value.trim()))
+
                     }
                 )
             }

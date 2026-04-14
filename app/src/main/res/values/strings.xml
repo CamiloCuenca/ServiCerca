@@ -161,7 +161,9 @@
     <string name="register_label_second_name">Segundo Nombre</string>
     <string name="register_label_first_lastname">Primer Apellido</string>
     <string name="register_label_second_lastname">Segundo Apellido</string>
+    <string name="register_label_city">Ciudad</string>
     <string name="title_create_service">Nuevo Servicio</string>
+
 
 
 

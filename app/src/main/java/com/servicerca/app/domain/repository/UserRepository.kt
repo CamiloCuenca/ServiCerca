@@ -9,4 +9,6 @@ interface UserRepository {
     fun findById(id: String): User?
     fun login(email: String, password: String): User?
     suspend fun deleteAccount(userId: String): Result<Unit>
+    suspend fun verifyEmail(email: String, otpCode: String): Result<Boolean>
+
 }

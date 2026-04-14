@@ -51,9 +51,22 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
         }
     }
 
+    override suspend fun verifyEmail(email: String, otpCode: String): Result<Boolean> {
+        val trimmedEmail = email.trim()
+        val userIndex = _users.value.indexOfFirst { it.email == trimmedEmail }
 
+        if (userIndex != -1) {
+            val updatedList = _users.value.toMutableList()
+            val user = updatedList[userIndex]
+            updatedList[userIndex] = user.copy(isEmailVerified = true)
+            _users.value = updatedList
+            return Result.success(true)
+        }
+        return Result.failure(Exception("Usuario no encontrado"))
+    }
 
     private fun fetchUsers(): List<User> {
+
         return listOf(
             User(
                 id = "1",
@@ -69,8 +82,10 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
                 completedServices = 12,
                 totalPoints = 1250,
                 rating = 4.5,
-                memberSince = 2
+                memberSince = 2,
+                isEmailVerified = true
             ),
+
             User(
                 id = "2",
                 name1 = "Lina",
@@ -85,8 +100,10 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
                 completedServices = 15,
                 totalPoints = 1650,
                 rating = 4.7,
-                memberSince = 3
+                memberSince = 3,
+                isEmailVerified = true
             ),
+
             User(
                 id = "3",
                 name1 = "Diego",
@@ -101,8 +118,10 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
                 completedServices = 7,
                 totalPoints = 1000,
                 rating = 4.9,
-                memberSince = 2
+                memberSince = 2,
+                isEmailVerified = true
             ),
+
             User(
                 id = "4",
                 name1 = "Carlos",
@@ -117,8 +136,10 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
                 role = UserRole.ADMIN,
                 pendingReviews = 12,
                 approvedReviews = 20,
-                rejectReviews = 6
+                rejectReviews = 6,
+                isEmailVerified = true
             )
+
         )
     }
 }
