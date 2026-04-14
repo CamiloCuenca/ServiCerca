@@ -11,6 +11,11 @@ import androidx.navigation.toRoute
 import com.servicerca.app.ui.chat.ChatListScreen
 import com.servicerca.app.ui.chat.ChatScreen
 import com.servicerca.app.ui.dashboard.user.HomeUserScreen
+<<<<<<< Updated upstream
+=======
+import com.servicerca.app.ui.dashboard.moderador.ModeratorPanelScreen
+import com.servicerca.app.ui.dashboard.moderador.userProfile.ManageUserScreen
+>>>>>>> Stashed changes
 import com.servicerca.app.ui.profile.DeleteProfileScreen
 import com.servicerca.app.ui.profile.EditProfileScreen
 import com.servicerca.app.ui.profile.InsigniasScreen
@@ -210,6 +215,17 @@ fun UserNavigation(
         composable("Chat/{chatId}") {
             ChatScreen(onBack = { navController.popBackStack()})
         }
+
+
+        composable<DashboardRoutes.ManageUser> {
+            ManageUserScreen(
+                onSeeProfile = {
+                    navController.navigate("userDetail/{userId}")
+                }
+            )
+        }
+
+
 
 
 
