@@ -31,7 +31,8 @@ import com.servicerca.app.ui.profile.StatisticsSection
 fun UserProfileManage(
     viewModel: UserProfileManageViewModel = hiltViewModel()
 ) {
-    val user by viewModel.user.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
+    val user = uiState.user
 
     Column(
         modifier = Modifier
@@ -60,11 +61,19 @@ fun UserProfileManage(
         )
 
 
-        CardLevel()
+        // Tarjeta de Nivel (con datos dinámicos)
+        CardLevel(
+            level = uiState.level,
+            levelName = uiState.levelName,
+            currentXp = uiState.totalXp,
+            nextLevelXp = uiState.xpRequiredForNextLevel,
+            progress = uiState.progress,
+            remainingXp = (uiState.xpRequiredForNextLevel - uiState.totalXp).coerceAtLeast(0)
+        )
 
-
+        // Sección de Estadísticas
         StatisticsSection(
-            user = user
+            uiState = uiState
         )
     }
 }
