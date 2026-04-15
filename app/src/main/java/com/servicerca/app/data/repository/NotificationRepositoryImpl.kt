@@ -39,10 +39,15 @@ class NotificationRepositoryImpl @Inject constructor() : NotificationRepository 
         _notifications.value = emptyList()
     }
 
+    override suspend fun addNotification(notification: Notification) {
+        _notifications.value = listOf(notification) + _notifications.value
+    }
+
     private fun fetchInitialNotifications(): List<Notification> {
         return listOf(
             Notification(
                 id = "1",
+                userId = "1",
                 title = "Nueva solicitud de servicio",
                 message = "Has recibido una nueva propuesta para el proyecto \"Reparación Eléctrica\".",
                 date = "5 min",
@@ -51,6 +56,7 @@ class NotificationRepositoryImpl @Inject constructor() : NotificationRepository 
             ),
             Notification(
                 id = "2",
+                userId = "1",
                 title = "Comentario recibido",
                 message = "\"Excelente trabajo, muy profesional y a tiempo.\"",
                 date = "2 h",
@@ -59,6 +65,7 @@ class NotificationRepositoryImpl @Inject constructor() : NotificationRepository 
             ),
             Notification(
                 id = "3",
+                userId = "1",
                 title = "Servicio verificado",
                 message = "El usuario @juan_perez ha confirmado tu servicio \"Plomería general\".",
                 date = "Ayer",
@@ -67,6 +74,7 @@ class NotificationRepositoryImpl @Inject constructor() : NotificationRepository 
             ),
             Notification(
                 id = "4",
+                userId = "1",
                 title = "Publicación rechazada",
                 message = "Tu publicación \"Jardinería\" no cumple con las normativas.",
                 date = "12 oct",
@@ -75,6 +83,7 @@ class NotificationRepositoryImpl @Inject constructor() : NotificationRepository 
             ),
             Notification(
                 id = "5",
+                userId = "1",
                 title = "Nueva publicación",
                 message = "¡Tu publicación \"Mantenimiento de PC\" ya está disponible!",
                 date = "10 oct",
@@ -83,21 +92,13 @@ class NotificationRepositoryImpl @Inject constructor() : NotificationRepository 
             ),
             Notification(
                 id = "6",
+                userId = "1",
                 title = "Nueva publicación",
-                message = "¡Tu publicación \"Mantenimiento de PC\" ya está disponible! Notification(\n" +
-                        "                id = \"5\",\n" +
-                        "                title = \"Nueva publicación\",\n" +
-                        "                message = \"¡Tu publicación \\\"Mantenimiento de PC\\\" ya está disponible!\",\n" +
-                        "                date = \"10 oct\",\n" +
-                        "                imageRes = R.drawable.nueva_publicacion,\n" +
-                        "                isRead = true\n" +
-                        "            )PRUEBA",
+                message = "¡Tu publicación \"Mantenimiento de PC\" ya está disponible!",
                 date = "10 oct",
                 imageRes = R.drawable.nueva_publicacion,
                 isRead = true
             )
-
-
         )
     }
 }

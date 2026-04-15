@@ -31,20 +31,14 @@ class ModeratorPanelViewModel @Inject constructor(
     private var currentJob: Job? = null
 
     init {
-        loadServicesByTab(0)
+        loadPendingServices()
     }
 
-    fun loadServicesByTab(tabIndex: Int) {
+    fun loadPendingServices() {
         currentJob?.cancel()
         currentJob = viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
-            val status = when (tabIndex) {
-                0 -> ServiceStatus.PENDING
-                1 -> ServiceStatus.IN_PROGRESS
-                2 -> ServiceStatus.RESOLVED
-                else -> ServiceStatus.PENDING
-            }
-            serviceRepository.findByStatus(status).collectLatest { servicesList ->
+            serviceRepository.findByStatus(ServiceStatus.PENDING).collectLatest { servicesList ->
                 _uiState.update {
                     it.copy(
                         services = servicesList,

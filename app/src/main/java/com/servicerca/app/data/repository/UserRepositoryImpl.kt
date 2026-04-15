@@ -22,7 +22,14 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
     }
 
     override fun save(user: User) {
-        _users.value += user
+        val userIndex = _users.value.indexOfFirst { it.id == user.id }
+        if (userIndex != -1) {
+            val updatedList = _users.value.toMutableList()
+            updatedList[userIndex] = user
+            _users.value = updatedList
+        } else {
+            _users.value += user
+        }
     }
 
     override fun findById(id: String): User? {
@@ -87,6 +94,27 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
         return Result.failure(Exception("Error al restablecer contraseña: Usuario no encontrado"))
     }
 
+    override suspend fun updatePassword(
+        userId: String,
+        currentPassword: String,
+        newPassword: String
+    ): Result<Unit> {
+        val userIndex = _users.value.indexOfFirst { it.id == userId }
+        if (userIndex == -1) {
+            return Result.failure(Exception("Usuario no encontrado"))
+        }
+
+        val user = _users.value[userIndex]
+        if (user.password != currentPassword) {
+            return Result.failure(Exception("La contraseña actual es incorrecta"))
+        }
+
+        val updatedList = _users.value.toMutableList()
+        updatedList[userIndex] = user.copy(password = newPassword)
+        _users.value = updatedList
+        return Result.success(Unit)
+    }
+
     private fun fetchUsers(): List<User> {
 
 
@@ -142,6 +170,9 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
                 totalPoints = 1000,
                 rating = 4.9,
                 memberSince = 2,
+                pendingReviews = 8,
+                approvedReviews = 15,
+                rejectReviews = 3,
                 isEmailVerified = true
             ),
 

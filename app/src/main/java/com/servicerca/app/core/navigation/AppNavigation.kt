@@ -211,8 +211,9 @@ private fun MainNavigation(
 
     // Determina la pantalla de inicio según el rol del usuario
     val startDestination = when (session.role) {
-        UserRole.ADMIN -> DashboardRoutes.HomeModerator
+        UserRole.ADMIN, UserRole.MODERATOR -> DashboardRoutes.HomeModerator
         UserRole.USER -> DashboardRoutes.HomeUser
+        else -> DashboardRoutes.HomeUser
     }
 
     NavHost(

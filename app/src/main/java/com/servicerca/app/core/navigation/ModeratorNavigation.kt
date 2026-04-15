@@ -38,7 +38,12 @@ fun ModeratorNavigation(
             DetailsVerificationModeratorScreen(
                 serviceId = serviceId, // Pasa el ID a la pantalla
                 onBack = { navController.popBackStack() },
-                onRejectClick = { navController.navigate("rejectReason/$serviceId") }
+                onRejectClick = { navController.navigate("rejectReason/$serviceId") },
+                onApproveSuccess = {
+                    navController.navigate(DashboardRoutes.HomeModerator) {
+                        popUpTo(DashboardRoutes.HomeModerator) { inclusive = true }
+                    }
+                }
             )
         }
 
@@ -46,19 +51,28 @@ fun ModeratorNavigation(
             val serviceId = backStackEntry.arguments?.getString("serviceId")
             RejectReasonScreen(
                 serviceId = serviceId, // Pasa el ID a la pantalla
-                onBack = { navController.popBackStack() }
+                onBack = { navController.popBackStack() },
+                onRejectSuccess = {
+                    navController.navigate(DashboardRoutes.HomeModerator) {
+                        popUpTo(DashboardRoutes.HomeModerator) { inclusive = true }
+                    }
+                }
             )
         }
 
         composable<DashboardRoutes.ProfileModerator> {
-            ProfileModerator(navController = navController,
-                onLogout = {
-                    // Delegar la acción de logout al callback pasado desde la pantalla raíz
-                    onLogout()
-                }
-
+            ProfileModerator(
+                navController = navController,
+                onLogout = { onLogout() },
+                onUpdatePassword = { navController.navigate("updatePassword") }
             )
+        }
 
+        composable("updatePassword") {
+            UpdatePasswordScreen(
+                onBack = { navController.popBackStack() },
+                onLogout = { onLogout() }
+            )
         }
 
         composable<DashboardRoutes.Historial> {

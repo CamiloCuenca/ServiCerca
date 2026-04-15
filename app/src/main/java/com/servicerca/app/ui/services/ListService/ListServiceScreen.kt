@@ -51,8 +51,8 @@ fun ListServiceScreen(
                 description = s.description,
                 status = when (s.status) {
                     com.servicerca.app.domain.model.ServiceStatus.PENDING -> "Pendiente"
-                    com.servicerca.app.domain.model.ServiceStatus.IN_PROGRESS -> "En progreso"
-                    com.servicerca.app.domain.model.ServiceStatus.RESOLVED -> "Resuelto"
+                    com.servicerca.app.domain.model.ServiceStatus.APPROVED -> "Aprobado"
+                    com.servicerca.app.domain.model.ServiceStatus.REJECTED -> "Rechazado"
                 },
                 imageRes = R.drawable.service,
                 imageUrl = s.photoUrl

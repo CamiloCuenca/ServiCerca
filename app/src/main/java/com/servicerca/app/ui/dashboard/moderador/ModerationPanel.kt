@@ -37,11 +37,6 @@ fun ModeratorPanelScreen (navController: NavHostController,
                           onBack: () -> Unit,
                           viewModel: ModeratorPanelViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsState()
-    var selectedTab by remember { mutableStateOf(0) }
-
-    LaunchedEffect(selectedTab) {
-        viewModel.loadServicesByTab(selectedTab)
-    }
 
         Column(
             modifier = Modifier
@@ -51,13 +46,6 @@ fun ModeratorPanelScreen (navController: NavHostController,
                 .padding(horizontal = 24.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-
-            ServiceTabRow(
-                selectedTabIndex = selectedTab,
-                onTabSelected = { index ->
-                    selectedTab = index
-                }
-            )
 
             // Dentro del Column...
 

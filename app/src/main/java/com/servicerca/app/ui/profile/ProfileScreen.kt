@@ -131,7 +131,14 @@ fun ProfileScreen(
             }
 
             // Nivel y Gestión
-            CardLevel()
+            CardLevel(
+                level = uiState.level,
+                levelName = uiState.levelName,
+                currentXp = uiState.totalXp,
+                nextLevelXp = uiState.xpRequiredForNextLevel,
+                progress = uiState.progress,
+                remainingXp = (uiState.xpRequiredForNextLevel - uiState.totalXp).coerceAtLeast(0)
+            )
 
             ManageServicesCard(onClick = onListService)
 
@@ -150,7 +157,7 @@ fun ProfileScreen(
             InsigniasSection(onInsignias)
 
             // Estadísticas
-            StatisticsSection(user)
+            StatisticsSection(uiState)
 
             // Botones de Configuración
             AccountSettingsSection(onEditProflie, onUpdatePassword, onDeleteProfile)
@@ -204,7 +211,8 @@ fun InsigniaItem(imageRes: Int, labelRes: Int, shadowColor: Color) {
 }
 
 @Composable
-fun StatisticsSection(user: com.servicerca.app.domain.model.User?) {
+fun StatisticsSection(uiState: ProfileUiState) {
+    val user = uiState.user
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(text = stringResource(R.string.statistic), fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 8.dp, bottom = 8.dp))
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
@@ -215,7 +223,7 @@ fun StatisticsSection(user: com.servicerca.app.domain.model.User?) {
             )
             CardStatistics(
                 R.drawable.puntos_totales,
-                user?.totalPoints?.toString() ?: "0",
+                uiState.totalXp.toString(),
                 stringResource(R.string.total_points)
             )
         }
@@ -223,7 +231,7 @@ fun StatisticsSection(user: com.servicerca.app.domain.model.User?) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             CardStatistics(
                 R.drawable.calificacion,
-                user?.rating?.toString() ?: "0.0",
+                String.format("%.1f", uiState.averageRating),
                 stringResource(R.string.average_rating)
             )
             CardStatistics(

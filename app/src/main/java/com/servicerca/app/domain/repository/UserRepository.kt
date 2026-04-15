@@ -12,4 +12,5 @@ interface UserRepository {
     suspend fun verifyEmail(email: String, otpCode: String): Result<Boolean>
     suspend fun initiatePasswordRecovery(email: String): Result<Unit>
     suspend fun resetPassword(email: String, code: String, newPassword: String): Result<Unit>
+    suspend fun updatePassword(userId: String, currentPassword: String, newPassword: String): Result<Unit>
 }

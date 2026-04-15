@@ -22,20 +22,27 @@ import com.servicerca.app.R
 import com.servicerca.app.core.components.progressBar.XpBar
 
 @Composable
-fun CardLevel(){
+fun CardLevel(
+    level: Int = 1,
+    levelName: String = "Novato",
+    currentXp: Int = 0,
+    nextLevelXp: Int = 500,
+    progress: Float = 0f,
+    remainingXp: Int = 500
+) {
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 6.dp),
+            defaultElevation = 6.dp
+        ),
         modifier = Modifier
             .size(width = 340.dp, height = 160.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
-    ){
-        Column(
-        ) {
+    ) {
+        Column {
             Text(
-                text = stringResource(R.string.level),
+                text = "Nivel $level",
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Start,
@@ -51,14 +58,14 @@ fun CardLevel(){
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = stringResource(R.string.job),
+                    text = levelName,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onBackground
                 )
 
                 Text(
-                    text = stringResource(R.string.xp),
+                    text = "$currentXp / $nextLevelXp XP",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1
@@ -66,16 +73,22 @@ fun CardLevel(){
             }
         }
         XpBar(
-            progress = 0.625f, // 65% de progreso
-            Modifier.padding(start = 15.dp, end = 15.dp)
+            progress = progress,
+            modifier = Modifier.padding(start = 15.dp, end = 15.dp)
         )
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .padding(bottom = 15.dp)
         ) {
+            val message = if (progress >= 1f && level >= 5) {
+                "¡Has alcanzado el nivel máximo!"
+            } else {
+                "¡Sólo $remainingXp puntos más para el siguiente nivel!"
+            }
             Text(
-                text = stringResource(R.string.mesaage_level),
+                text = message,
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -83,7 +96,6 @@ fun CardLevel(){
                     .padding(8.dp)
             )
         }
-
     }
 }
 

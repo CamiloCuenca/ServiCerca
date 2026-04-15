@@ -95,7 +95,7 @@ fun ProviderRow(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = "$rating ($reviewCount reseñas)",
+                        text = "${String.format("%.1f", rating)} ($reviewCount reseñas)",
                         fontSize = 12.sp,
                         color = Color.Gray
                     )

@@ -13,4 +13,6 @@ interface NotificationRepository {
     suspend fun deleteNotification(id: String)
     
     suspend fun clearAll()
+
+    suspend fun addNotification(notification: Notification)
 }
