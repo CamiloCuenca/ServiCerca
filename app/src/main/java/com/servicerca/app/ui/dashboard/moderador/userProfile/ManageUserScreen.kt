@@ -97,7 +97,7 @@ fun ManageUserScreen(
                 CardProfileManage(
                     name = "${user.name1} ${user.lastname1}",
                     email = user.email,
-                    imageProfile = R.drawable.foto_perfil, // Debería cargarse desde URL si CardProfileManage lo soporta
+                    imageProfile = user.profilePictureUrl,
                     onSeeProfile = { onSeeProfile(user.id) }
                 )
             }
