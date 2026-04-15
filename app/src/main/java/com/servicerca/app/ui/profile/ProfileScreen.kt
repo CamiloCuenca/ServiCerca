@@ -131,7 +131,14 @@ fun ProfileScreen(
             }
 
             // Nivel y Gestión
-            CardLevel()
+            CardLevel(
+                level = uiState.level,
+                levelName = uiState.levelName,
+                currentXp = uiState.totalXp,
+                nextLevelXp = uiState.xpRequiredForNextLevel,
+                progress = uiState.progress,
+                remainingXp = (uiState.xpRequiredForNextLevel - uiState.totalXp).coerceAtLeast(0)
+            )
 
             ManageServicesCard(onClick = onListService)
 
@@ -216,7 +223,7 @@ fun StatisticsSection(uiState: ProfileUiState) {
             )
             CardStatistics(
                 R.drawable.puntos_totales,
-                user?.totalPoints?.toString() ?: "0",
+                uiState.totalXp.toString(),
                 stringResource(R.string.total_points)
             )
         }
