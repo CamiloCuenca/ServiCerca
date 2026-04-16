@@ -87,15 +87,34 @@ fun MyServiceCard(
                         text = service.title,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-                        color =  MaterialTheme.colorScheme.onSurface
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.weight(1f),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    val statusColor = when (service.status) {
+                        "Aprobado" -> Color(0xFFE8F5E9)
+                        "Pendiente" -> Color(0xFFFFF3E0)
+                        "Rechazado" -> Color(0xFFFFEBEE)
+                        "Eliminado" -> Color(0xFFECEFF1)
+                        else -> Color(0xFFF1F3F5)
+                    }
+                    val contentColor = when (service.status) {
+                        "Aprobado" -> Color(0xFF2E7D32)
+                        "Pendiente" -> Color(0xFFEF6C00)
+                        "Rechazado" -> Color(0xFFC62828)
+                        "Eliminado" -> Color(0xFF455A64)
+                        else -> MaterialTheme.colorScheme.onSurface
+                    }
+
                     Surface(
-                        color = Color(0xFFE8F5E9),
+                        color = statusColor,
                         shape = RoundedCornerShape(12.dp)
                     ) {
                         Text(
                             text = service.status,
-                            color =  MaterialTheme.colorScheme.onSurface,
+                            color = contentColor,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Medium,
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
@@ -111,49 +130,51 @@ fun MyServiceCard(
                     overflow = TextOverflow.Ellipsis
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                HorizontalDivider(color = Color(0xFFF1F3F5))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    TextButton(
-                        onClick = onEdit,
-                        contentPadding = PaddingValues(0.dp)
+                if (service.status != "Eliminado") {
+                    HorizontalDivider(color = Color(0xFFF1F3F5))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                imageVector = Icons.Default.Edit,
-                                contentDescription = "Editar",
-                                modifier = Modifier.size(18.dp),
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text(
-                                text = stringResource(id = R.string.edit_button),
-                                color = MaterialTheme.colorScheme.primary,
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Bold
-                            )
+                        TextButton(
+                            onClick = onEdit,
+                            contentPadding = PaddingValues(0.dp)
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(
+                                    imageVector = Icons.Default.Edit,
+                                    contentDescription = "Editar",
+                                    modifier = Modifier.size(18.dp),
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    text = stringResource(id = R.string.edit_button),
+                                    color = MaterialTheme.colorScheme.primary,
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
                         }
-                    }
-                    TextButton(
-                        onClick = onDelete,
-                        contentPadding = PaddingValues(0.dp)
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                imageVector = Icons.Default.Delete,
-                                contentDescription = "Eliminar",
-                                modifier = Modifier.size(18.dp),
-                                tint = Color(0xFFEF5350)
-                            )
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text(
-                                text = stringResource(id = R.string.delete_button),
-                                color = Color(0xFFEF5350),
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Bold
-                            )
+                        TextButton(
+                            onClick = onDelete,
+                            contentPadding = PaddingValues(0.dp)
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(
+                                    imageVector = Icons.Default.Delete,
+                                    contentDescription = "Eliminar",
+                                    modifier = Modifier.size(18.dp),
+                                    tint = Color(0xFFEF5350)
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    text = stringResource(id = R.string.delete_button),
+                                    color = Color(0xFFEF5350),
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
                         }
                     }
                 }

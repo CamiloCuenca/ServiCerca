@@ -10,24 +10,37 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class ListServiceViewModel @Inject constructor(
 	private val serviceRepository: ServiceRepository,
 	private val sessionDataStore: SessionDataStore
 ) : ViewModel() {
 
-	private val _services = MutableStateFlow<List<Service>>(emptyList())
-	val services: StateFlow<List<Service>> = _services.asStateFlow()
-
-	init {
-		loadUserServices()
-	}
+	val services: StateFlow<List<Service>> = sessionDataStore.sessionFlow
+		.flatMapLatest { session ->
+			val ownerId = session?.userId
+			if (!ownerId.isNullOrBlank()) {
+				serviceRepository.findByOwnerId(ownerId)
+			} else {
+				flowOf(emptyList())
+			}
+		}.stateIn(
+			scope = viewModelScope,
+			started = SharingStarted.WhileSubscribed(5000),
+			initialValue = emptyList()
+		)
 
 	fun refresh() {
-		loadUserServices()
+		// Con la implementación reactiva, el refresh no suele ser necesario
+		// pero si el repositorio no es reactivo se podría forzar algo aquí.
 	}
 
 	fun deleteService(id: String) {
@@ -36,22 +49,6 @@ class ListServiceViewModel @Inject constructor(
 				serviceRepository.delete(id)
 			} catch (_: Exception) {
 				// Ignorar errores locales
-			}
-			// Refrescar la lista local
-			loadUserServices()
-		}
-	}
-
-	private fun loadUserServices() {
-		viewModelScope.launch {
-			val session = sessionDataStore.sessionFlow.first()
-			val ownerId = session?.userId
-			if (!ownerId.isNullOrBlank()) {
-				// Obtener servicios desde el repositorio filtrados por owner
-				val ownerServicesFlow = serviceRepository.findByOwnerId(ownerId)
-				_services.value = ownerServicesFlow.first()
-			} else {
-				_services.value = emptyList()
 			}
 		}
 	}
