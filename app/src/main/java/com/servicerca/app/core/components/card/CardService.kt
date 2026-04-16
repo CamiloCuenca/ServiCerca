@@ -318,22 +318,4 @@ fun CardService( // TODO @CAMILOCUENCA luego de tener el firestorage ponerle el 
                 }
             }
         }
-    }
-
-
-@Preview(showBackground = true)
-@Composable
-fun CardServicePreview() {
-    ServiCercaTheme {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color(0xFFEDEDED)),
-            contentAlignment = Alignment.Center
-        ) {
-            CardService(
-                onRequestClick = {}
-            )
-        }
-    }
-}
+    }}
