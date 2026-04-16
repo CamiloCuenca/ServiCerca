@@ -25,7 +25,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.servicerca.app.R
 import com.servicerca.app.core.components.card.CardLevel
 import com.servicerca.app.core.components.images.ProfileImage
-import com.servicerca.app.ui.profile.StatisticsSection
 
 @Composable
 fun UserProfileManage(

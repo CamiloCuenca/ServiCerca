@@ -72,14 +72,21 @@ fun HomeUserScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            items(services) { serviceWithRating ->
+            items(
+                items = services,
+                key = { it.service.id }
+            ) { serviceWithRating ->
                 CardService(
                     title = serviceWithRating.service.title,
                     category = serviceWithRating.service.type,
                     priceRange = "$${serviceWithRating.service.priceMin.toInt()} - $${serviceWithRating.service.priceMax.toInt()}",
                     rating = String.format("%.1f", serviceWithRating.averageRating),
-                    level = "EXPERTO",
+                    level = serviceWithRating.ownerLevel,
                     photoUrl = serviceWithRating.service.photoUrl,
+                    isBookmarked = serviceWithRating.isBookmarked,
+                    onBookmarkClick = {
+                        viewModel.onBookmarkClick(serviceWithRating.service.id)
+                    },
                     onRequestClick = { onDetailClick(serviceWithRating.service.id) }
                 )
             }

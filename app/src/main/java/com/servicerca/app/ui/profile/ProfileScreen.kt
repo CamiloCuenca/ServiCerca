@@ -146,7 +146,7 @@ fun ProfileScreen(
                 onClick = onListInteresting,
                 color = MaterialTheme.colorScheme.surface,
                 borderColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onSecondary,
+                contentColor = MaterialTheme.colorScheme.onSurface,
                 borderWidth = 2.dp,
                 title = stringResource(R.string.interesting_posts_title),
                 description = stringResource(R.string.interesting_posts_description),
@@ -236,7 +236,11 @@ fun StatisticsSection(uiState: ProfileUiState) {
             )
             CardStatistics(
                 R.drawable.tiempo_miembro,
-                if (user != null) stringResource(R.string.member_time_format, user.memberSince) else "-",
+                if (user != null) {
+                    val currentYear = java.time.Year.now().value
+                    val years = (currentYear - user.memberSince).coerceAtLeast(0)
+                    stringResource(R.string.member_time_format, years)
+                } else "-",
                 stringResource(R.string.member_time)
             )
         }

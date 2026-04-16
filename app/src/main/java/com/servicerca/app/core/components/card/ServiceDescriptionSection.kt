@@ -40,7 +40,7 @@ fun ServiceDescriptionSection(
             text = "Sobre el servicio",
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
-            color = Color(0xFF1A1C1E)
+            color = MaterialTheme.colorScheme.onBackground
         )
 
         Spacer(modifier = Modifier.height(8.dp))

@@ -99,14 +99,14 @@ fun UserNavigation(
             )
         }
 
-        composable("serviceList" ){
+        composable("serviceList") {
             ListServiceScreen(
-            onBackClick = { navController.popBackStack() } ,
-            onEditService = { navController.navigate("editService") },
-
-        )
-
-    }
+                onBackClick = { navController.popBackStack() },
+                onEditService = { serviceId ->
+                    navController.navigate("editService/$serviceId")
+                }
+            )
+        }
 
 
 
@@ -207,9 +207,13 @@ fun UserNavigation(
         }
 
 
-        composable("editService") {
-            EditServiceScreen(onBack = { navController.popBackStack() })
-
+        composable("editService/{serviceId}") { backStackEntry ->
+            val serviceId = backStackEntry.arguments?.getString("serviceId") ?: ""
+            EditServiceScreen(
+                serviceId = serviceId,
+                onBack = { navController.popBackStack() },
+                onSaveSuccess = { navController.popBackStack() }
+            )
         }
 
         composable("Chat/{chatId}") {

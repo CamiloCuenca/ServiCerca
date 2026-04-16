@@ -1,5 +1,6 @@
 package com.servicerca.app.ui.profile
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.servicerca.app.core.utils.RequestResult
@@ -7,17 +8,20 @@ import com.servicerca.app.core.utils.ValidatedField
 import com.servicerca.app.data.datastore.SessionDataStore
 import com.servicerca.app.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
 class EditProfileViewModel @Inject constructor(
     private val userRepository: UserRepository,
-    private val sessionDataStore: SessionDataStore
+    private val sessionDataStore: SessionDataStore,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     // ── Campos del formulario ──────────────────────────────────────────────
@@ -168,7 +172,16 @@ class EditProfileViewModel @Inject constructor(
         _saveResult.value = null
     }
 
-    fun onPictureChanged(url: String) {
-        _profilePictureUrl.value = url
+    fun onPictureChanged(imageBytes: ByteArray) {
+        viewModelScope.launch {
+            try {
+                val session = sessionDataStore.sessionFlow.firstOrNull() ?: return@launch
+                val cacheFile = File(context.cacheDir, "profile_edit_${session.userId}.jpg")
+                cacheFile.writeBytes(imageBytes)
+                _profilePictureUrl.value = "file://${cacheFile.absolutePath}"
+            } catch (e: Exception) {
+                // Manejar error si es necesario
+            }
+        }
     }
 }

@@ -134,6 +134,28 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
         return Result.success(Unit)
     }
 
+    override suspend fun toggleInterestingService(userId: String, serviceId: String): Result<Boolean> {
+        val userIndex = _users.value.indexOfFirst { it.id == userId }
+        if (userIndex == -1) {
+            return Result.failure(Exception("Usuario no encontrado"))
+        }
+
+        val usersUpdated = _users.value.toMutableList()
+        val user = usersUpdated[userIndex]
+        val alreadyInList = serviceId in user.listInteresting
+
+        val nextInteresting = if (alreadyInList) {
+            user.listInteresting - serviceId
+        } else {
+            user.listInteresting + serviceId
+        }
+
+        usersUpdated[userIndex] = user.copy(listInteresting = nextInteresting)
+        _users.value = usersUpdated
+
+        return Result.success(!alreadyInList)
+    }
+
     private fun fetchUsers(): List<User> {
 
 
@@ -152,26 +174,28 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
                 completedServices = 12,
                 totalPoints = 1250,
                 rating = 4.5,
-                memberSince = 2,
-                isEmailVerified = true
+                memberSince = 2024,
+                isEmailVerified = true,
+                listInteresting = listOf("1", "6")
             ),
 
             User(
                 id = "2",
-                name1 = "Lina",
+                name1 = "Sienna",
                 name2 = "Maria",
                 lastname1 = "Martinez",
-                lastname2 = "Fernandez",
+                lastname2 = "Toro",
                 city = "Pereira",
                 address = "Calle 456",
                 email = "maria@email.com",
                 password = "222222",
-                profilePictureUrl = "https://picsum.photos/200?random=2",
+                profilePictureUrl = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh3ixabRmfyRl92F78X1RNNDj2hhogCUofBWTVX977EHxGS4-BMcuI7Y39Y3ZjK3tJPANYHe8AiIyjv1CeEsNzjIcCaj4aQAklofVLW73gv-dqMxGJEUqYa-poX6UkJW5Z_YBAfSk9BrB8YHT5F4Rz3n7bxxMnBEVyNpi8RKfnVhBbrgEmqL5yVtC70CKU/s320/WhatsApp%20Image%202026-04-16%20at%2002.32.41.jpeg",
                 completedServices = 15,
                 totalPoints = 1650,
                 rating = 4.7,
-                memberSince = 3,
-                isEmailVerified = true
+                memberSince = 2023,
+                isEmailVerified = true,
+                listInteresting = listOf("3", "6")
             ),
 
             User(
@@ -182,17 +206,18 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
                 lastname2 = "Lothbrok",
                 city = "Armenia",
                 address = "Calle 777",
-                email = "diego@gmail.com",
+                email = "diego@email.com",
                 password = "111111",
                 profilePictureUrl = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEga-7mA9kd7EnROYLMEYwURS2xlW1uWK8eWC8F6X3RFuCrJQLnd5eJ8KNOqXeVNuUVM0c4X31Uoz7NlQKJ4QxFfF6EDWAwgT6y1F_HgZ23As74U0wOHy14ClTNC9kP5KJHgPouBaogO5IpYsvxGmDCYlJ9do4tNb9eb6fYBMMSIG3zEcAN-7y2lIrvTwOyb/s320/WhatsApp%20Image%202026-03-04%20at%2023.04.58.jpeg",
                 completedServices = 7,
                 totalPoints = 1000,
                 rating = 4.9,
-                memberSince = 2,
+                memberSince = 2024,
                 pendingReviews = 8,
                 approvedReviews = 15,
                 rejectReviews = 3,
-                isEmailVerified = true
+                isEmailVerified = true,
+                listInteresting = listOf("3", "6")
             ),
 
             User(
@@ -207,10 +232,12 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
                 password = "333333",
                 profilePictureUrl = "https://i.pinimg.com/originals/ae/90/f5/ae90f5c41e36d420e8175f072367ead9.jpg",
                 role = UserRole.ADMIN,
+                memberSince = 2022,
                 pendingReviews = 12,
                 approvedReviews = 20,
                 rejectReviews = 6,
-                isEmailVerified = true
+                isEmailVerified = true,
+                listInteresting = listOf("3", "6")
             ),
 
             User(

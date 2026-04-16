@@ -43,11 +43,12 @@ fun CardService( // TODO @CAMILOCUENCA luego de tener el firestorage ponerle el 
     isVerified: Boolean = true,
     level: String = "EXPERTO",
     photoUrl: String? = null,
+    isBookmarked: Boolean = false,
+    onBookmarkClick: () -> Unit = {},
     onRequestClick: () -> Unit = {}
 ) {
 
     var isSelectedLike by remember { mutableStateOf(false) }
-    var isSelectedPin by remember { mutableStateOf(false) }
 
     ElevatedCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
@@ -165,7 +166,6 @@ fun CardService( // TODO @CAMILOCUENCA luego de tener el firestorage ponerle el 
                     )
                 }
             }
-            }
 
             Column(
                 modifier = Modifier
@@ -236,10 +236,10 @@ fun CardService( // TODO @CAMILOCUENCA luego de tener el firestorage ponerle el 
                 // Precio y nivel
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.Bottom
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Column {
+                    Column(modifier = Modifier.weight(1f)) {
                         Text(
                             text = "PRECIO ESTIMADO",
                             fontSize = 10.sp,
@@ -248,16 +248,18 @@ fun CardService( // TODO @CAMILOCUENCA luego de tener el firestorage ponerle el 
                         )
                         Text(
                             text = priceRange,
-                            fontSize = 24.sp,
+                            fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurface,
+                            maxLines = 1
                         )
                     }
 
                     LevelTag(
                         text = level,
                         backgroundColor = Color(0xFFF3E5F5),
-                        contentColor = Color(0xFF9C27B0)
+                        contentColor = Color(0xFF9C27B0),
+                        modifier = Modifier.padding(top = 8.dp)
                     )
                 }
 
@@ -297,8 +299,8 @@ fun CardService( // TODO @CAMILOCUENCA luego de tener el firestorage ponerle el 
                                     contentDescription = null,
                                 )
                             },
-                            isSelected = isSelectedPin,
-                            onClick = { isSelectedPin = !isSelectedPin }
+                            isSelected = isBookmarked,
+                            onClick = onBookmarkClick
                         )
 
                         PrimaryButton(
@@ -316,22 +318,4 @@ fun CardService( // TODO @CAMILOCUENCA luego de tener el firestorage ponerle el 
                 }
             }
         }
-    }
-
-
-@Preview(showBackground = true)
-@Composable
-fun CardServicePreview() {
-    ServiCercaTheme {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color(0xFFEDEDED)),
-            contentAlignment = Alignment.Center
-        ) {
-            CardService(
-                onRequestClick = {}
-            )
-        }
-    }
-}
+    }}
