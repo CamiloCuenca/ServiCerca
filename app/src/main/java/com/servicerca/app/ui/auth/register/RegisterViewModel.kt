@@ -6,7 +6,6 @@ import com.servicerca.app.core.utils.RequestResult
 import com.servicerca.app.core.utils.ValidatedField
 import com.servicerca.app.domain.model.User
 import com.servicerca.app.domain.repository.UserRepository
-import com.servicerca.app.domain.model.UserRole
 import dagger.hilt.android.lifecycle.HiltViewModel
 
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -148,17 +147,12 @@ class RegisterViewModel @Inject constructor(
                     name2 = SecondName.value,
                     lastname1 = Lastname.value,
                     lastname2 = SecondLastname.value,
-                    email = email.value.trim(),
-
-                    password = password.value,
-                    address = address.value,
                     city = city.value,
+
+                    address = address.value,
+                    email = email.value.trim(),
+                    password = password.value,
                     profilePictureUrl = "https://cdn-icons-png.flaticon.com/512/149/149071.png", // Avatar por defecto
-                    memberSince = java.time.Year.now().value, // Año de ingreso actual
-                    role = UserRole.USER,
-                    completedServices = 0,
-                    totalPoints = 0,
-                    rating = 0.0
                 )
 
                 userRepository.save(newUser)
