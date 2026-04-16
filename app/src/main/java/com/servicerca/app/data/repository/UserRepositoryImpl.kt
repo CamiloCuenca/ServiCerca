@@ -133,7 +133,7 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
                 completedServices = 12,
                 totalPoints = 1250,
                 rating = 4.5,
-                memberSince = 2,
+                memberSince = 2024,
                 isEmailVerified = true
             ),
 
@@ -151,7 +151,7 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
                 completedServices = 15,
                 totalPoints = 1650,
                 rating = 4.7,
-                memberSince = 3,
+                memberSince = 2023,
                 isEmailVerified = true
             ),
 
@@ -169,7 +169,7 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
                 completedServices = 7,
                 totalPoints = 1000,
                 rating = 4.9,
-                memberSince = 2,
+                memberSince = 2024,
                 pendingReviews = 8,
                 approvedReviews = 15,
                 rejectReviews = 3,
@@ -188,6 +188,7 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
                 password = "333333",
                 profilePictureUrl = "https://i.pinimg.com/originals/ae/90/f5/ae90f5c41e36d420e8175f072367ead9.jpg",
                 role = UserRole.ADMIN,
+                memberSince = 2022,
                 pendingReviews = 12,
                 approvedReviews = 20,
                 rejectReviews = 6,
