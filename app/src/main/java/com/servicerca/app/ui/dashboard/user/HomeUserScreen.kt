@@ -78,7 +78,7 @@ fun HomeUserScreen(
                     category = serviceWithRating.service.type,
                     priceRange = "$${serviceWithRating.service.priceMin.toInt()} - $${serviceWithRating.service.priceMax.toInt()}",
                     rating = String.format("%.1f", serviceWithRating.averageRating),
-                    level = "EXPERTO",
+                    level = serviceWithRating.ownerLevel,
                     photoUrl = serviceWithRating.service.photoUrl,
                     onRequestClick = { onDetailClick(serviceWithRating.service.id) }
                 )

@@ -37,7 +37,9 @@ class ServiceRepositoryImpl @Inject constructor() : ServiceRepository {
     }
 
     override suspend fun delete(id: String) {
-        _services.value = _services.value.filter { it.id != id }
+        _services.value = _services.value.map {
+            if (it.id == id) it.copy(status = ServiceStatus.DELETED) else it
+        }
     }
 
     override suspend fun findById(id: String): Service? {
@@ -122,7 +124,7 @@ class ServiceRepositoryImpl @Inject constructor() : ServiceRepository {
                 location = Location(4.511738004282885, -75.69229701639676),
                 priceMin = 150000.0,
                 priceMax = 300000.0,
-                status = ServiceStatus.APPROVED,
+                status = ServiceStatus.REJECTED,
                 type = "Tecnología",
                 photoUrl = "https://cdn.pixabay.com/photo/2014/08/26/21/27/service-428539_1280.jpg",
                 ownerId = "3"

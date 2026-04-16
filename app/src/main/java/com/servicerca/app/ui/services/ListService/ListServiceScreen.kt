@@ -1,9 +1,11 @@
 package com.servicerca.app.ui.services.ListService
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -44,7 +46,18 @@ fun ListServiceScreen(
         // Use the provided ViewModel or obtain one via Hilt
         val actualViewModel = viewModel ?: hiltViewModel<ListServiceViewModel>()
         val servicesDomain by actualViewModel.services.collectAsState()
-        servicesDomain.map { s ->
+        
+        val filteredServices = servicesDomain.filter { s ->
+            when (selectedTab) {
+                0 -> s.status == com.servicerca.app.domain.model.ServiceStatus.APPROVED
+                1 -> s.status == com.servicerca.app.domain.model.ServiceStatus.PENDING
+                2 -> s.status == com.servicerca.app.domain.model.ServiceStatus.REJECTED
+                3 -> s.status == com.servicerca.app.domain.model.ServiceStatus.DELETED
+                else -> false
+            }
+        }
+
+        filteredServices.map { s ->
             MyServiceItem(
                 id = s.id,
                 title = s.title,
@@ -53,6 +66,7 @@ fun ListServiceScreen(
                     com.servicerca.app.domain.model.ServiceStatus.PENDING -> "Pendiente"
                     com.servicerca.app.domain.model.ServiceStatus.APPROVED -> "Aprobado"
                     com.servicerca.app.domain.model.ServiceStatus.REJECTED -> "Rechazado"
+                    com.servicerca.app.domain.model.ServiceStatus.DELETED -> "Eliminado"
                 },
                 imageRes = R.drawable.service,
                 imageUrl = s.photoUrl
@@ -141,23 +155,20 @@ fun ListServiceScreen(
 
     // MODAL DE CONFIRMACIÓN
     if (showDeleteModal) {
+        val actualViewModel = if (!isInPreview) (viewModel ?: hiltViewModel<ListServiceViewModel>()) else null
 
         ConfirmActionModal(
             onDismiss = { showDeleteModal = false },
-
             onConfirm = {
                 // Si tenemos un ViewModel real y un id seleccionado, eliminamos
-                if (!isInPreview) {
-                    val actualViewModel = viewModel ?: hiltViewModel<ListServiceViewModel>()
+                actualViewModel?.let { vm ->
                     selectedServiceId?.let { id ->
-                        actualViewModel.deleteService(id)
+                        vm.deleteService(id)
                     }
                 }
-
                 showDeleteModal = false
                 selectedServiceId = null
             },
-
             title = "¿Eliminar servicio?",
             textPrimary = "Cancelar",
             textSecondary = "Eliminar servicio"
@@ -190,21 +201,39 @@ fun ServiceTabRow(
         shape = RoundedCornerShape(12.dp),
         color = Color(0xFFF1F3F5)
     ) {
-
-        Row(modifier = Modifier.fillMaxSize()) {
-
+        val scrollState = rememberScrollState()
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .horizontalScroll(scrollState)
+        ) {
+            val tabWidth = 120.dp
             TabItemApp(
-                text = "Activos",
+                text = "Aprobados",
                 isSelected = selectedTabIndex == 0,
                 onClick = { onTabSelected(0) },
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.width(tabWidth)
             )
 
             TabItemApp(
-                text = "Inactivos",
+                text = "Pendientes",
                 isSelected = selectedTabIndex == 1,
                 onClick = { onTabSelected(1) },
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.width(tabWidth)
+            )
+
+            TabItemApp(
+                text = "Rechazados",
+                isSelected = selectedTabIndex == 2,
+                onClick = { onTabSelected(2) },
+                modifier = Modifier.width(tabWidth)
+            )
+
+            TabItemApp(
+                text = "Eliminados",
+                isSelected = selectedTabIndex == 3,
+                onClick = { onTabSelected(3) },
+                modifier = Modifier.width(tabWidth)
             )
         }
     }
