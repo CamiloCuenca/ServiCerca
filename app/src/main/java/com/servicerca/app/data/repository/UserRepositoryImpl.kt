@@ -115,6 +115,28 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
         return Result.success(Unit)
     }
 
+    override suspend fun toggleInterestingService(userId: String, serviceId: String): Result<Boolean> {
+        val userIndex = _users.value.indexOfFirst { it.id == userId }
+        if (userIndex == -1) {
+            return Result.failure(Exception("Usuario no encontrado"))
+        }
+
+        val usersUpdated = _users.value.toMutableList()
+        val user = usersUpdated[userIndex]
+        val alreadyInList = serviceId in user.listInteresting
+
+        val nextInteresting = if (alreadyInList) {
+            user.listInteresting - serviceId
+        } else {
+            user.listInteresting + serviceId
+        }
+
+        usersUpdated[userIndex] = user.copy(listInteresting = nextInteresting)
+        _users.value = usersUpdated
+
+        return Result.success(!alreadyInList)
+    }
+
     private fun fetchUsers(): List<User> {
 
 
@@ -134,7 +156,8 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
                 totalPoints = 1250,
                 rating = 4.5,
                 memberSince = 2024,
-                isEmailVerified = true
+                isEmailVerified = true,
+                listInteresting = listOf("1", "6")
             ),
 
             User(
@@ -152,7 +175,8 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
                 totalPoints = 1650,
                 rating = 4.7,
                 memberSince = 2023,
-                isEmailVerified = true
+                isEmailVerified = true,
+                listInteresting = listOf("3", "6")
             ),
 
             User(
@@ -173,7 +197,8 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
                 pendingReviews = 8,
                 approvedReviews = 15,
                 rejectReviews = 3,
-                isEmailVerified = true
+                isEmailVerified = true,
+                listInteresting = listOf("3", "6")
             ),
 
             User(
@@ -192,7 +217,8 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
                 pendingReviews = 12,
                 approvedReviews = 20,
                 rejectReviews = 6,
-                isEmailVerified = true
+                isEmailVerified = true,
+                listInteresting = listOf("3", "6")
             )
 
         )

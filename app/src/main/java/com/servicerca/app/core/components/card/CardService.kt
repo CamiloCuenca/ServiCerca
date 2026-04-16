@@ -43,11 +43,12 @@ fun CardService( // TODO @CAMILOCUENCA luego de tener el firestorage ponerle el 
     isVerified: Boolean = true,
     level: String = "EXPERTO",
     photoUrl: String? = null,
+    isBookmarked: Boolean = false,
+    onBookmarkClick: () -> Unit = {},
     onRequestClick: () -> Unit = {}
 ) {
 
     var isSelectedLike by remember { mutableStateOf(false) }
-    var isSelectedPin by remember { mutableStateOf(false) }
 
     ElevatedCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
@@ -164,7 +165,6 @@ fun CardService( // TODO @CAMILOCUENCA luego de tener el firestorage ponerle el 
                         modifier = Modifier.size(20.dp)
                     )
                 }
-            }
             }
 
             Column(
@@ -299,8 +299,8 @@ fun CardService( // TODO @CAMILOCUENCA luego de tener el firestorage ponerle el 
                                     contentDescription = null,
                                 )
                             },
-                            isSelected = isSelectedPin,
-                            onClick = { isSelectedPin = !isSelectedPin }
+                            isSelected = isBookmarked,
+                            onClick = onBookmarkClick
                         )
 
                         PrimaryButton(

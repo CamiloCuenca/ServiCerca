@@ -86,7 +86,7 @@ class ServiceRepositoryImpl @Inject constructor() : ServiceRepository {
                 priceMin = 30000.0,
                 priceMax = 80000.0,
                 status = ServiceStatus.PENDING,
-                type = "Plomería",
+                type = "Hogar",
                 photoUrl = "https://projectssdn.com/wp-content/uploads/elementor/thumbs/plomeria-en-general-qp5x9n6u64ze4tk30xqoxt57okaxdr7apr7hp13vds.png",
                 ownerId = "1"
             ),
