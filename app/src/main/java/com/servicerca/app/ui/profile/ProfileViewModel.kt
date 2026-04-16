@@ -154,24 +154,19 @@ class ProfileViewModel @Inject constructor(
     fun loadUserProfile() {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
-            try {
-                val session = sessionDataStore.sessionFlow.firstOrNull()
-                if (session != null) {
-                    val user = userRepository.findById(session.userId)
+            val session = sessionDataStore.sessionFlow.firstOrNull()
+            if (session != null) {
+                userRepository.users.collectLatest { allUsers ->
+                    val user = allUsers.find { it.id == session.userId }
                     _uiState.value = _uiState.value.copy(
                         user = user,
                         isLoading = false
                     )
-                } else {
-                    _uiState.value = _uiState.value.copy(
-                        isLoading = false,
-                        error = "Sesión no encontrada"
-                    )
                 }
-            } catch (e: Exception) {
+            } else {
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    error = e.message
+                    error = "Sesión no encontrada"
                 )
             }
         }
