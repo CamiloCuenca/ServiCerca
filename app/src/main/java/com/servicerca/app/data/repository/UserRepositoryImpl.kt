@@ -133,7 +133,7 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
                 completedServices = 12,
                 totalPoints = 1250,
                 rating = 4.5,
-                memberSince = 2024,
+                memberSince = java.time.Year.now().value,
                 isEmailVerified = true
             ),
 
@@ -169,7 +169,7 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
                 completedServices = 7,
                 totalPoints = 1000,
                 rating = 4.9,
-                memberSince = 2024,
+                memberSince = java.time.Year.now().value,
                 pendingReviews = 8,
                 approvedReviews = 15,
                 rejectReviews = 3,

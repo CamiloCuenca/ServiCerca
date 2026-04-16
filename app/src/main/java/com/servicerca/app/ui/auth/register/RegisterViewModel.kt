@@ -154,7 +154,7 @@ class RegisterViewModel @Inject constructor(
                     address = address.value,
                     city = city.value,
                     profilePictureUrl = "https://cdn-icons-png.flaticon.com/512/149/149071.png", // Avatar por defecto
-                    memberSince = 2024, // Año de ingreso
+                    memberSince = java.time.Year.now().value, // Año de ingreso actual
                     role = UserRole.USER,
                     completedServices = 0,
                     totalPoints = 0,
