@@ -1,7 +1,11 @@
 package com.servicerca.app.ui.profile
 
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,9 +40,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -59,6 +65,7 @@ import com.servicerca.app.core.components.input.AppTextField
 import com.servicerca.app.core.utils.RequestResult
 import com.servicerca.app.ui.theme.Error
 import com.servicerca.app.ui.theme.PrimaryLight
+import java.io.InputStream
 
 @Composable
 fun EditProfileScreen(
@@ -177,6 +184,25 @@ fun EditProfileScreen(
                             .fillMaxWidth()
                             .padding(top = 30.dp)
                     ) {
+                        val context = LocalContext.current
+                        val launcher = rememberLauncherForActivityResult(
+                            contract = ActivityResultContracts.GetContent(),
+                            onResult = { uri ->
+                                if (uri != null) {
+                                    try {
+                                        val inputStream: InputStream? = context.contentResolver.openInputStream(uri)
+                                        val bytes = inputStream?.readBytes()
+                                        inputStream?.close()
+                                        if (bytes != null) {
+                                            viewModel.onPictureChanged(bytes)
+                                        }
+                                    } catch (e: Exception) {
+                                        Log.e("EditProfile", "Error loading image", e)
+                                    }
+                                }
+                            }
+                        )
+
                         Box(
                             contentAlignment = Alignment.BottomEnd,
                             modifier = Modifier.size(150.dp)
@@ -189,6 +215,7 @@ fun EditProfileScreen(
                                 modifier = Modifier
                                     .size(150.dp)
                                     .shadow(elevation = 2.dp, shape = CircleShape)
+                                    .clickable { launcher.launch("image/*") }
                             ) {
                                 AsyncImage(
                                     model = profilePictureUrl,
@@ -202,7 +229,7 @@ fun EditProfileScreen(
 
                             // Botón cámara
                             IconButton(
-                                onClick = { /* TODO: abrir galería / cámara */ },
+                                onClick = { launcher.launch("image/*") },
                                 modifier = Modifier
                                     .size(45.dp)
                                     .offset(x = 5.dp, y = 5.dp)
