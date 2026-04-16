@@ -220,22 +220,6 @@ fun UserNavigation(
             ChatScreen(onBack = { navController.popBackStack()})
         }
 
-
-        composable<DashboardRoutes.ManageUser> {
-            ManageUserScreen(
-                onSeeProfile = {
-                    navController.navigate("userDetail/{userId}")
-                }
-            )
-        }
-
-
-
-
-
-
-
-
     }
 
 }

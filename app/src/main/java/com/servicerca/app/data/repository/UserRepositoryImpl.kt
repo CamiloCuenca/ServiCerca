@@ -58,6 +58,25 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
         }
     }
 
+    override suspend fun suspendAccount(userId: String): Result<Unit> {
+        Log.d("UserRepository", "Intentando suspender usuario con ID: $userId")
+        return try {
+            val userIndex = _users.value.indexOfFirst { it.id == userId }
+            if (userIndex != -1) {
+                val updatedList = _users.value.toMutableList()
+                val user = updatedList[userIndex]
+                updatedList[userIndex] = user.copy(isSuspended = !user.isSuspended)
+                _users.value = updatedList
+                Log.d("UserRepository", "Estado de suspensión cambiado para el usuario $userId")
+                Result.success(Unit)
+            } else {
+                Result.failure(Exception("Usuario no encontrado"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     override suspend fun verifyEmail(email: String, otpCode: String): Result<Boolean> {
         val trimmedEmail = email.trim()
         val userIndex = _users.value.indexOfFirst { it.email == trimmedEmail }
@@ -219,6 +238,27 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
                 rejectReviews = 6,
                 isEmailVerified = true,
                 listInteresting = listOf("3", "6")
+            ),
+
+            User(
+                id = "5",
+                name1 = "Fede",
+                name2 = "",
+                lastname1 = "Alvarez",
+                lastname2 = "Muñoz",
+                city = "Armenia",
+                address = "Carrera 16 16 35",
+                email = "fede@email.com",
+                password = "000000",
+                profilePictureUrl = "https://www.reddit.com/media?url=https%3A%2F%2Fi.redd.it%2F94j0h823jdnb1.jpg",
+                completedServices = 724,
+                totalPoints = 10000,
+                rating = 4.9,
+                memberSince = 15,
+                pendingReviews = 18,
+                approvedReviews = 15024,
+                rejectReviews = 1,
+                isEmailVerified = true
             )
 
         )

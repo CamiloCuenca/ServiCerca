@@ -12,6 +12,8 @@ import com.servicerca.app.ui.dashboard.moderador.ModerationHistory
 import com.servicerca.app.ui.dashboard.moderador.ModeratorPanelScreen
 import com.servicerca.app.ui.dashboard.moderador.ProfileModerator
 import com.servicerca.app.ui.dashboard.moderador.RejectReasonScreen
+import com.servicerca.app.ui.dashboard.moderador.userProfile.ManageUserScreen
+import com.servicerca.app.ui.dashboard.moderador.userProfile.UserProfileManage
 import com.servicerca.app.ui.profile.UpdatePasswordScreen
 
 @Composable
@@ -76,6 +78,18 @@ fun ModeratorNavigation(
 
         composable<DashboardRoutes.Historial> {
             ModerationHistory()
+        }
+
+        composable<DashboardRoutes.ManageUser> {
+            ManageUserScreen(
+                onSeeProfile = { userId ->
+                    navController.navigate(DashboardRoutes.UserDetail(userId))
+                }
+            )
+        }
+
+        composable<DashboardRoutes.UserDetail> {
+            UserProfileManage()
         }
     }
 }

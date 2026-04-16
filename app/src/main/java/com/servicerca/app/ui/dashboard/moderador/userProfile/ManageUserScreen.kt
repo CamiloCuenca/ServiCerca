@@ -28,9 +28,7 @@ import com.servicerca.app.core.components.navigation.ScrollPage
 @Composable
 fun ManageUserScreen(
     viewModel: ManageUserViewModel = hiltViewModel(),
-    onSeeProfile: (String) -> Unit = {},
-    onSuspendProfile: (String) -> Unit = {},
-    onDeleteProfile: (String) -> Unit = {}
+    onSeeProfile: (String) -> Unit = {}
 ) {
     val users by viewModel.users.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
@@ -93,12 +91,14 @@ fun ManageUserScreen(
                 .weight(1f),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(users) { user ->
+            items(users, key = { it.id }) { user ->
                 CardProfileManage(
                     name = "${user.name1} ${user.lastname1}",
                     email = user.email,
-                    imageProfile = R.drawable.foto_perfil, // Debería cargarse desde URL si CardProfileManage lo soporta
-                    onSeeProfile = { onSeeProfile(user.id) }
+                    imageProfile = user.profilePictureUrl,
+                    onSeeProfile = { onSeeProfile(user.id) },
+                    onSuspendProfile = { viewModel.suspendUser(user.id) },
+                    onDeleteProfile = { viewModel.deleteUser(user.id) }
                 )
             }
         }

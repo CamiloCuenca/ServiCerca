@@ -1,4 +1,4 @@
-package com.servicerca.app.domain.model
+
 
     import java.time.Year
 
@@ -24,4 +24,5 @@ package com.servicerca.app.domain.model
         val rejectReviews: Int = 0,
         val isEmailVerified: Boolean = false,
         val listInteresting: List<String> = emptyList()
+        val isSuspended: Boolean = false
     )
