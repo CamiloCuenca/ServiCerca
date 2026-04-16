@@ -1,15 +1,24 @@
 package com.servicerca.app.ui.services.edit
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.servicerca.app.core.utils.RequestResult
 import com.servicerca.app.core.utils.ValidatedField
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.io.File
+import javax.inject.Inject
 
-class EditServiceViewModel : ViewModel() {
+@HiltViewModel
+class EditServiceViewModel @Inject constructor(
+    private val serviceRepository: com.servicerca.app.domain.repository.ServiceRepository,
+    @ApplicationContext private val context: Context
+) : ViewModel() {
 
     // ── Categorías disponibles ─────────────────────────────────────────────
     val categories = listOf(
@@ -76,6 +85,9 @@ class EditServiceViewModel : ViewModel() {
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
+    private val _images = MutableStateFlow<List<ByteArray>>(emptyList())
+    val images: StateFlow<List<ByteArray>> = _images.asStateFlow()
+
     // ── Validación global ──────────────────────────────────────────────────
 
     /** true si al menos un campo fue modificado */
@@ -85,6 +97,7 @@ class EditServiceViewModel : ViewModel() {
                 || description.value.isNotBlank()
                 || minValue.value.isNotBlank()
                 || maxValue.value.isNotBlank()
+                || _images.value.isNotEmpty()
 
     /** true si todos los campos con contenido tienen formato válido */
     val isFormValid: Boolean
@@ -96,54 +109,79 @@ class EditServiceViewModel : ViewModel() {
 
     // ── Acciones ──────────────────────────────────────────────────────────
 
+    private var currentService: com.servicerca.app.domain.model.Service? = null
+
     /**
-     * Pre-carga los datos actuales del servicio en los campos del formulario.
-     * Se llama al abrir la pantalla pasando los datos del servicio a editar.
-     * TODO: recibir un objeto Service del repositorio en lugar de parámetros individuales.
+     * Pre-carga los datos del servicio.
      */
-    fun loadService(
-        title: String,
-        category: String,
-        description: String,
-        minPrice: String,
-        maxPrice: String
-    ) {
-        this.title.onChange(title)
-        this.category.onChange(category)
-        this.description.onChange(description)
-        this.minValue.onChange(minPrice)
-        this.maxValue.onChange(maxPrice)
-        // Reseteamos showError tras cargar para no mostrar errores inmediatamente
-        this.title.reset(); this.title.onChange(title)
-        this.category.reset(); this.category.onChange(category)
-        this.description.reset(); this.description.onChange(description)
-        this.minValue.reset(); this.minValue.onChange(minPrice)
-        this.maxValue.reset(); this.maxValue.onChange(maxPrice)
+    fun loadService(service: com.servicerca.app.domain.model.Service) {
+        currentService = service
+        this.title.onChange(service.title)
+        this.category.onChange(service.type)
+        this.description.onChange(service.description)
+        this.minValue.onChange(service.priceMin.toString())
+        this.maxValue.onChange(service.priceMax.toString())
+        // Si ya hay una imagen en el modelo, podríamos cargarla si fuera ByteArray, 
+        // pero como es URL por ahora manejamos las nuevas imágenes.
+        
+        // Reseteamos showError tras cargar
+        this.title.reset(); this.title.onChange(service.title)
+        this.category.reset(); this.category.onChange(service.type)
+        this.description.reset(); this.description.onChange(service.description)
+        this.minValue.reset(); this.minValue.onChange(service.priceMin.toString())
+        this.maxValue.reset(); this.maxValue.onChange(service.priceMax.toString())
+    }
+
+    fun addImage(image: ByteArray) {
+        if (_images.value.size >= 5) return
+        _images.value = _images.value + image
+    }
+
+    fun removeImageAt(index: Int) {
+        if (index !in _images.value.indices) return
+        val mutable = _images.value.toMutableList()
+        mutable.removeAt(index)
+        _images.value = mutable
     }
 
     /**
-     * Guarda los cambios del servicio. Valida todos los campos antes de proceder.
+     * Guarda los cambios del servicio.
      */
     fun saveService() {
-        // Validar solo los campos que tienen contenido
         title.touch(); category.touch(); description.touch()
         minValue.touch(); maxValue.touch()
-
-        if (!hasChanges) {
-            _saveResult.value = RequestResult.Failure("No has realizado ningún cambio")
-            return
-        }
 
         if (!isFormValid) {
             _saveResult.value = RequestResult.Failure("Por favor corrige los errores antes de guardar")
             return
         }
 
+        val service = currentService ?: return
+
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                // TODO: llamar al repositorio con solo los campos modificados
-                _saveResult.value = RequestResult.Success("Servicio actualizado correctamente")
+                var photoUrl = service.photoUrl
+                
+                // Si hay nuevas imágenes, guardamos la primera en cache (similar a CreateService)
+                if (_images.value.isNotEmpty()) {
+                    val firstImage = _images.value.first()
+                    val cacheFile = File(context.cacheDir, "service_edit_${service.id}.jpg")
+                    cacheFile.writeBytes(firstImage)
+                    photoUrl = "file://${cacheFile.absolutePath}"
+                }
+
+                val updatedService = service.copy(
+                    title = title.value,
+                    type = category.value,
+                    description = description.value,
+                    priceMin = minValue.value.toDoubleOrNull() ?: service.priceMin,
+                    priceMax = maxValue.value.toDoubleOrNull() ?: service.priceMax,
+                    status = com.servicerca.app.domain.model.ServiceStatus.PENDING,
+                    photoUrl = photoUrl
+                )
+                serviceRepository.update(updatedService)
+                _saveResult.value = RequestResult.Success("Servicio actualizado y enviado a revisión")
             } catch (e: Exception) {
                 _saveResult.value = RequestResult.Failure("Error al guardar: ${e.message}")
             } finally {
@@ -156,10 +194,11 @@ class EditServiceViewModel : ViewModel() {
      * Elimina el servicio actual.
      */
     fun deleteService() {
+        val service = currentService ?: return
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                // TODO: llamar al repositorio cuando se implemente la lógica real
+                serviceRepository.delete(service.id)
                 _deleteResult.value = RequestResult.Success("Servicio eliminado correctamente")
             } catch (e: Exception) {
                 _deleteResult.value = RequestResult.Failure("Error al eliminar: ${e.message}")
