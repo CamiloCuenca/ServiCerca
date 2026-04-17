@@ -2,6 +2,7 @@ package com.servicerca.app.ui.services.detail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.servicerca.app.core.utils.LevelUtils
 import com.servicerca.app.domain.model.Comment
 import com.servicerca.app.domain.model.Notification
 import com.servicerca.app.domain.model.Service
@@ -44,6 +45,9 @@ class DetailServiceViewModel @Inject constructor(
     private val _averageRating = MutableStateFlow(0f)
     val averageRating: StateFlow<Float> = _averageRating.asStateFlow()
 
+    private val _providerLevel = MutableStateFlow("Principiante")
+    val providerLevel: StateFlow<String> = _providerLevel.asStateFlow()
+
     fun loadService(serviceId: String) {
         viewModelScope.launch {
             val serviceResult = serviceRepository.findById(serviceId)
@@ -70,6 +74,9 @@ class DetailServiceViewModel @Inject constructor(
 
         _averageRating.value = if (providerComments.isEmpty()) 0f
         else providerComments.map { it.rating }.average().toFloat()
+
+        val totalXp = providerComments.sumOf { (it.rating * 50).toInt() }
+        _providerLevel.value = LevelUtils.getLevelName(totalXp)
     }
 
     fun addComment(

@@ -74,6 +74,7 @@ fun DetailServiceScreen(
     val provider = viewModel.provider.collectAsState().value
     val comments by viewModel.comments.collectAsState()
     val averageRating by viewModel.averageRating.collectAsState()
+    val providerLevel by viewModel.providerLevel.collectAsState()
 
     var isSelectedLike by remember { mutableStateOf(false) }
     var isSelectedPin by remember { mutableStateOf(false) }
@@ -226,7 +227,7 @@ fun DetailServiceScreen(
                     ProviderRow(
                         name = if (provider != null) "${provider.name1} ${provider.lastname1}" else "Cargando...",
                         avatarUrl = provider?.profilePictureUrl,
-                        level = "MAESTRO",
+                        level = providerLevel,
                         rating = averageRating.takeIf { it > 0f } ?: 0f,
                         reviewCount = comments.size,
                         onClick = {}
