@@ -76,6 +76,23 @@ class ServiceRepositoryImpl @Inject constructor() : ServiceRepository {
         )
     }
 
+    override suspend fun toggleLike(serviceId: String, userId: String) {
+        val currentServices = _services.value
+        val updatedServices = currentServices.map { service ->
+            if (service.id == serviceId) {
+                val newLikedBy = if (service.likedBy.contains(userId)) {
+                    service.likedBy.filter { it != userId }
+                } else {
+                    service.likedBy + userId
+                }
+                service.copy(likedBy = newLikedBy)
+            } else {
+                service
+            }
+        }
+        _services.value = updatedServices
+    }
+
     private fun fetchInitialServices(): List<Service> {
         return listOf(
             Service(
