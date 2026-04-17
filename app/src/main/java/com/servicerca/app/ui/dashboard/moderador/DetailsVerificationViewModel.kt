@@ -7,12 +7,14 @@ import com.servicerca.app.domain.model.ServiceStatus
 import com.servicerca.app.domain.model.User
 import com.servicerca.app.R
 import com.servicerca.app.domain.model.Notification
+import com.servicerca.app.domain.repository.CommentRepository
 import com.servicerca.app.domain.repository.NotificationRepository
 import com.servicerca.app.domain.repository.ServiceRepository
 import com.servicerca.app.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -21,6 +23,7 @@ import javax.inject.Inject
 data class DetailsVerificationUiState(
     val service: Service? = null,
     val owner: User? = null,
+    val ownerRating: Float = 0f,
     val isLoading: Boolean = false,
     val isSuccess: Boolean = false,
     val error: String? = null
@@ -30,7 +33,8 @@ data class DetailsVerificationUiState(
 class DetailsVerificationViewModel @Inject constructor(
     private val serviceRepository: ServiceRepository,
     private val userRepository: UserRepository,
-    private val notificationRepository: NotificationRepository
+    private val notificationRepository: NotificationRepository,
+    private val commentRepository: CommentRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(DetailsVerificationUiState())
@@ -41,12 +45,35 @@ class DetailsVerificationViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = true) }
             val service = serviceRepository.findById(id)
             val owner = service?.let { userRepository.findById(it.ownerId) }
-            
-            _uiState.update { it.copy(
-                service = service,
-                owner = owner,
-                isLoading = false
-            ) }
+
+            if (owner != null) {
+                combine(
+                    serviceRepository.services,
+                    commentRepository.comments
+                ) { allServices, allComments ->
+                    val providerServiceIds = allServices.filter { it.ownerId == owner.id }.map { it.id }
+                    val providerComments = allComments.filter { it.serviceId in providerServiceIds }
+                    if (providerComments.isEmpty()) 0f
+                    else providerComments.map { it.rating }.average().toFloat()
+                }.collect { rating ->
+                    _uiState.update {
+                        it.copy(
+                            service = service,
+                            owner = owner,
+                            ownerRating = rating,
+                            isLoading = false
+                        )
+                    }
+                }
+            } else {
+                _uiState.update {
+                    it.copy(
+                        service = service,
+                        owner = owner,
+                        isLoading = false
+                    )
+                }
+            }
         }
     }
 
