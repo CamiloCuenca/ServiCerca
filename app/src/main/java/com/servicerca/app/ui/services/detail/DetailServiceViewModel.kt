@@ -14,15 +14,19 @@ import com.servicerca.app.domain.repository.UserRepository
 import com.servicerca.app.data.datastore.SessionDataStore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.UUID
 import javax.inject.Inject
+import com.servicerca.app.R
 
 @HiltViewModel
 class DetailServiceViewModel @Inject constructor(
@@ -33,59 +37,94 @@ class DetailServiceViewModel @Inject constructor(
     private val sessionDataStore: SessionDataStore
 ) : ViewModel() {
 
-    private val _service = MutableStateFlow<Service?>(null)
-    val service: StateFlow<Service?> = _service.asStateFlow()
+    private val _serviceId = MutableStateFlow<String?>(null)
 
-    private val _provider = MutableStateFlow<User?>(null)
-    val provider: StateFlow<User?> = _provider.asStateFlow()
+    val service: StateFlow<Service?> = combine(
+        _serviceId,
+        serviceRepository.services
+    ) { id, allServices ->
+        allServices.find { it.id == id }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
-    private val _comments = MutableStateFlow<List<Comment>>(emptyList())
-    val comments: StateFlow<List<Comment>> = _comments.asStateFlow()
+    val provider: StateFlow<User?> = combine(
+        service,
+        userRepository.users
+    ) { s, allUsers ->
+        allUsers.find { it.id == s?.ownerId }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
-    private val _averageRating = MutableStateFlow(0f)
-    val averageRating: StateFlow<Float> = _averageRating.asStateFlow()
+    val comments: StateFlow<List<Comment>> = combine(
+        _serviceId,
+        commentRepository.comments
+    ) { id, allComments ->
+        allComments.filter { it.serviceId == id }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    private val _providerLevel = MutableStateFlow("Principiante")
-    val providerLevel: StateFlow<String> = _providerLevel.asStateFlow()
+    val averageRating: StateFlow<Float> = combine(
+        service,
+        commentRepository.comments
+    ) { s, allComments ->
+        if (s == null) return@combine 0f
+        val serviceComments = allComments.filter { it.serviceId == s.id }
+        if (serviceComments.isEmpty()) 0f
+        else serviceComments.map { it.rating }.average().toFloat()
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0f)
+
+    val providerAverageRating: StateFlow<Float> = combine(
+        service,
+        commentRepository.comments,
+        serviceRepository.services
+    ) { s, allComments, allServices ->
+        if (s == null) return@combine 0f
+        val providerServiceIds = allServices.filter { it.ownerId == s.ownerId }.map { it.id }
+        val providerComments = allComments.filter { it.serviceId in providerServiceIds }
+        if (providerComments.isEmpty()) 0f
+        else providerComments.map { it.rating }.average().toFloat()
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0f)
+
+    val providerLevel: StateFlow<String> = combine(
+        service,
+        commentRepository.comments,
+        serviceRepository.services
+    ) { s, allComments, allServices ->
+        if (s == null) return@combine "Principiante"
+        val providerServiceIds = allServices.filter { it.ownerId == s.ownerId }.map { it.id }
+        val providerComments = allComments.filter { it.serviceId in providerServiceIds }
+        val totalXp = providerComments.sumOf { (it.rating * 50).toInt() }
+        LevelUtils.getLevelName(totalXp)
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "Principiante")
+
+    val isBookmarked: StateFlow<Boolean> = combine(
+        _serviceId,
+        userRepository.users,
+        sessionDataStore.sessionFlow
+    ) { id, users, session ->
+        val currentUser = users.find { it.id == session?.userId }
+        id != null && id in (currentUser?.listInteresting ?: emptyList())
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+
+    val isLiked: StateFlow<Boolean> = combine(
+        service,
+        sessionDataStore.sessionFlow
+    ) { s, session ->
+        s?.likedBy?.contains(session?.userId) ?: false
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+
+    val likeCount: StateFlow<Int> = service.map {
+        it?.likedBy?.size ?: 0
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
 
     fun loadService(serviceId: String) {
-        viewModelScope.launch {
-            val serviceResult = serviceRepository.findById(serviceId)
-            _service.value = serviceResult
-            
-            if (serviceResult != null) {
-                _provider.value = userRepository.findById(serviceResult.ownerId)
-                loadComments(serviceId, serviceResult.ownerId)
-            }
-        }
-    }
-
-    private fun loadComments(serviceId: String, ownerId: String) {
-        val allComments = commentRepository.comments.value
-        val allServices = serviceRepository.services.value
-
-        // Comentarios específicos de este servicio
-        val serviceComments = allComments.filter { it.serviceId == serviceId }
-        _comments.value = serviceComments
-
-        // Calificación promedio basada en TODOS los servicios del proveedor
-        val providerServiceIds = allServices.filter { it.ownerId == ownerId }.map { it.id }
-        val providerComments = allComments.filter { it.serviceId in providerServiceIds }
-
-        _averageRating.value = if (providerComments.isEmpty()) 0f
-        else providerComments.map { it.rating }.average().toFloat()
-
-        val totalXp = providerComments.sumOf { (it.rating * 50).toInt() }
-        _providerLevel.value = LevelUtils.getLevelName(totalXp)
+        _serviceId.value = serviceId
     }
 
     fun addComment(
         rating: Int,
         text: String
     ) {
-        val service = _service.value ?: return
-        val serviceId = service.id
-        val ownerId = service.ownerId
+        val s = service.value ?: return
+        val serviceId = s.id
+        val ownerId = s.ownerId
         viewModelScope.launch {
             val session = sessionDataStore.sessionFlow.firstOrNull()
             if (session != null) {
@@ -125,20 +164,74 @@ class DetailServiceViewModel @Inject constructor(
                         isRead = false
                     )
                     notificationRepository.addNotification(notification)
-
-                    loadComments(serviceId, ownerId)
                 }
             }
         }
     }
 
     fun deleteComment(commentId: String) {
-        val service = _service.value ?: return
-        val serviceId = service.id
-        val ownerId = service.ownerId
         viewModelScope.launch {
             commentRepository.delete(commentId)
-            loadComments(serviceId, ownerId)
+        }
+    }
+
+    fun onBookmarkClick() {
+        val serviceId = _serviceId.value ?: return
+        viewModelScope.launch {
+            val session = sessionDataStore.sessionFlow.firstOrNull() ?: return@launch
+            val currentUser = userRepository.findById(session.userId) ?: return@launch
+            val s = service.value ?: return@launch
+
+            val isAddingBookmark = !currentUser.listInteresting.contains(serviceId)
+
+            userRepository.toggleInterestingService(
+                userId = session.userId,
+                serviceId = serviceId
+            )
+
+            if (isAddingBookmark) {
+                notificationRepository.addNotification(
+                    Notification(
+                        id = UUID.randomUUID().toString(),
+                        userId = s.ownerId,
+                        title = "¡Interés en tu servicio!",
+                        message = "${currentUser.name1} guardó tu servicio \"${s.title}\" como interesante",
+                        date = "Ahora",
+                        imageRes = R.drawable.insignia_favorita,
+                        isRead = false
+                    )
+                )
+            }
+        }
+    }
+
+    fun onLikeClick() {
+        val serviceId = _serviceId.value ?: return
+        viewModelScope.launch {
+            val session = sessionDataStore.sessionFlow.firstOrNull() ?: return@launch
+            val s = service.value ?: return@launch
+            val currentUser = userRepository.findById(session.userId) ?: return@launch
+
+            val isAddingLike = !s.likedBy.contains(session.userId)
+
+            serviceRepository.toggleLike(
+                serviceId = serviceId,
+                userId = session.userId
+            )
+
+            if (isAddingLike) {
+                notificationRepository.addNotification(
+                    Notification(
+                        id = UUID.randomUUID().toString(),
+                        userId = s.ownerId,
+                        title = "¡Nuevo like!",
+                        message = "${currentUser.name1} le dio like a tu servicio \"${s.title}\"",
+                        date = "Ahora",
+                        imageRes = R.drawable.insignia_favorita,
+                        isRead = false
+                    )
+                )
+            }
         }
     }
 }
