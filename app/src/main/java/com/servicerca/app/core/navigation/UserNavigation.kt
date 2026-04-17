@@ -63,7 +63,11 @@ fun UserNavigation(
 
 
         composable<DashboardRoutes.Search> {
-            SearchScreen()
+            SearchScreen(
+                onServiceClick = { serviceId ->
+                    navController.navigate("DetailService/$serviceId")
+                }
+            )
         }
 
         composable<DashboardRoutes.Profile> {
@@ -95,7 +99,10 @@ fun UserNavigation(
 
         composable("ListInteresting" ){
             ListInteresting(
-                onBack = { navController.popBackStack() }
+                onBack = { navController.popBackStack() },
+                onServiceClick = { serviceId ->
+                    navController.navigate("DetailService/$serviceId")
+                }
             )
         }
 

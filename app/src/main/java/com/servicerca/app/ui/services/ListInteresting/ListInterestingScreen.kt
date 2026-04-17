@@ -34,6 +34,7 @@ package com.servicerca.app.ui.services.ListInteresting
         @Composable
         fun ListInteresting(
             onBack: () -> Unit,
+            onServiceClick: (String) -> Unit = {},
             viewModel: ListInterestingViewModel? = null
         ) {
             val isInPreview = LocalInspectionMode.current
@@ -94,6 +95,7 @@ package com.servicerca.app.ui.services.ListInteresting
                         key = { it.id }
                     ) { service ->
                         InterestingServiceCard(
+                            onClick = { onServiceClick(service.id) },
                             imageUrl = service.photoUrl,
                             title = service.title,
                             category = service.type,

@@ -9,27 +9,46 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.servicerca.app.R
 import com.servicerca.app.core.components.card.ExploreMapCard
+import com.servicerca.app.core.components.card.InterestingServiceCard
 import com.servicerca.app.core.components.input.SearchTextField
 import com.servicerca.app.core.components.utils.PopularCategoriesSection
 import com.servicerca.app.core.components.utils.RecentSearchesSection
 import com.servicerca.app.ui.theme.ServiCercaTheme
 
 @Composable
+@Suppress("UNUSED_PARAMETER")
 fun SearchScreen(
     modifier: Modifier = Modifier,
     onSearch: (String) -> Unit = {},
     onClearRecentSearches: () -> Unit = {},
-    onCategoryClick: (String) -> Unit = {},
-    onOpenMap: () -> Unit = {}
+    onOpenMap: () -> Unit = {},
+    onServiceClick: (String) -> Unit = {},
+    viewModel: SearchViewModel? = null
 ) {
+    val isInPreview = LocalInspectionMode.current
+    val actualViewModel = if (isInPreview) {
+        null
+    } else {
+        viewModel ?: hiltViewModel<SearchViewModel>()
+    }
+
+    val query = actualViewModel?.query?.collectAsState()?.value.orEmpty()
+    val searchResults = actualViewModel?.searchResults?.collectAsState()?.value.orEmpty()
+    val recentSearches = actualViewModel?.recentSearches?.collectAsState()?.value.orEmpty()
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -38,12 +57,17 @@ fun SearchScreen(
     ) {
         Spacer(modifier = Modifier.height(16.dp))
 
-
         Spacer(modifier = Modifier.height(16.dp))
 
         SearchTextField(
-            query = "",
-            onQueryChange = onSearch,
+            query = query,
+            onQueryChange = { newQuery ->
+                actualViewModel?.onQueryChange(newQuery)
+                onSearch(newQuery)
+            },
+            onSearch = {
+                actualViewModel?.submitCurrentSearch()
+            },
             placeholder = stringResource(R.string.search_placeholder),
         )
 
@@ -54,23 +78,67 @@ fun SearchScreen(
             verticalArrangement = Arrangement.spacedBy(24.dp),
             contentPadding = PaddingValues(bottom = 24.dp)
         ) {
-            item {
-                RecentSearchesSection(
-                    recentSearches = listOf("Arreglo de aire", "Pintor zona norte", "Limpieza de alfombras"),
-                    onClearAll = onClearRecentSearches
-                )
-            }
+            if (query.isBlank()) {
+                item {
+                    RecentSearchesSection(
+                        recentSearches = recentSearches,
+                        onClearAll = {
+                            actualViewModel?.clearRecentSearches()
+                            onClearRecentSearches()
+                        },
+                        onSearchClick = { recent ->
+                            actualViewModel?.selectRecentSearch(recent)
+                        }
+                    )
+                }
 
+                item {
+                    ExploreMapCard(onOpenMap = onOpenMap)
+                }
 
+                item {
+                    PopularCategoriesSection(
+                        onViewAll = {}
+                    )
+                }
+            } else {
+                item {
+                    Text(
+                        text = "Resultados para \"$query\"",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                }
 
-            item {
-                ExploreMapCard(onOpenMap = onOpenMap)
-            }
+                items(
+                    items = searchResults,
+                    key = { it.service.id }
+                ) { result ->
+                    InterestingServiceCard(
+                        onClick = { onServiceClick(result.service.id) },
+                        imageUrl = result.service.photoUrl,
+                        title = result.service.title,
+                        category = result.service.type,
+                        priceMin = result.service.priceMin.toInt().toString(),
+                        priceMax = result.service.priceMax.toInt().toString(),
+                        rating = 0f,
+                        isFavorite = result.isBookmarked,
+                        onFavoriteClick = {
+                            actualViewModel?.onBookmarkClick(result.service.id)
+                        },
+                        modifier = Modifier.padding(horizontal = 0.dp)
+                    )
+                }
 
-            item {
-                PopularCategoriesSection(
-                    onViewAll = {}
-                )
+                if (searchResults.isEmpty()) {
+                    item {
+                        Text(
+                            text = "No se encontraron servicios con ese nombre.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
             }
         }
     }
