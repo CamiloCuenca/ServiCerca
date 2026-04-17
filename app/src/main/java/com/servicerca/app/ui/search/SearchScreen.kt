@@ -21,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.servicerca.app.R
+import com.servicerca.app.domain.model.Categories
 import com.servicerca.app.core.components.card.ExploreMapCard
 import com.servicerca.app.core.components.card.InterestingServiceCard
 import com.servicerca.app.core.components.input.SearchTextField
@@ -48,6 +49,8 @@ fun SearchScreen(
     val query = actualViewModel?.query?.collectAsState()?.value.orEmpty()
     val searchResults = actualViewModel?.searchResults?.collectAsState()?.value.orEmpty()
     val recentSearches = actualViewModel?.recentSearches?.collectAsState()?.value.orEmpty()
+    val selectedCategory = actualViewModel?.selectedCategory?.collectAsState()?.value
+    val categoryResults = actualViewModel?.categoryResults?.collectAsState()?.value.orEmpty()
 
     Column(
         modifier = modifier
@@ -98,8 +101,51 @@ fun SearchScreen(
 
                 item {
                     PopularCategoriesSection(
+                        onCategoryClick = { category ->
+                            actualViewModel?.selectCategory(category)
+                        },
                         onViewAll = {}
                     )
+                }
+
+                if (selectedCategory != null) {
+                    item {
+                        Text(
+                            text = "Servicios de ${selectedCategory.displayName}",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+
+                    items(
+                        items = categoryResults,
+                        key = { it.service.id }
+                    ) { result ->
+                        InterestingServiceCard(
+                            onClick = { onServiceClick(result.service.id) },
+                            imageUrl = result.service.photoUrl,
+                            title = result.service.title,
+                            category = result.service.type,
+                            priceMin = result.service.priceMin.toInt().toString(),
+                            priceMax = result.service.priceMax.toInt().toString(),
+                            rating = 0f,
+                            isFavorite = result.isBookmarked,
+                            onFavoriteClick = {
+                                actualViewModel?.onBookmarkClick(result.service.id)
+                            },
+                            modifier = Modifier.padding(horizontal = 0.dp)
+                        )
+                    }
+
+                    if (categoryResults.isEmpty()) {
+                        item {
+                            Text(
+                                text = "No hay servicios en esta categoría.",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
                 }
             } else {
                 item {
