@@ -31,7 +31,8 @@ fun UserScreen(
 ) {
 
     val navController = rememberNavController()
-    var title by remember { mutableStateOf("Inicio") }
+    val context = androidx.compose.ui.platform.LocalContext.current
+    var title by remember { mutableStateOf(context.getString(com.servicerca.app.R.string.nav_label_home)) }
 
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route

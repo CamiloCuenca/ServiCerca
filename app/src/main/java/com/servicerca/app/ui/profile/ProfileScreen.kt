@@ -323,8 +323,8 @@ fun StatisticsSection(state: ProfileUiState.Success) {
                 run {
                     val currentYear = java.time.Year.now().value
                     val years = (currentYear - user.memberSince).coerceAtLeast(0)
-                    // Mostrar tiempo relativo y año de creación
-                    val yearsText = if (years == 1) "1 año" else "$years años"
+                    val yearsText = if (years == 1) stringResource(R.string.member_time_year_singular)
+                                    else stringResource(R.string.member_time_year_plural, years)
                     "$yearsText (${user.memberSince})"
                 },
                 stringResource(R.string.member_time)

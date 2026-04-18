@@ -21,10 +21,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.servicerca.app.R
 import com.servicerca.app.core.components.card.CardService
 import com.servicerca.app.core.components.tag.CategoryTagSearch
 import com.servicerca.app.domain.model.Categories
@@ -76,7 +78,7 @@ fun HomeUserScreen(
                     }
                 ) {
                     Text(
-                        text = "Todos",
+                        text = stringResource(R.string.filter_all_label),
                         fontSize = 12.sp,
                         modifier = Modifier.padding(horizontal = 15.dp, vertical = 10.dp),
                         color = if (selectedCategory == null) {

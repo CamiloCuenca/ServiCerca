@@ -412,4 +412,37 @@
         <string name="status_resolved">RESOLVED</string>
         <string name="new_comment_title">New comment received</string>
         <string name="new_comment_message_format">%1$s commented: \"%2$s\" and gave you %3$d stars.</string>
+    <!-- Navigation bar labels -->
+    <string name="nav_label_chat">Chat</string>
+    <string name="nav_label_search">Search</string>
+    <string name="nav_label_home">Home</string>
+    <string name="nav_label_reservations">Bookings</string>
+    <string name="nav_label_profile">Profile</string>
+    <string name="nav_label_history">History</string>
+
+    <!-- Top app bar content descriptions -->
+    <string name="topbar_logo_content_description">ServiCerca logo</string>
+    <string name="topbar_location_content_description">Location</string>
+    <string name="topbar_help_content_description">Help</string>
+    <string name="topbar_back_content_description">Back</string>
+
+    <!-- Chat UI -->
+    <string name="chat_search_placeholder">Search chats</string>
+    <string name="chat_online_status">Online</string>
+    <string name="chat_offline_status">Offline</string>
+    <string name="chat_profile_photo_content_description">Profile picture</string>
+    <string name="chat_back_content_description">Go back</string>
+    <string name="chat_message_placeholder">Write a message…</string>
+
+    <!-- Home filter -->
+    <string name="filter_all_label">All</string>
+
+    <!-- CardLevel messages -->
+    <string name="level_format">Level %1$d</string>
+    <string name="level_max_reached_message">You have reached the maximum level!</string>
+    <string name="level_points_remaining_message">Just %1$d more points to the next level!</string>
+
+    <!-- Profile member time -->
+    <string name="member_time_year_singular">1 year</string>
+    <string name="member_time_year_plural">%1$d years</string>
 </resources>
