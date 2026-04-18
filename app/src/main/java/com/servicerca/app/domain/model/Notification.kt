@@ -7,5 +7,7 @@ data class Notification(
     val message: String,
     val date: String,
     val imageRes: Int,
-    val isRead: Boolean = false
+    val isRead: Boolean = false,
+    val targetId: String? = null,
+    val notificationType: NotificationType = NotificationType.SYSTEM
 )
