@@ -25,7 +25,7 @@ class UserProfileManageViewModel @Inject constructor(
 
     private val userId: String? = savedStateHandle["userId"]
 
-    private val _uiState = MutableStateFlow(ProfileUiState())
+    private val _uiState = MutableStateFlow<ProfileUiState>(ProfileUiState.Loading)
     val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
 
     init {
@@ -35,12 +35,14 @@ class UserProfileManageViewModel @Inject constructor(
     private fun loadUserData() {
         val id = userId ?: return
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true)
+            _uiState.value = ProfileUiState.Loading
             val user = userRepository.findById(id)
-            _uiState.value = _uiState.value.copy(user = user, isLoading = false)
-
-            // Observar estadísticas basadas en servicios y comentarios del usuario
-            observeUserStats(id)
+            if (user != null) {
+                _uiState.value = ProfileUiState.Success(user = user)
+                observeUserStats(id)
+            } else {
+                _uiState.value = ProfileUiState.Error("Usuario no encontrado")
+            }
         }
     }
 
@@ -57,23 +59,30 @@ class UserProfileManageViewModel @Inject constructor(
                 val avg = if (userComments.isNotEmpty()) userComments.map { it.rating }.average() else 0.0
                 val totalXp = userComments.sumOf { it.rating * 50 }
 
-                // Aquí podrías reutilizar una lógica común de cálculo de niveles
-                calculateLevelState(totalXp, avg)
-            }.collect { newState ->
-                _uiState.value = _uiState.value.copy(
-                    averageRating = newState.averageRating,
-                    totalXp = newState.totalXp,
-                    level = newState.level,
-                    levelName = newState.levelName,
-                    progress = newState.progress,
-                    xpRequiredForNextLevel = newState.xpRequiredForNextLevel
-                )
+                calculateLevelInfo(totalXp, avg)
+            }.collect { levelInfo ->
+                updateSuccessState { it.copy(
+                    averageRating = levelInfo.avgRating,
+                    totalXp = levelInfo.totalXp,
+                    level = levelInfo.level,
+                    levelName = levelInfo.levelName,
+                    progress = levelInfo.progress,
+                    xpRequiredForNextLevel = levelInfo.xpRequiredForNextLevel
+                ) }
             }
         }
     }
 
-    // Nota: Esta lógica idealmente debería estar en un UseCase para no duplicarla
-    private fun calculateLevelState(totalXp: Int, avgRating: Double): ProfileUiState {
+    private data class LevelInfo(
+        val avgRating: Double,
+        val totalXp: Int,
+        val level: Int,
+        val levelName: String,
+        val progress: Float,
+        val xpRequiredForNextLevel: Int
+    )
+
+    private fun calculateLevelInfo(totalXp: Int, avgRating: Double): LevelInfo {
         val levels = listOf(500, 1300, 2500, 4300, 7000)
         val levelNames = listOf("Principiante", "Colaborador", "Confiable", "Profesional local", "Experto local")
         var currentLevel = 1
@@ -93,13 +102,20 @@ class UserProfileManageViewModel @Inject constructor(
         val clampedLevel = currentLevel.coerceAtMost(5)
         val progress = if (totalXp >= levels.last()) 1.0f else (totalXp - xpRequiredForCurrent).toFloat() / (xpRequiredForNext - xpRequiredForCurrent).toFloat()
 
-        return ProfileUiState(
-            averageRating = avgRating,
+        return LevelInfo(
+            avgRating = avgRating,
             totalXp = totalXp,
             level = clampedLevel,
             levelName = levelNames[(clampedLevel - 1).coerceIn(0, 4)],
             progress = progress.coerceIn(0f, 1f),
             xpRequiredForNextLevel = xpRequiredForNext
         )
+    }
+
+    private fun updateSuccessState(update: (ProfileUiState.Success) -> ProfileUiState.Success) {
+        val current = _uiState.value
+        if (current is ProfileUiState.Success) {
+            _uiState.value = update(current)
+        }
     }
 }

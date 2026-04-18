@@ -6,6 +6,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -15,7 +16,6 @@ import androidx.compose.material3.ripple
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -33,35 +33,34 @@ import com.servicerca.app.R
 import com.servicerca.app.ui.profile.InsigniaUiModel
 
 @Composable
-fun CardInsigniasGrid(
+fun CardMainInsignias(
     insignias: List<InsigniaUiModel>,
     onInsigniaClick: (InsigniaUiModel) -> Unit = {}
 ) {
     ElevatedCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
-        modifier = Modifier.size(width = 340.dp, height = 280.dp),
+        modifier = Modifier.size(width = 340.dp, height = 150.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
     ) {
         Column(
             modifier = Modifier.padding(vertical = 18.dp)
         ) {
-            // Display insignias in two rows of three
-            val chunks = insignias.chunked(3)
-            chunks.forEachIndexed { index, rowInsignias ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp, vertical = if (index > 0) 15.dp else 0.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    rowInsignias.forEach { insignia ->
-                        InsigniaGridItem(insignia, onInsigniaClick)
-                    }
-                    // Fill row if less than 3
-                    repeat(3 - rowInsignias.size) {
-                        Spacer(Modifier.width(90.dp))
-                    }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Show first 3 insignias or limited set
+                val displayInsignias = insignias.take(3)
+                displayInsignias.forEach { insignia ->
+                    InsigniaMainItem(insignia, onInsigniaClick)
+                }
+                
+                // Fill if less than 3
+                repeat(3 - displayInsignias.size) {
+                    Spacer(Modifier.width(90.dp))
                 }
             }
         }
@@ -69,7 +68,7 @@ fun CardInsigniasGrid(
 }
 
 @Composable
-fun InsigniaGridItem(
+fun InsigniaMainItem(
     insignia: InsigniaUiModel,
     onClick: (InsigniaUiModel) -> Unit
 ) {
@@ -113,6 +112,6 @@ fun InsigniaGridItem(
 
 @Composable
 @Preview
-fun CardInsigniasGridPreview() {
-    CardInsigniasGrid(insignias = emptyList())
+fun CardMainInsigniasPreview() {
+    CardMainInsignias(insignias = emptyList())
 }

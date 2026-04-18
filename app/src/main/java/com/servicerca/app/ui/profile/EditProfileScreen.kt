@@ -115,7 +115,7 @@ fun EditProfileScreen(
                 showSuccessDialog = false
                 onSaveSuccess()
             },
-            title = stringResource(R.string.tittle_update_profile),
+            title = stringResource(R.string.title_update_profile),
             message = stringResource(R.string.message_update_profile)
         )
     }
