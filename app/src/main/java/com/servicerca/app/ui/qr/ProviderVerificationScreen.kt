@@ -208,10 +208,10 @@ fun ProviderVerificationScreen(
                     textAlign = TextAlign.Center
                 )
             } else {
-                PrimaryButton(
-                    text = "Escanear QR",
-                    onClick = {},
-                    enabled = false
+                Text(
+                    text = "Escaneando QR...",
+                    style = typography.bodySmall,
+                    color = colorScheme.onSurface.copy(alpha = 0.6f)
                 )
             }
 

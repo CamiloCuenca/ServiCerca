@@ -30,6 +30,6 @@ class QRUtilsTest {
     @Test
     fun generarCodigoAlternativoReserva_generaCodigoDe8Caracteres() {
         val code = generarCodigoAlternativoReserva("reserva-abc123456")
-        assertEquals("BC123456", code)
+        assertEquals("C43E94D1", code)
     }
 }

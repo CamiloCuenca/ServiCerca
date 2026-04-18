@@ -10,4 +10,5 @@ interface ReservationRepository {
     suspend fun createReservation(reservation: Reservation)
     suspend fun updateReservationStatus(reservationId: String, status: String)
     suspend fun deleteReservation(reservationId: String)
+    suspend fun completeReservation(reservationId: String)
 }

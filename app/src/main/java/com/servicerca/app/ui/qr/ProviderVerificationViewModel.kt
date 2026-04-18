@@ -3,7 +3,6 @@ package com.servicerca.app.ui.qr
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.servicerca.app.data.datastore.SessionDataStore
-import com.servicerca.app.domain.model.ReservationStatus
 import com.servicerca.app.domain.repository.ReservationRepository
 import com.servicerca.app.core.utils.leerReservaIdDesdeQR
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -67,9 +66,8 @@ class ProviderVerificationViewModel @Inject constructor(
                 return@launch
             }
 
-            // Marcamos como completado y luego eliminamos la reserva para ambos roles (estado local).
-            reservationRepository.updateReservationStatus(reservationId, ReservationStatus.COMPLETED.name)
-            reservationRepository.deleteReservation(reservationId)
+            // Operación única para evitar inconsistencias en estado local al completar/eliminar.
+            reservationRepository.completeReservation(reservationId)
 
             _uiState.value = _uiState.value.copy(
                 isProcessing = false,
