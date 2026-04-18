@@ -49,6 +49,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -60,6 +61,7 @@ import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
+import com.servicerca.app.R
 import com.servicerca.app.core.components.card.ConfirmServiceSummaryCard
 import com.servicerca.app.core.components.navigation.AppTopAppBarBack
 import com.servicerca.app.ui.theme.ServiCercaTheme
@@ -79,7 +81,7 @@ fun ProviderVerificationScreen(
     Scaffold(
         topBar = {
             AppTopAppBarBack(
-                title = "Confirmar servicio",
+                title = stringResource(R.string.confirm_service_title),
                 onBackClick = onBackClick
             )
         },
@@ -115,7 +117,7 @@ fun ProviderVerificationScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
-                text = "Escanear código QR",
+                text = stringResource(R.string.scan_qr_title),
                 style = typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = colorScheme.onSurface
@@ -124,7 +126,7 @@ fun ProviderVerificationScreen(
             Spacer(modifier = Modifier.height(12.dp))
 
             Text(
-                text = "Escanea el código QR que te mostrará el cliente para confirmar que el servicio fue completado satisfactoriamente.",
+                text = stringResource(R.string.scan_qr_description),
                 style = typography.bodyMedium,
                 color = colorScheme.onSurface.copy(alpha = 0.6f),
                 textAlign = TextAlign.Center,
@@ -140,7 +142,7 @@ fun ProviderVerificationScreen(
                 horizontalAlignment = Alignment.Start
             ) {
                 Text(
-                    text = "Codigo de confirmación",
+                    text = stringResource(R.string.confirmation_code_label),
                     style = typography.labelMedium,
                     fontWeight = FontWeight.Bold,
                     color = colorScheme.onSurface.copy(alpha = 0.7f),
@@ -173,7 +175,7 @@ fun ProviderVerificationScreen(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Validando QR...",
+                    text = stringResource(R.string.validating_qr_text),
                     style = typography.bodySmall,
                     color = colorScheme.onSurface.copy(alpha = 0.6f)
                 )
@@ -183,7 +185,7 @@ fun ProviderVerificationScreen(
 
             if (!uiState.isProcessing && !uiState.isSuccess && uiState.message.isBlank()) {
                 Text(
-                    text = "Escaneando QR...",
+                    text = stringResource(R.string.scanning_qr_text),
                     style = typography.bodySmall,
                     color = colorScheme.onSurface.copy(alpha = 0.6f)
                 )
@@ -220,8 +222,8 @@ fun QrResultDialog(
 ) {
     val iconVector = if (isSuccess) Icons.Default.CheckCircleOutline else Icons.Default.ErrorOutline
     val iconTint = if (isSuccess) Color(0xFF4CAF50) else MaterialTheme.colorScheme.error
-    val title = if (isSuccess) "¡Servicio confirmado!" else "No se pudo confirmar"
-    val confirmText = if (isSuccess) "Aceptar" else "Reintentar"
+    val title = if (isSuccess) stringResource(R.string.service_confirmed_title) else stringResource(R.string.unable_to_confirm_title)
+    val confirmText = if (isSuccess) stringResource(R.string.accept_action) else stringResource(R.string.retry_action)
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -288,7 +290,7 @@ fun QRCodeScannerScreen(
         onResult = { isGranted ->
             hasCameraPermission = isGranted
             if (!isGranted) {
-                permissionMessage = "Permiso de cámara denegado."
+                permissionMessage = context.getString(R.string.camera_permission_denied)
             }
         }
     )
@@ -309,15 +311,15 @@ fun QRCodeScannerScreen(
         if (hasCameraPermission) {
             CameraPreview(onQrCodeDetected = onQrDetected)
             Spacer(Modifier.height(16.dp))
-            Text(text = "Resultado: $scannedValue", modifier = Modifier.padding(16.dp))
+            Text(text = stringResource(R.string.qr_result_format, scannedValue), modifier = Modifier.padding(16.dp))
         } else {
             // UI cuando no hay permiso
             Text(
-                text = permissionMessage.ifBlank { "Necesitamos permiso de cámara para escanear QR." },
+                text = permissionMessage.ifBlank { stringResource(R.string.camera_permission_required_message) },
                 modifier = Modifier.padding(16.dp)
             )
             Button(onClick = { permissionLauncher.launch(Manifest.permission.CAMERA) }) {
-                Text("Conceder Permiso")
+                Text(stringResource(R.string.grant_permission_action))
             }
         }
     }

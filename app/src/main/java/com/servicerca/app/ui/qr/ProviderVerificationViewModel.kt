@@ -1,11 +1,14 @@
 package com.servicerca.app.ui.qr
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.servicerca.app.R
 import com.servicerca.app.data.datastore.SessionDataStore
 import com.servicerca.app.domain.repository.ReservationRepository
 import com.servicerca.app.core.utils.leerReservaIdDesdeQR
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,7 +17,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class ProviderVerificationUiState(
-    val scannedValue: String = "Escaneando...",
+    val scannedValue: String = "",
     val message: String = "",
     val isProcessing: Boolean = false,
     val isSuccess: Boolean = false,
@@ -25,7 +28,8 @@ data class ProviderVerificationUiState(
 @HiltViewModel
 class ProviderVerificationViewModel @Inject constructor(
     private val reservationRepository: ReservationRepository,
-    private val sessionDataStore: SessionDataStore
+    private val sessionDataStore: SessionDataStore,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ProviderVerificationUiState())
@@ -45,7 +49,7 @@ class ProviderVerificationViewModel @Inject constructor(
             if (reservationId == null) {
                 _uiState.value = _uiState.value.copy(
                     isProcessing = false,
-                    message = "QR inválido. Vuelve a intentarlo.",
+                    message = context.getString(R.string.invalid_qr_message),
                     showResultModal = true
                 )
                 return@launch
@@ -55,7 +59,7 @@ class ProviderVerificationViewModel @Inject constructor(
             if (reservation == null) {
                 _uiState.value = _uiState.value.copy(
                     isProcessing = false,
-                    message = "No se encontró la reserva asociada al QR.",
+                    message = context.getString(R.string.qr_reservation_not_found_message),
                     showResultModal = true
                 )
                 return@launch
@@ -65,7 +69,7 @@ class ProviderVerificationViewModel @Inject constructor(
             if (sessionUserId != null && reservation.providerId != sessionUserId) {
                 _uiState.value = _uiState.value.copy(
                     isProcessing = false,
-                    message = "Este QR no corresponde a tus reservas.",
+                    message = context.getString(R.string.qr_not_your_reservations_message),
                     showResultModal = true
                 )
                 return@launch
@@ -78,7 +82,7 @@ class ProviderVerificationViewModel @Inject constructor(
             _uiState.value = _uiState.value.copy(
                 isProcessing = false,
                 isSuccess = true,
-                message = "El servicio fue completado exitosamente. La reserva ha sido cerrada.",
+                message = context.getString(R.string.service_completed_reservation_closed_message),
                 showResultModal = true
             )
         }

@@ -30,7 +30,7 @@
     <string name="profile_text">Mi Perfil</string>
     <string name="recover_password">Recuperar contraseña</string>
 
-    <!-- Profile Screen -->
+    
     <string name="name_user">Nombre del usuario</string>
     <string name="lacation_profile">Mi ubicación</string>
     <string name="level">Nivel 5</string>
@@ -53,14 +53,14 @@
     <string name="delete_account">Eliminar cuenta</string>
     <string name="logout_content_description">Cerrar sesión</string>
     <string name="profile_fallback_name">Usuario</string>
-    <string name="location_not_available">Ubicación no disponible</string>
+    <string name="location_not_available">Location not available</string>
     <string name="interesting_posts_title">Publicaciones Interesantes</string>
     <string name="interesting_posts_description">Ver tus servicios favoritos</string>
     <string name="publish_service_button">Publicar Oferta</string>
     <string name="title_location_service">Ubicación del servicio</string>
     <string name="description_location_service">Toca para seleccionar en el mapa</string>
 
-    <!-- Insignias Screen -->
+    
     <string name="title_achievements">Logros principales</string>
     <string name="title_insginias_obtained">Insignias obtenidas</string>
     <string name="insignia_verified">Verificado</string>
@@ -75,7 +75,7 @@
     <string name="title_elite">¡Estás en la Élite!</string>
     <string name="text_best">Tu desempeño te posiciona entre los mejores.</string>
 
-    <!-- Insignia Descriptions -->
+    
     <string name="desc_insignia_verified">Verifica tu correo electrónico para obtener esta insignia.</string>
     <string name="desc_insignia_trusted">Completa 10 servicios con éxito para ser un proveedor confiable.</string>
     <string name="desc_insignia_50_services">Alcanza los 50 servicios completados para obtener este reconocimiento.</string>
@@ -88,7 +88,7 @@
     <string name="desc_insignia_locked">Sigue participando en ServiCerca para desbloquear este logro.</string>
     <string name="insignia_details_title">Detalles del Logro</string>
 
-    <!-- Edit Profile Screen -->
+    
     <string name="update_profile">Editar perfil</string>
     <string name="update_image">Actualizar imagen</string>
     <string name="first_name">Primer nombre</string>
@@ -108,7 +108,7 @@
     <string name="title_update_profile">Perfil actualizado</string>
     <string name="message_update_profile">Tus datos han sido actualizados correctamente.</string>
 
-    <!-- Delete Profile Screen -->
+    
     <string name="delete_profile">Eliminar cuenta</string>
     <string name="important_notice">AVISO IMPORTANTE</string>
     <string name="question_confirm_delete_profile">¿Estás seguro que quieres
@@ -126,13 +126,13 @@
     <string name="delete_account_password_label">Contraseña</string>
     <string name="delete_account_reauth_message">Por tu seguridad, introduce tu contraseña para confirmar la eliminación de la cuenta.</string>
     <string name="delete_account_confirm_button">Eliminar definitivamente</string>
-    <string name="delete_account_cancel_button">Cancelar</string>
+    <string name="delete_account_cancel_button">Cancel</string>
     <string name="error_incorrect_password">La contraseña es incorrecta</string>
     <string name="account_deleted_success">Tu cuenta ha sido eliminada correctamente. Serás redirigido en unos segundos.</string>
 
 
 
-    <!-- Update Password Screen -->
+    
     <string name="change_password">Cambiar contraseña</string>
     <string name="message_change_password">Ingrese tu contraseña actual y la nueva
         para actualizar tu seguridad.</string>
@@ -144,7 +144,7 @@
     <string name="message_change_password_success">Tu contraseña ha sido actualizada correctamente.
         Por seguridad, se cerrará la sesión actual.</string>
 
-    <!-- Notifications Screen -->
+    
     <string name="notifications">Notificaciones</string>
     <string name="tittle1">Nueva solicitud de servicio</string>
     <string name="tittle2">Comentario recibido</string>
@@ -167,7 +167,7 @@
     <string name="date4">Ayer</string>
     <string name="date5">2 días</string>
 
-    <!-- Search Screen -->
+    
     <string name="search_title">Buscar</string>
     <string name="search_placeholder">Buscar servicios...</string>
     <string name="recent_searches_title">Búsquedas recientes</string>
@@ -187,32 +187,32 @@
 
     <string name="title_message_list">Chats</string>
 
-    <!-- My Services Screen -->
+    
     <string name="my_services_title">Mis Servicios</string>
     <string name="tab_active">Activos</string>
     <string name="tab_pending">Pendientes</string>
     <string name="tab_completed">Completados</string>
     <string name="edit_button">Editar</string>
-    <string name="delete_button">Eliminar</string>
+    <string name="delete_button">Delete</string>
     <string name="status_active">Activo</string>
 
-    <!-- Reservation Screen -->
+    
     <string name="reservation_tab_reserved">Mis Pedidos</string>
     <string name="reservation_tab_offered">Mis Trabajos</string>
     <string name="reservation_month_year">Mayo 2024</string>
     <string name="reservation_today_format">Hoy, %s</string>
     <string name="reservation_num_services_format">%d servicios</string>
     <string name="reservation_ver_detalle">Ver detalle</string>
-    <string name="reservation_status_confirmed">Confirmado</string>
+    <string name="reservation_status_confirmed">Confirmed</string>
     <string name="reservation_status_pending">Solicitud Pendiente</string>
     <string name="reservation_status_cancelled">CANCELADO</string>
     <string name="reservation_service_plumber">Plomería Residencial</string>
     <string name="reservation_service_electrician">Reparación Eléctrica</string>
     <string name="reservation_service_cleaning">Limpieza Profunda</string>
-    <string name="reservation_servicio_solicitado">SERVICIO SOLICITADO</string>
-    <string name="reservation_profesional_certificado">Profesional Certificado</string>
+    <string name="reservation_servicio_solicitado">REQUESTED SERVICE</string>
+    <string name="reservation_profesional_certificado">Certified Professional</string>
 
-    <!-- Moderator Panel Screen -->
+    
     <string name="no_services_found">No hay servicios en esta categoría</string>
     <string name="type_service_moderation_panel">MANTENIMIENTO / HOGAR</string>
     <string name="title_service_moderation_panel">Instalaciones Eléctricas Residenciales</string>
@@ -237,7 +237,7 @@
     <string name="btn_virified_moderation_panel">Verificar</string>
     <string name="btn_decline_moderation_panel">Rechazar</string>
 
-    <!-- Profile Moderator Screen -->
+    
     <string name="name_moderator">Leon Scott Kennedy</string>
     <string name="position_moderator">Administrador - Moderador</string>
     <string name="pending_profile_moderator">PENDIENTES</string>
@@ -271,7 +271,7 @@
 
 
 
-    <!-- Details Verification Moderator Screen -->
+    
     <string name="details_verifications">Detalles de verificación</string>
     <string name="pending_revision">PENDIENTE DE REVISIÓN</string>
     <string name="label_revision">Ofecido por</string>
@@ -282,7 +282,7 @@
     <string name="approve_publication">Aprobar publicación</string>
     <string name="reject_publication">Rechazar publicación</string>
 
-    <!-- Reject Reason Screen -->
+    
     <string name="reject_reason">Motivo del rechazo</string>
     <string name="question_reject_reason">¿Por qué se rechazó la publicación?</string>
     <string name="message_reject_reason">Por favor, proporciona una explicación detallada sobre el motivo del
@@ -305,7 +305,7 @@
         promocional no permitido o que no corresponde a un servicio válido dentro de la plataforma.
         Por favor, asegúrate de publicar únicamente servicios reales y relevantes para la comunidad.</string>
 
-    <!-- History Moderator -->
+    
     <string name="history_tittle1">Instalaciones Electricas Residenciales</string>
     <string name="history_result1">APROBADA</string>
     <string name="history_username1">Erik Alexander Arbelaez</string>
@@ -347,7 +347,7 @@
     <string name="history_time5">01:03 PM</string>
 
 
-    <!-- Chat Screen -->
+    
     <string name="name_profile">Diego Alexander Jimenez</string>
 
     <string name="tab_pending_moderator">Pendientes</string>
@@ -357,122 +357,122 @@
     <string name="status_in_review">EN REVISIÓN</string>
     <string name="status_resolved">RESUELTO</string>
 
-    <!-- Notification Messages -->
+    
     <string name="new_comment_title">Nuevo comentario recibido</string>
     <string name="new_comment_message_format">%1$s ha comentado: \"%2$s\" y te dio %3$d estrellas.</string>
 
-    <!-- Localization additions: reservations, services, qr -->
-    <string name="action_back">Volver</string>
+    
+    <string name="action_back">Back</string>
     <string name="ok_action">OK</string>
-    <string name="accept_action">Aceptar</string>
-    <string name="retry_action">Reintentar</string>
-    <string name="now_label">Ahora</string>
-    <string name="loading_text">Cargando...</string>
+    <string name="accept_action">Accept</string>
+    <string name="retry_action">Retry</string>
+    <string name="now_label">Now</string>
+    <string name="loading_text">Loading...</string>
 
-    <!-- Reservation -->
-    <string name="new_reservation_title">Nueva Reserva</string>
-    <string name="reservation_requested_success">La reserva fue solicitada correctamente</string>
-    <string name="service_schedule_title">PROGRAMACIÓN DEL SERVICIO</string>
-    <string name="desired_date_label">Fecha Deseada</string>
-    <string name="select_date_content_description">Seleccionar fecha</string>
-    <string name="desired_time_label">Hora Deseada</string>
-    <string name="select_time_content_description">Seleccionar hora</string>
-    <string name="optional_message_label">Mensaje Opcional</string>
-    <string name="reservation_optional_message_placeholder">Describe detalles adicionales, códigos de acceso o requerimientos específicos...</string>
-    <string name="confirm_reservation_button">Confirmar Reserva</string>
-    <string name="confirm_action_content_description">Confirmar</string>
-    <string name="select_time_title">Selecciona la hora</string>
-    <string name="reservation_not_found">No se encontró la reserva</string>
-    <string name="reservation_details_title">Detalles</string>
-    <string name="role_client">CLIENTE</string>
-    <string name="service_summary_title">RESUMEN DEL SERVICIO</string>
-    <string name="agreed_date_time_label">Fecha y hora pactada</string>
-    <string name="meeting_address_label">Dirección de encuentro</string>
-    <string name="estimated_cost_label">Costo Estimado</string>
-    <string name="chat_with_client">Chatear con el Cliente</string>
-    <string name="chat_with_professional">Chatear con el Profesional</string>
-    <string name="reject_action">Rechazar</string>
-    <string name="finish_service_action">Terminar Servicio</string>
-    <string name="cancel_reservation_action">Cancelar Reserva</string>
-    <string name="cancel_reservation_confirm_title">¿Cancelar Reserva?</string>
-    <string name="keep_my_reservation_action">Mantener mi Reserva</string>
-    <string name="reject_request_confirm_title">¿Rechazar Solicitud?</string>
-    <string name="reject_request_action">Rechazar Solicitud</string>
-    <string name="status_pending_label">Pendiente</string>
-    <string name="status_cancelled_label">Cancelada</string>
-    <string name="status_rejected_label">Rechazada</string>
-    <string name="status_completed_label">Completada</string>
-    <string name="error_service_not_found">No se encontró el servicio</string>
-    <string name="error_loading_data">Error al cargar datos: %1$s</string>
-    <string name="new_service_request_title">Nueva solicitud de servicio</string>
-    <string name="new_reservation_received_message">Has recibido una reserva para tu servicio: %1$s</string>
-    <string name="error_creating_reservation">Error al crear la reserva: %1$s</string>
-    <string name="reservation_accepted_title">Reserva Aceptada</string>
-    <string name="reservation_accepted_message">¡Buenas noticias! Tu reserva para \'%1$s\' ha sido aceptada.</string>
-    <string name="reservation_rejected_title">Reserva Rechazada</string>
-    <string name="reservation_rejected_message">Lo sentimos, tu reserva para \'%1$s\' no ha podido ser aceptada.</string>
+    
+    <string name="new_reservation_title">New Reservation</string>
+    <string name="reservation_requested_success">Your reservation request was sent successfully</string>
+    <string name="service_schedule_title">SERVICE SCHEDULE</string>
+    <string name="desired_date_label">Desired Date</string>
+    <string name="select_date_content_description">Select date</string>
+    <string name="desired_time_label">Desired Time</string>
+    <string name="select_time_content_description">Select time</string>
+    <string name="optional_message_label">Optional Message</string>
+    <string name="reservation_optional_message_placeholder">Describe additional details, access codes, or specific requirements...</string>
+    <string name="confirm_reservation_button">Confirm Reservation</string>
+    <string name="confirm_action_content_description">Confirm</string>
+    <string name="select_time_title">Select time</string>
+    <string name="reservation_not_found">Reservation not found</string>
+    <string name="reservation_details_title">Details</string>
+    <string name="role_client">CLIENT</string>
+    <string name="service_summary_title">SERVICE SUMMARY</string>
+    <string name="agreed_date_time_label">Agreed date and time</string>
+    <string name="meeting_address_label">Meeting address</string>
+    <string name="estimated_cost_label">Estimated Cost</string>
+    <string name="chat_with_client">Chat with Client</string>
+    <string name="chat_with_professional">Chat with Professional</string>
+    <string name="reject_action">Reject</string>
+    <string name="finish_service_action">Finish Service</string>
+    <string name="cancel_reservation_action">Cancel Reservation</string>
+    <string name="cancel_reservation_confirm_title">Cancel reservation?</string>
+    <string name="keep_my_reservation_action">Keep my reservation</string>
+    <string name="reject_request_confirm_title">Reject request?</string>
+    <string name="reject_request_action">Reject Request</string>
+    <string name="status_pending_label">Pending</string>
+    <string name="status_cancelled_label">Cancelled</string>
+    <string name="status_rejected_label">Rejected</string>
+    <string name="status_completed_label">Completed</string>
+    <string name="error_service_not_found">Service not found</string>
+    <string name="error_loading_data">Error loading data: %1$s</string>
+    <string name="new_service_request_title">New service request</string>
+    <string name="new_reservation_received_message">You have received a reservation for your service: %1$s</string>
+    <string name="error_creating_reservation">Error creating reservation: %1$s</string>
+    <string name="reservation_accepted_title">Reservation Accepted</string>
+    <string name="reservation_accepted_message">Good news! Your reservation for '%1$s' has been accepted.</string>
+    <string name="reservation_rejected_title">Reservation Rejected</string>
+    <string name="reservation_rejected_message">Sorry, your reservation for '%1$s' could not be accepted.</string>
 
-    <!-- Create/Edit service -->
-    <string name="create_service_category_label">Categoría</string>
-    <string name="create_service_select_category_placeholder">Selecciona una categoría</string>
-    <string name="price_min_label">Precio mín.</string>
-    <string name="price_max_label">Precio máx.</string>
-    <string name="add_location_content_description">Agregar Ubicación</string>
-    <string name="go_to_location_content_description">Ir a Ubicación</string>
-    <string name="publish_service_content_description">Publicar Servicio</string>
-    <string name="delete_service_title">Eliminar servicio</string>
-    <string name="delete_service_confirmation_message">¿Estás seguro de que deseas eliminar este servicio? Esta acción no se puede deshacer.</string>
-    <string name="edit_service_screen_title">Editar Servicio</string>
-    <string name="save_changes_button">Guardar Cambios</string>
-    <string name="category_plumbing">Plomería</string>
-    <string name="category_electricity">Electricidad</string>
-    <string name="category_carpentry">Carpintería</string>
-    <string name="category_painting">Pintura</string>
-    <string name="category_gardening">Jardinería</string>
-    <string name="category_cleaning">Limpieza</string>
-    <string name="category_moving">Mudanzas</string>
-    <string name="category_locksmith">Cerrajería</string>
-    <string name="category_other">Otro</string>
-    <string name="error_title_required">El título es obligatorio</string>
-    <string name="error_title_min_length">El título debe tener al menos 5 caracteres</string>
-    <string name="error_select_category">Selecciona una categoría</string>
-    <string name="error_description_required">La descripción es obligatoria</string>
-    <string name="error_description_min_length">La descripción debe tener al menos 20 caracteres</string>
-    <string name="error_min_price_required">El precio mínimo es obligatorio</string>
-    <string name="error_valid_numeric_value">Ingresa un valor numérico válido</string>
-    <string name="error_price_negative">El precio no puede ser negativo</string>
-    <string name="error_max_price_required">El precio máximo es obligatorio</string>
-    <string name="error_max_price_greater_than_min">El precio máximo debe ser mayor al mínimo</string>
-    <string name="error_max_images_allowed">Máximo 5 imágenes permitidas</string>
-    <string name="error_add_at_least_one_image">Agrega al menos una imagen</string>
-    <string name="error_fix_form_before_publish">Por favor corrige los errores antes de publicar</string>
-    <string name="error_login_required_to_publish">Debes iniciar sesión para publicar</string>
-    <string name="service_published_success">¡Servicio publicado exitosamente!</string>
-    <string name="error_publishing_service">Error al publicar el servicio: %1$s</string>
-    <string name="error_fix_form_before_save">Por favor corrige los errores antes de guardar</string>
-    <string name="service_updated_sent_review">Servicio actualizado y enviado a revisión</string>
-    <string name="error_saving_service">Error al guardar: %1$s</string>
-    <string name="service_deleted_success">Servicio eliminado correctamente</string>
-    <string name="error_deleting_service">Error al eliminar: %1$s</string>
+    
+    <string name="create_service_category_label">Category</string>
+    <string name="create_service_select_category_placeholder">Select a category</string>
+    <string name="price_min_label">Min price</string>
+    <string name="price_max_label">Max price</string>
+    <string name="add_location_content_description">Add location</string>
+    <string name="go_to_location_content_description">Go to location</string>
+    <string name="publish_service_content_description">Publish service</string>
+    <string name="delete_service_title">Delete service</string>
+    <string name="delete_service_confirmation_message">Are you sure you want to delete this service? This action cannot be undone.</string>
+    <string name="edit_service_screen_title">Edit Service</string>
+    <string name="save_changes_button">Save Changes</string>
+    <string name="category_plumbing">Plumbing</string>
+    <string name="category_electricity">Electricity</string>
+    <string name="category_carpentry">Carpentry</string>
+    <string name="category_painting">Painting</string>
+    <string name="category_gardening">Gardening</string>
+    <string name="category_cleaning">Cleaning</string>
+    <string name="category_moving">Moving</string>
+    <string name="category_locksmith">Locksmith</string>
+    <string name="category_other">Other</string>
+    <string name="error_title_required">Title is required</string>
+    <string name="error_title_min_length">Title must be at least 5 characters long</string>
+    <string name="error_select_category">Select a category</string>
+    <string name="error_description_required">Description is required</string>
+    <string name="error_description_min_length">Description must be at least 20 characters long</string>
+    <string name="error_min_price_required">Minimum price is required</string>
+    <string name="error_valid_numeric_value">Enter a valid numeric value</string>
+    <string name="error_price_negative">Price cannot be negative</string>
+    <string name="error_max_price_required">Maximum price is required</string>
+    <string name="error_max_price_greater_than_min">Maximum price must be greater than minimum price</string>
+    <string name="error_max_images_allowed">Maximum 5 images allowed</string>
+    <string name="error_add_at_least_one_image">Add at least one image</string>
+    <string name="error_fix_form_before_publish">Please fix the errors before publishing</string>
+    <string name="error_login_required_to_publish">You must sign in to publish</string>
+    <string name="service_published_success">Service published successfully!</string>
+    <string name="error_publishing_service">Error publishing service: %1$s</string>
+    <string name="error_fix_form_before_save">Please fix the errors before saving</string>
+    <string name="service_updated_sent_review">Service updated and sent for review</string>
+    <string name="error_saving_service">Error saving: %1$s</string>
+    <string name="service_deleted_success">Service deleted successfully</string>
+    <string name="error_deleting_service">Error deleting: %1$s</string>
 
-    <!-- Map -->
-    <string name="my_location_title">Mi ubicación</string>
+    
+    <string name="my_location_title">My location</string>
 
-    <!-- QR provider verification -->
-    <string name="confirm_service_title">Confirmar servicio</string>
-    <string name="scan_qr_title">Escanear código QR</string>
-    <string name="scan_qr_description">Escanea el código QR que te mostrará el cliente para confirmar que el servicio fue completado satisfactoriamente.</string>
-    <string name="confirmation_code_label">Código de confirmación</string>
-    <string name="validating_qr_text">Validando QR...</string>
-    <string name="scanning_qr_text">Escaneando QR...</string>
-    <string name="service_confirmed_title">¡Servicio confirmado!</string>
-    <string name="unable_to_confirm_title">No se pudo confirmar</string>
-    <string name="camera_permission_denied">Permiso de cámara denegado.</string>
-    <string name="camera_permission_required_message">Necesitamos permiso de cámara para escanear QR.</string>
-    <string name="grant_permission_action">Conceder Permiso</string>
-    <string name="qr_result_format">Resultado: %1$s</string>
-    <string name="invalid_qr_message">QR inválido. Vuelve a intentarlo.</string>
-    <string name="qr_reservation_not_found_message">No se encontró la reserva asociada al QR.</string>
-    <string name="qr_not_your_reservations_message">Este QR no corresponde a tus reservas.</string>
-    <string name="service_completed_reservation_closed_message">El servicio fue completado exitosamente. La reserva ha sido cerrada.</string>
+    
+    <string name="confirm_service_title">Confirm service</string>
+    <string name="scan_qr_title">Scan QR code</string>
+    <string name="scan_qr_description">Scan the QR code shown by the client to confirm that the service was completed successfully.</string>
+    <string name="confirmation_code_label">Confirmation code</string>
+    <string name="validating_qr_text">Validating QR...</string>
+    <string name="scanning_qr_text">Scanning QR...</string>
+    <string name="service_confirmed_title">Service confirmed!</string>
+    <string name="unable_to_confirm_title">Could not confirm</string>
+    <string name="camera_permission_denied">Camera permission denied.</string>
+    <string name="camera_permission_required_message">We need camera permission to scan QR.</string>
+    <string name="grant_permission_action">Grant Permission</string>
+    <string name="qr_result_format">Result: %1$s</string>
+    <string name="invalid_qr_message">Invalid QR. Please try again.</string>
+    <string name="qr_reservation_not_found_message">No reservation associated with this QR was found.</string>
+    <string name="qr_not_your_reservations_message">This QR does not belong to your reservations.</string>
+    <string name="service_completed_reservation_closed_message">Service completed successfully. The reservation has been closed.</string>
 </resources>
