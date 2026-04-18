@@ -17,7 +17,9 @@ data class ProviderVerificationUiState(
     val scannedValue: String = "Escaneando...",
     val message: String = "",
     val isProcessing: Boolean = false,
-    val isSuccess: Boolean = false
+    val isSuccess: Boolean = false,
+    // Controla si se debe mostrar el modal de resultado (éxito o error)
+    val showResultModal: Boolean = false
 )
 
 @HiltViewModel
@@ -43,7 +45,8 @@ class ProviderVerificationViewModel @Inject constructor(
             if (reservationId == null) {
                 _uiState.value = _uiState.value.copy(
                     isProcessing = false,
-                    message = "QR inválido. Vuelve a intentarlo."
+                    message = "QR inválido. Vuelve a intentarlo.",
+                    showResultModal = true
                 )
                 return@launch
             }
@@ -52,7 +55,8 @@ class ProviderVerificationViewModel @Inject constructor(
             if (reservation == null) {
                 _uiState.value = _uiState.value.copy(
                     isProcessing = false,
-                    message = "No se encontró la reserva asociada al QR."
+                    message = "No se encontró la reserva asociada al QR.",
+                    showResultModal = true
                 )
                 return@launch
             }
@@ -61,7 +65,8 @@ class ProviderVerificationViewModel @Inject constructor(
             if (sessionUserId != null && reservation.providerId != sessionUserId) {
                 _uiState.value = _uiState.value.copy(
                     isProcessing = false,
-                    message = "Este QR no corresponde a tus reservas."
+                    message = "Este QR no corresponde a tus reservas.",
+                    showResultModal = true
                 )
                 return@launch
             }
@@ -72,8 +77,19 @@ class ProviderVerificationViewModel @Inject constructor(
             _uiState.value = _uiState.value.copy(
                 isProcessing = false,
                 isSuccess = true,
-                message = "Servicio confirmado y reserva eliminada correctamente."
+                message = "Servicio confirmado y reserva eliminada correctamente.",
+                showResultModal = true
             )
+        }
+    }
+
+    // Cierra el modal de resultado; para errores también reinicia el estado para permitir otro escaneo.
+    fun dismissModal() {
+        val wasError = !_uiState.value.isSuccess
+        if (wasError) {
+            _uiState.value = ProviderVerificationUiState()
+        } else {
+            _uiState.value = _uiState.value.copy(showResultModal = false)
         }
     }
 }

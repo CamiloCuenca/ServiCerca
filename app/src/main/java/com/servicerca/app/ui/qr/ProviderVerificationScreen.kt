@@ -10,10 +10,8 @@ import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,13 +19,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircleOutline
+import androidx.compose.material.icons.filled.ErrorOutline
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -35,6 +35,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -59,7 +60,6 @@ import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
-import com.servicerca.app.core.components.button.PrimaryButton
 import com.servicerca.app.core.components.card.ConfirmServiceSummaryCard
 import com.servicerca.app.core.components.navigation.AppTopAppBarBack
 import com.servicerca.app.ui.theme.ServiCercaTheme
@@ -167,47 +167,21 @@ fun ProviderVerificationScreen(
             Spacer(modifier = Modifier.height(32.dp))
 
             if (uiState.isProcessing) {
-                PrimaryButton(
+                CircularProgressIndicator(
+                    modifier = Modifier.size(32.dp),
+                    color = colorScheme.primary
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
                     text = "Validando QR...",
-                    onClick = {},
-                    enabled = false
+                    style = typography.bodySmall,
+                    color = colorScheme.onSurface.copy(alpha = 0.6f)
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
             }
 
-            if (uiState.isSuccess) {
-                Row(
-                    modifier = Modifier
-                        .background(
-                            color = Color(0xFFE8F5E9),
-                            shape = RoundedCornerShape(24.dp)
-                        )
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.CheckCircleOutline,
-                        contentDescription = null,
-                        tint = Color(0xFF4CAF50),
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = uiState.message,
-                        style = typography.labelSmall,
-                        color = Color(0xFF4CAF50),
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-            } else if (uiState.message.isNotBlank()) {
-                Text(
-                    text = uiState.message,
-                    style = typography.bodySmall,
-                    color = MaterialTheme.colorScheme.error,
-                    textAlign = TextAlign.Center
-                )
-            } else {
+            if (!uiState.isProcessing && !uiState.isSuccess && uiState.message.isBlank()) {
                 Text(
                     text = "Escaneando QR...",
                     style = typography.bodySmall,
@@ -217,7 +191,76 @@ fun ProviderVerificationScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
         }
+
+        // Modal de resultado: éxito o error al escanear el QR
+        if (uiState.showResultModal) {
+            QrResultDialog(
+                isSuccess = uiState.isSuccess,
+                message = uiState.message,
+                onDismiss = {
+                    viewModel.dismissModal()
+                    if (uiState.isSuccess) onBackClick()
+                },
+                onConfirm = {
+                    viewModel.dismissModal()
+                    if (uiState.isSuccess) onBackClick()
+                }
+            )
+        }
     }
+}
+
+// Diálogo de resultado del escaneo QR (éxito o error)
+@Composable
+fun QrResultDialog(
+    isSuccess: Boolean,
+    message: String,
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit
+) {
+    val iconVector = if (isSuccess) Icons.Default.CheckCircleOutline else Icons.Default.ErrorOutline
+    val iconTint = if (isSuccess) Color(0xFF4CAF50) else MaterialTheme.colorScheme.error
+    val title = if (isSuccess) "¡Servicio confirmado!" else "No se pudo confirmar"
+    val confirmText = if (isSuccess) "Aceptar" else "Reintentar"
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        icon = {
+            Icon(
+                imageVector = iconVector,
+                contentDescription = null,
+                tint = iconTint,
+                modifier = Modifier.size(48.dp)
+            )
+        },
+        title = {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center
+            )
+        },
+        text = {
+            Text(
+                text = message,
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center
+            )
+        },
+        containerColor = MaterialTheme.colorScheme.background,
+        titleContentColor = MaterialTheme.colorScheme.onBackground,
+        textContentColor = MaterialTheme.colorScheme.onSurface,
+        confirmButton = {
+            TextButton(onClick = onConfirm) {
+                Text(
+                    text = confirmText,
+                    color = if (isSuccess) Color(0xFF4CAF50) else MaterialTheme.colorScheme.error,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
+    )
 }
 
 //@Preview(showBackground = true, showSystemUi = true)
