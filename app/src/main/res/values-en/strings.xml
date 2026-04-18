@@ -176,7 +176,7 @@
         <string name="register_already_have_account_text">Do you already have an account?</string>
         <string name="register_terms_and_privacy_notice_text">By registering, you accept our Terms of Service \ny Privacy Policy</string>
         <string name="category_service_label">Service Category</string>
-        <string name="recover_password_button">Send instructions\n</string>
+        <string name="recover_password_button">Send instructions</string>
         <string name="recover_password_subtitle">Enter your email to receive \nrecovery instructions</string>
         <string name="profile_text">My Profile</string>
         <string name="recover_password">Recover password</string>

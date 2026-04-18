@@ -25,7 +25,7 @@
     <string name="title_service_label">Titulo del servicio</string>
     <string name="category_service_label">Categoría del servicio</string>
     <string name="detailed_description_label">Descripción detallada</string>
-    <string name="recover_password_button">Enviar instrucciones\n</string>
+    <string name="recover_password_button">Enviar instrucciones</string>
     <string name="recover_password_subtitle">Introduce tu correo electrónico para recibir\ninstrucciones de recuperación</string>
     <string name="profile_text">Mi Perfil</string>
     <string name="recover_password">Recuperar contraseña</string>
