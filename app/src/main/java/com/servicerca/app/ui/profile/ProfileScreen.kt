@@ -18,6 +18,7 @@ import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.foundation.rememberScrollState
@@ -50,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.servicerca.app.R
 import com.servicerca.app.core.components.alertDialog.ConfirmAlertDialog
+import com.servicerca.app.core.components.alertDialog.LanguagePickerDialog
 import com.servicerca.app.core.components.button.ButtonIcon
 import com.servicerca.app.core.components.button.DeleteButton
 import com.servicerca.app.core.components.button.PasswordButton
@@ -70,7 +72,9 @@ fun ProfileScreen(
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val selectedLanguageTag by viewModel.selectedLanguageTag.collectAsState()
     var showConfirmDialog by remember { mutableStateOf(false) }
+    var showLanguageDialog by remember { mutableStateOf(false) }
     var selectedInsignia by remember { mutableStateOf<InsigniaUiModel?>(null) }
 
     when (val state = uiState) {
@@ -176,7 +180,12 @@ fun ProfileScreen(
                 StatisticsSection(state)
 
                 // Botones de Configuración
-                AccountSettingsSection(onEditProflie, onUpdatePassword, onDeleteProfile)
+                AccountSettingsSection(
+                    onEdit = onEditProflie,
+                    onUpdatePass = onUpdatePassword,
+                    onDelete = onDeleteProfile,
+                    onChangeLanguage = { showLanguageDialog = true }
+                )
             }
         }
     }
@@ -195,6 +204,17 @@ fun ProfileScreen(
         InsigniaDetailDialog(
             insignia = insignia,
             onDismiss = { selectedInsignia = null }
+        )
+    }
+
+    if (showLanguageDialog) {
+        LanguagePickerDialog(
+            selectedLanguageTag = selectedLanguageTag,
+            onDismiss = { showLanguageDialog = false },
+            onLanguageSelected = { tag ->
+                viewModel.setLanguage(tag)
+                showLanguageDialog = false
+            }
         )
     }
 }
@@ -315,8 +335,18 @@ fun StatisticsSection(state: ProfileUiState.Success) {
 
 
 @Composable
-fun AccountSettingsSection(onEdit: () -> Unit, onUpdatePass: () -> Unit, onDelete: () -> Unit) {
+fun AccountSettingsSection(
+    onEdit: () -> Unit,
+    onUpdatePass: () -> Unit,
+    onDelete: () -> Unit,
+    onChangeLanguage: () -> Unit
+) {
     Column(modifier = Modifier.fillMaxWidth().padding(bottom = 20.dp), verticalArrangement = Arrangement.spacedBy(15.dp)) {
+        ButtonIcon(
+            text = stringResource(R.string.language_button),
+            onClick = onChangeLanguage,
+            icon = { Icon(Icons.Default.Language, null) }
+        )
         ButtonIcon(text = stringResource(R.string.edit_account), onClick = onEdit, icon = { Icon(Icons.Default.Edit, null) })
         PasswordButton(text = stringResource(R.string.edit_password), onClick = onUpdatePass, icon = { Icon(Icons.Default.Lock, null) })
         DeleteButton(text = stringResource(R.string.delete_account), onClick = onDelete, icon = { Icon(Icons.Default.Delete, null) })

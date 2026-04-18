@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -38,6 +39,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.servicerca.app.R
 import com.servicerca.app.core.components.alertDialog.ConfirmAlertDialog
+import com.servicerca.app.core.components.alertDialog.LanguagePickerDialog
+import com.servicerca.app.core.components.button.ButtonIcon
 import com.servicerca.app.core.components.card.CardMenuModerator
 import com.servicerca.app.core.components.card.CardProfileModerator
 import com.servicerca.app.core.components.images.ProfileImage
@@ -53,7 +56,9 @@ fun ProfileModerator (
     viewModel: ProfileViewModel = hiltViewModel()
 ){
     val uiState by viewModel.uiState.collectAsState()
+    val selectedLanguageTag by viewModel.selectedLanguageTag.collectAsState()
     var showConfirmDialog by remember { mutableStateOf(false) }
+    var showLanguageDialog by remember { mutableStateOf(false) }
 
     when (val state = uiState) {
         is ProfileUiState.Loading -> {
@@ -86,7 +91,7 @@ fun ProfileModerator (
                     ) {
                         Icon(
                             imageVector = Icons.Default.Logout,
-                            contentDescription = "Cerrar sesión"
+                            contentDescription = stringResource(R.string.logout_content_description)
                         )
                     }
                 }
@@ -116,6 +121,12 @@ fun ProfileModerator (
                     style = MaterialTheme.typography.bodyLarge,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()
+                )
+
+                ButtonIcon(
+                    text = stringResource(R.string.language_button),
+                    onClick = { showLanguageDialog = true },
+                    icon = { Icon(Icons.Default.Language, null) }
                 )
 
                 // Estadísticas de moderación
@@ -183,6 +194,17 @@ fun ProfileModerator (
             onConfirm = {
                 viewModel.logout()
                 onLogout()
+            }
+        )
+    }
+
+    if (showLanguageDialog) {
+        LanguagePickerDialog(
+            selectedLanguageTag = selectedLanguageTag,
+            onDismiss = { showLanguageDialog = false },
+            onLanguageSelected = { tag ->
+                viewModel.setLanguage(tag)
+                showLanguageDialog = false
             }
         )
     }

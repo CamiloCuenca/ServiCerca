@@ -52,6 +52,11 @@
     <string name="edit_account">Editar perfil</string>
     <string name="delete_account">Eliminar cuenta</string>
     <string name="logout_content_description">Cerrar sesión</string>
+    <string name="language_button">Idioma</string>
+    <string name="language_dialog_title">Selecciona el idioma</string>
+    <string name="language_option_system">Automático (sistema)</string>
+    <string name="language_option_spanish">Español</string>
+    <string name="language_option_english">English</string>
     <string name="profile_fallback_name">Usuario</string>
     <string name="location_not_available">Ubicación no disponible</string>
     <string name="interesting_posts_title">Publicaciones Interesantes</string>
@@ -170,9 +175,19 @@
     <!-- Search Screen -->
     <string name="search_title">Buscar</string>
     <string name="search_placeholder">Buscar servicios...</string>
+    <string name="search_results_for_query">Resultados para "%1$s"</string>
+    <string name="search_category_results_title">Servicios de %1$s</string>
+    <string name="search_no_services_in_category">No hay servicios en esta categoría.</string>
+    <string name="search_no_results_by_name">No se encontraron servicios con ese nombre.</string>
     <string name="recent_searches_title">Búsquedas recientes</string>
     <string name="clear_all">Borrar todo</string>
+    <string name="view_all">Ver todo</string>
     <string name="popular_categories_title">Categorías populares</string>
+    <string name="category_home">Hogar</string>
+    <string name="category_education">Educación</string>
+    <string name="category_pets">Mascotas</string>
+    <string name="category_technology">Tecnología</string>
+    <string name="category_transport">Transporte</string>
     <string name="explore_map_title">Explorar en el mapa</string>
     <string name="explore_map_description">Encuentra servicios profesionales justo donde los necesitas.</string>
     <string name="open_map_button">Abrir mapa</string>
@@ -252,8 +267,8 @@
     <string name="moderation_history">Historial de moderación</string>
     <string name="menu_option_see_profile">Ver Perfil</string>
     <string name="menu_option_suspend_profile">Suspender</string>
-    <string name="menu_option_delete_profile">Eliminar</string>
-    <string name="label_search_user">Buscar por nombre o email...</string>
+    <string name="menu_option_delete_profile" translatable="false">Eliminar</string>
+    <string name="label_search_user" translatable="false">Buscar por nombre o email...</string>
     <string name="label_count_all_users">Total de usuarios</string>
     <string name="label_count_active_users">Activos ahora</string>
     <string name="label_count_new_users">Nuevos hoy</string>
