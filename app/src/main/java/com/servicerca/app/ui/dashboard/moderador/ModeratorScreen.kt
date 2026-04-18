@@ -41,7 +41,7 @@ fun ModeratorScreen(
     val showtop = destination?.hasRoute<DashboardRoutes.EditProfile>() != true
     val showBT = destination?.hasRoute<DashboardRoutes.DeleteProfile>() != true
     val showBT2 = destination?.hasRoute<DashboardRoutes.UpdatePassword>() != true
-    val showBT3 = true // notifications are outside this NavHost
+    val showBT3 = true // Notifications are handled in the outer AppNavigation NavHost, not here
     val showModerator = destination?.hasRoute<DashboardRoutes.DetailServiceModerator>() != true
     val showModerator2 = destination?.hasRoute<DashboardRoutes.RejectReason>() != true
 

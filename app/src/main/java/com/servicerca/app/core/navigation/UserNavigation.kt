@@ -204,6 +204,7 @@ fun UserNavigation(
         }
 
         composable<DashboardRoutes.Chat> {
+            // ChatScreen retrieves the chat ID internally via its ViewModel (SavedStateHandle)
             ChatScreen(onBack = { navController.popBackStack() })
         }
 
