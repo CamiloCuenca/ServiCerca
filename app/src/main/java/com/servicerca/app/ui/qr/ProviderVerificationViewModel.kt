@@ -72,12 +72,13 @@ class ProviderVerificationViewModel @Inject constructor(
             }
 
             // Operación única para evitar inconsistencias en estado local al completar/eliminar.
+            // completeReservation marca el servicio como completado y elimina la reserva del estado local.
             reservationRepository.completeReservation(reservationId)
 
             _uiState.value = _uiState.value.copy(
                 isProcessing = false,
                 isSuccess = true,
-                message = "Servicio confirmado y reserva eliminada correctamente.",
+                message = "El servicio fue completado exitosamente. La reserva ha sido cerrada.",
                 showResultModal = true
             )
         }
