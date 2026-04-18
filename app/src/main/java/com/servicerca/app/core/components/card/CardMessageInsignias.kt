@@ -55,7 +55,7 @@ fun CardMessageInsignias(){
 
             ) {
                 Text(
-                    text = stringResource(R.string.tittle_elite),
+                    text = stringResource(R.string.title_elite),
                     style = MaterialTheme.typography.titleMedium,
                     overflow = TextOverflow.Ellipsis,
                     textAlign = TextAlign.Start,

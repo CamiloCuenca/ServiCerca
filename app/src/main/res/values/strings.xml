@@ -37,7 +37,7 @@
     <string name="job">Experto Local</string>
     <string name="xp">1250 / 2000 XP</string>
     <string name="mesaage_level">¡Sólo 750 puntos más para el nivel Maestro!</string>
-    <string name="tittle_insignias">Insignias</string>
+    <string name="title_insignias">Insignias</string>
     <string name="ver_todas">Ver todas</string>
     <string name="statistic">Estadísticas</string>
     <string name="edit_password">Cambiar contraseña</string>
@@ -72,8 +72,21 @@
     <string name="insignia_expert">Experto Norte</string>
     <string name="insignia_chat">Chat activo</string>
     <string name="insignia_eco">Eco-amigo</string>
-    <string name="tittle_elite">¡Estás en la Élite!</string>
+    <string name="title_elite">¡Estás en la Élite!</string>
     <string name="text_best">Tu desempeño te posiciona entre los mejores.</string>
+
+    <!-- Insignia Descriptions -->
+    <string name="desc_insignia_verified">Verifica tu correo electrónico para obtener esta insignia.</string>
+    <string name="desc_insignia_trusted">Completa 10 servicios con éxito para ser un proveedor confiable.</string>
+    <string name="desc_insignia_50_services">Alcanza los 50 servicios completados para obtener este reconocimiento.</string>
+    <string name="desc_insignia_fast">Mantén una calificación superior a 4.0 estrellas en tus servicios.</string>
+    <string name="desc_insignia_top5">Suma más de 4,300 puntos para estar en el top 5% de la comunidad.</string>
+    <string name="desc_insignia_favorite">Consigue una calificación promedio de 4.8 o superior.</string>
+    <string name="desc_insignia_expert">Alcanza la maestría con más de 7,000 puntos totales acumulados.</string>
+    <string name="desc_insignia_chat">Recibe al menos 5 reseñas positivas de diferentes clientes.</string>
+    <string name="desc_insignia_eco">Supera los 100 servicios completados para ser un pilar de la comunidad.</string>
+    <string name="desc_insignia_locked">Sigue participando en ServiCerca para desbloquear este logro.</string>
+    <string name="insignia_details_title">Detalles del Logro</string>
 
     <!-- Edit Profile Screen -->
     <string name="update_profile">Editar perfil</string>
@@ -92,7 +105,7 @@
     <string name="profile_type">Tipo de perfil</string>
     <string name="user_type">Cliente</string>
     <string name="btn_edit_profile">Guardar cambios</string>
-    <string name="tittle_update_profile">Perfil actualizado</string>
+    <string name="title_update_profile">Perfil actualizado</string>
     <string name="message_update_profile">Tus datos han sido actualizados correctamente.</string>
 
     <!-- Delete Profile Screen -->
@@ -127,7 +140,7 @@
     <string name="new_password">Nueva contraseña</string>
     <string name="confirm_new_password">Confirmar nueva contraseña</string>
     <string name="btn_update_password">Actualizar contraseña</string>
-    <string name="tittle_message_change_password">Contraseña actualizada</string>
+    <string name="title_message_change_password">Contraseña actualizada</string>
     <string name="message_change_password_success">Tu contraseña ha sido actualizada correctamente.
         Por seguridad, se cerrará la sesión actual.</string>
 
