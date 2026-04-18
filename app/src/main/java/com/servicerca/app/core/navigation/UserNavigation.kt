@@ -149,7 +149,7 @@ fun UserNavigation(
                     navController.popBackStack()
                 },
                 onQr = {
-                    navController.navigate("QrService")
+                    navController.navigate("QrService/${route.reservationId}")
                 }
 
             )
@@ -164,8 +164,10 @@ fun UserNavigation(
             )
         }
 
-        composable("QrService"){
+        composable("QrService/{reservationId}") { backStackEntry ->
+            val reservationId = backStackEntry.arguments?.getString("reservationId") ?: return@composable
             ServiceVerificationScreen(
+                reservationId = reservationId,
                 onBackClick = {
                     navController.popBackStack()
                 }
@@ -176,9 +178,6 @@ fun UserNavigation(
             ProviderVerificationScreen(
                 onBackClick = {
                     navController.popBackStack()
-                },
-                onScanClick = {
-                    navController.navigate(MainRoutes.QrService)
                 }
 
             )
