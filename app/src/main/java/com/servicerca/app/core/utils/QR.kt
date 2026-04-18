@@ -6,6 +6,9 @@ import android.graphics.Color
 import androidx.core.graphics.set
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.qrcode.QRCodeWriter
+import java.util.zip.CRC32
+
+private const val RESERVATION_QR_PREFIX = "servicerca:reservation:"
 
 fun generarQR(datos: String, size: Int = 512): Bitmap? {
     return try {
@@ -29,4 +32,25 @@ fun generarQR(datos: String, size: Int = 512): Bitmap? {
         e.printStackTrace()
         null
     }
+}
+
+fun generarContenidoReservaQR(reservationId: String): String {
+    return "$RESERVATION_QR_PREFIX$reservationId"
+}
+
+fun leerReservaIdDesdeQR(qrContent: String): String? {
+    val normalized = qrContent.trim()
+    if (normalized.isBlank()) return null
+
+    return if (normalized.startsWith(RESERVATION_QR_PREFIX)) {
+        normalized.removePrefix(RESERVATION_QR_PREFIX).takeIf { it.isNotBlank() }
+    } else {
+        // Compatibilidad: aceptamos QR antiguos que solo tenían el id de la reserva.
+        normalized
+    }
+}
+
+fun generarCodigoAlternativoReserva(reservationId: String): String {
+    val checksum = CRC32().apply { update(reservationId.trim().toByteArray()) }.value
+    return checksum.toString(16).uppercase().padStart(8, '0').takeLast(8)
 }

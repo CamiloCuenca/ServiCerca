@@ -65,6 +65,18 @@ class ReservationRepositoryImpl @Inject constructor(
         _reservations.value = _reservations.value.filter { it.id != reservationId }
     }
 
+    override suspend fun completeReservation(reservationId: String) {
+        _reservations.update { current ->
+            current.mapNotNull { reservation ->
+                if (reservation.id == reservationId) {
+                    null
+                } else {
+                    reservation
+                }
+            }
+        }
+    }
+
     private fun fetchInitialReservations(userId: String): List<Reservation> {
         val date1 = java.util.Date(1775815200000L) // 10 de abril de 2026
         val date2 = java.util.Date(1776247200000L) // 15 de abril de 2026

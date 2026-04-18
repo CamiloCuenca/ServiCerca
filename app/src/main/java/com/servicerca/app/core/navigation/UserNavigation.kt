@@ -143,10 +143,13 @@ fun UserNavigation(
             )
         }
 
-        // Se eliminó MakeReservation de aquí, ahora es global
+        // Se eliminó MakeReservation y ReservationDetail de aquí, ahora son globales
 
-        composable("QrService"){
+
+        composable("QrService/{reservationId}") { backStackEntry ->
+            val reservationId = backStackEntry.arguments?.getString("reservationId") ?: return@composable
             ServiceVerificationScreen(
+                reservationId = reservationId,
                 onBackClick = {
                     navController.popBackStack()
                 }
@@ -157,9 +160,6 @@ fun UserNavigation(
             ProviderVerificationScreen(
                 onBackClick = {
                     navController.popBackStack()
-                },
-                onScanClick = {
-                    navController.navigate(MainRoutes.QrService)
                 }
 
             )
