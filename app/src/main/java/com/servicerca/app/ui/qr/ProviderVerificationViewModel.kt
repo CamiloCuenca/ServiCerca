@@ -32,7 +32,11 @@ class ProviderVerificationViewModel @Inject constructor(
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(ProviderVerificationUiState())
+    private val _uiState = MutableStateFlow(
+        ProviderVerificationUiState(
+            scannedValue = context.getString(R.string.scanning_qr_text)
+        )
+    )
     val uiState: StateFlow<ProviderVerificationUiState> = _uiState.asStateFlow()
 
     fun onQrDetected(rawValue: String) {
@@ -92,7 +96,9 @@ class ProviderVerificationViewModel @Inject constructor(
     fun dismissModal() {
         val wasError = !_uiState.value.isSuccess
         if (wasError) {
-            _uiState.value = ProviderVerificationUiState()
+            _uiState.value = ProviderVerificationUiState(
+                scannedValue = context.getString(R.string.scanning_qr_text)
+            )
         } else {
             _uiState.value = _uiState.value.copy(showResultModal = false)
         }
