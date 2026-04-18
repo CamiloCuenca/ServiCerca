@@ -38,5 +38,46 @@ sealed class DashboardRoutes {
     @Serializable
     data object ManageUser : DashboardRoutes()
 
+    // User sub-routes
+    @Serializable
+    data class DetailService(val serviceId: String) : DashboardRoutes()
+
+    @Serializable
+    data object Insignias : DashboardRoutes()
+
+    @Serializable
+    data object EditProfile : DashboardRoutes()
+
+    @Serializable
+    data object UpdatePassword : DashboardRoutes()
+
+    @Serializable
+    data object DeleteProfile : DashboardRoutes()
+
+    @Serializable
+    data object ServiceList : DashboardRoutes()
+
+    @Serializable
+    data object ListInteresting : DashboardRoutes()
+
+    @Serializable
+    data class EditService(val serviceId: String) : DashboardRoutes()
+
+    @Serializable
+    data class Chat(val chatId: String) : DashboardRoutes()
+
+    @Serializable
+    data object QrScannerDashboard : DashboardRoutes()
+
+    @Serializable
+    data class QrServiceVerification(val reservationId: String) : DashboardRoutes()
+
+    // Moderator sub-routes
+    @Serializable
+    data class DetailServiceModerator(val serviceId: String) : DashboardRoutes()
+
+    @Serializable
+    data class RejectReason(val serviceId: String) : DashboardRoutes()
+
 }
 
