@@ -68,17 +68,14 @@ class ProfileViewModel @Inject constructor(
                 val myServiceIds = services.filter { it.ownerId == userId }.map { it.id }
                 val myComments = allComments.filter { it.serviceId in myServiceIds }
 
-                val avg = if (myComments.isNotEmpty()) {
-                    myComments.map { it.rating }.average()
-                } else {
-                    0.0
-                }
-                avg
-            }.collect { avgRating ->
+                // We no longer calculate average from comments locally to ensure SSOT with User model
+                // But we still observe comments to trigger UI updates if necessary
+                Unit
+            }.collect { 
                 updateSuccessState { current ->
-                    val levelInfo = calculateLevelInfo(current.user.totalPoints, avgRating)
+                    val levelInfo = calculateLevelInfo(current.user.totalPoints, current.user.rating)
                     current.copy(
-                        averageRating = avgRating,
+                        averageRating = current.user.rating,
                         totalXp = current.user.totalPoints,
                         level = levelInfo.level,
                         xpInLevel = levelInfo.xpInLevel,
@@ -173,10 +170,11 @@ class ProfileViewModel @Inject constructor(
                     if (user != null) {
                         val insignias = getEarnedInsigniasUseCase(user).map { it.toUiModel() }
                         updateSuccessState { current ->
-                            val levelInfo = calculateLevelInfo(user.totalPoints, current.averageRating)
+                            val levelInfo = calculateLevelInfo(user.totalPoints, user.rating)
                             current.copy(
                                 user = user,
                                 insignias = insignias,
+                                averageRating = user.rating,
                                 totalXp = user.totalPoints,
                                 level = levelInfo.level,
                                 xpInLevel = levelInfo.xpInLevel,
@@ -186,10 +184,11 @@ class ProfileViewModel @Inject constructor(
                             )
                         } ?: run {
                             // First time success
-                            val levelInfo = calculateLevelInfo(user.totalPoints, 0.0)
+                            val levelInfo = calculateLevelInfo(user.totalPoints, user.rating)
                             _uiState.value = ProfileUiState.Success(
                                 user = user,
                                 insignias = insignias,
+                                averageRating = user.rating,
                                 totalXp = user.totalPoints,
                                 level = levelInfo.level,
                                 xpInLevel = levelInfo.xpInLevel,
