@@ -1,6 +1,5 @@
 package com.servicerca.app.core.components.card
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,17 +26,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.servicerca.app.R
+import coil3.compose.AsyncImage
 
 @Composable
 fun CardProfileManage(
     name: String,
     email: String,
-    imageProfile: Int,
+    imageProfile: String,
     onSeeProfile: () -> Unit = {},
     onSuspendProfile: () -> Unit = {},
     onDeleteProfile: () -> Unit = {}
@@ -60,9 +59,10 @@ fun CardProfileManage(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                painter = painterResource(id = imageProfile),
+            AsyncImage(
+                model = imageProfile,
                 contentDescription = "Profile Image",
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(60.dp)
                     .clip(CircleShape)
@@ -130,6 +130,6 @@ fun CardProfileManagePreview() {
     CardProfileManage(
         name = "Heliana Cuenca",
         email = "juan.camilo@email.com",
-        imageProfile = R.drawable.foto_jcc
+        imageProfile = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEga-7mA9kd7EnROYLMEYwURS2xlW1uWK8eWC8F6X3RFuCrJQLnd5eJ8KNOqXeVNuUVM0c4X31Uoz7NlQKJ4QxFfF6EDWAwgT6y1F_HgZ23As74U0wOHy14ClTNC9kP5KJHgPouBaogO5IpYsvxGmDCYlJ9do4tNb9eb6fYBMMSIG3zEcAN-7y2lIrvTwOyb/s320/WhatsApp%20Image%202026-03-04%20at%2023.04.58.jpeg"
     )
 }

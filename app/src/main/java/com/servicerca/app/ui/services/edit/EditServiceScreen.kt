@@ -1,5 +1,8 @@
 package com.servicerca.app.ui.services.edit
 
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,6 +47,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
@@ -52,23 +56,29 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.servicerca.app.R
 import com.servicerca.app.core.components.button.DeleteButton
 import com.servicerca.app.core.components.button.PrimaryButton
 import com.servicerca.app.core.components.card.CardServiceImage
 import com.servicerca.app.core.components.input.AppTextField
+import com.servicerca.app.core.components.images.ImagesHorizontalScroller
 import com.servicerca.app.core.utils.RequestResult
+import com.servicerca.app.domain.repository.ServiceRepository
+import com.servicerca.app.ui.services.ListService.ListServiceViewModel
 import com.servicerca.app.ui.theme.Error
 import com.servicerca.app.ui.theme.PrimaryLight
+import java.io.InputStream
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditServiceScreen(
+    serviceId: String,
     onBack: () -> Unit,
     onSaveSuccess: () -> Unit = {},
     onDeleteSuccess: () -> Unit = {},
-    viewModel: EditServiceViewModel = viewModel()
+    viewModel: EditServiceViewModel = hiltViewModel(),
+    listViewModel: ListServiceViewModel = hiltViewModel()
 ) {
     val saveResult by viewModel.saveResult.collectAsState()
     val deleteResult by viewModel.deleteResult.collectAsState()
@@ -78,6 +88,14 @@ fun EditServiceScreen(
     var showDeleteDialog by remember { mutableStateOf(false) }
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
+
+    val services by listViewModel.services.collectAsState()
+    
+    LaunchedEffect(serviceId, services) {
+        services.find { it.id == serviceId }?.let { service ->
+            viewModel.loadService(service)
+        }
+    }
 
     // Resultado de guardar cambios
     LaunchedEffect(saveResult) {
@@ -202,26 +220,37 @@ fun EditServiceScreen(
 
             // ── Fotos del servicio ───────────────────────────────────────
             Text(
-                text = "Fotos del servicio",
-                style = MaterialTheme.typography.headlineSmall,
-                modifier = Modifier.padding(bottom = 4.dp)
+                text = stringResource(R.string.create_service_add_image_label),
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier.padding(horizontal = 8.dp)
             )
 
-            ElevatedCard(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(4.dp),
-                elevation = CardDefaults.elevatedCardElevation(defaultElevation = 7.dp)
-            ) {
-                Row(
-                    modifier = Modifier.padding(16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    CardServiceImage()
-                    CardServiceImage()
-                    CardServiceImage()
+            val images by viewModel.images.collectAsState()
+            val context = LocalContext.current
+            val launcher = rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.GetContent(),
+                onResult = { uri ->
+                    if (uri != null) {
+                        try {
+                            val inputStream: InputStream? = context.contentResolver.openInputStream(uri)
+                            val bytes = inputStream?.readBytes()
+                            inputStream?.close()
+                            if (bytes != null) {
+                                viewModel.addImage(bytes)
+                            }
+                        } catch (e: Exception) {
+                            Log.w("EditService", "failed to read image uri", e)
+                        }
+                    }
                 }
-            }
+            )
+
+            ImagesHorizontalScroller(
+                images = images,
+                onAddImage = { launcher.launch("image/*") },
+                onRemoveAt = { idx: Int -> viewModel.removeImageAt(idx) }
+            )
 
             // ── Título ───────────────────────────────────────────────────
             AppTextField(
@@ -348,5 +377,5 @@ fun EditServiceScreen(
 @Composable
 @Preview(showBackground = true, showSystemUi = true)
 fun EditServiceScreenPreview() {
-    EditServiceScreen(onBack = {})
+    EditServiceScreen(serviceId = "1", onBack = {})
 }

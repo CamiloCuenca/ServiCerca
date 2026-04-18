@@ -23,5 +23,6 @@ package com.servicerca.app.domain.model
         val approvedReviews: Int = 0,
         val rejectReviews: Int = 0,
         val isEmailVerified: Boolean = false,
-        val listInteresting: List<String> = emptyList()
+        val listInteresting: List<String> = emptyList(),
+        val isSuspended: Boolean = false
     )

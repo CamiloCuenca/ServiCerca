@@ -22,4 +22,6 @@ interface ServiceRepository {
     fun findByStatus(status: ServiceStatus): StateFlow<List<Service>>
 
     fun findByType(type: String): StateFlow<List<Service>>
+
+    suspend fun toggleLike(serviceId: String, userId: String)
 }

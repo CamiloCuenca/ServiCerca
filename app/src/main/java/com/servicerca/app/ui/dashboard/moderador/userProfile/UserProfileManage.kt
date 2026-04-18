@@ -25,12 +25,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.servicerca.app.R
 import com.servicerca.app.core.components.card.CardLevel
 import com.servicerca.app.core.components.images.ProfileImage
+import com.servicerca.app.ui.profile.StatisticsSection
 
 @Composable
 fun UserProfileManage(
     viewModel: UserProfileManageViewModel = hiltViewModel()
 ) {
-    val user by viewModel.user.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
+    val user = uiState.user
 
     Column(
         modifier = Modifier
@@ -59,12 +61,20 @@ fun UserProfileManage(
         )
 
 
-        CardLevel()
+        // Tarjeta de Nivel (con datos dinámicos)
+        CardLevel(
+            level = uiState.level,
+            levelName = uiState.levelName,
+            currentXp = uiState.totalXp,
+            nextLevelXp = uiState.xpRequiredForNextLevel,
+            progress = uiState.progress,
+            remainingXp = (uiState.xpRequiredForNextLevel - uiState.totalXp).coerceAtLeast(0)
+        )
 
-
-        //StatisticsSection(
-            //user = user
-        //)
+        // Sección de Estadísticas
+        StatisticsSection(
+            uiState = uiState
+        )
     }
 }
 

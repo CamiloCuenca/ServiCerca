@@ -44,11 +44,13 @@ fun CardService( // TODO @CAMILOCUENCA luego de tener el firestorage ponerle el 
     level: String = "EXPERTO",
     photoUrl: String? = null,
     isBookmarked: Boolean = false,
+    likeCount: Int = 0,
+    isLiked: Boolean = false,
     onBookmarkClick: () -> Unit = {},
+    onLikeClick: () -> Unit = {},
     onRequestClick: () -> Unit = {}
 ) {
 
-    var isSelectedLike by remember { mutableStateOf(false) }
 
     ElevatedCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
@@ -186,6 +188,23 @@ fun CardService( // TODO @CAMILOCUENCA luego de tener el firestorage ponerle el 
                     )
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
+                        if (likeCount > 0) {
+                            Icon(
+                                imageVector = Icons.Default.Favorite,
+                                contentDescription = null,
+                                tint = if (isLiked) Color.Red else Color.Gray,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = likeCount.toString(),
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = if (isLiked) Color.Red else Color.Gray
+                            )
+                            Spacer(modifier = Modifier.width(12.dp))
+                        }
+
                         Icon(
                             painter = painterResource(id = R.drawable.ic_star),
                             contentDescription = null,
@@ -288,8 +307,8 @@ fun CardService( // TODO @CAMILOCUENCA luego de tener el firestorage ponerle el 
                                     contentDescription = null,
                                 )
                             },
-                            isSelected = isSelectedLike,
-                            onClick = { isSelectedLike = !isSelectedLike }
+                            isSelected = isLiked,
+                            onClick = onLikeClick
                         )
 
                         ReactionIconButton(
