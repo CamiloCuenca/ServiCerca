@@ -42,6 +42,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.key
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import kotlinx.coroutines.delay
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -69,9 +74,16 @@ fun MakeReservation(
         viewModel.loadServiceDetails(serviceId)
     }
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    
     // Manejar éxito de la reserva
     LaunchedEffect(uiState.isSuccess) {
         if (uiState.isSuccess) {
+            snackbarHostState.showSnackbar(
+                message = "La reserva fue solicitada correctamente",
+                withDismissAction = true
+            )
+            delay(1500)
             onBack()
         }
     }
@@ -86,141 +98,155 @@ fun MakeReservation(
     val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
     val timeFormatter = DateTimeFormatter.ofPattern("hh:mm a")
 
-    if (uiState.isLoading) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            CircularProgressIndicator()
-        }
-    } else {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 24.dp, vertical = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(onClick = onBack) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Volver"
-                    )
-                }
-                Text(
-                    text = "Nueva Reserva",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
+    Scaffold(
+        snackbarHost = { 
+            SnackbarHost(hostState = snackbarHostState) { data ->
+                androidx.compose.material3.Snackbar(
+                    snackbarData = data,
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                    shape = RoundedCornerShape(12.dp)
                 )
             }
-
-            val provider = uiState.provider
-            CardMakeReservation(
-                serviceImageUrl = uiState.service?.photoUrl,
-                serviceTitle = uiState.service?.title,
-                professionalName = if (provider != null) "${provider.name1} ${provider.lastname1}" else null,
-                rating = if (uiState.service != null) "$${uiState.service!!.priceMin} - $${uiState.service!!.priceMax}" else null
-            )
-
+        },
+        containerColor = MaterialTheme.colorScheme.background
+    ) { paddingValues ->
+        if (uiState.isLoading) {
+            Box(modifier = Modifier.fillMaxSize().padding(paddingValues), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+        } else {
             Column(
-                modifier = Modifier.padding(top = 16.dp)
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 24.dp, vertical = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
-                Text(
-                    text = "PROGRAMACIÓN DEL SERVICIO",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
-
-                // Campo de Fecha
-                OutlinedTextField(
-                    value = selectedDate.format(dateFormatter),
-                    onValueChange = { },
-                    label = { Text("Fecha Deseada") },
-                    readOnly = true,
-                    trailingIcon = {
-                        IconButton(onClick = { showDatePicker = true }) {
-                            Icon(Icons.Default.CalendarMonth, contentDescription = "Seleccionar fecha")
-                        }
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 16.dp)
-                        .clickable { showDatePicker = true }
-                )
-
-                // Campo de Hora
-                OutlinedTextField(
-                    value = selectedTime.format(timeFormatter),
-                    onValueChange = { },
-                    label = { Text("Hora Deseada") },
-                    readOnly = true,
-                    trailingIcon = {
-                        IconButton(onClick = { showTimePicker = true }) {
-                            Icon(Icons.Default.Schedule, contentDescription = "Seleccionar hora")
-                        }
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 16.dp)
-                        .clickable { showTimePicker = true }
-                )
-
-                Text(
-                    text = "Mensaje Opcional",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
-
-                OutlinedTextField(
-                    value = message,
-                    onValueChange = { message = it },
-                    modifier = Modifier
-                        .height(150.dp)
-                        .padding(bottom = 25.dp)
-                        .fillMaxWidth(),
-                    placeholder = {
-                        Text("Describe detalles adicionales, códigos de acceso o requerimientos específicos...")
-                    },
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedPlaceholderColor = MaterialTheme.colorScheme.outline,
-                        unfocusedPlaceholderColor = MaterialTheme.colorScheme.outline
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(onClick = onBack) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Volver"
+                        )
+                    }
+                    Text(
+                        text = "Nueva Reserva",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
                     )
+                }
+
+                val provider = uiState.provider
+                CardMakeReservation(
+                    serviceImageUrl = uiState.service?.photoUrl,
+                    serviceTitle = uiState.service?.title,
+                    professionalName = if (provider != null) "${provider.name1} ${provider.lastname1}" else null,
+                    rating = if (uiState.service != null) "$${uiState.service!!.priceMin} - $${uiState.service!!.priceMax}" else null
                 )
 
                 Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.padding(top = 16.dp)
                 ) {
-                    Button(
-                        onClick = {
-                            viewModel.confirmReservation(
-                                serviceId = serviceId,
-                                providerId = uiState.service?.ownerId ?: "",
-                                serviceTitle = uiState.service?.title ?: "",
-                                serviceImageUrl = uiState.service?.photoUrl,
-                                date = selectedDate,
-                                time = selectedTime,
-                                message = message
-                            )
+                    Text(
+                        text = "PROGRAMACIÓN DEL SERVICIO",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
+
+                    // Campo de Fecha
+                    OutlinedTextField(
+                        value = selectedDate.format(dateFormatter),
+                        onValueChange = { },
+                        label = { Text("Fecha Deseada") },
+                        readOnly = true,
+                        trailingIcon = {
+                            IconButton(onClick = { showDatePicker = true }) {
+                                Icon(Icons.Default.CalendarMonth, contentDescription = "Seleccionar fecha")
+                            }
                         },
-                        enabled = uiState.service != null
-                    ) {
-                        Text("Confirmar Reserva")
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Icon(
-                            imageVector = Icons.Default.ArrowCircleUp,
-                            contentDescription = "Confirmar"
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 16.dp)
+                            .clickable { showDatePicker = true }
+                    )
+
+                    // Campo de Hora
+                    OutlinedTextField(
+                        value = selectedTime.format(timeFormatter),
+                        onValueChange = { },
+                        label = { Text("Hora Deseada") },
+                        readOnly = true,
+                        trailingIcon = {
+                            IconButton(onClick = { showTimePicker = true }) {
+                                Icon(Icons.Default.Schedule, contentDescription = "Seleccionar hora")
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 16.dp)
+                            .clickable { showTimePicker = true }
+                    )
+
+                    Text(
+                        text = "Mensaje Opcional",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
+
+                    OutlinedTextField(
+                        value = message,
+                        onValueChange = { message = it },
+                        modifier = Modifier
+                            .height(150.dp)
+                            .padding(bottom = 25.dp)
+                            .fillMaxWidth(),
+                        placeholder = {
+                            Text("Describe detalles adicionales, códigos de acceso o requerimientos específicos...")
+                        },
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedPlaceholderColor = MaterialTheme.colorScheme.outline,
+                            unfocusedPlaceholderColor = MaterialTheme.colorScheme.outline
                         )
-                    }
-                    
-                    TextButton(onClick = onBack) {
-                        Text("Cancelar", color = MaterialTheme.colorScheme.primary)
+                    )
+
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Button(
+                            onClick = {
+                                viewModel.confirmReservation(
+                                    serviceId = serviceId,
+                                    providerId = uiState.service?.ownerId ?: "",
+                                    serviceTitle = uiState.service?.title ?: "",
+                                    serviceImageUrl = uiState.service?.photoUrl,
+                                    date = selectedDate,
+                                    time = selectedTime,
+                                    message = message
+                                )
+                            },
+                            enabled = uiState.service != null && !uiState.isLoading
+                        ) {
+                            Text("Confirmar Reserva")
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Icon(
+                                imageVector = Icons.Default.ArrowCircleUp,
+                                contentDescription = "Confirmar"
+                            )
+                        }
+                        
+                        TextButton(onClick = onBack) {
+                            Text("Cancelar", color = MaterialTheme.colorScheme.primary)
+                        }
                     }
                 }
             }

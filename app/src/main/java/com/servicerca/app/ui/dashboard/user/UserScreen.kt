@@ -25,6 +25,8 @@ fun UserScreen(
     onCreateService: () -> Unit,
     onNotificationClick: () -> Unit,
     onMapClick: () -> Unit,
+    onReservationDetailClick: (String) -> Unit,
+    onMakeReservationClick: (String) -> Unit,
     viewModel: NotificationViewModel = hiltViewModel()
 ) {
 
@@ -132,7 +134,9 @@ fun UserScreen(
         UserNavigation(
             navController = navController,
             _padding = padding,
-            onLogout = onLogout // pasar el callback hacia UserNavigation
+            onLogout = onLogout,
+            onReservationDetailClick = onReservationDetailClick,
+            onMakeReservationClick = onMakeReservationClick
         )
     }
 }
@@ -146,6 +150,8 @@ fun UserScreenPreview() {
         onLogout = {},
         onCreateService = {},
         onNotificationClick = {},
-        onMapClick = {}
+        onMapClick = {},
+        onReservationDetailClick = {},
+        onMakeReservationClick = {}
     )
 }
