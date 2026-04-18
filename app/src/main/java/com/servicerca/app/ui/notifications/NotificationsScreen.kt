@@ -44,6 +44,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.servicerca.app.R
 import com.servicerca.app.core.components.notifications.ContainerNotifications
+import com.servicerca.app.domain.model.NotificationType
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -52,6 +53,7 @@ import androidx.compose.runtime.getValue
 @Composable
 fun NotificationsScreen (
     onBack: () -> Unit,
+    onNotificationClick: (NotificationType, String) -> Unit = { _, _ -> },
     viewModel: NotificationViewModel = hiltViewModel()
 ){
     val notifications by viewModel.notifications.collectAsState()
@@ -167,7 +169,13 @@ fun NotificationsScreen (
                                 date = notification.date,
                                 content = notification.message,
                                 imageRes2 = if (!notification.isRead) R.drawable.nueva_notificacion else null,
-                                onClick = { viewModel.markAsRead(notification.id) }
+                                onClick = { 
+                                    viewModel.markAsRead(notification.id)
+                                    // Navegar si hay un destino
+                                    notification.targetId?.let { id ->
+                                        onNotificationClick(notification.notificationType, id)
+                                    }
+                                }
                             )
                         }
                     }

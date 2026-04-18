@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,6 +26,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.servicerca.app.R
 import com.servicerca.app.core.components.card.CardLevel
 import com.servicerca.app.core.components.images.ProfileImage
+import com.servicerca.app.ui.profile.ProfileUiState
 import com.servicerca.app.ui.profile.StatisticsSection
 
 @Composable
@@ -32,54 +34,65 @@ fun UserProfileManage(
     viewModel: UserProfileManageViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val user = uiState.user
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(24.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp)
-    ) {
-        // Imagen de Perfil
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Box(modifier = Modifier.size(150.dp)) {
-                ProfileImage(url = user?.profilePictureUrl ?: "")
+    when (val state = uiState) {
+        is ProfileUiState.Loading -> {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
             }
         }
+        is ProfileUiState.Error -> {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text(text = state.message, color = MaterialTheme.colorScheme.error)
+            }
+        }
+        is ProfileUiState.Success -> {
+            val user = state.user
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(24.dp),
+                verticalArrangement = Arrangement.spacedBy(20.dp)
+            ) {
+                // Imagen de Perfil
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Box(modifier = Modifier.size(150.dp)) {
+                        ProfileImage(url = user.profilePictureUrl)
+                    }
+                }
 
-        // Nombre del Usuario
-        Text(
-            text = user?.let { "${it.name1} ${it.lastname1}" } ?: stringResource(R.string.profile_fallback_name),
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth()
-        )
+                // Nombre completo
+                Text(
+                    text = "${user.name1} ${user.name2 ?: ""} ${user.lastname1}",
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
 
+                // Tarjeta de Nivel (con datos dinámicos)
+                CardLevel(
+                    level = state.level,
+                    levelName = state.levelName,
+                    currentXp = state.totalXp,
+                    nextLevelXp = state.xpRequiredForNextLevel,
+                    progress = state.progress,
+                    remainingXp = (state.xpRequiredForNextLevel - state.totalXp).coerceAtLeast(0)
+                )
 
-        // Tarjeta de Nivel (con datos dinámicos)
-        CardLevel(
-            level = uiState.level,
-            levelName = uiState.levelName,
-            currentXp = uiState.totalXp,
-            nextLevelXp = uiState.xpRequiredForNextLevel,
-            progress = uiState.progress,
-            remainingXp = (uiState.xpRequiredForNextLevel - uiState.totalXp).coerceAtLeast(0)
-        )
-
-        // Sección de Estadísticas
-        StatisticsSection(
-            uiState = uiState
-        )
+                // Sección de Estadísticas
+                StatisticsSection(state = state)
+            }
+        }
     }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun UserProfileManagePreview() {
-    UserProfileManage()
+    // UserProfileManage()
 }

@@ -36,6 +36,7 @@ class MakeReservationViewModel @Inject constructor(
     private val serviceRepository: ServiceRepository,
     private val userRepository: UserRepository,
     private val reservationRepository: ReservationRepository,
+    private val notificationRepository: com.servicerca.app.domain.repository.NotificationRepository,
     private val sessionDataStore: SessionDataStore
 ) : ViewModel() {
 
@@ -98,6 +99,21 @@ class MakeReservationViewModel @Inject constructor(
                     message = message
                 )
                 reservationRepository.createReservation(reservation)
+
+                // Trigger Notification for the Provider
+                val notification = com.servicerca.app.domain.model.Notification(
+                    id = UUID.randomUUID().toString(),
+                    userId = providerId,
+                    title = "Nueva solicitud de servicio",
+                    message = "Has recibido una reserva para tu servicio: $serviceTitle",
+                    date = "Ahora",
+                    imageRes = com.servicerca.app.R.drawable.nueva_solicitud_servicio,
+                    isRead = false,
+                    targetId = reservation.id,
+                    notificationType = com.servicerca.app.domain.model.NotificationType.RESERVATION
+                )
+                notificationRepository.addNotification(notification)
+
                 _uiState.value = _uiState.value.copy(isLoading = false, isSuccess = true)
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(

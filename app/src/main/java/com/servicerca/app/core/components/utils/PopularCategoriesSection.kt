@@ -37,6 +37,7 @@ fun PopularCategoriesSection(
                 text = stringResource(R.string.popular_categories_title),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
+
             )
 
             Text(
@@ -51,19 +52,22 @@ fun PopularCategoriesSection(
         Spacer(modifier = Modifier.height(16.dp))
 
         Row(modifier = Modifier.fillMaxWidth()) {
-            //TODO @CamiloCuenca luego poner las imagenes
             CategoryCard(
                 title = "Hogar",
                 icon = R.drawable.ic_push_pin,
                 modifier = Modifier.weight(1f),
-                onClick = { onCategoryClick(Categories.HOGAR) }
+                onClick = { onCategoryClick(Categories.HOGAR) },
+                image = R.drawable.categoria_hogar
+
+
             )
             Spacer(modifier = Modifier.width(12.dp))
             CategoryCard(
                 title = "Educación",
                 icon = R.drawable.ic_push_pin,
                 modifier = Modifier.weight(1f),
-                onClick = { onCategoryClick(Categories.EDUCACIÓN) }
+                onClick = { onCategoryClick(Categories.EDUCACIÓN) },
+                image = R.drawable.categoria_educacion
             )
         }
         Spacer(modifier = Modifier.height(12.dp))
@@ -72,7 +76,8 @@ fun PopularCategoriesSection(
                 title = "Mascotas",
                 icon = R.drawable.ic_push_pin,
                 modifier = Modifier.weight(1f),
-                onClick = { onCategoryClick(Categories.MASCOTAS) }
+                onClick = { onCategoryClick(Categories.MASCOTAS) },
+                image = R.drawable.categoria_mascotas
             )
             Spacer(modifier = Modifier.width(12.dp))
             CategoryCard(
@@ -80,6 +85,7 @@ fun PopularCategoriesSection(
                 icon = R.drawable.ic_push_pin,
                 modifier = Modifier.weight(1f),
                 onClick = { onCategoryClick(Categories.TECNOLOGIA) }
+                ,image = R.drawable.categoria_tecnologia
             )
 
         }

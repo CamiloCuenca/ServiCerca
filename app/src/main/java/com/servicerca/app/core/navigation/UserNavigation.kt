@@ -33,7 +33,9 @@ import com.servicerca.app.ui.services.edit.EditServiceScreen
 fun UserNavigation(
     navController: NavHostController,
     _padding: PaddingValues,
-    onLogout: () -> Unit // nuevo parámetro para delegar logout al NavController raíz
+    onLogout: () -> Unit,
+    onReservationDetailClick: (String) -> Unit,
+    onMakeReservationClick: (String) -> Unit
 ){
 
     NavHost(
@@ -56,7 +58,7 @@ fun UserNavigation(
                 serviceId = serviceId,
                 onBack = { navController.popBackStack() },
                 onMakeReservation = { id ->
-                    navController.navigate(MainRoutes.MakeReservation(id))
+                    onMakeReservationClick(id)
                 }
             )
         }
@@ -132,7 +134,7 @@ fun UserNavigation(
         composable<DashboardRoutes.Reservation> {
             ReservationScreen(
                 onResevationDetails = { reservationId ->
-                    navController.navigate(MainRoutes.ReservationDetail(reservationId))
+                    onReservationDetailClick(reservationId)
                 },
                 onQrScanner = {
                     navController.navigate("QrScanner")
@@ -141,28 +143,8 @@ fun UserNavigation(
             )
         }
 
-        composable<MainRoutes.ReservationDetail> { backStackEntry ->
-            val route: MainRoutes.ReservationDetail = backStackEntry.toRoute()
-            DetailsReservationScreen(
-                reservationId = route.reservationId,
-                onBackClick = {
-                    navController.popBackStack()
-                },
-                onQr = {
-                    navController.navigate("QrService/${route.reservationId}")
-                }
+        // Se eliminó MakeReservation y ReservationDetail de aquí, ahora son globales
 
-            )
-
-        }
-
-        composable<MainRoutes.MakeReservation> { backStackEntry ->
-            val route: MainRoutes.MakeReservation = backStackEntry.toRoute()
-            MakeReservation(
-                serviceId = route.serviceId,
-                onBack = { navController.popBackStack() }
-            )
-        }
 
         composable("QrService/{reservationId}") { backStackEntry ->
             val reservationId = backStackEntry.arguments?.getString("reservationId") ?: return@composable

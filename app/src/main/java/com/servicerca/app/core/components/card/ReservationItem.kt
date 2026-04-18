@@ -37,7 +37,7 @@ import com.servicerca.app.domain.model.Reservation
 
 @Composable
 fun ReservationItem(
-    reservation: Reservation,
+    reservation: com.servicerca.app.ui.reservation.ReservationUiModel,
     modifier: Modifier = Modifier,
     onDetailClick: () -> Unit = {},
     onChatClick: () -> Unit = {}
@@ -95,6 +95,15 @@ fun ReservationItem(
                         fontWeight = FontWeight.SemiBold
                     )
 
+                    Spacer(modifier = Modifier.height(2.dp))
+
+                    Text(
+                        text = if (reservation.isIncoming) "Cliente: ${reservation.otherUserName}" else "Proveedor: ${reservation.otherUserName}",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Medium
+                    )
+
                     Spacer(modifier = Modifier.height(4.dp))
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -102,7 +111,7 @@ fun ReservationItem(
                             imageVector = Icons.Default.Schedule,
                             contentDescription = null,
                             modifier = Modifier.size(16.dp),
-                            tint = MaterialTheme.colorScheme.onSurface
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
 
                         Spacer(modifier = Modifier.width(4.dp))
@@ -110,7 +119,7 @@ fun ReservationItem(
                         Text(
                             text = reservation.time,
                             style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurface
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
