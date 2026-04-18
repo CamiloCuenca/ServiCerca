@@ -32,7 +32,7 @@ import com.servicerca.app.ui.theme.ServiCercaTheme
 @Composable
 fun ListServiceScreen(
     onBackClick: () -> Unit = {},
-    onEditService: () -> Unit = {},
+    onEditService: (String) -> Unit = {},
     viewModel: ListServiceViewModel? = null
 ) {
 
@@ -142,7 +142,7 @@ fun ListServiceScreen(
 
                 MyServiceCard(
                     service = service,
-                    onEdit = { onEditService() },
+                    onEdit = { onEditService(service.id) },
 
                     onDelete = {
                         selectedServiceId = service.id

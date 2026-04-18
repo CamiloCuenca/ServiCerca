@@ -74,9 +74,11 @@ fun DetailServiceScreen(
     val provider = viewModel.provider.collectAsState().value
     val comments by viewModel.comments.collectAsState()
     val averageRating by viewModel.averageRating.collectAsState()
+    val providerLevel by viewModel.providerLevel.collectAsState()
+    val isLiked by viewModel.isLiked.collectAsState()
+    val isBookmarked by viewModel.isBookmarked.collectAsState()
+    val likeCount by viewModel.likeCount.collectAsState()
 
-    var isSelectedLike by remember { mutableStateOf(false) }
-    var isSelectedPin by remember { mutableStateOf(false) }
     var reviewText by remember { mutableStateOf("") }
     var selectedRating by remember { mutableIntStateOf(5) }
 
@@ -184,7 +186,10 @@ fun DetailServiceScreen(
                         subtitle = service!!.type,
                         price = service!!.priceMin,
                         isVerified = true,
-                        category = service!!.type
+                        category = service!!.type,
+                        rating = String.format("%.1f", averageRating),
+                        likeCount = likeCount,
+                        isLiked = isLiked
                     )
 
                     Spacer(modifier = Modifier.height(4.dp))
@@ -203,9 +208,10 @@ fun DetailServiceScreen(
                                     contentDescription = null,
                                 )
                             },
-                            isSelected = isSelectedLike,
-                            onClick = { isSelectedLike = !isSelectedLike }
+                            isSelected = isLiked,
+                            onClick = { viewModel.onLikeClick() }
                         )
+
                         ReactionIconButton(
                             icon = {
                                 Icon(
@@ -213,8 +219,8 @@ fun DetailServiceScreen(
                                     contentDescription = null,
                                 )
                             },
-                            isSelected = isSelectedPin,
-                            onClick = { isSelectedPin = !isSelectedPin }
+                            isSelected = isBookmarked,
+                            onClick = { viewModel.onBookmarkClick() }
                         )
                     }
 
@@ -226,7 +232,7 @@ fun DetailServiceScreen(
                     ProviderRow(
                         name = if (provider != null) "${provider.name1} ${provider.lastname1}" else "Cargando...",
                         avatarUrl = provider?.profilePictureUrl,
-                        level = "MAESTRO",
+                        level = providerLevel,
                         rating = averageRating.takeIf { it > 0f } ?: 0f,
                         reviewCount = comments.size,
                         onClick = {}

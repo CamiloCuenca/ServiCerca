@@ -23,7 +23,8 @@ import com.servicerca.app.core.components.card.menu.MenuOptionModerator
 @Composable
 fun CardMenuModerator(
     onValidateClick: () -> Unit = {},
-    onHistoryClick: () -> Unit = {}
+    onHistoryClick: () -> Unit = {},
+    onManageUserClick: () -> Unit = {}
 ) {
 
     ElevatedCard(
@@ -51,7 +52,7 @@ fun CardMenuModerator(
             MenuOptionModerator(
                 icon = Icons.Default.Group,
                 text = stringResource(R.string.user_management),
-                onClick = { }
+                onClick = onManageUserClick
             )
 
             Divider()

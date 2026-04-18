@@ -1,4 +1,4 @@
-package com.servicerca.app.ui.dashboard.moderador
+ package com.servicerca.app.ui.dashboard.moderador
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -172,6 +172,15 @@ fun ProfileModerator (
                 },
                 onHistoryClick = {
                     navController.navigate(DashboardRoutes.Historial) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                },
+                onManageUserClick = {
+                    navController.navigate(DashboardRoutes.ManageUser) {
                         popUpTo(navController.graph.findStartDestination().id) {
                             saveState = true
                         }

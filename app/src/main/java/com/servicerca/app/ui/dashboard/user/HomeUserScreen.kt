@@ -118,8 +118,13 @@ fun HomeUserScreen(
                     level = serviceWithRating.ownerLevel,
                     photoUrl = serviceWithRating.service.photoUrl,
                     isBookmarked = serviceWithRating.isBookmarked,
+                    likeCount = serviceWithRating.likeCount,
+                    isLiked = serviceWithRating.isLiked,
                     onBookmarkClick = {
                         viewModel.onBookmarkClick(serviceWithRating.service.id)
+                    },
+                    onLikeClick = {
+                        viewModel.onLikeClick(serviceWithRating.service.id)
                     },
                     onRequestClick = { onDetailClick(serviceWithRating.service.id) }
                 )
