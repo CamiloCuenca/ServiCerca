@@ -127,7 +127,7 @@ class ServiceRepositoryImpl @Inject constructor() : ServiceRepository {
                 priceMin = 60000.0,
                 priceMax = 200000.0,
                 status = ServiceStatus.APPROVED,
-                type = "Limpieza",
+                type = "Hogar",
                 photoUrl = "https://extremecleangm.com/wp-content/uploads/2025/01/Lavado-de-Muebles-Iniciando-el-2025.jpg",
                 ownerId = "1"
             ),
@@ -157,7 +157,7 @@ class ServiceRepositoryImpl @Inject constructor() : ServiceRepository {
                 priceMin = 500000.0,
                 priceMax = 1800000.0,
                 status = ServiceStatus.REJECTED,
-                type = "Decoraciones",
+                type = "Hogar",
                 photoUrl = "https://cdn.pixabay.com/photo/2018/09/05/08/05/party-3655712_1280.jpg",
                 ownerId = "2"
             ),
