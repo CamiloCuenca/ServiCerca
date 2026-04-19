@@ -1,8 +1,9 @@
 package com.servicerca.app.ui.dashboard.moderador.userProfile
 
+import com.servicerca.app.domain.model.User
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.servicerca.app.domain.model.User
+
 import com.servicerca.app.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
