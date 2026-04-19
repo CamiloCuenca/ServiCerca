@@ -11,7 +11,6 @@ import androidx.navigation.toRoute
 import com.servicerca.app.ui.chat.ChatListScreen
 import com.servicerca.app.ui.chat.ChatScreen
 import com.servicerca.app.ui.dashboard.user.HomeUserScreen
-import com.servicerca.app.ui.dashboard.moderador.userProfile.ManageUserScreen
 import com.servicerca.app.ui.profile.DeleteProfileScreen
 import com.servicerca.app.ui.profile.EditProfileScreen
 import com.servicerca.app.ui.profile.InsigniasScreen
@@ -143,6 +142,9 @@ fun UserNavigation(
                 },
                 onQr = {
                     navController.navigate("QrService")
+                },
+                onNavigateToChat = { chatId ->
+                    navController.navigate("Chat/$chatId")
                 }
 
             )
