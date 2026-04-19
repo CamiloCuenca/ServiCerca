@@ -8,5 +8,6 @@ data class Message(
     val message: String = "",
     val time: String = "",
     val isMine: Boolean = false,
-    val imageProfile: Int? = null
+    val isRead: Boolean = false,
+    val imageProfile: String? = null
 )
