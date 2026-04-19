@@ -1,5 +1,7 @@
 package com.servicerca.app.core.components.chat
 
+import androidx.annotation.DrawableRes
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -22,17 +24,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImage
 import com.servicerca.app.R
 
 @Composable
 fun HeaderChatComponent(
-    imageProfile : String,
+    @DrawableRes imageProfile : Int,
     nameProfile : String = "",
     onlineStatus : Boolean = false,
     onBack : () -> Unit = {}
@@ -55,16 +55,13 @@ fun HeaderChatComponent(
             )
         }
 
-        AsyncImage(
-            model = imageProfile,
+        Image(
+            painter = painterResource(id = imageProfile),
             contentDescription = "Foto de perfil",
             modifier = Modifier
                 .size(40.dp)
                 .clip(CircleShape)
-                .align(Alignment.CenterVertically),
-            contentScale = ContentScale.Crop,
-            placeholder = painterResource(R.drawable.primo_de_juan_camilo),
-            error = painterResource(R.drawable.primo_de_juan_camilo)
+                .align(Alignment.CenterVertically)
         )
 
         Column(
@@ -124,7 +121,7 @@ fun HeaderChatComponent(
 @Preview(showBackground = true)
 fun HeaderChatComponentPreview() {
     HeaderChatComponent(
-        imageProfile = "",
+        imageProfile = R.drawable.primo_de_juan_camilo,
         nameProfile = "Deiver Bonano Cuenca",
         onlineStatus = true
     )

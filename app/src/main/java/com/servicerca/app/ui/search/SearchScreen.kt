@@ -110,8 +110,9 @@ fun SearchScreen(
 
                 if (selectedCategory != null) {
                     item {
+                        val categoryName = stringResource(categoryLabelRes(selectedCategory))
                         Text(
-                            text = "Servicios de ${selectedCategory.displayName}",
+                            text = stringResource(R.string.search_category_results_title, categoryName),
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.onBackground
                         )
@@ -140,7 +141,7 @@ fun SearchScreen(
                     if (categoryResults.isEmpty()) {
                         item {
                             Text(
-                                text = "No hay servicios en esta categoría.",
+                                text = stringResource(R.string.search_no_services_in_category),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -150,7 +151,7 @@ fun SearchScreen(
             } else {
                 item {
                     Text(
-                        text = "Resultados para \"$query\"",
+                        text = stringResource(R.string.search_results_for_query, query),
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onBackground
                     )
@@ -179,7 +180,7 @@ fun SearchScreen(
                 if (searchResults.isEmpty()) {
                     item {
                         Text(
-                            text = "No se encontraron servicios con ese nombre.",
+                            text = stringResource(R.string.search_no_results_by_name),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -198,4 +199,12 @@ fun SearchScreenPreview() {
     ServiCercaTheme {
         SearchScreen()
     }
+}
+
+private fun categoryLabelRes(category: Categories): Int = when (category) {
+    Categories.HOGAR -> R.string.category_home
+    Categories.EDUCACIÓN -> R.string.category_education
+    Categories.MASCOTAS -> R.string.category_pets
+    Categories.TECNOLOGIA -> R.string.category_technology
+    Categories.TRANSPORTE -> R.string.category_transport
 }

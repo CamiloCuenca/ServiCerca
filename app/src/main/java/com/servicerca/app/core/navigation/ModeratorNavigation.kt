@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 import com.servicerca.app.ui.dashboard.moderador.DetailsVerificationModeratorScreen
 import com.servicerca.app.ui.dashboard.moderador.ModerationHistory
 import com.servicerca.app.ui.dashboard.moderador.ModeratorPanelScreen
@@ -34,12 +35,12 @@ fun ModeratorNavigation(
                 onBack = { navController.popBackStack() }
             )
         }
-        composable("detailsServicesModerator/{serviceId}") { backStackEntry ->
-            val serviceId = backStackEntry.arguments?.getString("serviceId")
+        composable<DashboardRoutes.DetailServiceModerator> { backStackEntry ->
+            val route = backStackEntry.toRoute<DashboardRoutes.DetailServiceModerator>()
             DetailsVerificationModeratorScreen(
-                serviceId = serviceId, // Pasa el ID a la pantalla
+                serviceId = route.serviceId,
                 onBack = { navController.popBackStack() },
-                onRejectClick = { navController.navigate("rejectReason/$serviceId") },
+                onRejectClick = { navController.navigate(DashboardRoutes.RejectReason(route.serviceId)) },
                 onApproveSuccess = {
                     navController.navigate(DashboardRoutes.HomeModerator) {
                         popUpTo(DashboardRoutes.HomeModerator) { inclusive = true }
@@ -48,10 +49,10 @@ fun ModeratorNavigation(
             )
         }
 
-        composable("rejectReason/{serviceId}") { backStackEntry ->
-            val serviceId = backStackEntry.arguments?.getString("serviceId")
+        composable<DashboardRoutes.RejectReason> { backStackEntry ->
+            val route = backStackEntry.toRoute<DashboardRoutes.RejectReason>()
             RejectReasonScreen(
-                serviceId = serviceId, // Pasa el ID a la pantalla
+                serviceId = route.serviceId,
                 onBack = { navController.popBackStack() },
                 onRejectSuccess = {
                     navController.navigate(DashboardRoutes.HomeModerator) {
@@ -65,11 +66,11 @@ fun ModeratorNavigation(
             ProfileModerator(
                 navController = navController,
                 onLogout = { onLogout() },
-                onUpdatePassword = { navController.navigate("updatePassword") }
+                onUpdatePassword = { navController.navigate(DashboardRoutes.UpdatePassword) }
             )
         }
 
-        composable("updatePassword") {
+        composable<DashboardRoutes.UpdatePassword> {
             UpdatePasswordScreen(
                 onBack = { navController.popBackStack() },
                 onLogout = { onLogout() }

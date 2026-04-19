@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.servicerca.app.R
 import com.servicerca.app.core.utils.RequestResult
 import com.servicerca.app.core.utils.ValidatedField
 import com.servicerca.app.data.datastore.SessionDataStore
@@ -31,38 +32,38 @@ class CreateServiceViewModel @Inject constructor(
 
     // ── Categorías disponibles ─────────────────────────────────────────────
     val categories = listOf(
-        "Plomería",
-        "Electricidad",
-        "Carpintería",
-        "Pintura",
-        "Jardinería",
-        "Limpieza",
-        "Mudanzas",
-        "Cerrajería",
-        "Otro"
+        context.getString(R.string.category_plumbing),
+        context.getString(R.string.category_electricity),
+        context.getString(R.string.category_carpentry),
+        context.getString(R.string.category_painting),
+        context.getString(R.string.category_gardening),
+        context.getString(R.string.category_cleaning),
+        context.getString(R.string.category_moving),
+        context.getString(R.string.category_locksmith),
+        context.getString(R.string.category_other)
     )
 
     // ── Campos del formulario ──────────────────────────────────────────────
 
     val title = ValidatedField("") { value ->
         when {
-            value.isBlank() -> "El título es obligatorio"
-            value.length < 5 -> "El título debe tener al menos 5 caracteres"
+            value.isBlank() -> context.getString(R.string.error_title_required)
+            value.length < 5 -> context.getString(R.string.error_title_min_length)
             else -> null
         }
     }
 
     val category = ValidatedField("") { value ->
         when {
-            value.isBlank() -> "Selecciona una categoría"
+            value.isBlank() -> context.getString(R.string.error_select_category)
             else -> null
         }
     }
 
     val description = ValidatedField("") { value ->
         when {
-            value.isBlank() -> "La descripción es obligatoria"
-            value.length < 20 -> "La descripción debe tener al menos 20 caracteres"
+            value.isBlank() -> context.getString(R.string.error_description_required)
+            value.length < 20 -> context.getString(R.string.error_description_min_length)
             else -> null
         }
     }
@@ -70,9 +71,9 @@ class CreateServiceViewModel @Inject constructor(
     val minValue = ValidatedField("") { value ->
         val min = value.toDoubleOrNull()
         when {
-            value.isBlank() -> "El precio mínimo es obligatorio"
-            min == null -> "Ingresa un valor numérico válido"
-            min < 0 -> "El precio no puede ser negativo"
+            value.isBlank() -> context.getString(R.string.error_min_price_required)
+            min == null -> context.getString(R.string.error_valid_numeric_value)
+            min < 0 -> context.getString(R.string.error_price_negative)
             else -> null
         }
     }
@@ -81,10 +82,10 @@ class CreateServiceViewModel @Inject constructor(
         val max = value.toDoubleOrNull()
         val min = minValue.value.toDoubleOrNull()
         when {
-            value.isBlank() -> "El precio máximo es obligatorio"
-            max == null -> "Ingresa un valor numérico válido"
-            max < 0 -> "El precio no puede ser negativo"
-            min != null && max < min -> "El precio máximo debe ser mayor al mínimo"
+            value.isBlank() -> context.getString(R.string.error_max_price_required)
+            max == null -> context.getString(R.string.error_valid_numeric_value)
+            max < 0 -> context.getString(R.string.error_price_negative)
+            min != null && max < min -> context.getString(R.string.error_max_price_greater_than_min)
             else -> null
         }
     }
@@ -95,7 +96,7 @@ class CreateServiceViewModel @Inject constructor(
 
     fun addImage(bytes: ByteArray) {
         if (_images.value.size >= 5) {
-            _createResult.value = RequestResult.Failure("Máximo 5 imágenes permitidas")
+            _createResult.value = RequestResult.Failure(context.getString(R.string.error_max_images_allowed))
             return
         }
         _images.value = _images.value + bytes
@@ -146,12 +147,12 @@ class CreateServiceViewModel @Inject constructor(
 
         // Touch images -> forzar error si no hay imágenes
         if (_images.value.isEmpty()) {
-            _createResult.value = RequestResult.Failure("Agrega al menos una imagen")
+            _createResult.value = RequestResult.Failure(context.getString(R.string.error_add_at_least_one_image))
             return
         }
 
         if (!isFormValid) {
-            _createResult.value = RequestResult.Failure("Por favor corrige los errores antes de publicar")
+            _createResult.value = RequestResult.Failure(context.getString(R.string.error_fix_form_before_publish))
             return
         }
 
@@ -162,7 +163,7 @@ class CreateServiceViewModel @Inject constructor(
                 val session = sessionDataStore.sessionFlow.first()
                 val ownerId = session?.userId
                 if (ownerId.isNullOrBlank()) {
-                    _createResult.value = RequestResult.Failure("Debes iniciar sesión para publicar")
+                    _createResult.value = RequestResult.Failure(context.getString(R.string.error_login_required_to_publish))
                     _isLoading.value = false
                     return@launch
                 }
@@ -194,12 +195,12 @@ class CreateServiceViewModel @Inject constructor(
                 // Guardar en repositorio
                 serviceRepository.save(service)
 
-                _createResult.value = RequestResult.Success("¡Servicio publicado exitosamente!")
+                _createResult.value = RequestResult.Success(context.getString(R.string.service_published_success))
                 // Limpiar formulario
                 resetForm()
                 clearImages()
             } catch (e: Exception) {
-                _createResult.value = RequestResult.Failure("Error al publicar el servicio: ${e.message}")
+                _createResult.value = RequestResult.Failure(context.getString(R.string.error_publishing_service, e.message ?: ""))
             } finally {
                 _isLoading.value = false
             }

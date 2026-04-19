@@ -49,11 +49,13 @@ import androidx.compose.material3.SnackbarHostState
 import kotlinx.coroutines.delay
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.servicerca.app.R
 import com.servicerca.app.core.components.card.CardMakeReservation
 import java.time.Instant
 import java.time.LocalDate
@@ -75,12 +77,13 @@ fun MakeReservation(
     }
 
     val snackbarHostState = remember { SnackbarHostState() }
+    val reservationRequestedSuccess = stringResource(R.string.reservation_requested_success)
     
     // Manejar éxito de la reserva
     LaunchedEffect(uiState.isSuccess) {
         if (uiState.isSuccess) {
             snackbarHostState.showSnackbar(
-                message = "La reserva fue solicitada correctamente",
+                message = reservationRequestedSuccess,
                 withDismissAction = true
             )
             delay(1500)
@@ -131,11 +134,11 @@ fun MakeReservation(
                     IconButton(onClick = onBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Volver"
+                            contentDescription = stringResource(R.string.action_back)
                         )
                     }
                     Text(
-                        text = "Nueva Reserva",
+                        text = stringResource(R.string.new_reservation_title),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold
                     )
@@ -153,7 +156,7 @@ fun MakeReservation(
                     modifier = Modifier.padding(top = 16.dp)
                 ) {
                     Text(
-                        text = "PROGRAMACIÓN DEL SERVICIO",
+                        text = stringResource(R.string.service_schedule_title),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface,
@@ -164,11 +167,11 @@ fun MakeReservation(
                     OutlinedTextField(
                         value = selectedDate.format(dateFormatter),
                         onValueChange = { },
-                        label = { Text("Fecha Deseada") },
+                        label = { Text(stringResource(R.string.desired_date_label)) },
                         readOnly = true,
                         trailingIcon = {
                             IconButton(onClick = { showDatePicker = true }) {
-                                Icon(Icons.Default.CalendarMonth, contentDescription = "Seleccionar fecha")
+                                Icon(Icons.Default.CalendarMonth, contentDescription = stringResource(R.string.select_date_content_description))
                             }
                         },
                         modifier = Modifier
@@ -181,11 +184,11 @@ fun MakeReservation(
                     OutlinedTextField(
                         value = selectedTime.format(timeFormatter),
                         onValueChange = { },
-                        label = { Text("Hora Deseada") },
+                        label = { Text(stringResource(R.string.desired_time_label)) },
                         readOnly = true,
                         trailingIcon = {
                             IconButton(onClick = { showTimePicker = true }) {
-                                Icon(Icons.Default.Schedule, contentDescription = "Seleccionar hora")
+                                Icon(Icons.Default.Schedule, contentDescription = stringResource(R.string.select_time_content_description))
                             }
                         },
                         modifier = Modifier
@@ -195,7 +198,7 @@ fun MakeReservation(
                     )
 
                     Text(
-                        text = "Mensaje Opcional",
+                        text = stringResource(R.string.optional_message_label),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface,
@@ -210,7 +213,7 @@ fun MakeReservation(
                             .padding(bottom = 25.dp)
                             .fillMaxWidth(),
                         placeholder = {
-                            Text("Describe detalles adicionales, códigos de acceso o requerimientos específicos...")
+                            Text(stringResource(R.string.reservation_optional_message_placeholder))
                         },
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedPlaceholderColor = MaterialTheme.colorScheme.outline,
@@ -236,16 +239,16 @@ fun MakeReservation(
                             },
                             enabled = uiState.service != null && !uiState.isLoading
                         ) {
-                            Text("Confirmar Reserva")
+                            Text(stringResource(R.string.confirm_reservation_button))
                             Spacer(modifier = Modifier.width(8.dp))
                             Icon(
                                 imageVector = Icons.Default.ArrowCircleUp,
-                                contentDescription = "Confirmar"
+                                contentDescription = stringResource(R.string.confirm_action_content_description)
                             )
                         }
                         
                         TextButton(onClick = onBack) {
-                            Text("Cancelar", color = MaterialTheme.colorScheme.primary)
+                            Text(stringResource(R.string.delete_account_cancel_button), color = MaterialTheme.colorScheme.primary)
                         }
                     }
                 }
@@ -268,12 +271,12 @@ fun MakeReservation(
                     }
                     showDatePicker = false
                 }) {
-                    Text("OK")
+                    Text(stringResource(R.string.ok_action))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDatePicker = false }) {
-                    Text("Cancelar")
+                    Text(stringResource(R.string.delete_account_cancel_button))
                 }
             }
         ) {
@@ -297,7 +300,7 @@ fun MakeReservation(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Selecciona la hora",
+                        text = stringResource(R.string.select_time_title),
                         style = MaterialTheme.typography.labelLarge,
                         modifier = Modifier.padding(bottom = 20.dp)
                     )
@@ -307,13 +310,13 @@ fun MakeReservation(
                         horizontalArrangement = Arrangement.End
                     ) {
                         TextButton(onClick = { showTimePicker = false }) {
-                            Text("Cancelar")
+                            Text(stringResource(R.string.delete_account_cancel_button))
                         }
                         TextButton(onClick = {
                             selectedTime = LocalTime.of(timePickerState.hour, timePickerState.minute)
                             showTimePicker = false
                         }) {
-                            Text("OK")
+                            Text(stringResource(R.string.ok_action))
                         }
                     }
                 }
@@ -325,5 +328,5 @@ fun MakeReservation(
 @Preview(showBackground = true)
 @Composable
 fun MakeReservationPreview() {
-    Text("Vista previa de Reserva")
+    Text(stringResource(R.string.new_reservation_title))
 }

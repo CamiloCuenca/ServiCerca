@@ -1,7 +1,9 @@
 package com.servicerca.app.ui.reservation
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.servicerca.app.R
 import com.servicerca.app.data.datastore.SessionDataStore
 import com.servicerca.app.domain.model.Reservation
 import com.servicerca.app.domain.model.ReservationStatus
@@ -11,6 +13,7 @@ import com.servicerca.app.domain.repository.ReservationRepository
 import com.servicerca.app.domain.repository.ServiceRepository
 import com.servicerca.app.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -37,7 +40,8 @@ class MakeReservationViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val reservationRepository: ReservationRepository,
     private val notificationRepository: com.servicerca.app.domain.repository.NotificationRepository,
-    private val sessionDataStore: SessionDataStore
+    private val sessionDataStore: SessionDataStore,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MakeReservationUiState())
@@ -58,13 +62,13 @@ class MakeReservationViewModel @Inject constructor(
                 } else {
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        error = "No se encontró el servicio"
+                        error = context.getString(R.string.error_service_not_found)
                     )
                 }
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    error = "Error al cargar datos: ${e.message}"
+                    error = context.getString(R.string.error_loading_data, e.message ?: "")
                 )
             }
         }
@@ -104,9 +108,9 @@ class MakeReservationViewModel @Inject constructor(
                 val notification = com.servicerca.app.domain.model.Notification(
                     id = UUID.randomUUID().toString(),
                     userId = providerId,
-                    title = "Nueva solicitud de servicio",
-                    message = "Has recibido una reserva para tu servicio: $serviceTitle",
-                    date = "Ahora",
+                    title = context.getString(R.string.new_service_request_title),
+                    message = context.getString(R.string.new_reservation_received_message, serviceTitle),
+                    date = context.getString(R.string.now_label),
                     imageRes = com.servicerca.app.R.drawable.nueva_solicitud_servicio,
                     isRead = false,
                     targetId = reservation.id,
@@ -118,7 +122,7 @@ class MakeReservationViewModel @Inject constructor(
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    error = "Error al crear la reserva: ${e.message}"
+                    error = context.getString(R.string.error_creating_reservation, e.message ?: "")
                 )
             }
         }

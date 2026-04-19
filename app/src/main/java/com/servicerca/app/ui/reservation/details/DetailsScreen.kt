@@ -59,8 +59,7 @@ fun DetailsReservationScreen(
     reservationId: String,
     viewModel: ReservationDetailsViewModel = hiltViewModel(),
     onBackClick: () -> Unit = {},
-    onQr: () -> Unit = {},
-    onNavigateToChat: (String) -> Unit = {}
+    onQr: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var showDeleteModal by remember { mutableStateOf(false) }
@@ -210,11 +209,7 @@ fun DetailsReservationScreen(
             // 🔹 BOTÓN DE CHAT (Ahora más integrado)
             PrimaryButton(
                 text = if (uiState.isProvider) "Chatear con el Cliente" else "Chatear con el Profesional",
-                onClick = {
-                    viewModel.onContactProfessional { chatId ->
-                        onNavigateToChat(chatId)
-                    }
-                },
+                onClick = {},
                 modifier = Modifier.fillMaxWidth()
             )
             
@@ -319,13 +314,11 @@ fun getStatusInfo(status: ReservationStatus): StatusUIInfo {
             Color(0xFFD1FADF),
             Color(0xFF027A48)
         )
-
         ReservationStatus.PENDING -> StatusUIInfo(
             "Pendiente",
             Color(0xFFFEF0C7),
             Color(0xFFB54708)
         )
-
         ReservationStatus.CANCELLED -> StatusUIInfo(
             "Cancelada",
             Color(0xFFFEE4E2),

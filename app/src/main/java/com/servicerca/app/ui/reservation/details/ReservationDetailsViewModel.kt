@@ -1,7 +1,9 @@
 package com.servicerca.app.ui.reservation.details
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.servicerca.app.R
 import com.servicerca.app.data.datastore.SessionDataStore
 import com.servicerca.app.domain.model.Notification
 import com.servicerca.app.domain.model.Reservation
@@ -14,6 +16,7 @@ import com.servicerca.app.domain.repository.ReservationRepository
 import com.servicerca.app.domain.repository.ServiceRepository
 import com.servicerca.app.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -39,7 +42,8 @@ class ReservationDetailsViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val chatRepository: ChatRepository,
     private val notificationRepository: NotificationRepository,
-    private val sessionDataStore: SessionDataStore
+    private val sessionDataStore: SessionDataStore,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ReservationDetailsUiState())
@@ -83,9 +87,9 @@ class ReservationDetailsViewModel @Inject constructor(
             val notification = Notification(
                 id = UUID.randomUUID().toString(),
                 userId = currentReservation.userId,
-                title = "Reserva Aceptada",
-                message = "¡Buenas noticias! Tu reserva para '${currentReservation.serviceTitle}' ha sido aceptada.",
-                date = "Ahora",
+                title = context.getString(R.string.reservation_accepted_title),
+                message = context.getString(R.string.reservation_accepted_message, currentReservation.serviceTitle),
+                date = context.getString(R.string.now_label),
                 imageRes = com.servicerca.app.R.drawable.nueva_solicitud_servicio,
                 isRead = false,
                 targetId = id,
@@ -106,9 +110,9 @@ class ReservationDetailsViewModel @Inject constructor(
             val notification = Notification(
                 id = UUID.randomUUID().toString(),
                 userId = currentReservation.userId,
-                title = "Reserva Rechazada",
-                message = "Lo sentimos, tu reserva para '${currentReservation.serviceTitle}' no ha podido ser aceptada.",
-                date = "Ahora",
+                title = context.getString(R.string.reservation_rejected_title),
+                message = context.getString(R.string.reservation_rejected_message, currentReservation.serviceTitle),
+                date = context.getString(R.string.now_label),
                 imageRes = com.servicerca.app.R.drawable.publicacion_rechazada,
                 isRead = false,
                 targetId = id,

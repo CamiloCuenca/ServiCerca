@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 import com.servicerca.app.ui.chat.ChatListScreen
 import com.servicerca.app.ui.chat.ChatScreen
 import com.servicerca.app.ui.dashboard.user.HomeUserScreen
@@ -43,15 +44,15 @@ fun UserNavigation(
         composable<DashboardRoutes.HomeUser> {
             HomeUserScreen(
                 onDetailClick = { serviceId ->
-                    navController.navigate("DetailService/$serviceId")
+                    navController.navigate(DashboardRoutes.DetailService(serviceId))
                 }
             )
         }
 
-        composable("DetailService/{serviceId}") { backStackEntry ->
-            val serviceId = backStackEntry.arguments?.getString("serviceId") ?: "1"
+        composable<DashboardRoutes.DetailService> { backStackEntry ->
+            val route = backStackEntry.toRoute<DashboardRoutes.DetailService>()
             DetailServiceScreen(
-                serviceId = serviceId,
+                serviceId = route.serviceId,
                 onBack = { navController.popBackStack() },
                 onMakeReservation = { id ->
                     onMakeReservationClick(id)
@@ -63,7 +64,7 @@ fun UserNavigation(
         composable<DashboardRoutes.Search> {
             SearchScreen(
                 onServiceClick = { serviceId ->
-                    navController.navigate("DetailService/$serviceId")
+                    navController.navigate(DashboardRoutes.DetailService(serviceId))
                 }
             )
         }
@@ -71,22 +72,22 @@ fun UserNavigation(
         composable<DashboardRoutes.Profile> {
             ProfileScreen(
                 onInsignias = {
-                    navController.navigate("insignias")
+                    navController.navigate(DashboardRoutes.Insignias)
                 },
                 onEditProflie = {
-                    navController.navigate("editProfile")
+                    navController.navigate(DashboardRoutes.EditProfile)
                 },
                 onUpdatePassword = {
-                    navController.navigate("updatePassword")
+                    navController.navigate(DashboardRoutes.UpdatePassword)
                 },
                 onDeleteProfile = {
-                    navController.navigate("deleteProfile")
+                    navController.navigate(DashboardRoutes.DeleteProfile)
                 },
                 onListService = {
-                    navController.navigate("serviceList")
+                    navController.navigate(DashboardRoutes.ServiceList)
                 },
                 onListInteresting = {
-                    navController.navigate("ListInteresting")
+                    navController.navigate(DashboardRoutes.ListInteresting)
                 },
                 onLogout = {
                     // Delegar la acción de logout al callback pasado desde la pantalla raíz
@@ -95,20 +96,20 @@ fun UserNavigation(
             )
         }
 
-        composable("ListInteresting" ){
+        composable<DashboardRoutes.ListInteresting> {
             ListInteresting(
                 onBack = { navController.popBackStack() },
                 onServiceClick = { serviceId ->
-                    navController.navigate("DetailService/$serviceId")
+                    navController.navigate(DashboardRoutes.DetailService(serviceId))
                 }
             )
         }
 
-        composable("serviceList") {
+        composable<DashboardRoutes.ServiceList> {
             ListServiceScreen(
                 onBackClick = { navController.popBackStack() },
                 onEditService = { serviceId ->
-                    navController.navigate("editService/$serviceId")
+                    navController.navigate(DashboardRoutes.EditService(serviceId))
                 }
             )
         }
@@ -122,7 +123,7 @@ fun UserNavigation(
         composable<DashboardRoutes.ChatList> {
             ChatListScreen(
                 onChatClick = { chatId ->
-                    navController.navigate("Chat/$chatId")
+                    navController.navigate(DashboardRoutes.Chat(chatId))
                 }
             )
         }
@@ -133,7 +134,7 @@ fun UserNavigation(
                     onReservationDetailClick(reservationId)
                 },
                 onQrScanner = {
-                    navController.navigate("QrScanner")
+                    navController.navigate(DashboardRoutes.QrScannerDashboard)
                 }
 
             )
@@ -142,17 +143,17 @@ fun UserNavigation(
         // Se eliminó MakeReservation y ReservationDetail de aquí, ahora son globales
 
 
-        composable("QrService/{reservationId}") { backStackEntry ->
-            val reservationId = backStackEntry.arguments?.getString("reservationId") ?: return@composable
+        composable<DashboardRoutes.QrServiceVerification> { backStackEntry ->
+            val route = backStackEntry.toRoute<DashboardRoutes.QrServiceVerification>()
             ServiceVerificationScreen(
-                reservationId = reservationId,
+                reservationId = route.reservationId,
                 onBackClick = {
                     navController.popBackStack()
                 }
             )
         }
 
-        composable("QrScanner"){
+        composable<DashboardRoutes.QrScannerDashboard> {
             ProviderVerificationScreen(
                 onBackClick = {
                     navController.popBackStack()
@@ -165,25 +166,24 @@ fun UserNavigation(
 
 
 
-        composable("insignias") {
+        composable<DashboardRoutes.Insignias> {
             InsigniasScreen(onBack = { navController.popBackStack() })
-
         }
 
-        composable("editProfile") {
+        composable<DashboardRoutes.EditProfile> {
             EditProfileScreen(
                 onBack = { navController.popBackStack() },
                 onSaveSuccess = { navController.popBackStack() }
             )
         }
 
-        composable("updatePassword") {
+        composable<DashboardRoutes.UpdatePassword> {
             UpdatePasswordScreen(
                 onBack = { navController.popBackStack() },
                 onLogout = { onLogout() }
             )
         }
-        composable("deleteProfile") {
+        composable<DashboardRoutes.DeleteProfile> {
             DeleteProfileScreen(
                 onBack = { navController.popBackStack() },
                 onDeleteSuccess = { onLogout() }
@@ -191,17 +191,18 @@ fun UserNavigation(
         }
 
 
-        composable("editService/{serviceId}") { backStackEntry ->
-            val serviceId = backStackEntry.arguments?.getString("serviceId") ?: ""
+        composable<DashboardRoutes.EditService> { backStackEntry ->
+            val route = backStackEntry.toRoute<DashboardRoutes.EditService>()
             EditServiceScreen(
-                serviceId = serviceId,
+                serviceId = route.serviceId,
                 onBack = { navController.popBackStack() },
                 onSaveSuccess = { navController.popBackStack() }
             )
         }
 
-        composable("Chat/{chatId}") {
-            ChatScreen(onBack = { navController.popBackStack()})
+        composable<DashboardRoutes.Chat> {
+            // ChatScreen retrieves the chat ID internally via its ViewModel (SavedStateHandle)
+            ChatScreen(onBack = { navController.popBackStack() })
         }
 
     }
