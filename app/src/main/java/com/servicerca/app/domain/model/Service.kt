@@ -10,5 +10,6 @@ data class Service(
     val status: ServiceStatus,
     val type: String,
     val photoUrl: String,
-    val ownerId: String
+    val ownerId: String,
+    val likedBy: List<String> = emptyList()
 )

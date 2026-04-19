@@ -17,6 +17,7 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -43,7 +44,7 @@ fun AppTopAppBar(
         navigationIcon = {
             Image(
                 painter = painterResource(id = R.drawable.logo_servicerca),
-                contentDescription = "Logo ServiCerca",
+                contentDescription = stringResource(R.string.topbar_logo_content_description),
                 modifier = Modifier.size(40.dp)
             )
         },
@@ -54,7 +55,7 @@ fun AppTopAppBar(
             IconButton(onClick = onLocationClick) {
                 Icon(
                     imageVector = Icons.Outlined.LocationOn,
-                    contentDescription = "Ubicación"
+                    contentDescription = stringResource(R.string.topbar_location_content_description)
                 )
             }
 
@@ -105,7 +106,7 @@ fun AppTopAppBarModerator(
         navigationIcon = {
             Image(
                 painter = painterResource(id = R.drawable.logo_servicerca),
-                contentDescription = "Logo ServiCerca",
+                contentDescription = stringResource(R.string.topbar_logo_content_description),
                 modifier = Modifier.size(40.dp)
             )
         },
@@ -146,7 +147,7 @@ fun AppTopAppBarBack(
             IconButton(onClick = onBackClick) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Volver"
+                    contentDescription = stringResource(R.string.topbar_back_content_description)
                 )
             }
         },
@@ -154,7 +155,7 @@ fun AppTopAppBarBack(
             IconButton(onClick = onHelpClick) {
                 Icon(
                     imageVector = Icons.Outlined.HelpOutline,
-                    contentDescription = "Ayuda"
+                    contentDescription = stringResource(R.string.topbar_help_content_description)
                 )
             }
         },
@@ -172,5 +173,4 @@ fun AppTopAppBarBackPreview() {
         onBackClick = {}
     )
 }
-
 

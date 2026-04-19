@@ -91,7 +91,7 @@ fun UpdatePasswordScreen(
                 viewModel.logout()
                 onLogout()
             },
-            title = stringResource(R.string.tittle_message_change_password),
+            title = stringResource(R.string.title_message_change_password),
             message = stringResource(R.string.message_change_password_success),
         )
     }

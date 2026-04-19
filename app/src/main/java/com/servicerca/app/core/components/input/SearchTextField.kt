@@ -11,8 +11,11 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.foundation.text.KeyboardActions
 
 @Composable
 fun SearchTextField(
@@ -20,8 +23,11 @@ fun SearchTextField(
     onQueryChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     placeholder: String = "Buscar...",
-    singleLine: Boolean = true
+    singleLine: Boolean = true,
+    onSearch: () -> Unit = {}
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+
     TextField(
         value = query,
         onValueChange = onQueryChange,
@@ -38,7 +44,14 @@ fun SearchTextField(
         },
         singleLine = singleLine,
         keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Text
+            keyboardType = KeyboardType.Text,
+            imeAction = ImeAction.Search
+        ),
+        keyboardActions = KeyboardActions(
+            onSearch = {
+                onSearch()
+                keyboardController?.hide()
+            }
         ),
         colors = TextFieldDefaults.colors(
             focusedTextColor = MaterialTheme.colorScheme.onSurface,

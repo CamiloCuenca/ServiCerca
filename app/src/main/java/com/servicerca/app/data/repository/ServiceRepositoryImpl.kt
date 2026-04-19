@@ -76,6 +76,23 @@ class ServiceRepositoryImpl @Inject constructor() : ServiceRepository {
         )
     }
 
+    override suspend fun toggleLike(serviceId: String, userId: String) {
+        val currentServices = _services.value
+        val updatedServices = currentServices.map { service ->
+            if (service.id == serviceId) {
+                val newLikedBy = if (service.likedBy.contains(userId)) {
+                    service.likedBy.filter { it != userId }
+                } else {
+                    service.likedBy + userId
+                }
+                service.copy(likedBy = newLikedBy)
+            } else {
+                service
+            }
+        }
+        _services.value = updatedServices
+    }
+
     private fun fetchInitialServices(): List<Service> {
         return listOf(
             Service(
@@ -110,7 +127,7 @@ class ServiceRepositoryImpl @Inject constructor() : ServiceRepository {
                 priceMin = 60000.0,
                 priceMax = 200000.0,
                 status = ServiceStatus.APPROVED,
-                type = "Limpieza",
+                type = "Hogar",
                 photoUrl = "https://extremecleangm.com/wp-content/uploads/2025/01/Lavado-de-Muebles-Iniciando-el-2025.jpg",
                 ownerId = "1"
             ),
@@ -140,7 +157,7 @@ class ServiceRepositoryImpl @Inject constructor() : ServiceRepository {
                 priceMin = 500000.0,
                 priceMax = 1800000.0,
                 status = ServiceStatus.REJECTED,
-                type = "Decoraciones",
+                type = "Hogar",
                 photoUrl = "https://cdn.pixabay.com/photo/2018/09/05/08/05/party-3655712_1280.jpg",
                 ownerId = "2"
             ),
@@ -159,6 +176,78 @@ class ServiceRepositoryImpl @Inject constructor() : ServiceRepository {
                 type = "Tecnología",
                 photoUrl = "https://cdn.pixabay.com/photo/2025/09/09/08/52/design-9824072_1280.jpg",
                 ownerId = "3"
+            ),
+            Service(
+                id = "7",
+                title = "Diseño de Logotipos",
+                description = "Creación de identidad visual para tu marca o emprendimiento.",
+                location = Location(4.540000, -75.665000),
+                priceMin = 80000.0,
+                priceMax = 250000.0,
+                status = ServiceStatus.PENDING,
+                type = "Diseño",
+                photoUrl = "https://limagemarketing.es/wp-content/uploads/la-importancia-del-logotipo.jpg",
+                ownerId = "3"
+            ),
+            Service(
+                id = "8",
+                title = "Instalación de Aire Acondicionado",
+                description = "Montaje y mantenimiento de unidades de aire para hogar y oficina.",
+                location = Location(4.533000, -75.670000),
+                priceMin = 120000.0,
+                priceMax = 400000.0,
+                status = ServiceStatus.REJECTED,
+                type = "Técnico",
+                photoUrl = "https://img.multimap.es/wp-content/uploads/2023/07/instalar-ac-2048x1349.jpg",
+                ownerId = "1"
+            ),
+            Service(
+                id = "9",
+                title = "Asesoría Contable",
+                description = "Gestión de impuestos y contabilidad para personas naturales.",
+                location = Location(4.538000, -75.672000),
+                priceMin = 100000.0,
+                priceMax = 300000.0,
+                status = ServiceStatus.APPROVED,
+                type = "Profesional",
+                photoUrl = "https://colchadoyasociados.com/wp-content/uploads/2021/12/asesoria-contable.jpg",
+                ownerId = "2"
+            ),
+            Service(
+                id = "10",
+                title = "Clases de Guitarra",
+                description = "Aprende a tocar desde cero, nivel principiante e intermedio.",
+                location = Location(4.542000, -75.658000),
+                priceMin = 40000.0,
+                priceMax = 80000.0,
+                status = ServiceStatus.APPROVED,
+                type = "Educación",
+                photoUrl = "https://virtuosso.com/blog/wp-content/uploads/2011/12/inversiones-de-acordes-guitarra-.jpg",
+                ownerId = "5"
+            ),
+            Service(
+                id = "11",
+                title = "Entrenamiento Personal",
+                description = "Rutinas personalizadas para gimnasio o en casa.",
+                location = Location(4.535500, -75.668000),
+                priceMin = 50000.0,
+                priceMax = 150000.0,
+                status = ServiceStatus.PENDING,
+                type = "Salud",
+                photoUrl = "https://c.pxhere.com/images/7b/62/52b0545aeddbd39beef6a6543304-1706250.jpg!d",
+                ownerId = "5"
+            ),
+            Service(
+                id = "12",
+                title = "Cuidado de Mascotas",
+                description = "Paseos y cuidado diario para perros y gatos.",
+                location = Location(4.537000, -75.670500),
+                priceMin = 25000.0,
+                priceMax = 60000.0,
+                status = ServiceStatus.REJECTED,
+                type = "Mascotas",
+                photoUrl = "https://laredhispana.org/wp-content/uploads/2022/07/cuidado-de-mascotas-en-vacaciones.jpg",
+                ownerId = "5"
             )
         )
     }

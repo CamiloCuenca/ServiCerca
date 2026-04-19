@@ -34,9 +34,12 @@ import com.servicerca.app.ui.dashboard.user.UserScreen
 import com.servicerca.app.ui.notifications.NotificationsScreen
 import com.servicerca.app.ui.services.create.CreateServiceScreen
 import com.servicerca.app.ui.services.detail.DetailServiceScreen
+import com.servicerca.app.ui.reservation.details.DetailsReservationScreen
+import com.servicerca.app.domain.model.NotificationType
 import androidx.navigation.toRoute
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.servicerca.app.ui.auth.register.RegisterViewModel
+import com.servicerca.app.ui.reservation.MakeReservation
 
 
 @Composable
@@ -238,8 +241,13 @@ private fun MainNavigation(
                 },
                 onMapClick = {
                     navController.navigate(MainRoutes.Map)
+                },
+                onReservationDetailClick = { reservationId ->
+                    navController.navigate(MainRoutes.ReservationDetail(reservationId))
+                },
+                onMakeReservationClick = { serviceId ->
+                    navController.navigate(MainRoutes.MakeReservation(serviceId))
                 }
-
             )
         }
 
@@ -254,6 +262,12 @@ private fun MainNavigation(
                 },
                 onNotificationClick = {
                     navController.navigate(MainRoutes.Notifications)
+                },
+                onReservationDetailClick = { reservationId ->
+                    navController.navigate(MainRoutes.ReservationDetail(reservationId))
+                },
+                onMakeReservationClick = { serviceId ->
+                    navController.navigate(MainRoutes.MakeReservation(serviceId))
                 }
             )
         }
@@ -271,6 +285,31 @@ private fun MainNavigation(
             NotificationsScreen(
                 onBack = {
                     navController.popBackStack()
+                },
+                onNotificationClick = { type, id ->
+                    when (type) {
+                        NotificationType.RESERVATION -> {
+                            navController.navigate(MainRoutes.ReservationDetail(id))
+                        }
+                        NotificationType.SERVICE -> {
+                            navController.navigate(MainRoutes.ServiceDetail(id))
+                        }
+                        else -> { /* No-op for System */ }
+                    }
+                }
+            )
+        }
+
+        composable<MainRoutes.ReservationDetail> { backStackEntry ->
+            val route = backStackEntry.toRoute<MainRoutes.ReservationDetail>()
+            DetailsReservationScreen(
+                reservationId = route.reservationId,
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onQr = {
+                    // Si se requiere QR desde aquí, asegurar que la ruta exista o manejarla
+                    navController.navigate(MainRoutes.QrService)
                 }
             )
         }
@@ -286,6 +325,16 @@ private fun MainNavigation(
         composable<MainRoutes.ServiceDetail> { backStackEntry ->
             val route = backStackEntry.toRoute<MainRoutes.ServiceDetail>()
             DetailServiceScreen(
+                serviceId = route.serviceId,
+                onBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable<MainRoutes.MakeReservation> { backStackEntry ->
+            val route = backStackEntry.toRoute<MainRoutes.MakeReservation>()
+            MakeReservation(
                 serviceId = route.serviceId,
                 onBack = {
                     navController.popBackStack()

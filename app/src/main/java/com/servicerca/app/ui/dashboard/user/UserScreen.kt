@@ -8,12 +8,15 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.compose.runtime.*
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.servicerca.app.core.components.navigation.AppTopAppBar
 import com.servicerca.app.core.components.navigation.BottomNavigationBar
+import com.servicerca.app.core.navigation.DashboardRoutes
+import com.servicerca.app.core.navigation.MainRoutes
 import com.servicerca.app.core.navigation.UserNavigation
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.servicerca.app.ui.notifications.NotificationViewModel
@@ -25,62 +28,53 @@ fun UserScreen(
     onCreateService: () -> Unit,
     onNotificationClick: () -> Unit,
     onMapClick: () -> Unit,
+    onReservationDetailClick: (String) -> Unit,
+    onMakeReservationClick: (String) -> Unit,
     viewModel: NotificationViewModel = hiltViewModel()
 ) {
 
     val navController = rememberNavController()
-    var title by remember { mutableStateOf("Inicio") }
+    val context = androidx.compose.ui.platform.LocalContext.current
+    var title by remember { mutableStateOf(context.getString(com.servicerca.app.R.string.nav_label_home)) }
 
     val backStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = backStackEntry?.destination?.route
+    val destination = backStackEntry?.destination
 
-    val hideTopBarRoutes = setOf(
-        "editProfile",
-        "deleteProfile",
-        "updatePassword",
-        "QrScanner",
-        "QrService",
-        "ListInteresting",
-        "DetailService",
-        "Chat/{chatId}",
-        "DetailService",
-        "com.servicerca.app.core.navigation.MainRoutes.MakeReservation"
-    )
+    val showTopBar = destination?.let {
+        !it.hasRoute<DashboardRoutes.EditProfile>() &&
+        !it.hasRoute<DashboardRoutes.DeleteProfile>() &&
+        !it.hasRoute<DashboardRoutes.UpdatePassword>() &&
+        !it.hasRoute<DashboardRoutes.QrScannerDashboard>() &&
+        !it.hasRoute<DashboardRoutes.QrServiceVerification>() &&
+        !it.hasRoute<DashboardRoutes.ListInteresting>() &&
+        !it.hasRoute<DashboardRoutes.DetailService>() &&
+        !it.hasRoute<DashboardRoutes.Chat>() &&
+        !it.hasRoute<MainRoutes.MakeReservation>()
+    } ?: true
 
-    val hideBottomBarRoutes = setOf(
-        "insignias",
-        "serviceList",
-        "QrScanner",
-        "QrService",
-        "ListInteresting",
-        "DetailService",
-        "Chat/{chatId}",
-        "DetailService",
-        "com.servicerca.app.core.navigation.MainRoutes.MakeReservation"
-    )
+    val showBottomBar = destination?.let {
+        !it.hasRoute<DashboardRoutes.Insignias>() &&
+        !it.hasRoute<DashboardRoutes.ServiceList>() &&
+        !it.hasRoute<DashboardRoutes.QrScannerDashboard>() &&
+        !it.hasRoute<DashboardRoutes.QrServiceVerification>() &&
+        !it.hasRoute<DashboardRoutes.ListInteresting>() &&
+        !it.hasRoute<DashboardRoutes.DetailService>() &&
+        !it.hasRoute<DashboardRoutes.Chat>() &&
+        !it.hasRoute<MainRoutes.MakeReservation>()
+    } ?: true
 
-    val hideFabRoutes = setOf(
-        "insignias",
-        "editProfile",
-        "deleteProfile",
-        "updatePassword",
-        "notifications",
-        "QrScanner",
-        "QrService",
-        "ListInteresting",
-        "DetailService",
-        "com.servicerca.app.core.navigation.MainRoutes.MakeReservation",
-        "DetailService",
-        "Chat/{chatId}"
-    )
-
-    // Lógica para detectar si es una ruta con parámetros (como DetailService/{id})
-    val isDetailService = currentRoute?.startsWith("DetailService") ?: false
-    val isMakeReservation = currentRoute?.contains("MakeReservation") ?: false
-
-    val showTopBar = currentRoute !in hideTopBarRoutes && !isDetailService && !isMakeReservation
-    val showBottomBar = currentRoute !in hideBottomBarRoutes && !isDetailService && !isMakeReservation
-    val showFab = currentRoute !in hideFabRoutes && !isDetailService && !isMakeReservation
+    val showFab = destination?.let {
+        !it.hasRoute<DashboardRoutes.Insignias>() &&
+        !it.hasRoute<DashboardRoutes.EditProfile>() &&
+        !it.hasRoute<DashboardRoutes.DeleteProfile>() &&
+        !it.hasRoute<DashboardRoutes.UpdatePassword>() &&
+        !it.hasRoute<DashboardRoutes.QrScannerDashboard>() &&
+        !it.hasRoute<DashboardRoutes.QrServiceVerification>() &&
+        !it.hasRoute<DashboardRoutes.ListInteresting>() &&
+        !it.hasRoute<DashboardRoutes.DetailService>() &&
+        !it.hasRoute<DashboardRoutes.Chat>() &&
+        !it.hasRoute<MainRoutes.MakeReservation>()
+    } ?: true
 
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -132,7 +126,9 @@ fun UserScreen(
         UserNavigation(
             navController = navController,
             _padding = padding,
-            onLogout = onLogout // pasar el callback hacia UserNavigation
+            onLogout = onLogout,
+            onReservationDetailClick = onReservationDetailClick,
+            onMakeReservationClick = onMakeReservationClick
         )
     }
 }
@@ -146,6 +142,8 @@ fun UserScreenPreview() {
         onLogout = {},
         onCreateService = {},
         onNotificationClick = {},
-        onMapClick = {}
+        onMapClick = {},
+        onReservationDetailClick = {},
+        onMakeReservationClick = {}
     )
 }

@@ -3,6 +3,7 @@ package com.servicerca.app.ui.services.edit
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.servicerca.app.R
 import com.servicerca.app.core.utils.RequestResult
 import com.servicerca.app.core.utils.ValidatedField
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,15 +23,15 @@ class EditServiceViewModel @Inject constructor(
 
     // ── Categorías disponibles ─────────────────────────────────────────────
     val categories = listOf(
-        "Plomería",
-        "Electricidad",
-        "Carpintería",
-        "Pintura",
-        "Jardinería",
-        "Limpieza",
-        "Mudanzas",
-        "Cerrajería",
-        "Otro"
+        context.getString(R.string.category_plumbing),
+        context.getString(R.string.category_electricity),
+        context.getString(R.string.category_carpentry),
+        context.getString(R.string.category_painting),
+        context.getString(R.string.category_gardening),
+        context.getString(R.string.category_cleaning),
+        context.getString(R.string.category_moving),
+        context.getString(R.string.category_locksmith),
+        context.getString(R.string.category_other)
     )
 
     // ── Campos del formulario ──────────────────────────────────────────────
@@ -39,7 +40,7 @@ class EditServiceViewModel @Inject constructor(
 
     val title = ValidatedField("") { value ->
         when {
-            value.isNotBlank() && value.length < 5 -> "El título debe tener al menos 5 caracteres"
+            value.isNotBlank() && value.length < 5 -> context.getString(R.string.error_title_min_length)
             else -> null
         }
     }
@@ -48,7 +49,7 @@ class EditServiceViewModel @Inject constructor(
 
     val description = ValidatedField("") { value ->
         when {
-            value.isNotBlank() && value.length < 20 -> "La descripción debe tener al menos 20 caracteres"
+            value.isNotBlank() && value.length < 20 -> context.getString(R.string.error_description_min_length)
             else -> null
         }
     }
@@ -56,8 +57,8 @@ class EditServiceViewModel @Inject constructor(
     val minValue = ValidatedField("") { value ->
         val min = value.toDoubleOrNull()
         when {
-            value.isNotBlank() && min == null -> "Ingresa un valor numérico válido"
-            value.isNotBlank() && min != null && min < 0 -> "El precio no puede ser negativo"
+            value.isNotBlank() && min == null -> context.getString(R.string.error_valid_numeric_value)
+            value.isNotBlank() && min != null && min < 0 -> context.getString(R.string.error_price_negative)
             else -> null
         }
     }
@@ -66,10 +67,10 @@ class EditServiceViewModel @Inject constructor(
         val max = value.toDoubleOrNull()
         val min = minValue.value.toDoubleOrNull()
         when {
-            value.isNotBlank() && max == null -> "Ingresa un valor numérico válido"
-            value.isNotBlank() && max != null && max < 0 -> "El precio no puede ser negativo"
+            value.isNotBlank() && max == null -> context.getString(R.string.error_valid_numeric_value)
+            value.isNotBlank() && max != null && max < 0 -> context.getString(R.string.error_price_negative)
             value.isNotBlank() && min != null && max != null && max < min ->
-                "El precio máximo debe ser mayor al mínimo"
+                context.getString(R.string.error_max_price_greater_than_min)
             else -> null
         }
     }
@@ -152,7 +153,7 @@ class EditServiceViewModel @Inject constructor(
         minValue.touch(); maxValue.touch()
 
         if (!isFormValid) {
-            _saveResult.value = RequestResult.Failure("Por favor corrige los errores antes de guardar")
+            _saveResult.value = RequestResult.Failure(context.getString(R.string.error_fix_form_before_save))
             return
         }
 
@@ -181,9 +182,9 @@ class EditServiceViewModel @Inject constructor(
                     photoUrl = photoUrl
                 )
                 serviceRepository.update(updatedService)
-                _saveResult.value = RequestResult.Success("Servicio actualizado y enviado a revisión")
+                _saveResult.value = RequestResult.Success(context.getString(R.string.service_updated_sent_review))
             } catch (e: Exception) {
-                _saveResult.value = RequestResult.Failure("Error al guardar: ${e.message}")
+                _saveResult.value = RequestResult.Failure(context.getString(R.string.error_saving_service, e.message ?: ""))
             } finally {
                 _isLoading.value = false
             }
@@ -199,9 +200,9 @@ class EditServiceViewModel @Inject constructor(
             _isLoading.value = true
             try {
                 serviceRepository.delete(service.id)
-                _deleteResult.value = RequestResult.Success("Servicio eliminado correctamente")
+                _deleteResult.value = RequestResult.Success(context.getString(R.string.service_deleted_success))
             } catch (e: Exception) {
-                _deleteResult.value = RequestResult.Failure("Error al eliminar: ${e.message}")
+                _deleteResult.value = RequestResult.Failure(context.getString(R.string.error_deleting_service, e.message ?: ""))
             } finally {
                 _isLoading.value = false
             }

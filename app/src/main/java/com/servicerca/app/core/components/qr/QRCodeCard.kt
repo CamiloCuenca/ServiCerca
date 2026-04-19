@@ -32,7 +32,8 @@ import com.servicerca.app.core.utils.generarQR
 @Composable
 fun QRCodeCard(
     modifier: Modifier = Modifier,
-    qrRes: Int? = null // Optional QR resource
+    qrRes: Int? = null, // Optional QR resource
+    qrContent: String = "Contenido del QR"
 ) {
     val colorScheme = MaterialTheme.colorScheme
     
@@ -140,7 +141,7 @@ fun QRCodeCard(
                         modifier = Modifier.size(180.dp)
                     )
                 } else {
-                    PantallaQR("Contenido del QR")
+                    PantallaQR(qrContent)
                 }
             }
         }

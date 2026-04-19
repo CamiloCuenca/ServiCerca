@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -38,10 +39,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.servicerca.app.R
 import com.servicerca.app.core.components.alertDialog.ConfirmAlertDialog
+import com.servicerca.app.core.components.alertDialog.LanguagePickerDialog
+import com.servicerca.app.core.components.button.ButtonIcon
 import com.servicerca.app.core.components.card.CardMenuModerator
 import com.servicerca.app.core.components.card.CardProfileModerator
 import com.servicerca.app.core.components.images.ProfileImage
 import com.servicerca.app.core.navigation.DashboardRoutes
+import com.servicerca.app.ui.profile.ProfileUiState
 import com.servicerca.app.ui.profile.ProfileViewModel
 
 @Composable
@@ -52,145 +56,138 @@ fun ProfileModerator (
     viewModel: ProfileViewModel = hiltViewModel()
 ){
     val uiState by viewModel.uiState.collectAsState()
-    val user = uiState.user
-
+    val selectedLanguageTag by viewModel.selectedLanguageTag.collectAsState()
     var showConfirmDialog by remember { mutableStateOf(false) }
+    var showLanguageDialog by remember { mutableStateOf(false) }
 
-    if (uiState.isLoading) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            CircularProgressIndicator()
-        }
-    } else {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(24.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 10.dp),
-                horizontalArrangement = Arrangement.End
-            ) {
-                IconButton(
-                    onClick = { showConfirmDialog = true }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Logout,
-                        contentDescription = "Cerrar sesión"
-                    )
-                }
+    when (val state = uiState) {
+        is ProfileUiState.Loading -> {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
             }
-
+        }
+        is ProfileUiState.Error -> {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text(text = state.message, color = MaterialTheme.colorScheme.error)
+            }
+        }
+        is ProfileUiState.Success -> {
+            val user = state.user
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(24.dp),
+                verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
-                Box(
-                    modifier = Modifier.fillMaxWidth()
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 10.dp),
+                    horizontalArrangement = Arrangement.End
                 ) {
-
-
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.fillMaxWidth()
+                    IconButton(
+                        onClick = { showConfirmDialog = true }
                     ) {
-                        Box(
-                            contentAlignment = Alignment.BottomEnd,
-                            modifier = Modifier.size(150.dp)
-                        ) {
-                            ProfileImage(
-                                url = user?.profilePictureUrl ?: "",
-                            )
-                        }
+                        Icon(
+                            imageVector = Icons.Default.Logout,
+                            contentDescription = stringResource(R.string.logout_content_description)
+                        )
                     }
                 }
-            }
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
+
+                // Imagen de Perfil
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Box(modifier = Modifier.size(150.dp)) {
+                        ProfileImage(url = user.profilePictureUrl)
+                    }
+                }
+
+                // Nombre completo
                 Text(
-                    text = if (user != null) "${user.name1} ${user.name2 ?: ""} ${user.lastname1}" else stringResource(R.string.profile_fallback_name),
+                    text = "${user.name1} ${user.name2 ?: ""} ${user.lastname1}",
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
 
-                    modifier = Modifier.align(Alignment.Center)
+                // Rol
+                Text(
+                    text = user.role.name,
+                    style = MaterialTheme.typography.bodyLarge,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                ButtonIcon(
+                    text = stringResource(R.string.language_button),
+                    onClick = { showLanguageDialog = true },
+                    icon = { Icon(Icons.Default.Language, null) }
+                )
+
+                // Estadísticas de moderación
+                CardProfileModerator(
+                    title = stringResource(R.string.pending_profile_moderator),
+                    label = state.pendingCount.toString(),
+                    color = Color(0xFFDB9C16)
+                )
+                CardProfileModerator(
+                    title = stringResource(R.string.approved_profile_moderator),
+                    label = state.approvedCount.toString(),
+                    color = Color(0xFF3CA834)
+                )
+                CardProfileModerator(
+                    title = stringResource(R.string.rejected_profile_moderator),
+                    label = state.rejectedCount.toString(),
+                    color = Color(0xFFC72E2E)
+                )
+
+                // Panel de moderación
+                Text(
+                    text = stringResource(R.string.title_panel_moderator),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(top = 10.dp)
+                )
+
+                CardMenuModerator(
+                    onValidateClick = {
+                        navController.navigate(DashboardRoutes.HomeModerator) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
+                    onHistoryClick = {
+                        navController.navigate(DashboardRoutes.Historial) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
+                    onManageUserClick = {
+                        navController.navigate(DashboardRoutes.ManageUser) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
                 )
             }
-            Box(
-                modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-
-                    Text(
-                        text = user?.role?.name ?: "",
-                        style = MaterialTheme.typography.bodyLarge,
-                        textAlign = TextAlign.Center
-                    )
-                }
-            }
-            CardProfileModerator(
-                title = stringResource(R.string.pending_profile_moderator),
-                label = uiState.pendingCount.toString(),
-                color = Color(0xFFDB9C16)
-            )
-            CardProfileModerator(
-                title = stringResource(R.string.approved_profile_moderator),
-                label = uiState.approvedCount.toString(),
-                color = Color(0xFF3CA834)
-            )
-            CardProfileModerator(
-                title = stringResource(R.string.rejected_profile_moderator),
-                label = uiState.rejectedCount.toString(),
-                color = Color(0xFFC72E2E)
-            )
-
-            Text(
-                text = stringResource(R.string.title_panel_moderator),
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-            )
-
-            CardMenuModerator(
-                onValidateClick = {
-                    navController.navigate(DashboardRoutes.HomeModerator) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                },
-                onHistoryClick = {
-                    navController.navigate(DashboardRoutes.Historial) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                },
-                onManageUserClick = {
-                    navController.navigate(DashboardRoutes.ManageUser) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                }
-            )
         }
     }
+
     if (showConfirmDialog) {
         ConfirmAlertDialog(
             onShowExitDialogChange = { showConfirmDialog = it },
@@ -200,7 +197,19 @@ fun ProfileModerator (
             }
         )
     }
+
+    if (showLanguageDialog) {
+        LanguagePickerDialog(
+            selectedLanguageTag = selectedLanguageTag,
+            onDismiss = { showLanguageDialog = false },
+            onLanguageSelected = { tag ->
+                viewModel.setLanguage(tag)
+                showLanguageDialog = false
+            }
+        )
+    }
 }
+
 
 @Preview(showBackground = true)
 @Composable

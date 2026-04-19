@@ -13,21 +13,24 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -42,11 +45,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.servicerca.app.R
 import com.servicerca.app.core.components.alertDialog.ConfirmAlertDialog
+import com.servicerca.app.core.components.alertDialog.LanguagePickerDialog
 import com.servicerca.app.core.components.button.ButtonIcon
 import com.servicerca.app.core.components.button.DeleteButton
 import com.servicerca.app.core.components.button.PasswordButton
@@ -67,100 +72,121 @@ fun ProfileScreen(
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val user = uiState.user
+    val selectedLanguageTag by viewModel.selectedLanguageTag.collectAsState()
     var showConfirmDialog by remember { mutableStateOf(false) }
+    var showLanguageDialog by remember { mutableStateOf(false) }
+    var selectedInsignia by remember { mutableStateOf<InsigniaUiModel?>(null) }
 
-    if (uiState.isLoading) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            CircularProgressIndicator()
+    when (val state = uiState) {
+        is ProfileUiState.Loading -> {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
         }
-    } else {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(24.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
-        ) {
-            // Botón de Cerrar Sesión
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
-            ) {
-                IconButton(onClick = { showConfirmDialog = true }) {
-                    Icon(imageVector = Icons.AutoMirrored.Filled.Logout, contentDescription = stringResource(R.string.logout_content_description))
-                }
+        is ProfileUiState.Error -> {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text(text = state.message, color = MaterialTheme.colorScheme.error)
             }
-
-            // Imagen de Perfil
+        }
+        is ProfileUiState.Success -> {
+            val user = state.user
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(24.dp),
+                verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
-                Box(modifier = Modifier.size(150.dp)) {
-                    ProfileImage(url = user?.profilePictureUrl ?: "")
+                // Botón de Cerrar Sesión
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    IconButton(onClick = { showConfirmDialog = true }) {
+                        Icon(imageVector = Icons.AutoMirrored.Filled.Logout, contentDescription = stringResource(R.string.logout_content_description))
+                    }
                 }
-            }
 
-            // Nombre del Usuario
-            Text(
-                text = if (user != null) "${user.name1} ${user.lastname1}" else stringResource(R.string.profile_fallback_name),
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
-            )
+                // Imagen de Perfil
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Box(modifier = Modifier.size(150.dp)) {
+                        ProfileImage(url = user.profilePictureUrl)
+                    }
+                }
 
-            // Ubicación
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.LocationOn,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(25.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
+                // Nombre del Usuario
                 Text(
-                    text = user?.city ?: stringResource(R.string.location_not_available),
-                    style = MaterialTheme.typography.bodyLarge
+                    text = "${user.name1} ${user.lastname1}",
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                // Ubicación
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.LocationOn,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(25.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = user.city,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+
+                // Nivel y Gestión
+                CardLevel(
+                    level = state.level,
+                    levelName = state.levelName,
+                    currentXp = state.totalXp,
+                    nextLevelXp = state.xpRequiredForNextLevel,
+                    progress = state.progress,
+                    remainingXp = (state.xpRequiredForNextLevel - state.totalXp).coerceAtLeast(0)
+                )
+
+                ManageServicesCard(onClick = onListService)
+
+                ManageServicesCard(
+                    onClick = onListInteresting,
+                    color = MaterialTheme.colorScheme.surface,
+                    borderColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onSurface,
+                    borderWidth = 2.dp,
+                    title = stringResource(R.string.interesting_posts_title),
+                    description = stringResource(R.string.interesting_posts_description),
+                    icon = Icons.Default.Bookmark
+                )
+
+                // Insignias Dinámicas
+                val earnedInsignias = state.insignias.filter { it.isEarned }
+                InsigniasSection(
+                    insignias = earnedInsignias,
+                    onInsignias = onInsignias,
+                    onInsigniaClick = { selectedInsignia = it }
+                )
+
+                // Estadísticas
+                StatisticsSection(state)
+
+                // Botones de Configuración
+                AccountSettingsSection(
+                    onEdit = onEditProflie,
+                    onUpdatePass = onUpdatePassword,
+                    onDelete = onDeleteProfile,
+                    onChangeLanguage = { showLanguageDialog = true }
                 )
             }
-
-            // Nivel y Gestión
-            CardLevel(
-                level = uiState.level,
-                levelName = uiState.levelName,
-                currentXp = uiState.totalXp,
-                nextLevelXp = uiState.xpRequiredForNextLevel,
-                progress = uiState.progress,
-                remainingXp = (uiState.xpRequiredForNextLevel - uiState.totalXp).coerceAtLeast(0)
-            )
-
-            ManageServicesCard(onClick = onListService)
-
-            ManageServicesCard(
-                onClick = onListInteresting,
-                color = MaterialTheme.colorScheme.surface,
-                borderColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onSurface,
-                borderWidth = 2.dp,
-                title = stringResource(R.string.interesting_posts_title),
-                description = stringResource(R.string.interesting_posts_description),
-                icon = Icons.Default.Bookmark
-            )
-
-            // Insignias (Sección Estática por ahora)
-            InsigniasSection(onInsignias)
-
-            // Estadísticas
-            StatisticsSection(uiState)
-
-            // Botones de Configuración
-            AccountSettingsSection(onEditProflie, onUpdatePassword, onDeleteProfile)
         }
     }
 
@@ -173,57 +199,115 @@ fun ProfileScreen(
             }
         )
     }
+
+    selectedInsignia?.let { insignia ->
+        InsigniaDetailDialog(
+            insignia = insignia,
+            onDismiss = { selectedInsignia = null }
+        )
+    }
+
+    if (showLanguageDialog) {
+        LanguagePickerDialog(
+            selectedLanguageTag = selectedLanguageTag,
+            onDismiss = { showLanguageDialog = false },
+            onLanguageSelected = { tag ->
+                viewModel.setLanguage(tag)
+                showLanguageDialog = false
+            }
+        )
+    }
 }
 
 @Composable
-fun InsigniasSection(onInsignias: () -> Unit) {
+fun InsigniasSection(
+    insignias: List<InsigniaUiModel>,
+    onInsignias: () -> Unit,
+    onInsigniaClick: (InsigniaUiModel) -> Unit
+) {
     Column(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = stringResource(R.string.tittle_insignias), fontWeight = FontWeight.Bold)
+            Text(text = stringResource(R.string.title_insignias), fontWeight = FontWeight.Bold)
             Text(
                 text = stringResource(R.string.ver_todas),
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.clickable { onInsignias() }
             )
         }
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            InsigniaItem(R.drawable.insignia_verificado, R.string.insignia_verified, Color.Cyan)
-            InsigniaItem(R.drawable.insignia_rapido, R.string.insignia_fast, Color(0xFF9C27B0))
-            InsigniaItem(R.drawable.insignia_top5, R.string.insignia_top5, Color(0xFFFFEB3B))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            // Mostramos un resumen de hasta 3 insignias
+            val displayInsignias = insignias.take(3)
+            displayInsignias.forEach { insignia ->
+                Box(modifier = Modifier.weight(1f)) {
+                    InsigniaItem(
+                        insignia = insignia,
+                        onClick = { onInsigniaClick(insignia) }
+                    )
+                }
+            }
+            // Espaciado si hay menos de 3
+            repeat(3 - displayInsignias.size) {
+                Spacer(modifier = Modifier.weight(1f))
+            }
         }
     }
 }
 
 @Composable
-fun InsigniaItem(imageRes: Int, labelRes: Int, shadowColor: Color) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+fun InsigniaItem(
+    insignia: InsigniaUiModel,
+    onClick: () -> Unit
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() }
+    ) {
         Image(
-            painter = painterResource(id = imageRes),
+            painter = painterResource(id = insignia.iconRes),
             contentDescription = null,
-            modifier = Modifier.size(80.dp).shadow(1.dp, CircleShape, ambientColor = shadowColor, spotColor = shadowColor)
+            modifier = Modifier
+                .size(80.dp)
+                .shadow(
+                    elevation = 2.dp,
+                    shape = CircleShape,
+                    ambientColor = insignia.shadowColor,
+                    spotColor = insignia.shadowColor
+                )
         )
-        Text(text = stringResource(labelRes), style = MaterialTheme.typography.bodyMedium)
+        Text(
+            text = stringResource(insignia.nameRes),
+            style = MaterialTheme.typography.bodyMedium,
+            textAlign = TextAlign.Center,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
     }
 }
 
+
 @Composable
-fun StatisticsSection(uiState: ProfileUiState) {
-    val user = uiState.user
+fun StatisticsSection(state: ProfileUiState.Success) {
+    val user = state.user
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(text = stringResource(R.string.statistic), fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 8.dp, bottom = 8.dp))
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             CardStatistics(
                 R.drawable.servicios_completados,
-                user?.completedServices?.toString() ?: "0",
+                user.completedServices.toString(),
                 stringResource(R.string.services_completed)
             )
             CardStatistics(
                 R.drawable.puntos_totales,
-                uiState.totalXp.toString(),
+                state.totalXp.toString(),
                 stringResource(R.string.total_points)
             )
         }
@@ -231,25 +315,38 @@ fun StatisticsSection(uiState: ProfileUiState) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             CardStatistics(
                 R.drawable.calificacion,
-                String.format("%.1f", uiState.averageRating),
+                String.format("%.1f", state.averageRating),
                 stringResource(R.string.average_rating)
             )
             CardStatistics(
                 R.drawable.tiempo_miembro,
-                if (user != null) {
+                run {
                     val currentYear = java.time.Year.now().value
                     val years = (currentYear - user.memberSince).coerceAtLeast(0)
-                    stringResource(R.string.member_time_format, years)
-                } else "-",
+                    val yearsText = if (years == 1) stringResource(R.string.member_time_year_singular)
+                                    else stringResource(R.string.member_time_year_plural, years)
+                    "$yearsText (${user.memberSince})"
+                },
                 stringResource(R.string.member_time)
             )
         }
     }
 }
 
+
 @Composable
-fun AccountSettingsSection(onEdit: () -> Unit, onUpdatePass: () -> Unit, onDelete: () -> Unit) {
+fun AccountSettingsSection(
+    onEdit: () -> Unit,
+    onUpdatePass: () -> Unit,
+    onDelete: () -> Unit,
+    onChangeLanguage: () -> Unit
+) {
     Column(modifier = Modifier.fillMaxWidth().padding(bottom = 20.dp), verticalArrangement = Arrangement.spacedBy(15.dp)) {
+        ButtonIcon(
+            text = stringResource(R.string.language_button),
+            onClick = onChangeLanguage,
+            icon = { Icon(Icons.Default.Language, null) }
+        )
         ButtonIcon(text = stringResource(R.string.edit_account), onClick = onEdit, icon = { Icon(Icons.Default.Edit, null) })
         PasswordButton(text = stringResource(R.string.edit_password), onClick = onUpdatePass, icon = { Icon(Icons.Default.Lock, null) })
         DeleteButton(text = stringResource(R.string.delete_account), onClick = onDelete, icon = { Icon(Icons.Default.Delete, null) })

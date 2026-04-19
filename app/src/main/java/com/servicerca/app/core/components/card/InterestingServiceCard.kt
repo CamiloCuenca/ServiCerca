@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -24,6 +24,7 @@ import coil3.compose.AsyncImage
 
 @Composable
 fun InterestingServiceCard(
+    modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
     imageUrl: String? = null,
     isFavorite: Boolean = true,
@@ -33,12 +34,11 @@ fun InterestingServiceCard(
     priceMin: String = "45",
     priceMax: String = "120",
     rating: Float = 4.8f,
-    favoriteIcon: ImageVector = Icons.Default.Favorite,
+    favoriteIcon: ImageVector = Icons.Default.Bookmark,
     favoriteIconTint: Color = MaterialTheme.colorScheme.primary,
     priceColor: Color = MaterialTheme.colorScheme.primary,
     ratingColor: Color = Color(0xFFFFC107),
-    imageSize: Dp = 90.dp,
-    modifier: Modifier = Modifier
+    imageSize: Dp = 90.dp
 ) {
     Card(
         onClick = onClick,
@@ -80,27 +80,27 @@ fun InterestingServiceCard(
                     )
                 }
 
-                // Botón favorito
-                Box(
+                Surface(
+                    onClick = onFavoriteClick,
+                    shape = CircleShape,
+                    color = Color.Black.copy(alpha = 0.45f),
                     modifier = Modifier
                         .align(Alignment.TopEnd)
-                        .padding(4.dp)
-                        .size(28.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.surface),
-                    contentAlignment = Alignment.Center
+                        .padding(6.dp)
+                        .size(32.dp)
                 ) {
-                    IconButton(
-                        onClick = onFavoriteClick,
-                        modifier = Modifier.size(28.dp)
-                    ) {
-                        Icon(
-                            imageVector = favoriteIcon,
-                            contentDescription = "Favorito",
-                            tint = if (isFavorite) favoriteIconTint else MaterialTheme.colorScheme.outline,
-                            modifier = Modifier.size(16.dp)
-                        )
-                    }
+                    Icon(
+                        imageVector = favoriteIcon,
+                        contentDescription = if (isFavorite) {
+                            "Quitar de interesantes"
+                        } else {
+                            "Marcar como interesante"
+                        },
+                        tint = if (isFavorite) favoriteIconTint else Color.White,
+                        modifier = Modifier
+                            .padding(7.dp)
+                            .fillMaxSize()
+                    )
                 }
             }
 

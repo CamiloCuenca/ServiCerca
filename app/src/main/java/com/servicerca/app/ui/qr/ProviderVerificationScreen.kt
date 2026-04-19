@@ -10,10 +10,8 @@ import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,14 +19,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircleOutline
-import androidx.compose.material.icons.outlined.QrCodeScanner
+import androidx.compose.material.icons.filled.ErrorOutline
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -36,9 +35,11 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,17 +49,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
-import com.servicerca.app.core.components.button.PrimaryButton
+import com.servicerca.app.R
 import com.servicerca.app.core.components.card.ConfirmServiceSummaryCard
 import com.servicerca.app.core.components.navigation.AppTopAppBarBack
 import com.servicerca.app.ui.theme.ServiCercaTheme
@@ -69,15 +72,16 @@ import java.util.concurrent.Executors
 @Composable
 fun ProviderVerificationScreen(
     onBackClick: () -> Unit = {},
-    onScanClick: () -> Unit = {}
+    viewModel: ProviderVerificationViewModel = hiltViewModel()
 ) {
     val colorScheme = MaterialTheme.colorScheme
     val typography = MaterialTheme.typography
+    val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
         topBar = {
             AppTopAppBarBack(
-                title = "Confirmar servicio",
+                title = stringResource(R.string.confirm_service_title),
                 onBackClick = onBackClick
             )
         },
@@ -104,13 +108,16 @@ fun ProviderVerificationScreen(
                     .fillMaxWidth()
                     .height(300.dp)
             ) {
-                QRCodeScannerScreen()
+                QRCodeScannerScreen(
+                    scannedValue = uiState.scannedValue,
+                    onQrDetected = viewModel::onQrDetected
+                )
             }
 
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
-                text = "Escanear código QR",
+                text = stringResource(R.string.scan_qr_title),
                 style = typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = colorScheme.onSurface
@@ -119,7 +126,7 @@ fun ProviderVerificationScreen(
             Spacer(modifier = Modifier.height(12.dp))
 
             Text(
-                text = "Escanea el código QR que te mostrará el cliente para confirmar que el servicio fue completado satisfactoriamente.",
+                text = stringResource(R.string.scan_qr_description),
                 style = typography.bodyMedium,
                 color = colorScheme.onSurface.copy(alpha = 0.6f),
                 textAlign = TextAlign.Center,
@@ -135,7 +142,7 @@ fun ProviderVerificationScreen(
                 horizontalAlignment = Alignment.Start
             ) {
                 Text(
-                    text = "Codigo de confirmación",
+                    text = stringResource(R.string.confirmation_code_label),
                     style = typography.labelMedium,
                     fontWeight = FontWeight.Bold,
                     color = colorScheme.onSurface.copy(alpha = 0.7f),
@@ -144,10 +151,11 @@ fun ProviderVerificationScreen(
 
                 // Reusing AppTextField or similar structure if exists, falling back to OutlinedTextField for exact visual match
                 OutlinedTextField(
-                    value = "12345678",
+                    value = uiState.scannedValue,
                     onValueChange = {},
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
+                    readOnly = true,
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedContainerColor = colorScheme.surface,
                         unfocusedContainerColor = colorScheme.surface,
@@ -160,49 +168,101 @@ fun ProviderVerificationScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Scan Button
-            PrimaryButton(
-                text = "Escanear QR",
-                onClick = onScanClick,
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Outlined.QrCodeScanner,
-                        contentDescription = null,
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // Success pill
-            Row(
-                modifier = Modifier
-                    .background(
-                        color = Color(0xFFE8F5E9), // Light green background
-                        shape = RoundedCornerShape(24.dp)
-                    )
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = Icons.Default.CheckCircleOutline,
-                    contentDescription = null,
-                    tint = Color(0xFF4CAF50), // Green
-                    modifier = Modifier.size(16.dp)
+            if (uiState.isProcessing) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(32.dp),
+                    color = colorScheme.primary
                 )
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Servicio confirmado correctamente",
-                    style = typography.labelSmall,
-                    color = Color(0xFF4CAF50),
-                    fontWeight = FontWeight.Bold
+                    text = stringResource(R.string.validating_qr_text),
+                    style = typography.bodySmall,
+                    color = colorScheme.onSurface.copy(alpha = 0.6f)
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+            }
+
+            if (!uiState.isProcessing && !uiState.isSuccess && uiState.message.isBlank()) {
+                Text(
+                    text = stringResource(R.string.scanning_qr_text),
+                    style = typography.bodySmall,
+                    color = colorScheme.onSurface.copy(alpha = 0.6f)
                 )
             }
 
             Spacer(modifier = Modifier.height(32.dp))
         }
+
+        // Modal de resultado: éxito o error al escanear el QR
+        if (uiState.showResultModal) {
+            QrResultDialog(
+                isSuccess = uiState.isSuccess,
+                message = uiState.message,
+                onDismiss = {
+                    viewModel.dismissModal()
+                    if (uiState.isSuccess) onBackClick()
+                },
+                onConfirm = {
+                    viewModel.dismissModal()
+                    if (uiState.isSuccess) onBackClick()
+                }
+            )
+        }
     }
+}
+
+// Diálogo de resultado del escaneo QR (éxito o error)
+@Composable
+fun QrResultDialog(
+    isSuccess: Boolean,
+    message: String,
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit
+) {
+    val iconVector = if (isSuccess) Icons.Default.CheckCircleOutline else Icons.Default.ErrorOutline
+    val iconTint = if (isSuccess) Color(0xFF4CAF50) else MaterialTheme.colorScheme.error
+    val title = if (isSuccess) stringResource(R.string.service_confirmed_title) else stringResource(R.string.unable_to_confirm_title)
+    val confirmText = if (isSuccess) stringResource(R.string.accept_action) else stringResource(R.string.retry_action)
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        icon = {
+            Icon(
+                imageVector = iconVector,
+                contentDescription = null,
+                tint = iconTint,
+                modifier = Modifier.size(48.dp)
+            )
+        },
+        title = {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center
+            )
+        },
+        text = {
+            Text(
+                text = message,
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center
+            )
+        },
+        containerColor = MaterialTheme.colorScheme.background,
+        titleContentColor = MaterialTheme.colorScheme.onBackground,
+        textContentColor = MaterialTheme.colorScheme.onSurface,
+        confirmButton = {
+            TextButton(onClick = onConfirm) {
+                Text(
+                    text = confirmText,
+                    color = if (isSuccess) Color(0xFF4CAF50) else MaterialTheme.colorScheme.error,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
+    )
 }
 
 //@Preview(showBackground = true, showSystemUi = true)
@@ -216,11 +276,13 @@ fun ProviderVerificationScreenPreview() {
 
 // Composable principal para el lector QR
 @Composable
-fun QRCodeScannerScreen() {
+fun QRCodeScannerScreen(
+    scannedValue: String,
+    onQrDetected: (String) -> Unit
+) {
     val context = LocalContext.current
-    val lifecycleOwner = LocalLifecycleOwner.current
     var hasCameraPermission by remember { mutableStateOf(false) }
-    var qrCodeResult by remember { mutableStateOf("Escaneando...") }
+    var permissionMessage by remember { mutableStateOf("") }
 
     // Launcher para solicitar permisos de cámara
     val permissionLauncher = rememberLauncherForActivityResult(
@@ -228,7 +290,7 @@ fun QRCodeScannerScreen() {
         onResult = { isGranted ->
             hasCameraPermission = isGranted
             if (!isGranted) {
-                qrCodeResult = "Permiso de cámara denegado."
+                permissionMessage = context.getString(R.string.camera_permission_denied)
             }
         }
     )
@@ -247,17 +309,17 @@ fun QRCodeScannerScreen() {
 
     Column(modifier = Modifier.fillMaxSize()) {
         if (hasCameraPermission) {
-            CameraPreview(onQrCodeDetected = { result ->
-                qrCodeResult = result
-                // Aquí podrías agregar lógica para navegar, mostrar un diálogo, etc.
-            })
+            CameraPreview(onQrCodeDetected = onQrDetected)
             Spacer(Modifier.height(16.dp))
-            Text(text = "Resultado: $qrCodeResult", modifier = Modifier.padding(16.dp))
+            Text(text = stringResource(R.string.qr_result_format, scannedValue), modifier = Modifier.padding(16.dp))
         } else {
             // UI cuando no hay permiso
-            Text("Necesitamos permiso de cámara para escanear QR.", modifier = Modifier.padding(16.dp))
+            Text(
+                text = permissionMessage.ifBlank { stringResource(R.string.camera_permission_required_message) },
+                modifier = Modifier.padding(16.dp)
+            )
             Button(onClick = { permissionLauncher.launch(Manifest.permission.CAMERA) }) {
-                Text("Conceder Permiso")
+                Text(stringResource(R.string.grant_permission_action))
             }
         }
     }
@@ -353,5 +415,3 @@ class BarcodeAnalyzer(private val onQrCodeDetected: (String) -> Unit) : ImageAna
         }
     }
 }
-
-

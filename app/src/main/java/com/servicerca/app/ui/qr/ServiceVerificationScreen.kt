@@ -10,6 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,14 +25,19 @@ import com.servicerca.app.R
 import com.servicerca.app.core.components.button.AlternativeCodeField
 import com.servicerca.app.core.components.navigation.AppTopAppBarBack
 import com.servicerca.app.core.components.qr.QRCodeCard
+import com.servicerca.app.core.utils.generarCodigoAlternativoReserva
+import com.servicerca.app.core.utils.generarContenidoReservaQR
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ServiceVerificationScreen(
+    reservationId: String,
     onBackClick: () -> Unit = {}
 ) {
     val colorScheme = MaterialTheme.colorScheme
     val typography = MaterialTheme.typography
+    val qrContent = remember(reservationId) { generarContenidoReservaQR(reservationId) }
+    val alternativeCode = remember(reservationId) { generarCodigoAlternativoReserva(reservationId) }
 
     Scaffold(
         topBar = {
@@ -68,7 +74,7 @@ fun ServiceVerificationScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             // QR Code Section
-            QRCodeCard()
+            QRCodeCard(qrContent = qrContent)
 
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -92,7 +98,7 @@ fun ServiceVerificationScreen(
             Spacer(modifier = Modifier.height(12.dp))
 
             // Alternative Code
-            AlternativeCodeField(code = "12345678")
+            AlternativeCodeField(code = alternativeCode)
 
             Spacer(modifier = Modifier.height(24.dp))
         }
@@ -187,5 +193,5 @@ fun ServiceSummaryCard() {
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun ServiceVerificationScreenPreview() {
-    ServiceVerificationScreen()
+    ServiceVerificationScreen(reservationId = "1")
 }

@@ -42,7 +42,7 @@ fun CardLevel(
     ) {
         Column {
             Text(
-                text = "Nivel $level",
+                text = stringResource(R.string.level_format, level),
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Start,
@@ -83,9 +83,9 @@ fun CardLevel(
                 .padding(bottom = 15.dp)
         ) {
             val message = if (progress >= 1f && level >= 5) {
-                "¡Has alcanzado el nivel máximo!"
+                stringResource(R.string.level_max_reached_message)
             } else {
-                "¡Sólo $remainingXp puntos más para el siguiente nivel!"
+                stringResource(R.string.level_points_remaining_message, remainingXp)
             }
             Text(
                 text = message,

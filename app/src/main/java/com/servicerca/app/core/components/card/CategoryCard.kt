@@ -33,7 +33,8 @@ fun CategoryCard(
     title: String,
     icon: Int,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    image: Int
 ) {
     Card(
         modifier = modifier
@@ -44,7 +45,7 @@ fun CategoryCard(
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             Image(
-                painter = ColorPainter(Color.Gray),
+                painter = painterResource(id = image),
                 contentDescription = null,
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop

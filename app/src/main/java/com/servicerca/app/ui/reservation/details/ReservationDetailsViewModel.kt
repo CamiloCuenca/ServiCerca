@@ -1,19 +1,29 @@
 package com.servicerca.app.ui.reservation.details
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.servicerca.app.R
+import com.servicerca.app.data.datastore.SessionDataStore
+import com.servicerca.app.domain.model.Notification
 import com.servicerca.app.domain.model.Reservation
+import com.servicerca.app.domain.model.ReservationStatus
 import com.servicerca.app.domain.model.Service
 import com.servicerca.app.domain.model.User
 import com.servicerca.app.domain.repository.ChatRepository
+import com.servicerca.app.domain.repository.NotificationRepository
 import com.servicerca.app.domain.repository.ReservationRepository
 import com.servicerca.app.domain.repository.ServiceRepository
 import com.servicerca.app.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import java.util.UUID
 import javax.inject.Inject
 
 data class ReservationDetailsUiState(
@@ -21,6 +31,7 @@ data class ReservationDetailsUiState(
     val service: Service? = null,
     val provider: User? = null,
     val customer: User? = null,
+    val isProvider: Boolean = false,
     val isLoading: Boolean = false
 )
 
@@ -29,7 +40,10 @@ class ReservationDetailsViewModel @Inject constructor(
     private val reservationRepository: ReservationRepository,
     private val serviceRepository: ServiceRepository,
     private val userRepository: UserRepository,
-    private val chatRepository: ChatRepository
+    private val chatRepository: ChatRepository,
+    private val notificationRepository: NotificationRepository,
+    private val sessionDataStore: SessionDataStore,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ReservationDetailsUiState())
@@ -38,6 +52,11 @@ class ReservationDetailsViewModel @Inject constructor(
     fun loadReservation(id: String) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
+            
+            val session = sessionDataStore.sessionFlow
+                .filterNotNull()
+                .first()
+            val currentUserId = session.userId
             
             val reservation = reservationRepository.getReservationById(id)
             if (reservation != null) {
@@ -50,11 +69,58 @@ class ReservationDetailsViewModel @Inject constructor(
                     service = service,
                     provider = provider,
                     customer = customer,
+                    isProvider = reservation.providerId == currentUserId,
                     isLoading = false
                 )
             } else {
                 _uiState.value = _uiState.value.copy(isLoading = false)
             }
+        }
+    }
+
+    fun acceptReservation(id: String) {
+        viewModelScope.launch {
+            val currentReservation = _uiState.value.reservation ?: return@launch
+            reservationRepository.updateReservationStatus(id, ReservationStatus.CONFIRMED.name)
+            
+            // Notificar al cliente
+            val notification = Notification(
+                id = UUID.randomUUID().toString(),
+                userId = currentReservation.userId,
+                title = context.getString(R.string.reservation_accepted_title),
+                message = context.getString(R.string.reservation_accepted_message, currentReservation.serviceTitle),
+                date = context.getString(R.string.now_label),
+                imageRes = com.servicerca.app.R.drawable.nueva_solicitud_servicio,
+                isRead = false,
+                targetId = id,
+                notificationType = com.servicerca.app.domain.model.NotificationType.RESERVATION
+            )
+            notificationRepository.addNotification(notification)
+            
+            loadReservation(id)
+        }
+    }
+
+    fun rejectReservation(id: String) {
+        viewModelScope.launch {
+            val currentReservation = _uiState.value.reservation ?: return@launch
+            reservationRepository.updateReservationStatus(id, ReservationStatus.REJECTED.name)
+            
+            // Notificar al cliente
+            val notification = Notification(
+                id = UUID.randomUUID().toString(),
+                userId = currentReservation.userId,
+                title = context.getString(R.string.reservation_rejected_title),
+                message = context.getString(R.string.reservation_rejected_message, currentReservation.serviceTitle),
+                date = context.getString(R.string.now_label),
+                imageRes = com.servicerca.app.R.drawable.publicacion_rechazada,
+                isRead = false,
+                targetId = id,
+                notificationType = com.servicerca.app.domain.model.NotificationType.RESERVATION
+            )
+            notificationRepository.addNotification(notification)
+            
+            loadReservation(id)
         }
     }
 

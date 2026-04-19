@@ -31,6 +31,7 @@ import androidx.navigation.compose.rememberNavController
 import com.servicerca.app.R
 import com.servicerca.app.core.components.card.CardModeratorPanelScreen
 import com.servicerca.app.core.components.navigation.TabItemApp
+import com.servicerca.app.core.navigation.DashboardRoutes
 
 @Composable
 fun ModeratorPanelScreen (navController: NavHostController,
@@ -65,10 +66,10 @@ fun ModeratorPanelScreen (navController: NavHostController,
                         tittle = service.title,
                         description = service.description,
                         onVerifyClick = {
-                            navController.navigate("detailsServicesModerator/${service.id}")
+                            navController.navigate(DashboardRoutes.DetailServiceModerator(service.id))
                         },
                         onRejectClick = {
-                            navController.navigate("rejectReason/${service.id}")
+                            navController.navigate(DashboardRoutes.RejectReason(service.id))
                         }
                     )
                 }
