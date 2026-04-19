@@ -75,7 +75,7 @@ fun DetailsReservationScreen(
         }
     } else if (uiState.reservation == null) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("No se encontró la reserva")
+            Text(stringResource(R.string.reservation_not_found))
         }
     } else {
         val reservation = uiState.reservation!!
@@ -117,7 +117,7 @@ fun DetailsReservationScreen(
                 Spacer(modifier = Modifier.width(16.dp))
 
                 Text(
-                    text = "Detalles",
+                    text = stringResource(R.string.reservation_details_title),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
@@ -128,17 +128,17 @@ fun DetailsReservationScreen(
             
             // 🔹 Lógica de Rol: ¿Quién es el protagonista de la tarjeta?
             val targetUser = if (uiState.isProvider) customer else provider
-            val roleLabel = if (uiState.isProvider) "CLIENTE" else "PROFESIONAL CERTIFICADO"
+            val roleLabel = if (uiState.isProvider) stringResource(R.string.role_client) else stringResource(R.string.reservation_profesional_certificado)
 
             CardDetailsReservation(
                 serviceImageUrl = reservation.serviceImageUrl ?: service?.photoUrl,
                 profileImageUrl = targetUser?.profilePictureUrl,
-                serviceRequestedLabel = "SERVICIO SOLICITADO",
+                serviceRequestedLabel = stringResource(R.string.reservation_servicio_solicitado),
                 statusText = statusInfo.text,
                 statusContainerColor = statusInfo.containerColor,
                 statusContentColor = statusInfo.contentColor,
                 serviceTitle = reservation.serviceTitle,
-                professionalName = if (targetUser != null) "${targetUser.name1} ${targetUser.lastname1}" else "Cargando...",
+                professionalName = if (targetUser != null) "${targetUser.name1} ${targetUser.lastname1}" else stringResource(R.string.loading_text),
                 professionalBadgeText = roleLabel,
                 rating = if (uiState.isProvider) null else "4.9", // No mostramos el rating del propio cliente si somos proveedores
                 modifier = Modifier.padding(horizontal = 0.dp) // Reset padding inside Column
@@ -148,7 +148,7 @@ fun DetailsReservationScreen(
 
             // 🔹 SECTION: INFORMACIÓN DETALLADA
             Text(
-                text = "RESUMEN DEL SERVICIO",
+                text = stringResource(R.string.service_summary_title),
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold,
@@ -170,7 +170,7 @@ fun DetailsReservationScreen(
 
                     InfoItem(
                         icon = Icons.Default.CalendarMonth,
-                        label = "Fecha y hora pactada",
+                        label = stringResource(R.string.agreed_date_time_label),
                         value = reservation.time
                     )
 
@@ -178,8 +178,8 @@ fun DetailsReservationScreen(
 
                     InfoItem(
                         icon = Icons.Default.LocationOn,
-                        label = "Dirección de encuentro",
-                        value = customer?.city ?: "Ubicación no disponible"
+                        label = stringResource(R.string.meeting_address_label),
+                        value = customer?.city ?: stringResource(R.string.location_not_available)
                     )
 
                     Spacer(modifier = Modifier.height(20.dp))
@@ -198,7 +198,7 @@ fun DetailsReservationScreen(
                     Spacer(modifier = Modifier.height(24.dp))
 
                     EstimatedCostRow(
-                        label = "Costo Estimado",
+                        label = stringResource(R.string.estimated_cost_label),
                         value = if (service != null) "$${service.priceMin} - $${service.priceMax}" else "$0.00"
                     )
                 }
@@ -208,7 +208,7 @@ fun DetailsReservationScreen(
 
             // 🔹 BOTÓN DE CHAT (Ahora más integrado)
             PrimaryButton(
-                text = if (uiState.isProvider) "Chatear con el Cliente" else "Chatear con el Profesional",
+                text = if (uiState.isProvider) stringResource(R.string.chat_with_client) else stringResource(R.string.chat_with_professional),
                 onClick = {},
                 modifier = Modifier.fillMaxWidth()
             )
@@ -222,7 +222,7 @@ fun DetailsReservationScreen(
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     DeleteButton(
-                        text = "Rechazar",
+                        text = stringResource(R.string.reject_action),
                         onClick = { showRejectModal = true },
                         modifier = Modifier.weight(1f),
                         icon = {
@@ -235,7 +235,7 @@ fun DetailsReservationScreen(
                     )
                     
                     PrimaryButton(
-                        text = "Aceptar",
+                        text = stringResource(R.string.accept_action),
                         onClick = { viewModel.acceptReservation(reservation.id) },
                         modifier = Modifier.weight(1.2f) // Un poco más de peso al botón principal
                     )
@@ -245,7 +245,7 @@ fun DetailsReservationScreen(
                 // Si es confirmada pero no terminada, mostramos botón de terminar si es necesario
                 if (reservation.status == ReservationStatus.CONFIRMED) {
                     PrimaryButton(
-                        text = "Terminar Servicio",
+                        text = stringResource(R.string.finish_service_action),
                         onClick = { onQr() },
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -253,7 +253,7 @@ fun DetailsReservationScreen(
                 }
 
                 DeleteButton(
-                    text = "Cancelar Reserva",
+                    text = stringResource(R.string.cancel_reservation_action),
                     onClick = { showDeleteModal = true },
                     modifier = Modifier.fillMaxWidth(),
                     icon = {
@@ -278,9 +278,9 @@ fun DetailsReservationScreen(
                         showDeleteModal = false
                     }
                 },
-                title = "¿Cancelar Reserva?",
-                textPrimary = "Mantener mi Reserva",
-                textSecondary = "Cancelar Reserva"
+                title = stringResource(R.string.cancel_reservation_confirm_title),
+                textPrimary = stringResource(R.string.keep_my_reservation_action),
+                textSecondary = stringResource(R.string.cancel_reservation_action)
             )
         }
 
@@ -292,9 +292,9 @@ fun DetailsReservationScreen(
                     viewModel.rejectReservation(reservation.id)
                     showRejectModal = false
                 },
-                title = "¿Rechazar Solicitud?",
-                textPrimary = "Volver",
-                textSecondary = "Rechazar Solicitud"
+                title = stringResource(R.string.reject_request_confirm_title),
+                textPrimary = stringResource(R.string.action_back),
+                textSecondary = stringResource(R.string.reject_request_action)
             )
         }
     }
@@ -315,22 +315,22 @@ fun getStatusInfo(status: ReservationStatus): StatusUIInfo {
             Color(0xFF027A48)
         )
         ReservationStatus.PENDING -> StatusUIInfo(
-            "Pendiente",
+            stringResource(R.string.status_pending_label),
             Color(0xFFFEF0C7),
             Color(0xFFB54708)
         )
         ReservationStatus.CANCELLED -> StatusUIInfo(
-            "Cancelada",
+            stringResource(R.string.status_cancelled_label),
             Color(0xFFFEE4E2),
             Color(0xFFB42318)
         )
         ReservationStatus.REJECTED -> StatusUIInfo(
-            "Rechazada",
+            stringResource(R.string.status_rejected_label),
             Color(0xFFFEE4E2),
             Color(0xFFD92D20)
         )
         ReservationStatus.COMPLETED -> StatusUIInfo(
-            "Completada",
+            stringResource(R.string.status_completed_label),
             Color(0xFFD1E9FF),
             Color(0xFF175CD3)
         )

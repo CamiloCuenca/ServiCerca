@@ -147,8 +147,8 @@ fun EditServiceScreen(
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
-            title = { Text("Eliminar servicio") },
-            text = { Text("¿Estás seguro de que deseas eliminar este servicio? Esta acción no se puede deshacer.") },
+            title = { Text(stringResource(R.string.delete_service_title)) },
+            text = { Text(stringResource(R.string.delete_service_confirmation_message)) },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -157,7 +157,7 @@ fun EditServiceScreen(
                     }
                 ) {
                     Text(
-                        text = "Eliminar",
+                        text = stringResource(R.string.delete_button),
                         color = MaterialTheme.colorScheme.error,
                         fontWeight = FontWeight.Bold
                     )
@@ -165,7 +165,7 @@ fun EditServiceScreen(
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteDialog = false }) {
-                    Text("Cancelar")
+                    Text(stringResource(R.string.delete_account_cancel_button))
                 }
             }
         )
@@ -209,7 +209,7 @@ fun EditServiceScreen(
                 }
 
                 Text(
-                    text = "Editar Servicio",
+                    text = stringResource(R.string.edit_service_screen_title),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onBackground,
@@ -270,8 +270,8 @@ fun EditServiceScreen(
                     value = viewModel.category.value.ifBlank { "" },
                     onValueChange = {},
                     readOnly = true,
-                    label = { Text("Categoría") },
-                    placeholder = { Text("Selecciona una categoría") },
+                    label = { Text(stringResource(R.string.create_service_category_label)) },
+                    placeholder = { Text(stringResource(R.string.create_service_select_category_placeholder)) },
                     trailingIcon = {
                         ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
                     },
@@ -334,7 +334,7 @@ fun EditServiceScreen(
                     value = viewModel.minValue.value,
                     onValueChange = { viewModel.minValue.onChange(it) },
                     modifier = Modifier.weight(1f),
-                    label = "Precio mín.",
+                    label = stringResource(R.string.price_min_label),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     isError = viewModel.minValue.error != null,
                     supportingText = viewModel.minValue.error?.let { msg -> { Text(msg) } }
@@ -344,7 +344,7 @@ fun EditServiceScreen(
                     value = viewModel.maxValue.value,
                     onValueChange = { viewModel.maxValue.onChange(it) },
                     modifier = Modifier.weight(1f),
-                    label = "Precio máx.",
+                    label = stringResource(R.string.price_max_label),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     isError = viewModel.maxValue.error != null,
                     supportingText = viewModel.maxValue.error?.let { msg -> { Text(msg) } }
@@ -355,13 +355,13 @@ fun EditServiceScreen(
 
             // ── Guardar cambios ──────────────────────────────────────────
             PrimaryButton(
-                text = "Guardar Cambios",
+                text = stringResource(R.string.save_changes_button),
                 onClick = { viewModel.saveService() }
             )
 
             // ── Eliminar servicio (con confirmación) ─────────────────────
             DeleteButton(
-                text = "Eliminar Servicio",
+                text = stringResource(R.string.delete_service_title),
                 onClick = { showDeleteDialog = true },
                 icon = {
                     Icon(

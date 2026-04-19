@@ -41,7 +41,7 @@ fun PopularCategoriesSection(
             )
 
             Text(
-                text = "Ver todo",
+                text = stringResource(R.string.view_all),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.clickable { onViewAll() }
@@ -53,7 +53,7 @@ fun PopularCategoriesSection(
 
         Row(modifier = Modifier.fillMaxWidth()) {
             CategoryCard(
-                title = "Hogar",
+                title = stringResource(R.string.category_home),
                 icon = R.drawable.ic_push_pin,
                 modifier = Modifier.weight(1f),
                 onClick = { onCategoryClick(Categories.HOGAR) },
@@ -63,7 +63,7 @@ fun PopularCategoriesSection(
             )
             Spacer(modifier = Modifier.width(12.dp))
             CategoryCard(
-                title = "Educación",
+                title = stringResource(R.string.category_education),
                 icon = R.drawable.ic_push_pin,
                 modifier = Modifier.weight(1f),
                 onClick = { onCategoryClick(Categories.EDUCACIÓN) },
@@ -73,7 +73,7 @@ fun PopularCategoriesSection(
         Spacer(modifier = Modifier.height(12.dp))
         Row(modifier = Modifier.fillMaxWidth()) {
             CategoryCard(
-                title = "Mascotas",
+                title = stringResource(R.string.category_pets),
                 icon = R.drawable.ic_push_pin,
                 modifier = Modifier.weight(1f),
                 onClick = { onCategoryClick(Categories.MASCOTAS) },
@@ -81,7 +81,7 @@ fun PopularCategoriesSection(
             )
             Spacer(modifier = Modifier.width(12.dp))
             CategoryCard(
-                title = "Tecnología",
+                title = stringResource(R.string.category_technology),
                 icon = R.drawable.ic_push_pin,
                 modifier = Modifier.weight(1f),
                 onClick = { onCategoryClick(Categories.TECNOLOGIA) }

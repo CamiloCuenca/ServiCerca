@@ -218,8 +218,8 @@ fun CreateServiceScreen(
                         value = viewModel.category.value.ifBlank { "" },
                         onValueChange = {},
                         readOnly = true,
-                        label = { Text("Categoría") },
-                        placeholder = { Text("Selecciona una categoría") },
+                        label = { Text(stringResource(R.string.create_service_category_label)) },
+                        placeholder = { Text(stringResource(R.string.create_service_select_category_placeholder)) },
                         trailingIcon = {
                             ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
                         },
@@ -286,7 +286,7 @@ fun CreateServiceScreen(
                         value = viewModel.minValue.value,
                         onValueChange = { viewModel.minValue.onChange(it) },
                         modifier = Modifier.weight(1f),
-                        label = "Precio mín.",
+                        label = stringResource(R.string.price_min_label),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         isError = viewModel.minValue.error != null,
                         supportingText = viewModel.minValue.error?.let { msg -> { Text(msg) } }
@@ -296,7 +296,7 @@ fun CreateServiceScreen(
                         value = viewModel.maxValue.value,
                         onValueChange = { viewModel.maxValue.onChange(it) },
                         modifier = Modifier.weight(1f),
-                        label = "Precio máx.",
+                        label = stringResource(R.string.price_max_label),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         isError = viewModel.maxValue.error != null,
                         supportingText = viewModel.maxValue.error?.let { msg -> { Text(msg) } }
@@ -328,7 +328,7 @@ fun CreateServiceScreen(
                     Row {
                         Icon(
                             imageVector = Icons.Default.AddLocationAlt,
-                            contentDescription = "Agregar Ubicacion",
+                            contentDescription = stringResource(R.string.add_location_content_description),
                             modifier = Modifier.align(Alignment.CenterVertically)
                         )
                         Spacer(modifier = Modifier.width(20.dp))
@@ -347,7 +347,7 @@ fun CreateServiceScreen(
                         Spacer(modifier = Modifier.width(30.dp))
                         Icon(
                             imageVector = Icons.Default.ArrowCircleRight,
-                            contentDescription = "Ir a Ubicacion",
+                            contentDescription = stringResource(R.string.go_to_location_content_description),
                             modifier = Modifier.align(Alignment.CenterVertically)
                         )
                     }
@@ -370,7 +370,7 @@ fun CreateServiceScreen(
                     icon = {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                            contentDescription = "Publicar Servicio",
+                            contentDescription = stringResource(R.string.publish_service_content_description),
                             modifier = Modifier.align(Alignment.End)
                         )
                     }
@@ -384,4 +384,3 @@ fun CreateServiceScreen(
     }
 
 }
-
