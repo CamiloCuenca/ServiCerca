@@ -1,7 +1,5 @@
 package com.servicerca.app.core.components.chat
 
-import androidx.annotation.DrawableRes
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -25,17 +23,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
 import com.servicerca.app.R
 
 @Composable
 fun ChatComponent(
-    @DrawableRes imageRes: Int,
+    imageUrl: String,
     name: String,
     lastMessage: String,
     time: String?,
@@ -57,17 +57,19 @@ fun ChatComponent(
                 .fillMaxWidth()
                 .padding(6.dp)
         ) {
-            Image(
-                painter = painterResource(id = imageRes),
+            AsyncImage(
+                model = imageUrl,
                 contentDescription = "Foto de perfil",
                 modifier = Modifier
                     .size(60.dp)
-                    .clip(CircleShape)
+                    .clip(CircleShape),
+                contentScale = ContentScale.Crop,
+                placeholder = painterResource(R.drawable.primo_de_juan_camilo),
+                error = painterResource(R.drawable.primo_de_juan_camilo)
             )
 
             Spacer(modifier = Modifier.width(8.dp))
 
-            // Centro: ocupa el espacio restante, pero NO empuja la derecha fuera
             Column(
                 modifier = Modifier
                     .weight(1f)
@@ -85,8 +87,10 @@ fun ChatComponent(
                 Text(
                     text = lastMessage,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    maxLines = 1, // o 2 si quieres
+                    color = if (unreadCount > 0) MaterialTheme.colorScheme.onSurface
+                    else MaterialTheme.colorScheme.onSurfaceVariant, // Color más suave si ya se leyó
+                    fontWeight = if (unreadCount > 0) FontWeight.Bold else FontWeight.Normal, // <--- Negrita solo si hay mensajes
+                    maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
             }
@@ -99,31 +103,27 @@ fun ChatComponent(
                         text = time,
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary,
+                        color = if (unreadCount > 0) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
                         fontStyle = FontStyle.Italic,
                         maxLines = 1
                     )
                 }
 
-                Box {
-                    Icon(
-                        imageVector = Icons.Default.Circle,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-
-                    Text(
-                        text = unreadCount.toString(),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                    )
+                if (unreadCount > 0) {
+                    Box {
+                        Icon(
+                            imageVector = Icons.Default.Circle,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                        Text(
+                            text = unreadCount.toString(),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            modifier = Modifier.align(Alignment.Center)
+                        )
+                    }
                 }
-
-
-
-
             }
         }
     }
@@ -131,16 +131,14 @@ fun ChatComponent(
     Spacer(modifier = Modifier.height(2.dp))
 }
 
-
 @Composable
 @Preview(showBackground = true)
-fun ChatScreen() {
+fun ChatComponentPreview() {
     ChatComponent(
-        imageRes = R.drawable.foto_jcc,
+        imageUrl = "",
         name = "Juan Camilo Cuenca",
         lastMessage = "Hola mi amor, ¿cómo estás?",
         time = "12:45 PM",
         unreadCount = 20
     )
 }
-
