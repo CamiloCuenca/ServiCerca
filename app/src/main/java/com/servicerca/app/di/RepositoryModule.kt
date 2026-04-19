@@ -1,10 +1,12 @@
 package com.servicerca.app.di
 
+import com.servicerca.app.data.repository.ChatRepositoryImpl
 import com.servicerca.app.data.repository.CommentRepositoryImpl
 import com.servicerca.app.data.repository.ReservationRepositoryImpl
 import com.servicerca.app.data.repository.ServiceRepositoryImpl
 import com.servicerca.app.data.repository.UserRepositoryImpl
 import com.servicerca.app.data.repository.NotificationRepositoryImpl
+import com.servicerca.app.domain.repository.ChatRepository
 import com.servicerca.app.domain.repository.CommentRepository
 import com.servicerca.app.domain.repository.NotificationRepository
 import com.servicerca.app.domain.repository.ReservationRepository
@@ -49,5 +51,11 @@ abstract class RepositoryModule {
     abstract fun bindNotificationRepository(
         notificationRepositoryImpl: NotificationRepositoryImpl
     ): NotificationRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindChatRepository(
+        chatRepositoryImpl: ChatRepositoryImpl
+    ): ChatRepository
 
 }
