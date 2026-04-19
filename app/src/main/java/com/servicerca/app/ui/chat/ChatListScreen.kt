@@ -14,13 +14,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.servicerca.app.core.components.chat.ChatComponent
 import com.servicerca.app.core.components.input.SearchTextField
 
 @Composable
 fun ChatListScreen(
-    viewModel: ChatListViewModel = viewModel(),
+    viewModel: ChatListViewModel = hiltViewModel(),
     onSearch: (String) -> Unit = {},
     onChatClick: (String) -> Unit = {}
 ) {
@@ -52,7 +53,7 @@ fun ChatListScreen(
 
             uiState.chats.forEach { chat ->
                 ChatComponent(
-                    imageRes = chat.participantImage,
+                    imageUrl = chat.participantImage,
                     name = chat.participantName,
                     lastMessage = chat.lastMessage,
                     time = chat.lastMessageTime,
