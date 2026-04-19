@@ -11,9 +11,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.hasRoute
 import com.servicerca.app.core.components.navigation.AppTopAppBarModerator
 import com.servicerca.app.core.components.navigation.BottomNavigationBarModerator
 import com.servicerca.app.core.navigation.DashboardRoutes

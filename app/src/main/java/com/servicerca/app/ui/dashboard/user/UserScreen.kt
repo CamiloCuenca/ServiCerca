@@ -8,11 +8,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.compose.runtime.*
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.hasRoute
 import com.servicerca.app.core.components.navigation.AppTopAppBar
 import com.servicerca.app.core.components.navigation.BottomNavigationBar
 import com.servicerca.app.core.navigation.DashboardRoutes
