@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.servicerca.app.domain.model.Reservation
 import com.servicerca.app.domain.model.Service
 import com.servicerca.app.domain.model.User
+import com.servicerca.app.domain.repository.ChatRepository
 import com.servicerca.app.domain.repository.ReservationRepository
 import com.servicerca.app.domain.repository.ServiceRepository
 import com.servicerca.app.domain.repository.UserRepository
@@ -27,7 +28,8 @@ data class ReservationDetailsUiState(
 class ReservationDetailsViewModel @Inject constructor(
     private val reservationRepository: ReservationRepository,
     private val serviceRepository: ServiceRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val chatRepository: ChatRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ReservationDetailsUiState())
@@ -61,6 +63,19 @@ class ReservationDetailsViewModel @Inject constructor(
             reservationRepository.updateReservationStatus(id, "CANCELLED")
             loadReservation(id)
             onComplete()
+        }
+    }
+
+    fun onContactProfessional(onNavigate: (String) -> Unit) {
+        val provider = uiState.value.provider ?: return
+
+        viewModelScope.launch {
+            val chatId = chatRepository.getOrCreateChat(
+                userId = provider.id,
+                userName = "${provider.name1} ${provider.lastname1}",
+                userImage = provider.profilePictureUrl
+            )
+            onNavigate(chatId)
         }
     }
 }
