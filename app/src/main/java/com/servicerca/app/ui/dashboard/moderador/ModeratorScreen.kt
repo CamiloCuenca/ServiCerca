@@ -24,6 +24,8 @@ fun ModeratorScreen(
     onLogout: () -> Unit,
     onCreateService: () -> Unit,
     onNotificationClick: () -> Unit,
+    onReservationDetailClick: (String) -> Unit,
+    onMakeReservationClick: (String) -> Unit,
     viewModel: NotificationViewModel = hiltViewModel()
 ) {
 
@@ -89,7 +91,9 @@ fun ModeratorScreenPreview() {
     ModeratorScreen(
         onLogout = {},
         onCreateService = {},
-        onNotificationClick = {}
+        onNotificationClick = {},
+        onReservationDetailClick = {},
+        onMakeReservationClick = {}
     )
 
 }

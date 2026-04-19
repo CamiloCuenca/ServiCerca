@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.clickable
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,9 +18,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.servicerca.app.R
 import com.servicerca.app.core.components.card.CategoryCard
+import com.servicerca.app.domain.model.Categories
 
 @Composable
+@Suppress("UNUSED_PARAMETER")
 fun PopularCategoriesSection(
+    onCategoryClick: (Categories) -> Unit,
     onViewAll: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -33,6 +37,14 @@ fun PopularCategoriesSection(
                 text = stringResource(R.string.popular_categories_title),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
+
+            )
+
+            Text(
+                text = "Ver todo",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.clickable { onViewAll() }
             )
 
         }
@@ -40,19 +52,22 @@ fun PopularCategoriesSection(
         Spacer(modifier = Modifier.height(16.dp))
 
         Row(modifier = Modifier.fillMaxWidth()) {
-            //TODO @CamiloCuenca luego poner las imagenes
             CategoryCard(
                 title = "Hogar",
                 icon = R.drawable.ic_push_pin,
                 modifier = Modifier.weight(1f),
-                onClick = {  }
+                onClick = { onCategoryClick(Categories.HOGAR) },
+                image = R.drawable.categoria_hogar
+
+
             )
             Spacer(modifier = Modifier.width(12.dp))
             CategoryCard(
                 title = "Educación",
                 icon = R.drawable.ic_push_pin,
                 modifier = Modifier.weight(1f),
-                onClick = {  }
+                onClick = { onCategoryClick(Categories.EDUCACIÓN) },
+                image = R.drawable.categoria_educacion
             )
         }
         Spacer(modifier = Modifier.height(12.dp))
@@ -61,14 +76,16 @@ fun PopularCategoriesSection(
                 title = "Mascotas",
                 icon = R.drawable.ic_push_pin,
                 modifier = Modifier.weight(1f),
-                onClick = {  }
+                onClick = { onCategoryClick(Categories.MASCOTAS) },
+                image = R.drawable.categoria_mascotas
             )
             Spacer(modifier = Modifier.width(12.dp))
             CategoryCard(
                 title = "Tecnología",
                 icon = R.drawable.ic_push_pin,
                 modifier = Modifier.weight(1f),
-                onClick = {  }
+                onClick = { onCategoryClick(Categories.TECNOLOGIA) }
+                ,image = R.drawable.categoria_tecnologia
             )
 
         }

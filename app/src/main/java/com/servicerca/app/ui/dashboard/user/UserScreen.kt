@@ -25,6 +25,8 @@ fun UserScreen(
     onCreateService: () -> Unit,
     onNotificationClick: () -> Unit,
     onMapClick: () -> Unit,
+    onReservationDetailClick: (String) -> Unit,
+    onMakeReservationClick: (String) -> Unit,
     viewModel: NotificationViewModel = hiltViewModel()
 ) {
 
@@ -40,6 +42,7 @@ fun UserScreen(
         "updatePassword",
         "QrScanner",
         "QrService",
+        "QrService/{reservationId}",
         "ListInteresting",
         "DetailService",
         "Chat/{chatId}",
@@ -52,6 +55,7 @@ fun UserScreen(
         "serviceList",
         "QrScanner",
         "QrService",
+        "QrService/{reservationId}",
         "ListInteresting",
         "DetailService",
         "Chat/{chatId}",
@@ -67,6 +71,7 @@ fun UserScreen(
         "notifications",
         "QrScanner",
         "QrService",
+        "QrService/{reservationId}",
         "ListInteresting",
         "DetailService",
         "com.servicerca.app.core.navigation.MainRoutes.MakeReservation",
@@ -132,7 +137,9 @@ fun UserScreen(
         UserNavigation(
             navController = navController,
             _padding = padding,
-            onLogout = onLogout // pasar el callback hacia UserNavigation
+            onLogout = onLogout,
+            onReservationDetailClick = onReservationDetailClick,
+            onMakeReservationClick = onMakeReservationClick
         )
     }
 }
@@ -146,6 +153,8 @@ fun UserScreenPreview() {
         onLogout = {},
         onCreateService = {},
         onNotificationClick = {},
-        onMapClick = {}
+        onMapClick = {},
+        onReservationDetailClick = {},
+        onMakeReservationClick = {}
     )
 }

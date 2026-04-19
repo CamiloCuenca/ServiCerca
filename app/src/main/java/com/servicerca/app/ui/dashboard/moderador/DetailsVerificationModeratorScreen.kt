@@ -50,6 +50,8 @@ import androidx.compose.runtime.getValue
 import coil3.compose.AsyncImage
 import com.servicerca.app.domain.model.ServiceStatus
 
+import java.util.Locale
+
 @Composable
 fun DetailsVerificationModeratorScreen(
     serviceId: String?,
@@ -177,7 +179,7 @@ fun DetailsVerificationModeratorScreen(
                             imageUrl = uiState.owner?.profilePictureUrl,
                             label = stringResource(R.string.label_revision),
                             username = "${uiState.owner?.name1} ${uiState.owner?.lastname1}",
-                            qualification = uiState.owner?.rating.toString()
+                            qualification = String.format(Locale.getDefault(), "%.1f", uiState.ownerRating)
                         )
                         CardBudget(
                             budget = stringResource(

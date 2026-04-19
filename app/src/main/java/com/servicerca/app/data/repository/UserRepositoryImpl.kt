@@ -176,6 +176,7 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
                 rating = 4.5,
                 memberSince = 2024,
                 isEmailVerified = true,
+                approvedReviews = 6,
                 listInteresting = listOf("1", "6")
             ),
 
@@ -190,11 +191,12 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
                 email = "maria@email.com",
                 password = "222222",
                 profilePictureUrl = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh3ixabRmfyRl92F78X1RNNDj2hhogCUofBWTVX977EHxGS4-BMcuI7Y39Y3ZjK3tJPANYHe8AiIyjv1CeEsNzjIcCaj4aQAklofVLW73gv-dqMxGJEUqYa-poX6UkJW5Z_YBAfSk9BrB8YHT5F4Rz3n7bxxMnBEVyNpi8RKfnVhBbrgEmqL5yVtC70CKU/s320/WhatsApp%20Image%202026-04-16%20at%2002.32.41.jpeg",
-                completedServices = 15,
+                completedServices = 50,
                 totalPoints = 1650,
                 rating = 4.7,
                 memberSince = 2023,
                 isEmailVerified = true,
+                approvedReviews = 10,
                 listInteresting = listOf("3", "6")
             ),
 
@@ -214,7 +216,7 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
                 rating = 4.9,
                 memberSince = 2024,
                 pendingReviews = 8,
-                approvedReviews = 15,
+                approvedReviews = 4,
                 rejectReviews = 3,
                 isEmailVerified = true,
                 listInteresting = listOf("3", "6")
@@ -234,7 +236,10 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
                 role = UserRole.ADMIN,
                 memberSince = 2022,
                 pendingReviews = 12,
-                approvedReviews = 20,
+                approvedReviews = 25,
+                completedServices = 55,
+                totalPoints = 4500,
+                rating = 4.85,
                 rejectReviews = 6,
                 isEmailVerified = true,
                 listInteresting = listOf("3", "6")
@@ -250,11 +255,11 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
                 address = "Carrera 16 16 35",
                 email = "fede@email.com",
                 password = "000000",
-                profilePictureUrl = "https://www.reddit.com/media?url=https%3A%2F%2Fi.redd.it%2F94j0h823jdnb1.jpg",
+                profilePictureUrl = "https://i.pinimg.com/originals/86/40/3a/86403adfcbc94ba53887be6543a8f6b2.jpg",
                 completedServices = 724,
                 totalPoints = 10000,
                 rating = 4.9,
-                memberSince = 15,
+                memberSince = 2024,
                 pendingReviews = 18,
                 approvedReviews = 15024,
                 rejectReviews = 1,
@@ -263,4 +268,5 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
 
         )
     }
+
 }

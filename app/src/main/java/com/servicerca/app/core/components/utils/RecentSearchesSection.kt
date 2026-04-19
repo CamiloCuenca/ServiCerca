@@ -26,6 +26,7 @@ import com.servicerca.app.R
 fun RecentSearchesSection(
     recentSearches: List<String>,
     onClearAll: () -> Unit,
+    onSearchClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
@@ -53,6 +54,7 @@ fun RecentSearchesSection(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .clickable { onSearchClick(search) }
                     .padding(vertical = 12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
