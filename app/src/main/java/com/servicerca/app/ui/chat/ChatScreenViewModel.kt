@@ -4,33 +4,37 @@ import android.icu.util.Calendar
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.servicerca.app.data.repository.ChatRepositoryImpl
 import com.servicerca.app.domain.model.Message
+import com.servicerca.app.domain.repository.ChatRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 data class ChatUiState(
     val messages: List<Message> = emptyList(),
     val currentMessage: String = "",
     val isOnline: Boolean = true,
     val participantName: String = "",
-    val participantImage: Int = 0
+    val participantImage: String = ""
 )
 
-class ChatScreenViewModel(
+@HiltViewModel
+class ChatScreenViewModel @Inject constructor(
+    private val repository: ChatRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private val chatId: String = checkNotNull(savedStateHandle["chatId"])
-    private val repository = ChatRepositoryImpl()
     private val _uiState = MutableStateFlow(ChatUiState())
     val uiState: StateFlow<ChatUiState> = _uiState.asStateFlow()
 
     init {
         loadMessages()
         loadChatInfo()
+        markAsRead()
     }
 
     private fun loadMessages() {
@@ -76,11 +80,19 @@ class ChatScreenViewModel(
         }
     }
 
+    private fun markAsRead(){
+        viewModelScope.launch {
+            repository.markAsRead(chatId)
+        }
+    }
+
     private fun getCurrentTime(): String {
-        val hour = Calendar.HOUR_OF_DAY
-        val minute = Calendar.MINUTE
+        val calendar = Calendar.getInstance()
+        val hour = calendar.get(Calendar.HOUR_OF_DAY)
+        val minute = calendar.get(Calendar.MINUTE)
         val amPm = if (hour >= 12) "PM" else "AM"
         val hour12 = if (hour % 12 == 0) 12 else hour % 12
-        return "$hour12:${minute.toString().padStart(2, '0')} $amPm"
+        val minuteStr = minute.toString().padStart(2, '0')
+        return "$hour12:$minuteStr $amPm"
     }
 }

@@ -58,7 +58,7 @@ fun HeaderChatComponent(
 
         Image(
             painter = painterResource(id = imageProfile),
-            contentDescription = stringResource(R.string.chat_profile_photo_content_description),
+            contentDescription = "Foto de perfil",
             modifier = Modifier
                 .size(40.dp)
                 .clip(CircleShape)

@@ -1,99 +1,141 @@
 package com.servicerca.app.data.repository
 
-import com.servicerca.app.R
+import com.servicerca.app.data.datastore.SessionDataStore
 import com.servicerca.app.domain.model.Chat
 import com.servicerca.app.domain.model.Message
 import com.servicerca.app.domain.repository.ChatRepository
+import com.servicerca.app.domain.repository.UserRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
+import javax.inject.Singleton
 
-class ChatRepositoryImpl @Inject constructor() : ChatRepository {
+@Singleton
+class ChatRepositoryImpl @Inject constructor(
+    private val sessionDataStore: SessionDataStore,
+    private val userRepository: UserRepository
+) : ChatRepository {
 
-    private val fakeChats = listOf(
-        Chat(
-            chatId = "chat_deiver",
-            participantName = "Deiver Bonano Cuenca",
-            participantImage = R.drawable.primo_de_juan_camilo,
-            lastMessage = "Uy mano, mandame 50 mil pesos porfa",
-            lastMessageTime = "3:45 PM",
-            unreadCount = 2
-        ),
-        Chat(
-            chatId = "chat_mauricio",
-            participantName = "Mauricio Cuenca",
-            participantImage = R.drawable.papa_de_juan_camilo,
-            lastMessage = "Usted donde anda!",
-            lastMessageTime = "4:28 PM",
-            unreadCount = 1
-        ),
-        Chat(
-            chatId = "chat_julian",
-            participantName = "Julian Montealegre",
-            participantImage = R.drawable.tio_de_brandon,
-            lastMessage = "Hola, ¿Donde estas?",
-            lastMessageTime = "5:28 PM",
-            unreadCount = 0
-        ),
-        Chat(
-            chatId = "chat_ferney",
-            participantName = "Ferney Alexander",
-            participantImage = R.drawable.otro_primo,
-            lastMessage = "Mano llegame, estoy embalado",
-            lastMessageTime = "11:43 AM",
-            unreadCount = 3
-        )
+    // Modelo interno con contadores separados para cada usuario
+    private data class Conversation(
+        val user1Id: String,
+        val user1Name: String,
+        val user1Image: String,
+        var unreadCount1: Int = 0, // Mensajes que el usuario 1 no ha leído
+        val user2Id: String,
+        val user2Name: String,
+        val user2Image: String,
+        var unreadCount2: Int = 0, // Mensajes que el usuario 2 no ha leído
+        var lastMessage: String = "",
+        var lastMessageTime: String = "",
+        val lastSenderId: String = ""
     )
 
-    // Mensajes simulados por chatId
-    private val fakeMessages = mapOf(
-        "chat_deiver" to listOf(
-            Message(
-                senderId = "deiver",
-                message = "Uy mano, mandame 50 mil pesos porfa",
-                time = "3:40 PM",
-                isMine = false,
-                imageProfile = R.drawable.primo_de_juan_camilo
-            ),
-            Message(senderId = "me", message = "Jajaja no tengo ni pa' mí", time = "3:42 PM", isMine = true),
-            Message(senderId = "deiver", message = "Uy mano, mandame 50 mil pesos porfa, estoy en la quiebra", time = "3:45 PM", isMine = false, imageProfile = R.drawable.primo_de_juan_camilo)
-        ),
-        "chat_mauricio" to listOf(
-            Message(senderId = "mauricio", message = "Usted donde anda!", time = "4:28 PM", isMine = false, imageProfile = R.drawable.papa_de_juan_camilo)
-        ),
-        "chat_julian" to listOf(
-            Message(senderId = "julian", message = "Hola, ¿Donde estas? Te necesito para una cosa", time = "5:28 PM", isMine = false, imageProfile = R.drawable.tio_de_brandon)
-        ),
-        "chat_ferney" to listOf(
-            Message(senderId = "ferney", message = "Mano llegame, estoy embalado con los tombos", time = "11:43 AM", isMine = false, imageProfile = R.drawable.otro_primo)
-        )
-    )
+    private val _allConversations = MutableStateFlow<List<Conversation>>(emptyList())
+    private val _messages = MutableStateFlow<Map<String, List<Message>>>(emptyMap())
 
-    // Flows internos para simular tiempo real
-    private val chatsFlow = MutableStateFlow(fakeChats)
-    private val messagesFlow = mutableMapOf<String, MutableStateFlow<List<Message>>>()
+    private fun getConvId(u1: String, u2: String) = if (u1 < u2) "${u1}_$u2" else "${u2}_$u1"
 
-    fun getChats(): Flow<List<Chat>> = chatsFlow
+    override fun getChats(): Flow<List<Chat>> {
+        return combine(_allConversations, sessionDataStore.sessionFlow) { conversations, session ->
+            val currentUserId = session?.userId ?: return@combine emptyList<Chat>()
+
+            conversations
+                .filter { it.user1Id == currentUserId || it.user2Id == currentUserId }
+                .map { conv ->
+                    val isUser1 = conv.user1Id == currentUserId
+                    Chat(
+                        chatId = if (isUser1) conv.user2Id else conv.user1Id,
+                        participantName = if (isUser1) conv.user2Name else conv.user1Name,
+                        participantImage = if (isUser1) conv.user2Image else conv.user1Image,
+                        lastMessage = conv.lastMessage,
+                        lastMessageTime = conv.lastMessageTime,
+                        // Mostramos solo el contador que corresponde al usuario actual
+                        unreadCount = if (isUser1) conv.unreadCount1 else conv.unreadCount2
+                    )
+                }
+        }
+    }
 
     override suspend fun getMessages(chatId: String): Flow<List<Message>> {
-        // Si no existe el flow para ese chat, lo crea con los mensajes simulados
-        if (!messagesFlow.containsKey(chatId)) {
-            messagesFlow[chatId] = MutableStateFlow(fakeMessages[chatId] ?: emptyList())
+        val currentUserId = sessionDataStore.sessionFlow.first()?.userId ?: ""
+        val convId = getConvId(currentUserId, chatId)
+
+        return _messages.map { allMessages ->
+            allMessages[convId]?.map { msg ->
+                msg.copy(isMine = msg.senderId == currentUserId)
+            } ?: emptyList()
         }
-        return messagesFlow[chatId]!!
     }
 
     override suspend fun sendMessage(chatId: String, message: Message) {
-        val current = messagesFlow[chatId] ?: MutableStateFlow(emptyList())
-        current.value += message
-        messagesFlow[chatId] = current
+        val currentUserId = sessionDataStore.sessionFlow.first()?.userId ?: return
+        val convId = getConvId(currentUserId, chatId)
 
-        // Actualizar el último mensaje en la lista de chats
-        chatsFlow.value = chatsFlow.value.map {
-            if (it.chatId == chatId) it.copy(
-                lastMessage = message.message,
-                lastMessageTime = message.time
-            ) else it
+        // 1. Guardar mensaje
+        val msgWithSender = message.copy(senderId = currentUserId)
+        val currentList = _messages.value[convId] ?: emptyList()
+        _messages.value += (convId to (currentList + msgWithSender))
+
+        // 2. Actualizar conversación e INCREMENTAR contador del RECEPTOR
+        _allConversations.value = _allConversations.value.map { conv ->
+            if (getConvId(conv.user1Id, conv.user2Id) == convId) {
+                val isUser1Sending = conv.user1Id == currentUserId
+                conv.copy(
+                    lastMessage = message.message,
+                    lastMessageTime = message.time,
+                    lastSenderId = currentUserId,
+                    // Si el usuario 1 envía, incrementamos unreadCount2. Si el 2 envía, unreadCount1.
+                    unreadCount1 = if (!isUser1Sending) conv.unreadCount1 + 1 else conv.unreadCount1,
+                    unreadCount2 = if (isUser1Sending) conv.unreadCount2 + 1 else conv.unreadCount2
+                )
+            } else {
+                conv
+            }
         }
+    }
+
+    override suspend fun markAsRead(chatId: String) {
+        val session = sessionDataStore.sessionFlow.first() ?: return
+        val currentUserId = session.userId
+        val convId = getConvId(currentUserId, chatId)
+
+        _allConversations.value = _allConversations.value.map { conv ->
+            if (getConvId(conv.user1Id, conv.user2Id) == convId) {
+                if (conv.user1Id == currentUserId) conv.copy(unreadCount1 = 0)
+                else conv.copy(unreadCount2 = 0)
+            } else { conv }
+        }
+
+        val messages = _messages.value[convId] ?: emptyList()
+        val updatedMessages = messages.map { msg ->
+            if (msg.senderId != currentUserId) msg.copy(isRead = true) else msg
+        }
+        _messages.value += (convId to updatedMessages)
+    }
+
+    override suspend fun getOrCreateChat(userId: String, userName: String, userImage: String): String {
+        val session = sessionDataStore.sessionFlow.first() ?: return userId
+        val currentUserId = session.userId
+        val convId = getConvId(currentUserId, userId)
+
+        val existing = _allConversations.value.find { getConvId(it.user1Id, it.user2Id) == convId }
+
+        if (existing == null) {
+            val currentUserData = userRepository.findById(currentUserId)
+            val newConv = Conversation(
+                user1Id = currentUserId,
+                user1Name = "${currentUserData?.name1 ?: ""} ${currentUserData?.lastname1 ?: ""}".trim().ifEmpty { "Yo" },
+                user1Image = currentUserData?.profilePictureUrl ?: "",
+                user2Id = userId,
+                user2Name = userName,
+                user2Image = userImage
+            )
+            _allConversations.value = listOf(newConv) + _allConversations.value
+        }
+        return userId
     }
 }

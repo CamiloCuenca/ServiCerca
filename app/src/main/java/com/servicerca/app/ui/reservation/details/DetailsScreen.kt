@@ -59,7 +59,8 @@ fun DetailsReservationScreen(
     reservationId: String,
     viewModel: ReservationDetailsViewModel = hiltViewModel(),
     onBackClick: () -> Unit = {},
-    onQr: () -> Unit = {}
+    onQr: () -> Unit = {},
+    onNavigateToChat: (String) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var showDeleteModal by remember { mutableStateOf(false) }
@@ -125,7 +126,7 @@ fun DetailsReservationScreen(
             }
 
             val statusInfo = getStatusInfo(reservation.status)
-            
+
             // 🔹 Lógica de Rol: ¿Quién es el protagonista de la tarjeta?
             val targetUser = if (uiState.isProvider) customer else provider
             val roleLabel = if (uiState.isProvider) stringResource(R.string.role_client) else stringResource(R.string.reservation_profesional_certificado)
@@ -209,10 +210,14 @@ fun DetailsReservationScreen(
             // 🔹 BOTÓN DE CHAT (Ahora más integrado)
             PrimaryButton(
                 text = if (uiState.isProvider) stringResource(R.string.chat_with_client) else stringResource(R.string.chat_with_professional),
-                onClick = {},
+                onClick = {
+                    viewModel.onContactProfessional { chatId ->
+                        onNavigateToChat(chatId)
+                    }
+                },
                 modifier = Modifier.fillMaxWidth()
             )
-            
+
             Spacer(modifier = Modifier.height(16.dp))
 
             // 🔹 ACCIONES DEPENDIENDO DEL ESTADO Y ROL
@@ -233,7 +238,7 @@ fun DetailsReservationScreen(
                             )
                         }
                     )
-                    
+
                     PrimaryButton(
                         text = stringResource(R.string.accept_action),
                         onClick = { viewModel.acceptReservation(reservation.id) },
@@ -241,7 +246,7 @@ fun DetailsReservationScreen(
                     )
                 }
             } else if (reservation.status != ReservationStatus.CANCELLED && reservation.status != ReservationStatus.REJECTED) {
-                
+
                 // Si es confirmada pero no terminada, mostramos botón de terminar si es necesario
                 if (reservation.status == ReservationStatus.CONFIRMED) {
                     PrimaryButton(
@@ -314,11 +319,13 @@ fun getStatusInfo(status: ReservationStatus): StatusUIInfo {
             Color(0xFFD1FADF),
             Color(0xFF027A48)
         )
+
         ReservationStatus.PENDING -> StatusUIInfo(
             stringResource(R.string.status_pending_label),
             Color(0xFFFEF0C7),
             Color(0xFFB54708)
         )
+
         ReservationStatus.CANCELLED -> StatusUIInfo(
             stringResource(R.string.status_cancelled_label),
             Color(0xFFFEE4E2),

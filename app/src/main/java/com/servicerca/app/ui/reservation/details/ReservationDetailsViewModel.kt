@@ -10,6 +10,7 @@ import com.servicerca.app.domain.model.Reservation
 import com.servicerca.app.domain.model.ReservationStatus
 import com.servicerca.app.domain.model.Service
 import com.servicerca.app.domain.model.User
+import com.servicerca.app.domain.repository.ChatRepository
 import com.servicerca.app.domain.repository.NotificationRepository
 import com.servicerca.app.domain.repository.ReservationRepository
 import com.servicerca.app.domain.repository.ServiceRepository
@@ -39,6 +40,7 @@ class ReservationDetailsViewModel @Inject constructor(
     private val reservationRepository: ReservationRepository,
     private val serviceRepository: ServiceRepository,
     private val userRepository: UserRepository,
+    private val chatRepository: ChatRepository,
     private val notificationRepository: NotificationRepository,
     private val sessionDataStore: SessionDataStore,
     @ApplicationContext private val context: Context
@@ -127,6 +129,21 @@ class ReservationDetailsViewModel @Inject constructor(
             reservationRepository.updateReservationStatus(id, "CANCELLED")
             loadReservation(id)
             onComplete()
+        }
+    }
+
+    fun onContactProfessional(onNavigate: (String) -> Unit) {
+        val state = uiState.value
+        val targetUser = if (state.isProvider) state.customer else state.provider
+        val userToContact = targetUser ?: return
+
+        viewModelScope.launch {
+            val chatId = chatRepository.getOrCreateChat(
+                userId = userToContact.id,
+                userName = "${userToContact.name1} ${userToContact.lastname1}",
+                userImage = userToContact.profilePictureUrl
+            )
+            onNavigate(chatId)
         }
     }
 }
