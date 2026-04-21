@@ -1,7 +1,7 @@
 package com.servicerca.app.core.components.chat
 
-import androidx.annotation.DrawableRes
-import androidx.compose.foundation.Image
+import androidx.compose.ui.layout.ContentScale
+import coil3.compose.AsyncImage
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -33,10 +33,10 @@ import com.servicerca.app.R
 
 @Composable
 fun HeaderChatComponent(
-    @DrawableRes imageProfile : Int,
-    nameProfile : String = "",
-    onlineStatus : Boolean = false,
-    onBack : () -> Unit = {}
+    imageProfile: Any,
+    nameProfile: String = "",
+    onlineStatus: Boolean = false,
+    onBack: () -> Unit = {}
 ) {
 
     Column (
@@ -56,13 +56,16 @@ fun HeaderChatComponent(
             )
         }
 
-        Image(
-            painter = painterResource(id = imageProfile),
+        AsyncImage(
+            model = imageProfile,
             contentDescription = "Foto de perfil",
             modifier = Modifier
                 .size(40.dp)
                 .clip(CircleShape)
-                .align(Alignment.CenterVertically)
+                .align(Alignment.CenterVertically),
+            contentScale = ContentScale.Crop,
+            placeholder = painterResource(R.drawable.primo_de_juan_camilo),
+            error = painterResource(R.drawable.primo_de_juan_camilo)
         )
 
         Column(

@@ -58,6 +58,9 @@ sealed class MainRoutes {
     data object Insignias : MainRoutes()
 
     @Serializable
+    data class Chat(val chatId: String) : MainRoutes()
+
+    @Serializable
     data class ServiceDetail(val serviceId: String) : MainRoutes()
 
 }

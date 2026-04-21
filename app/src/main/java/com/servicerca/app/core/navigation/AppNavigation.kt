@@ -40,6 +40,7 @@ import androidx.navigation.toRoute
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.servicerca.app.ui.auth.register.RegisterViewModel
 import com.servicerca.app.ui.reservation.MakeReservation
+import com.servicerca.app.ui.chat.ChatScreen
 
 
 @Composable
@@ -310,8 +311,15 @@ private fun MainNavigation(
                 onQr = {
                     // Si se requiere QR desde aquí, asegurar que la ruta exista o manejarla
                     navController.navigate(MainRoutes.QrService)
+                },
+                onNavigateToChat = { chatId ->
+                    navController.navigate(MainRoutes.Chat(chatId))
                 }
             )
+        }
+
+        composable<MainRoutes.Chat> {
+            ChatScreen(onBack = { navController.popBackStack() })
         }
 
         composable<MainRoutes.Map>{
