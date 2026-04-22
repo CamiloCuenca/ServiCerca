@@ -75,6 +75,8 @@ fun DetailServiceScreen(
     val comments by viewModel.comments.collectAsState()
     val averageRating by viewModel.averageRating.collectAsState()
     val providerLevel by viewModel.providerLevel.collectAsState()
+    val providerAverageRating by viewModel.providerAverageRating.collectAsState()
+    val providerCommentCount by viewModel.providerCommentCount.collectAsState()
     val isLiked by viewModel.isLiked.collectAsState()
     val isBookmarked by viewModel.isBookmarked.collectAsState()
     val likeCount by viewModel.likeCount.collectAsState()
@@ -233,8 +235,8 @@ fun DetailServiceScreen(
                         name = if (provider != null) "${provider.name1} ${provider.lastname1}" else "Cargando...",
                         avatarUrl = provider?.profilePictureUrl,
                         level = providerLevel,
-                        rating = averageRating.takeIf { it > 0f } ?: 0f,
-                        reviewCount = comments.size,
+                        rating = providerAverageRating,
+                        reviewCount = providerCommentCount,
                         onClick = {}
                     )
 

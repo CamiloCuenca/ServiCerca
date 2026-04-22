@@ -41,6 +41,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.servicerca.app.ui.auth.register.RegisterViewModel
 import com.servicerca.app.ui.reservation.MakeReservation
 import com.servicerca.app.ui.chat.ChatScreen
+import com.servicerca.app.ui.qr.ProviderVerificationScreen
+import com.servicerca.app.ui.qr.ServiceVerificationScreen
 
 
 @Composable
@@ -308,9 +310,12 @@ private fun MainNavigation(
                 onBackClick = {
                     navController.popBackStack()
                 },
-                onQr = {
-                    // Si se requiere QR desde aquí, asegurar que la ruta exista o manejarla
-                    navController.navigate(MainRoutes.QrService)
+                onQr = { id, isProvider ->
+                    if (isProvider) {
+                        navController.navigate(MainRoutes.QrScanner)
+                    } else {
+                        navController.navigate(MainRoutes.QrService(id))
+                    }
                 },
                 onNavigateToChat = { chatId ->
                     navController.navigate(MainRoutes.Chat(chatId))
@@ -320,6 +325,18 @@ private fun MainNavigation(
 
         composable<MainRoutes.Chat> {
             ChatScreen(onBack = { navController.popBackStack() })
+        }
+
+        composable<MainRoutes.QrService> { backStackEntry ->
+            val route = backStackEntry.toRoute<MainRoutes.QrService>()
+            ServiceVerificationScreen(
+                reservationId = route.reservationId,
+                onBackClick = { navController.popBackStack() }
+            )
+        }
+
+        composable<MainRoutes.QrScanner> {
+            ProviderVerificationScreen(onBackClick = { navController.popBackStack() })
         }
 
         composable<MainRoutes.Map>{

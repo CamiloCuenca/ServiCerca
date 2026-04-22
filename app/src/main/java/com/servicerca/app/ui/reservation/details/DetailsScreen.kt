@@ -59,7 +59,7 @@ fun DetailsReservationScreen(
     reservationId: String,
     viewModel: ReservationDetailsViewModel = hiltViewModel(),
     onBackClick: () -> Unit = {},
-    onQr: () -> Unit = {},
+    onQr: (String, Boolean) -> Unit = { _, _ -> },
     onNavigateToChat: (String) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -251,7 +251,7 @@ fun DetailsReservationScreen(
                 if (reservation.status == ReservationStatus.CONFIRMED) {
                     PrimaryButton(
                         text = stringResource(R.string.finish_service_action),
-                        onClick = { onQr() },
+                        onClick = { onQr(reservation.id, uiState.isProvider) },
                         modifier = Modifier.fillMaxWidth()
                     )
                     Spacer(modifier = Modifier.height(12.dp))
