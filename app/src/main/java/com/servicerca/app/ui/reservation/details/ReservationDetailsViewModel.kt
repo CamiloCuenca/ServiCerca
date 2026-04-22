@@ -90,7 +90,7 @@ class ReservationDetailsViewModel @Inject constructor(
                 title = context.getString(R.string.reservation_accepted_title),
                 message = context.getString(R.string.reservation_accepted_message, currentReservation.serviceTitle),
                 date = context.getString(R.string.now_label),
-                imageRes = com.servicerca.app.R.drawable.nueva_solicitud_servicio,
+                imageRes = R.drawable.nueva_solicitud_servicio,
                 isRead = false,
                 targetId = id,
                 notificationType = com.servicerca.app.domain.model.NotificationType.RESERVATION
@@ -113,7 +113,7 @@ class ReservationDetailsViewModel @Inject constructor(
                 title = context.getString(R.string.reservation_rejected_title),
                 message = context.getString(R.string.reservation_rejected_message, currentReservation.serviceTitle),
                 date = context.getString(R.string.now_label),
-                imageRes = com.servicerca.app.R.drawable.publicacion_rechazada,
+                imageRes = R.drawable.publicacion_rechazada,
                 isRead = false,
                 targetId = id,
                 notificationType = com.servicerca.app.domain.model.NotificationType.RESERVATION

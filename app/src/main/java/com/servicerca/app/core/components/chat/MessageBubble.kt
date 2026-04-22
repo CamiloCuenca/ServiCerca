@@ -24,7 +24,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
@@ -91,28 +90,5 @@ fun MessageBubble(
                 modifier = Modifier.padding(horizontal = 8.dp)
             )
         }
-    }
-}
-
-@Composable
-@Preview(showBackground = true)
-fun MessageBubblePreview() {
-
-    Column {
-        MessageBubble(
-            message = "Hola, ¿cómo estás? Este es un mensaje de prueba para mostrar cómo se ve el bubble de mensaje en la interfaz de chat.",
-            time = "3:45 PM",
-            isMine = false,
-            imageProfile = ""
-        )
-
-        Spacer(Modifier.height(16.dp))
-
-        MessageBubble(
-            message = "¡Hola! Estoy bien, gracias por preguntar. Este es otro mensaje de prueba para mostrar cómo se ve el bubble de mensaje en la interfaz de chat cuando es un mensaje mío.",
-            time = "3:46 PM",
-            isMine = true,
-            imageProfile = null
-        )
     }
 }

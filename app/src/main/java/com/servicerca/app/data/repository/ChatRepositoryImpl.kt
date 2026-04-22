@@ -19,16 +19,15 @@ class ChatRepositoryImpl @Inject constructor(
     private val userRepository: UserRepository
 ) : ChatRepository {
 
-    // Modelo interno con contadores separados para cada usuario
     private data class Conversation(
         val user1Id: String,
         val user1Name: String,
         val user1Image: String,
-        var unreadCount1: Int = 0, // Mensajes que el usuario 1 no ha leído
+        var unreadCount1: Int = 0,
         val user2Id: String,
         val user2Name: String,
         val user2Image: String,
-        var unreadCount2: Int = 0, // Mensajes que el usuario 2 no ha leído
+        var unreadCount2: Int = 0,
         var lastMessage: String = "",
         var lastMessageTime: String = "",
         val lastSenderId: String = ""
@@ -53,7 +52,6 @@ class ChatRepositoryImpl @Inject constructor(
                         participantImage = if (isUser1) conv.user2Image else conv.user1Image,
                         lastMessage = conv.lastMessage,
                         lastMessageTime = conv.lastMessageTime,
-                        // Mostramos solo el contador que corresponde al usuario actual
                         unreadCount = if (isUser1) conv.unreadCount1 else conv.unreadCount2
                     )
                 }
@@ -75,12 +73,10 @@ class ChatRepositoryImpl @Inject constructor(
         val currentUserId = sessionDataStore.sessionFlow.first()?.userId ?: return
         val convId = getConvId(currentUserId, chatId)
 
-        // 1. Guardar mensaje
         val msgWithSender = message.copy(senderId = currentUserId)
         val currentList = _messages.value[convId] ?: emptyList()
         _messages.value += (convId to (currentList + msgWithSender))
 
-        // 2. Actualizar conversación e INCREMENTAR contador del RECEPTOR
         _allConversations.value = _allConversations.value.map { conv ->
             if (getConvId(conv.user1Id, conv.user2Id) == convId) {
                 val isUser1Sending = conv.user1Id == currentUserId
@@ -88,7 +84,6 @@ class ChatRepositoryImpl @Inject constructor(
                     lastMessage = message.message,
                     lastMessageTime = message.time,
                     lastSenderId = currentUserId,
-                    // Si el usuario 1 envía, incrementamos unreadCount2. Si el 2 envía, unreadCount1.
                     unreadCount1 = if (!isUser1Sending) conv.unreadCount1 + 1 else conv.unreadCount1,
                     unreadCount2 = if (isUser1Sending) conv.unreadCount2 + 1 else conv.unreadCount2
                 )

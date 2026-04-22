@@ -24,14 +24,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import com.servicerca.app.R
 
 @Composable
 fun ChatComponent(
@@ -63,9 +61,7 @@ fun ChatComponent(
                 modifier = Modifier
                     .size(60.dp)
                     .clip(CircleShape),
-                contentScale = ContentScale.Crop,
-                placeholder = painterResource(R.drawable.primo_de_juan_camilo),
-                error = painterResource(R.drawable.primo_de_juan_camilo)
+                contentScale = ContentScale.Crop
             )
 
             Spacer(modifier = Modifier.width(8.dp))
@@ -88,8 +84,8 @@ fun ChatComponent(
                     text = lastMessage,
                     style = MaterialTheme.typography.bodyMedium,
                     color = if (unreadCount > 0) MaterialTheme.colorScheme.onSurface
-                    else MaterialTheme.colorScheme.onSurfaceVariant, // Color más suave si ya se leyó
-                    fontWeight = if (unreadCount > 0) FontWeight.Bold else FontWeight.Normal, // <--- Negrita solo si hay mensajes
+                    else MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontWeight = if (unreadCount > 0) FontWeight.Bold else FontWeight.Normal,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )

@@ -5,7 +5,7 @@ import com.servicerca.app.domain.model.Message
 import kotlinx.coroutines.flow.Flow
 
 interface ChatRepository {
-    fun getChats(): Flow<List<Chat>> // Ahora en la interfaz
+    fun getChats(): Flow<List<Chat>>
     suspend fun sendMessage(chatId: String, message: Message)
     suspend fun getMessages(chatId: String): Flow<List<Message>>
     suspend fun getOrCreateChat(userId: String, userName: String, userImage: String): String
