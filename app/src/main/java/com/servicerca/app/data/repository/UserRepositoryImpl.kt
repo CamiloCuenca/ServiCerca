@@ -156,6 +156,10 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
         return Result.success(!alreadyInList)
     }
 
+    override fun findByEmail(email: String): User? {
+        return users.value.firstOrNull { it.email.equals(email, ignoreCase = true) }
+    }
+
     private fun fetchUsers(): List<User> {
 
 

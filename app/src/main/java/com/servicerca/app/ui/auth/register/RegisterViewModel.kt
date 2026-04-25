@@ -155,6 +155,11 @@ class RegisterViewModel @Inject constructor(
                     profilePictureUrl = "https://cdn-icons-png.flaticon.com/512/149/149071.png", // Avatar por defecto
                 )
 
+                if (userRepository.findByEmail(email.value.trim()) != null) {
+                    _RegisterResult.value = RequestResult.Failure("El correo electrónico ya está registrado")
+                    return@launch
+                }
+
                 userRepository.save(newUser)
                 _RegisterResult.value = RequestResult.Success("Registro exitoso")
             } catch (e: Exception) {

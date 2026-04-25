@@ -50,39 +50,7 @@ class CommentRepositoryImpl @Inject constructor() : CommentRepository {
 
     private fun fetchComments(): List<Comment> {
         return listOf(
-            Comment(
-                id = "1",
-                userId = "2",               // Maria
-                serviceId = "1",
-                userName = "Maria G.",
-                userAvatar = "https://picsum.photos/200?random=2",
-                rating = 5,
-                text = "Excelente servicio, llegó muy rápido y resolvió el problema en menos de una hora. Muy recomendado.",
-                date = System.currentTimeMillis(),
-                timeAgo = "Hace 2 días"
-            ),
-            Comment(
-                id = "2",
-                userId = "1",               // Juan
-                serviceId = "1",
-                userName = "Juan C.",
-                userAvatar = "https://m.media-amazon.com/images/I/41g6jROgo0L.png",
-                rating = 4,
-                text = "Buen servicio, cumplió con lo prometido.",
-                date = System.currentTimeMillis(),
-                timeAgo = "Hace 5 días"
-            ),
-            Comment(
-                id = "3",
-                userId = "3",               // Carlos
-                serviceId = "2",
-                userName = "Carlos A.",
-                userAvatar = "https://picsum.photos/200?random=3",
-                rating = 3,
-                text = "El servicio fue regular, esperaba algo mejor.",
-                date = System.currentTimeMillis(),
-                timeAgo = "Hace 1 semana"
-            )
+
         )
     }
 }
