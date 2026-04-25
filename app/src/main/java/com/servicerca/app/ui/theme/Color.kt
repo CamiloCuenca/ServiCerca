@@ -8,7 +8,10 @@ val SecondaryLight = Color(0xFF006064)    // Azul Petróleo
 val SurfaceLight = Color(0xFFF8FDFF)      // Azul Glaciar (Cards / Contenedores)
 val BackgroundLight = Color(0xFFF8FDFF)   // Fondo
 val TextPrimaryLight = Color(0xFF1A1C1E)  // Casi negro
-val Error = Color(0xFFBA1A1A)             // Rojo Material
+val ErrorLight = Color(0xFFBA1A1A)             // Rojo Material
+val OnErrorLight = Color(0xFFFFFFFF)
+val ErrorContainerLight = Color(0xFFFFDAD6)
+val OnErrorContainerLight = Color(0xFF410002)
 
 // Contrapartes pensadas para modo oscuro
 val PrimaryDark = Color(0xFF1272C6)       // versión más suave/oscura del cian
@@ -16,20 +19,22 @@ val SecondaryDark = Color(0xCE0802BF)     // versión más clara del petróleo p
 val SurfaceDark = Color(0xFF545454)   // superficie oscura con matiz azulado
 val BackgroundDark = Color(0xFF3C3C3C)   // fondo muy oscuro con matiz teal
 val TextPrimaryDark = Color(0xFFF8FDFF)   // texto claro sobre fondos oscuros
-val ErrorDark = Color(0xFFBA1A1A)         // mantengo el mismo rojo para alertas
+val ErrorDark = Color(0xFFFFB4AB)         // Rojo más claro para mejor contraste en oscuro
+val OnErrorDark = Color(0xFF690005)
+val ErrorContainerDark = Color(0xFF93000A)
+val OnErrorContainerDark = Color(0xFFFFDAD6)
 
-// Helpers on* colors
+// Helpers on* colors (Light)
 val OnPrimaryLight = Color(0xFFFFFFFF)
 val OnSecondaryLight = Color(0xFFFFFFFF)
 val OnBackgroundLight = TextPrimaryLight
 val OnSurfaceLight = TextPrimaryLight
-val OnError = Color(0xFFFFFFFF)
 
+// Helpers on* colors (Dark)
 val OnPrimaryDark = Color(0xFFFFFFFF)
 val OnSecondaryDark = Color(0xFFFFFFFF)
 val OnBackgroundDark = TextPrimaryDark
 val OnSurfaceDark = TextPrimaryDark
-val OnErrorDark = Color(0xFFFFFFFF)
 
 // Semantic Colors
 val SuccessLight = Color(0xFF027A48)

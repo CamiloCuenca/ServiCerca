@@ -29,7 +29,9 @@ private val DarkColorScheme = darkColorScheme(
     surfaceVariant = Color(0xFF454748),
     onSurfaceVariant = Color(0xFFC5C7C8),
     error = ErrorDark,
-    onError = OnErrorDark
+    onError = OnErrorDark,
+    errorContainer = ErrorContainerDark,
+    onErrorContainer = OnErrorContainerDark
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -49,11 +51,10 @@ private val LightColorScheme = lightColorScheme(
     onTertiaryContainer = Color(0xFF7F56D9),
     surfaceVariant = Color(0xFFE1E2E4),
     onSurfaceVariant = Color(0xFF454748),
-    error = Error,
-    onError = OnError
-
-    /* Other default colors to override
-    */
+    error = ErrorLight,
+    onError = OnErrorLight,
+    errorContainer = ErrorContainerLight,
+    onErrorContainer = OnErrorContainerLight
 )
 
 @Composable

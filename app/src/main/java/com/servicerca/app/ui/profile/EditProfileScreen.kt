@@ -63,8 +63,7 @@ import com.servicerca.app.core.components.button.PrimaryButton
 import com.servicerca.app.core.components.card.CardInfoprofile
 import com.servicerca.app.core.components.input.AppTextField
 import com.servicerca.app.core.utils.RequestResult
-import com.servicerca.app.ui.theme.Error
-import com.servicerca.app.ui.theme.PrimaryLight
+
 import java.io.InputStream
 
 @Composable

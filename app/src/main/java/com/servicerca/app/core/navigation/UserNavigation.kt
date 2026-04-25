@@ -139,6 +139,9 @@ fun UserNavigation(
                 onResevationDetails = { reservationId ->
                     onReservationDetailClick(reservationId)
                 },
+                onNavigateToChat = { chatId ->
+                    navController.navigate(DashboardRoutes.Chat(chatId))
+                },
                 onQrScanner = {
                     navController.navigate(DashboardRoutes.QrScannerDashboard)
                 }
