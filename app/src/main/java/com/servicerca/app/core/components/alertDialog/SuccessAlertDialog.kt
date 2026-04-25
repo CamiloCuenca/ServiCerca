@@ -30,9 +30,9 @@ fun SuccessAlertDialog(
                 style = MaterialTheme.typography.bodyMedium
             ) 
         },
-        containerColor = MaterialTheme.colorScheme.background,
-        titleContentColor = MaterialTheme.colorScheme.onBackground,
-        textContentColor = MaterialTheme.colorScheme.onSurface,
+        containerColor = MaterialTheme.colorScheme.surface,
+        titleContentColor = MaterialTheme.colorScheme.onSurface,
+        textContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
         confirmButton = {
             TextButton(
                 onClick = onConfirm

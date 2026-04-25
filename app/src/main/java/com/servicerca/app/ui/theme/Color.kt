@@ -14,11 +14,11 @@ val ErrorContainerLight = Color(0xFFFFDAD6)
 val OnErrorContainerLight = Color(0xFF410002)
 
 // Contrapartes pensadas para modo oscuro
-val PrimaryDark = Color(0xFF1272C6)       // versión más suave/oscura del cian
-val SecondaryDark = Color(0xCE0802BF)     // versión más clara del petróleo para contraste en oscuro
-val SurfaceDark = Color(0xFF545454)   // superficie oscura con matiz azulado
-val BackgroundDark = Color(0xFF3C3C3C)   // fondo muy oscuro con matiz teal
-val TextPrimaryDark = Color(0xFFF8FDFF)   // texto claro sobre fondos oscuros
+val PrimaryDark = Color(0xFF4DD9C5)       // Cian brillante pero suave sobre fondos oscuros
+val SecondaryDark = Color(0xFF80CBC4)     // Teal claro para buen contraste
+val SurfaceDark = Color(0xFF1E2A2A)       // Verde-teal muy oscuro (no gris plano)
+val BackgroundDark = Color(0xFF121A1A)    // Fondo casi negro con tinte teal
+val TextPrimaryDark = Color(0xFFE8F5F4)   // Blanco suavizado con tinte teal
 val ErrorDark = Color(0xFFFFB4AB)         // Rojo más claro para mejor contraste en oscuro
 val OnErrorDark = Color(0xFF690005)
 val ErrorContainerDark = Color(0xFF93000A)
@@ -31,26 +31,48 @@ val OnBackgroundLight = TextPrimaryLight
 val OnSurfaceLight = TextPrimaryLight
 
 // Helpers on* colors (Dark)
-val OnPrimaryDark = Color(0xFFFFFFFF)
-val OnSecondaryDark = Color(0xFFFFFFFF)
+val OnPrimaryDark = Color(0xFF00251F)     // Oscuro sobre primario brillante
+val OnSecondaryDark = Color(0xFF003733)   // Oscuro sobre secundario claro
 val OnBackgroundDark = TextPrimaryDark
 val OnSurfaceDark = TextPrimaryDark
 
-// Semantic Colors
-val SuccessLight = Color(0xFF027A48)
+// ─── Semantic: Success (Aprobado) ─────────────────────────────────────────────
+// Modo claro: verde oscuro legible sobre fondo blanco
+val SuccessLight = Color(0xFF1A7F37)           // Verde oscuro — texto/icono en modo claro
 val OnSuccessLight = Color.White
-val SuccessContainerLight = Color(0xFFD1FADF)
-val OnSuccessContainerLight = Color(0xFF027A48)
+val SuccessContainerLight = Color(0xFFCCFBD3)  // Verde muy suave — fondo del chip/badge
+val OnSuccessContainerLight = Color(0xFF0A3D17) // Verde muy oscuro — texto sobre el container
 
-val WarningLight = Color(0xFFB54708)
+// Modo oscuro: verde lima brillante sobre fondo oscuro teal
+val SuccessDark = Color(0xFF5EDB7A)            // Verde lima — texto/icono en modo oscuro
+val OnSuccessDark = Color(0xFF00200A)           // Negro verdoso — sobre el primario oscuro
+val SuccessContainerDark = Color(0xFF0D3B1A)   // Verde muy oscuro — fondo container en oscuro
+val OnSuccessContainerDark = Color(0xFFA3F0B1)  // Verde claro — texto sobre container oscuro
+
+// ─── Semantic: Warning (Pendiente) ────────────────────────────────────────────
+// Modo claro: ámbar cálido
+val WarningLight = Color(0xFFA05C00)           // Ámbar oscuro — texto/icono en modo claro
 val OnWarningLight = Color.White
-val WarningContainerLight = Color(0xFFFEF0C7)
-val OnWarningContainerLight = Color(0xFFB54708)
+val WarningContainerLight = Color(0xFFFFF0C2)  // Amarillo muy suave — fondo del badge
+val OnWarningContainerLight = Color(0xFF3E2400) // Marrón oscuro — texto sobre container
 
-val InfoLight = Color(0xFF175CD3)
+// Modo oscuro: amarillo brillante visible
+val WarningDark = Color(0xFFFFCC40)            // Amarillo ámbar brillante — sobre fondo oscuro
+val OnWarningDark = Color(0xFF3E2400)           // Marrón muy oscuro — sobre primario oscuro
+val WarningContainerDark = Color(0xFF3D2700)   // Marrón muy oscuro — fondo container en oscuro
+val OnWarningContainerDark = Color(0xFFFFE49E)  // Amarillo claro — texto sobre container oscuro
+
+// ─── Info ──────────────────────────────────────────────────────────────────────
+val InfoLight = Color(0xFF0B50C2)
 val OnInfoLight = Color.White
-val InfoContainerLight = Color(0xFFD1E9FF)
-val OnInfoContainerLight = Color(0xFF175CD3)
+val InfoContainerLight = Color(0xFFD6E4FF)
+val OnInfoContainerLight = Color(0xFF001A4D)
 
+val InfoDark = Color(0xFF8AB4F8)
+val OnInfoDark = Color(0xFF001A4D)
+val InfoContainerDark = Color(0xFF0A2A6B)
+val OnInfoContainerDark = Color(0xFFD6E4FF)
+
+// ─── Stars ────────────────────────────────────────────────────────────────────
 val StarColor = Color(0xFFFFD700)
 val StarInactiveColor = Color(0xFFE0E0E0)
