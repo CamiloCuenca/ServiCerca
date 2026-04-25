@@ -1,5 +1,6 @@
 package com.servicerca.app.core.components.button
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
@@ -30,7 +31,8 @@ fun ButtonIconDecline(
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.errorContainer,
             contentColor = MaterialTheme.colorScheme.error
-        )
+        ),
+        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp)
     ) {
 
         if (icon != null) {

@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -126,10 +127,10 @@ fun BottomNavigationBarModerator(
     val context = LocalContext.current
 
     LaunchedEffect(currentDestination) {
-        val destination = DestinationModerator.entries.find {
-            it.route::class.qualifiedName == currentDestination?.route
+        val matched = DestinationModerator.entries.find { dest ->
+            currentDestination?.hasRoute(dest.route::class) == true
         }
-        destination?.let {
+        matched?.let {
             titleTopBar(context.getString(it.labelRes))
         }
     }
@@ -143,23 +144,18 @@ fun BottomNavigationBarModerator(
     ) {
 
         DestinationModerator.entries.forEach { destination ->
-
-            val routeName = destination.route::class.qualifiedName ?: ""
-
-            val isSelected = currentDestination?.route == routeName
+            val isSelected = currentDestination?.hasRoute(destination.route::class) == true
 
             NavigationBarItem(
                 selected = isSelected,
 
                 onClick = {
-                    if (routeName.isNotEmpty()) {
-                        navController.navigate(routeName) {
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
+                    navController.navigate(destination.route) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
                         }
+                        launchSingleTop = true
+                        restoreState = true
                     }
                 },
 
@@ -196,6 +192,6 @@ enum class DestinationModerator(
 
     HOME(DashboardRoutes.HomeModerator, R.string.nav_label_home, Icons.Default.Home),
     PROFILE(DashboardRoutes.ProfileModerator, R.string.nav_label_profile, Icons.Default.AccountCircle),
-    HISTORIAL(DashboardRoutes.Historial, R.string.nav_label_history, Icons.Default.History)
+    HISTORIAL(DashboardRoutes.Historial(), R.string.nav_label_history, Icons.Default.History)
 
 }

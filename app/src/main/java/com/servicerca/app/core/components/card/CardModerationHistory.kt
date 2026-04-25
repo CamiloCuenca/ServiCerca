@@ -41,13 +41,14 @@ fun CardModerationHistory(
     actionPerformed: String,
     reason: String,
     date: String,
-    time: String
-
+    time: String,
+    onClick: () -> Unit = {}
 ){
     val isApproved = result.equals("APROBADA", ignoreCase = true)
 
     ElevatedCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        onClick = onClick,
         shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.elevatedCardColors(
             containerColor = MaterialTheme.colorScheme.surface

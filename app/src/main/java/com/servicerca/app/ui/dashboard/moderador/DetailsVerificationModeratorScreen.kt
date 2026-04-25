@@ -183,29 +183,30 @@ fun DetailsVerificationModeratorScreen(
                                 modifier = Modifier.padding(bottom = 10.dp)
                             )
                         }
-                        Column() {
-                            ButtonIcon(
-                                text = stringResource(R.string.approve_publication),
-                                onClick = { viewModel.approveService() },
-                                icon = {
-                                    Icon(
-                                        imageVector = Icons.Outlined.CheckCircle, // Icono de Material
-                                        contentDescription = null
-                                    )
-                                }
-                            )
-                            ButtonIconDecline(
-                                text = stringResource(R.string.reject_publication),
-                                onClick = onRejectClick,
-                                icon = {
-                                    Icon(
-                                        imageVector = Icons.Default.HighlightOff, // Icono de Material
-                                        contentDescription = null
-                                    )
-                                },
-                                modifier = Modifier
-                                    .padding(vertical = 10.dp)
-                            )
+                        if (service?.status == ServiceStatus.PENDING) {
+                            Column {
+                                ButtonIcon(
+                                    text = stringResource(R.string.approve_publication),
+                                    onClick = { viewModel.approveService() },
+                                    icon = {
+                                        Icon(
+                                            imageVector = Icons.Outlined.CheckCircle,
+                                            contentDescription = null
+                                        )
+                                    }
+                                )
+                                ButtonIconDecline(
+                                    text = stringResource(R.string.reject_publication),
+                                    onClick = onRejectClick,
+                                    icon = {
+                                        Icon(
+                                            imageVector = Icons.Default.HighlightOff,
+                                            contentDescription = null
+                                        )
+                                    },
+                                    modifier = Modifier.padding(vertical = 10.dp)
+                                )
+                            }
                         }
                     }
                 }

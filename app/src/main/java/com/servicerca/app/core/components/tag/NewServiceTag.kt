@@ -21,29 +21,20 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.material3.MaterialTheme
 
 @Composable
-fun NewServiceTag(){
-    Box {
-        Surface(
-            color = MaterialTheme.colorScheme.surface,
-            contentColor = MaterialTheme.colorScheme.onSurface,
-            shape = RoundedCornerShape(8.dp),
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(12.dp)
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-            ) {
-                Spacer(modifier = Modifier.width(4.dp))
-                Text(
-                    text = stringResource(R.string.new_tag_label),
-                    fontSize = 10.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
-        }
+fun NewServiceTag(modifier: Modifier = Modifier){
+    Surface(
+        color = MaterialTheme.colorScheme.primary,
+        contentColor = MaterialTheme.colorScheme.onPrimary,
+        shape = RoundedCornerShape(8.dp),
+        modifier = modifier.padding(12.dp)
+    ) {
+        Text(
+            text = stringResource(R.string.new_tag_label).uppercase(),
+            fontSize = 10.sp,
+            fontWeight = FontWeight.Black,
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+            letterSpacing = 0.5.sp
+        )
     }
 }
 

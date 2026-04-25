@@ -11,9 +11,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
-import com.servicerca.app.R
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.servicerca.app.core.navigation.DashboardRoutes
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,9 +32,17 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.runtime.LaunchedEffect
 
 @Composable
-fun ModerationHistory (viewModel: ModerationHistoryViewModel = hiltViewModel()){
+fun ModerationHistory (
+    navController: NavHostController,
+    initialTab: Int = 0,
+    viewModel: ModerationHistoryViewModel = hiltViewModel()
+){
+    LaunchedEffect(initialTab) {
+        viewModel.onTabSelected(initialTab)
+    }
     val selectedTab by viewModel.selectedTab.collectAsStateWithLifecycle()
 
     val historyItems by viewModel.filteredHistory.collectAsStateWithLifecycle()
@@ -61,7 +72,10 @@ fun ModerationHistory (viewModel: ModerationHistoryViewModel = hiltViewModel()){
                 actionPerformed = item.actionPerformed,
                 reason = item.reason,
                 date = item.date,
-                time = item.time
+                time = item.time,
+                onClick = {
+                    navController.navigate(DashboardRoutes.DetailServiceModerator(item.serviceId))
+                }
             )
         }
     }
@@ -107,5 +121,5 @@ fun ServiceTabRowHistory(
 @Preview (showBackground = true)
 @Composable
 fun ModerationHistoryPreview (){
-    ModerationHistory()
+    ModerationHistory(navController = rememberNavController(), initialTab = 0)
 }

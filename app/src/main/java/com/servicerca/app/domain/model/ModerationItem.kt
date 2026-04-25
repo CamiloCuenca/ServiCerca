@@ -1,6 +1,7 @@
 package com.servicerca.app.domain.model
 
 data class ModerationItem (
+    val serviceId: String,
     val title: String,
     val resultado: String,
     val userName: String,

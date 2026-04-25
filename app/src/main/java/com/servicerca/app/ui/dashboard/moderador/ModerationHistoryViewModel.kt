@@ -42,6 +42,7 @@ class ModerationHistoryViewModel @Inject constructor(
             val status = if (service.status == ServiceStatus.APPROVED) ModerationStatus.APRBADA else ModerationStatus.RECHAZADA
             
             ModerationItem(
+                serviceId = service.id,
                 title = service.title,
                 resultado = if (status == ModerationStatus.APRBADA) "APROBADA" else "RECHAZADA",
                 userName = "${owner?.name1 ?: ""} ${owner?.lastname1 ?: ""}".trim(),

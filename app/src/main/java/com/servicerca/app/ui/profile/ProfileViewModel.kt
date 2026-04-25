@@ -184,8 +184,8 @@ class ProfileViewModel @Inject constructor(
                     val user = allUsers.find { it.id == session.userId }
                     if (user != null) {
                         val insignias = getEarnedInsigniasUseCase(user).map { it.toUiModel() }
+                        val levelInfo = calculateLevelInfo(user.totalPoints, user.rating)
                         updateSuccessState { current ->
-                            val levelInfo = calculateLevelInfo(user.totalPoints, user.rating)
                             current.copy(
                                 user = user,
                                 insignias = insignias,
@@ -199,10 +199,13 @@ class ProfileViewModel @Inject constructor(
                             )
                         } ?: run {
                             // First time success
-                            val levelInfo = calculateLevelInfo(user.totalPoints, user.rating)
+                            val services = serviceRepository.services.value
                             _uiState.value = ProfileUiState.Success(
                                 user = user,
                                 insignias = insignias,
+                                pendingCount = services.count { it.status == ServiceStatus.PENDING },
+                                approvedCount = services.count { it.status == ServiceStatus.APPROVED },
+                                rejectedCount = services.count { it.status == ServiceStatus.REJECTED },
                                 averageRating = user.rating,
                                 totalXp = user.totalPoints,
                                 level = levelInfo.level,

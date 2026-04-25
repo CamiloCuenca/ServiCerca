@@ -77,8 +77,12 @@ fun ModeratorNavigation(
             )
         }
 
-        composable<DashboardRoutes.Historial> {
-            ModerationHistory()
+        composable<DashboardRoutes.Historial> { backStackEntry ->
+            val route = backStackEntry.toRoute<DashboardRoutes.Historial>()
+            ModerationHistory(
+                navController = navController,
+                initialTab = route.initialTab
+            )
         }
 
         composable<DashboardRoutes.ManageUser> {
