@@ -21,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.servicerca.app.ui.theme.StarColor
 
 @Composable
 fun InterestingServiceCard(
@@ -37,7 +38,7 @@ fun InterestingServiceCard(
     favoriteIcon: ImageVector = Icons.Default.Bookmark,
     favoriteIconTint: Color = MaterialTheme.colorScheme.primary,
     priceColor: Color = MaterialTheme.colorScheme.primary,
-    ratingColor: Color = Color(0xFFFFC107),
+    ratingColor: Color = StarColor,
     imageSize: Dp = 90.dp
 ) {
     Card(

@@ -28,6 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.servicerca.app.R
+import com.servicerca.app.ui.theme.StarColor
 
 import coil3.compose.AsyncImage
 
@@ -74,14 +75,14 @@ fun ProviderRow(
                     )
                     // Badge nivel
                     Surface(
-                        color = Color(0xFFF3E5F5),
+                        color = MaterialTheme.colorScheme.primaryContainer,
                         shape = androidx.compose.foundation.shape.RoundedCornerShape(6.dp)
                     ) {
                         Text(
                             text = level,
                             fontSize = 10.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFF9C27B0),
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
                         )
                     }
@@ -91,14 +92,14 @@ fun ProviderRow(
                     Icon(
                         painter = painterResource(id = R.drawable.ic_star),
                         contentDescription = null,
-                        tint = Color(0xFFFFD700),
+                        tint = StarColor,
                         modifier = Modifier.size(14.dp)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
                         text = "${String.format("%.1f", rating)} ($reviewCount reseñas)",
                         fontSize = 12.sp,
-                        color = Color.Gray
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
@@ -108,7 +109,7 @@ fun ProviderRow(
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = "Ver perfil",
-                tint = Color.Gray
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }

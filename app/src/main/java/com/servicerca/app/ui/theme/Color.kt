@@ -30,3 +30,22 @@ val OnSecondaryDark = Color(0xFFFFFFFF)
 val OnBackgroundDark = TextPrimaryDark
 val OnSurfaceDark = TextPrimaryDark
 val OnErrorDark = Color(0xFFFFFFFF)
+
+// Semantic Colors
+val SuccessLight = Color(0xFF027A48)
+val OnSuccessLight = Color.White
+val SuccessContainerLight = Color(0xFFD1FADF)
+val OnSuccessContainerLight = Color(0xFF027A48)
+
+val WarningLight = Color(0xFFB54708)
+val OnWarningLight = Color.White
+val WarningContainerLight = Color(0xFFFEF0C7)
+val OnWarningContainerLight = Color(0xFFB54708)
+
+val InfoLight = Color(0xFF175CD3)
+val OnInfoLight = Color.White
+val InfoContainerLight = Color(0xFFD1E9FF)
+val OnInfoContainerLight = Color(0xFF175CD3)
+
+val StarColor = Color(0xFFFFD700)
+val StarInactiveColor = Color(0xFFE0E0E0)

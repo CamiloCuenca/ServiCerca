@@ -33,7 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -41,6 +41,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.servicerca.app.R
 import com.servicerca.app.core.components.button.ButtonIconDecline
+import com.servicerca.app.core.components.header.ScreenHeader
 
 import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -81,33 +82,10 @@ fun RejectReasonScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
 
-                // Header: ícono a la izquierda, título centrado
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
-                ) {
-                    IconButton(
-                        onClick = { onBack() },
-                        modifier = Modifier.align(Alignment.CenterStart)
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = null
-                        )
-                    }
-
-                    Text(
-                        text = stringResource(R.string.reject_reason),
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                    )
-                }
-                HorizontalDivider(thickness = 2.dp, color = MaterialTheme.colorScheme.outline)
+                ScreenHeader(
+                    title = stringResource(R.string.reject_reason),
+                    onBack = onBack
+                )
                 var description by remember { mutableStateOf("") }
 
                 Column(
@@ -224,8 +202,8 @@ fun RejectReasonScreen(
                         onClick = onBack,
                         shape = RoundedCornerShape(16.dp),
                         colors = ButtonDefaults.outlinedButtonColors(
-                            containerColor = Color.LightGray,
-                            contentColor = Color.Black
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                            contentColor = MaterialTheme.colorScheme.onSurface
                         ),
                         modifier = Modifier
                             .fillMaxWidth()

@@ -130,6 +130,13 @@ class DetailServiceViewModel @Inject constructor(
         it?.likedBy?.size ?: 0
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
 
+    val isOwner: StateFlow<Boolean> = combine(
+        service,
+        sessionDataStore.sessionFlow
+    ) { s, session ->
+        s?.ownerId != null && s.ownerId == session?.userId
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+
     @OptIn(ExperimentalCoroutinesApi::class)
     val canReview: StateFlow<Boolean> = combine(
         _serviceId,

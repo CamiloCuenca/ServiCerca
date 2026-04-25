@@ -20,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.servicerca.app.R
+import com.servicerca.app.ui.theme.SuccessLight
 
 @Composable
 fun ConfirmServiceSummaryCard(
@@ -63,7 +64,7 @@ fun ConfirmServiceSummaryCard(
                     Box(
                         modifier = Modifier
                             .size(14.dp)
-                            .background(Color(0xFF00E676), CircleShape) // Bright green
+                            .background(SuccessLight, CircleShape) // Semantic success color
                             .border(2.dp, colorScheme.surface, CircleShape)
                             .align(Alignment.BottomEnd)
                             .offset(x = (-2).dp, y = (-2).dp)

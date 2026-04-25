@@ -127,8 +127,8 @@ fun EditProfileScreen(
                 val isError = saveResult is RequestResult.Failure
                 Snackbar(
                     snackbarData = data,
-                    containerColor = if (isError) Error else PrimaryLight,
-                    contentColor = Color.White
+                    containerColor = if (isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
                 )
             }
         }

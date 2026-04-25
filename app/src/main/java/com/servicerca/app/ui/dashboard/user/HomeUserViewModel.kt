@@ -29,7 +29,8 @@ data class ServiceWithRating(
     val ownerLevel: String,
     val isBookmarked: Boolean,
     val likeCount: Int,
-    val isLiked: Boolean
+    val isLiked: Boolean,
+    val isOwner: Boolean
 )
 
 @HiltViewModel
@@ -72,7 +73,8 @@ class HomeUserViewModel @Inject constructor(
                     ownerLevel = ownerLevel,
                     isBookmarked = service.id in interestingIds,
                     likeCount = service.likedBy.size,
-                    isLiked = service.likedBy.contains(session?.userId)
+                    isLiked = service.likedBy.contains(session?.userId),
+                    isOwner = service.ownerId == session?.userId
                 )
             }
     }.stateIn(

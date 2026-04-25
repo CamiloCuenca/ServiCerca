@@ -121,7 +121,7 @@ fun DeleteReservationScreen (
                 ) {
 
                     Surface(
-                        color = Color(0xFFFDDFDF),
+                        color = MaterialTheme.colorScheme.errorContainer,
                         shape = RoundedCornerShape(12.dp)
                     ) {
 
@@ -220,7 +220,7 @@ fun ConfirmActionModal(
             )
 
             Surface(
-                color = Color(0xFFFDDFDF),
+                color = MaterialTheme.colorScheme.errorContainer,
                 shape = RoundedCornerShape(12.dp)
             ) {
                 Text(

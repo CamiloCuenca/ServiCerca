@@ -12,8 +12,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,11 +35,16 @@ fun InsigniaDetailDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
+        containerColor = MaterialTheme.colorScheme.surface,
+        titleContentColor = MaterialTheme.colorScheme.onSurface,
+        textContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
         title = {
             Text(
                 text = stringResource(R.string.insignia_details_title),
                 style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
             )
         },
         text = {
@@ -48,7 +55,7 @@ fun InsigniaDetailDialog(
             ) {
                 // Icono grande
                 Box(
-                    modifier = Modifier.size(100.dp),
+                    modifier = Modifier.size(120.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Image(
@@ -57,30 +64,47 @@ fun InsigniaDetailDialog(
                         modifier = Modifier
                             .size(100.dp)
                             .shadow(
-                                elevation = 4.dp,
+                                elevation = if (insignia.isEarned) 8.dp else 0.dp,
                                 shape = CircleShape,
-                                ambientColor = if (insignia.isEarned) insignia.shadowColor else Color.Gray.copy(alpha = 0.3f),
-                                spotColor = if (insignia.isEarned) insignia.shadowColor else Color.Gray.copy(alpha = 0.3f)
+                                ambientColor = if (insignia.isEarned) insignia.shadowColor else Color.Transparent,
+                                spotColor = if (insignia.isEarned) insignia.shadowColor else Color.Transparent
                             ),
-                        alpha = if (insignia.isEarned) 1.0f else 0.4f
+                        alpha = if (insignia.isEarned) 1.0f else 0.38f
                     )
                 }
                 
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
                     Text(
                         text = stringResource(insignia.nameRes),
                         style = MaterialTheme.typography.headlineSmall,
-                        fontWeight = FontWeight.Bold,
-                        color = if (insignia.isEarned) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                        fontWeight = FontWeight.ExtraBold,
+                        color = if (insignia.isEarned) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
+                        textAlign = TextAlign.Center
                     )
                     
                     if (insignia.isEarned) {
+                        Surface(
+                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
+                            contentColor = MaterialTheme.colorScheme.primary,
+                            shape = CircleShape,
+                            modifier = Modifier.padding(vertical = 4.dp)
+                        ) {
+                            Text(
+                                text = "¡Logro desbloqueado!",
+                                style = MaterialTheme.typography.labelLarge,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
+                            )
+                        }
+                    } else {
                         Text(
-                            text = "¡Logro desbloqueado!",
+                            text = "Aún no obtenido",
                             style = MaterialTheme.typography.labelMedium,
-                            color = Color(0xFF3CA834),
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(bottom = 8.dp)
+                            color = MaterialTheme.colorScheme.outline,
+                            fontWeight = FontWeight.Medium
                         )
                     }
                     
@@ -89,14 +113,22 @@ fun InsigniaDetailDialog(
                     Text(
                         text = stringResource(insignia.descriptionRes),
                         style = MaterialTheme.typography.bodyLarge,
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        lineHeight = androidx.compose.ui.unit.TextUnit.Unspecified
                     )
                 }
             }
         },
         confirmButton = {
-            TextButton(onClick = onDismiss) {
-                Text(text = "Cerrar")
+            TextButton(
+                onClick = onDismiss,
+                colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.primary)
+            ) {
+                Text(
+                    text = "Cerrar",
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
     )

@@ -111,7 +111,7 @@ fun RegisterScreen(
                 // Mostrar el Snackbar con el estilo adecuado según si es error o éxito
                 Snackbar(
                     containerColor = if (isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
-                    contentColor = Color.White
+                    contentColor = MaterialTheme.colorScheme.onPrimary
                 ) {
                     Text(data.visuals.message)
                 }

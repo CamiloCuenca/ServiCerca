@@ -12,7 +12,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import com.servicerca.app.ui.theme.StarColor
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import coil3.compose.AsyncImage
@@ -20,6 +20,7 @@ import android.graphics.BitmapFactory
 import androidx.compose.ui.graphics.asImageBitmap
 import android.util.Base64
 import android.util.Log
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -46,6 +47,7 @@ fun CardService( // TODO @CAMILOCUENCA luego de tener el firestorage ponerle el 
     isBookmarked: Boolean = false,
     likeCount: Int = 0,
     isLiked: Boolean = false,
+    isOwner: Boolean = false,
     onBookmarkClick: () -> Unit = {},
     onLikeClick: () -> Unit = {},
     onRequestClick: () -> Unit = {}
@@ -193,7 +195,7 @@ fun CardService( // TODO @CAMILOCUENCA luego de tener el firestorage ponerle el 
                             Icon(
                                 imageVector = Icons.Default.Favorite,
                                 contentDescription = null,
-                                tint = if (isLiked) Color.Red else Color.Gray,
+                                tint = if (isLiked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.size(16.dp)
                             )
                             Spacer(modifier = Modifier.width(4.dp))
@@ -201,7 +203,7 @@ fun CardService( // TODO @CAMILOCUENCA luego de tener el firestorage ponerle el 
                                 text = likeCount.toString(),
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = if (isLiked) Color.Red else Color.Gray
+                                color = if (isLiked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                             )
                             Spacer(modifier = Modifier.width(12.dp))
                         }
@@ -209,7 +211,7 @@ fun CardService( // TODO @CAMILOCUENCA luego de tener el firestorage ponerle el 
                         Icon(
                             painter = painterResource(id = R.drawable.ic_star),
                             contentDescription = null,
-                            tint = Color(0xFFFFD700),
+                            tint = StarColor,
                             modifier = Modifier.size(16.dp)
                         )
                         Spacer(modifier = Modifier.width(4.dp))
@@ -217,7 +219,7 @@ fun CardService( // TODO @CAMILOCUENCA luego de tener el firestorage ponerle el 
                             text = rating,
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFFFFD700)
+                            color = StarColor
                         )
                     }
                 }
@@ -277,8 +279,6 @@ fun CardService( // TODO @CAMILOCUENCA luego de tener el firestorage ponerle el 
 
                     LevelTag(
                         text = level,
-                        backgroundColor = Color(0xFFF3E5F5),
-                        contentColor = Color(0xFF9C27B0),
                         modifier = Modifier.padding(top = 8.dp)
                     )
                 }
@@ -323,11 +323,12 @@ fun CardService( // TODO @CAMILOCUENCA luego de tener el firestorage ponerle el 
                             onClick = onBookmarkClick
                         )
 
-                        PrimaryButton(
-                            text = "Solicitar servicio",
-                            onClick = onRequestClick,
-
-                        )
+                        if (!isOwner) {
+                            PrimaryButton(
+                                text = "Solicitar servicio",
+                                onClick = onRequestClick,
+                            )
+                        }
 
 
 

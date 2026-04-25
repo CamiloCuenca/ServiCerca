@@ -35,6 +35,8 @@ import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.servicerca.app.R
 import com.servicerca.app.core.components.tag.CategoryTag
+import com.servicerca.app.ui.theme.SuccessContainerLight
+import com.servicerca.app.ui.theme.OnSuccessContainerLight
 
 @Composable
 fun CardDetailsReservation(
@@ -43,8 +45,8 @@ fun CardDetailsReservation(
     profileImageUrl: String? = null,
     serviceRequestedLabel: String? = null,
     statusText: String? = null,
-    statusContainerColor: Color = Color(0xFFD1FADF),
-    statusContentColor: Color = Color(0xFF027A48),
+    statusContainerColor: Color = SuccessContainerLight,
+    statusContentColor: Color = OnSuccessContainerLight,
     serviceTitle: String? = null,
     professionalName: String? = null,
     professionalBadgeText: String? = null,

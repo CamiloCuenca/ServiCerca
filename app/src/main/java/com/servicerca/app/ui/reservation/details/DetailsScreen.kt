@@ -51,7 +51,14 @@ import com.servicerca.app.core.components.Map.MapBox
 import com.servicerca.app.core.components.button.DeleteButton
 import com.servicerca.app.core.components.button.PrimaryButton
 import com.servicerca.app.core.components.card.CardDetailsReservation
+import com.servicerca.app.core.components.header.SectionHeader
 import com.servicerca.app.domain.model.ReservationStatus
+import com.servicerca.app.ui.theme.SuccessContainerLight
+import com.servicerca.app.ui.theme.OnSuccessContainerLight
+import com.servicerca.app.ui.theme.WarningContainerLight
+import com.servicerca.app.ui.theme.OnWarningContainerLight
+import com.servicerca.app.ui.theme.InfoContainerLight
+import com.servicerca.app.ui.theme.OnInfoContainerLight
 import com.servicerca.app.ui.reservation.ConfirmActionModal
 
 @Composable
@@ -148,12 +155,8 @@ fun DetailsReservationScreen(
             Spacer(modifier = Modifier.height(28.dp))
 
             // 🔹 SECTION: INFORMACIÓN DETALLADA
-            Text(
-                text = stringResource(R.string.service_summary_title),
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 1.2.sp,
+            SectionHeader(
+                title = stringResource(R.string.service_summary_title),
                 modifier = Modifier.padding(start = 4.dp)
             )
 
@@ -316,30 +319,30 @@ fun getStatusInfo(status: ReservationStatus): StatusUIInfo {
     return when (status) {
         ReservationStatus.CONFIRMED -> StatusUIInfo(
             stringResource(R.string.reservation_status_confirmed),
-            Color(0xFFD1FADF),
-            Color(0xFF027A48)
+            SuccessContainerLight,
+            OnSuccessContainerLight
         )
 
         ReservationStatus.PENDING -> StatusUIInfo(
             stringResource(R.string.status_pending_label),
-            Color(0xFFFEF0C7),
-            Color(0xFFB54708)
+            WarningContainerLight,
+            OnWarningContainerLight
         )
 
         ReservationStatus.CANCELLED -> StatusUIInfo(
             stringResource(R.string.status_cancelled_label),
-            Color(0xFFFEE4E2),
-            Color(0xFFB42318)
+            MaterialTheme.colorScheme.errorContainer,
+            MaterialTheme.colorScheme.onErrorContainer
         )
         ReservationStatus.REJECTED -> StatusUIInfo(
             stringResource(R.string.status_rejected_label),
-            Color(0xFFFEE4E2),
-            Color(0xFFD92D20)
+            MaterialTheme.colorScheme.errorContainer,
+            MaterialTheme.colorScheme.onErrorContainer
         )
         ReservationStatus.COMPLETED -> StatusUIInfo(
             stringResource(R.string.status_completed_label),
-            Color(0xFFD1E9FF),
-            Color(0xFF175CD3)
+            InfoContainerLight,
+            OnInfoContainerLight
         )
     }
 }

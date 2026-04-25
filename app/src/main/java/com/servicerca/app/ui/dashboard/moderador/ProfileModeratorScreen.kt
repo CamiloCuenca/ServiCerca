@@ -27,7 +27,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import com.servicerca.app.ui.theme.WarningLight
+import com.servicerca.app.ui.theme.SuccessLight
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -133,17 +134,17 @@ fun ProfileModerator (
                 CardProfileModerator(
                     title = stringResource(R.string.pending_profile_moderator),
                     label = state.pendingCount.toString(),
-                    color = Color(0xFFDB9C16)
+                    color = WarningLight
                 )
                 CardProfileModerator(
                     title = stringResource(R.string.approved_profile_moderator),
                     label = state.approvedCount.toString(),
-                    color = Color(0xFF3CA834)
+                    color = SuccessLight
                 )
                 CardProfileModerator(
                     title = stringResource(R.string.rejected_profile_moderator),
                     label = state.rejectedCount.toString(),
-                    color = Color(0xFFC72E2E)
+                    color = MaterialTheme.colorScheme.error
                 )
 
                 // Panel de moderación

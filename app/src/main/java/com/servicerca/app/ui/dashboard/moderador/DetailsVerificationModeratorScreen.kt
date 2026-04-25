@@ -43,6 +43,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.servicerca.app.R
 import com.servicerca.app.core.components.button.ButtonIcon
 import com.servicerca.app.core.components.button.ButtonIconDecline
+import com.servicerca.app.core.components.header.ScreenHeader
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -94,33 +95,10 @@ fun DetailsVerificationModeratorScreen(
                     modifier = Modifier.fillMaxWidth()
                 ) {
 
-                    // Header: ícono a la izquierda, título centrado
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 8.dp, vertical = 4.dp)
-                    ) {
-                        IconButton(
-                            onClick = { onBack() },
-                            modifier = Modifier.align(Alignment.CenterStart)
-                        ) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = null
-                            )
-                        }
-
-                        Text(
-                            text = stringResource(R.string.details_verifications),
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onBackground,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier
-                                .align(Alignment.Center)
-                        )
-                    }
-                    HorizontalDivider(thickness = 2.dp, color = MaterialTheme.colorScheme.outline)
+                    ScreenHeader(
+                        title = stringResource(R.string.details_verifications),
+                        onBack = onBack
+                    )
                     Column() {
                         AsyncImage(
                             model = service?.photoUrl,

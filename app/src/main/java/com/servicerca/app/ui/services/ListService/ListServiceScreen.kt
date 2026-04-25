@@ -200,7 +200,7 @@ fun ServiceTabRow(
             .fillMaxWidth()
             .height(48.dp),
         shape = RoundedCornerShape(12.dp),
-        color = Color(0xFFF1F3F5)
+        color = MaterialTheme.colorScheme.surfaceVariant
     ) {
         val scrollState = rememberScrollState()
         Row(

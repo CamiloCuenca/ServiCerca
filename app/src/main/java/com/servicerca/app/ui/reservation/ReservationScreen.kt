@@ -21,7 +21,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -104,14 +103,14 @@ fun ReservationScreen(
                 )
 
                 Surface(
-                    color = Color(0xFFF1F3F5),
+                    color = MaterialTheme.colorScheme.surfaceVariant,
                     shape = RoundedCornerShape(50)
                 ) {
                     Text(
                         text = stringResource(id = R.string.reservation_num_services_format, reservations.size),
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                         style = MaterialTheme.typography.labelSmall,
-                        color = Color.Gray
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
@@ -128,7 +127,7 @@ fun ReservationScreen(
                     Text(
                         text = "No hay reservas para este día",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = Color.Gray
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
@@ -154,7 +153,7 @@ fun ReservationTabRow(
             .fillMaxWidth()
             .height(48.dp),
         shape = RoundedCornerShape(12.dp),
-        color = Color(0xFFF1F3F5)
+        color = MaterialTheme.colorScheme.surfaceVariant
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
             TabItemApp(

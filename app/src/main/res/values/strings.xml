@@ -451,6 +451,7 @@
     <string name="status_cancelled_label">Cancelada</string>
     <string name="status_rejected_label">Rechazada</string>
     <string name="status_completed_label">Completada</string>
+    <string name="new_tag_label">NUEVO</string>
     <string name="error_service_not_found">No se encontró el servicio</string>
     <string name="error_loading_data">Error al cargar datos: %1$s</string>
     <string name="new_service_request_title">Nueva solicitud de servicio</string>
