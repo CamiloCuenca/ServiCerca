@@ -20,11 +20,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.servicerca.app.R
 
+import androidx.compose.material3.MaterialTheme
+
 @Composable
 fun VerificationTag() {
     Box {
         Surface(
-            color = Color.White,
+            color = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.onSurface,
             shape = RoundedCornerShape(8.dp),
             modifier = Modifier
                 .align(Alignment.TopEnd)
@@ -37,7 +40,7 @@ fun VerificationTag() {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_check_circle),
                     contentDescription = null,
-                    tint = Color(0xFF13ECEC),
+                    tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(14.dp)
                 )
                 Spacer(modifier = Modifier.width(4.dp))
@@ -45,7 +48,7 @@ fun VerificationTag() {
                     text = "VERIFICADA",
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color.DarkGray
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
         }

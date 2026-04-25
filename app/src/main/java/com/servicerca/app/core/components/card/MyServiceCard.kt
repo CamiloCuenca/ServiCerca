@@ -32,6 +32,10 @@ import coil3.compose.AsyncImage
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import com.servicerca.app.ui.theme.SuccessContainerLight
+import com.servicerca.app.ui.theme.OnSuccessContainerLight
+import com.servicerca.app.ui.theme.WarningContainerLight
+import com.servicerca.app.ui.theme.OnWarningContainerLight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -96,18 +100,18 @@ fun MyServiceCard(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     val statusColor = when (service.status) {
-                        "Aprobado" -> Color(0xFFE8F5E9)
-                        "Pendiente" -> Color(0xFFFFF3E0)
-                        "Rechazado" -> Color(0xFFFFEBEE)
-                        "Eliminado" -> Color(0xFFECEFF1)
-                        else -> Color(0xFFF1F3F5)
+                        "Aprobado" -> SuccessContainerLight
+                        "Pendiente" -> WarningContainerLight
+                        "Rechazado" -> MaterialTheme.colorScheme.errorContainer
+                        "Eliminado" -> MaterialTheme.colorScheme.surfaceVariant
+                        else -> MaterialTheme.colorScheme.surfaceVariant
                     }
                     val contentColor = when (service.status) {
-                        "Aprobado" -> Color(0xFF2E7D32)
-                        "Pendiente" -> Color(0xFFEF6C00)
-                        "Rechazado" -> Color(0xFFC62828)
-                        "Eliminado" -> Color(0xFF455A64)
-                        else -> MaterialTheme.colorScheme.onSurface
+                        "Aprobado" -> OnSuccessContainerLight
+                        "Pendiente" -> OnWarningContainerLight
+                        "Rechazado" -> MaterialTheme.colorScheme.error
+                        "Eliminado" -> MaterialTheme.colorScheme.onSurfaceVariant
+                        else -> MaterialTheme.colorScheme.onSurfaceVariant
                     }
 
                     Surface(
@@ -133,7 +137,7 @@ fun MyServiceCard(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 if (service.status != "Eliminado") {
-                    HorizontalDivider(color = Color(0xFFF1F3F5))
+                    HorizontalDivider(color = MaterialTheme.colorScheme.surfaceVariant)
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
@@ -167,12 +171,12 @@ fun MyServiceCard(
                                     imageVector = Icons.Default.Delete,
                                     contentDescription = "Eliminar",
                                     modifier = Modifier.size(18.dp),
-                                    tint = Color(0xFFEF5350)
+                                    tint = MaterialTheme.colorScheme.error
                                 )
                                 Spacer(modifier = Modifier.width(4.dp))
                                 Text(
                                     text = stringResource(id = R.string.delete_button),
-                                    color = Color(0xFFEF5350),
+                                    color = MaterialTheme.colorScheme.error,
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.Bold
                                 )

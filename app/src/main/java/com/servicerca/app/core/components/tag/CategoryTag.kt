@@ -12,24 +12,37 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.servicerca.app.domain.model.Categories
+import com.servicerca.app.ui.theme.InfoContainerLight
+import com.servicerca.app.ui.theme.OnInfoContainerLight
+import com.servicerca.app.ui.theme.OnWarningContainerLight
+import com.servicerca.app.ui.theme.WarningContainerLight
 
 
 @Composable
 fun CategoryTag(
     text: String,
     modifier: Modifier = Modifier,
-    color: Color = Color(0xFFF1F3F5),
-    colorText: Color = Color.Gray
+    color: Color? = null,
+    colorText: Color? = null
 ) {
+    val (defaultBg, defaultContent) = when (text.uppercase()) {
+        "HOGAR" -> MaterialTheme.colorScheme.primaryContainer to MaterialTheme.colorScheme.primary
+        "TECNOLOGÍA", "TECNOLOGIA" -> InfoContainerLight to OnInfoContainerLight
+        "EDUCACIÓN", "EDUCACION" -> MaterialTheme.colorScheme.tertiaryContainer to MaterialTheme.colorScheme.onTertiaryContainer
+        "MASCOTAS" -> WarningContainerLight to OnWarningContainerLight
+        "TRANSPORTE" -> MaterialTheme.colorScheme.secondaryContainer to MaterialTheme.colorScheme.secondary
+        else -> MaterialTheme.colorScheme.surfaceVariant to MaterialTheme.colorScheme.onSurfaceVariant
+    }
+
     Surface(
-        color = color,
+        color = color ?: defaultBg,
         shape = RoundedCornerShape(8.dp),
         modifier = modifier
     ) {
         Text(
             text = text,
             fontSize = 12.sp,
-            color = colorText,
+            color = colorText ?: defaultContent,
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
         )
     }
@@ -47,7 +60,7 @@ fun CategoryTagSearch(
         color = if (isSelected)
             MaterialTheme.colorScheme.primary
         else
-            Color(0xFFF1F3F5),
+            MaterialTheme.colorScheme.surfaceVariant,
     ) {
         Text(
             text = stringResource(category.nameRes),
@@ -56,7 +69,7 @@ fun CategoryTagSearch(
             color = if (isSelected)
                 MaterialTheme.colorScheme.onPrimary
             else
-                Color.Gray
+                MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }

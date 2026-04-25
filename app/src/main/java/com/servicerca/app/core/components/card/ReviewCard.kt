@@ -26,6 +26,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.servicerca.app.R
+import com.servicerca.app.ui.theme.StarColor
+import com.servicerca.app.ui.theme.StarInactiveColor
 
 /**
  * Tarjeta que muestra un comentario/reseña de un usuario sobre un servicio.
@@ -89,7 +91,7 @@ fun ReviewCard(
                     Icon(
                         painter = painterResource(id = R.drawable.ic_star),
                         contentDescription = null,
-                        tint = if (index < rating) Color(0xFFFFD700) else Color(0xFFE0E0E0),
+                        tint = if (index < rating) StarColor else StarInactiveColor,
                         modifier = Modifier.size(16.dp)
                     )
                 }

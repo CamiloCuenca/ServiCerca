@@ -28,7 +28,7 @@ fun ButtonIconDecline(
         enabled = enabled,
         shape = RoundedCornerShape(16.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = Color(0xFFFDDFDF),
+            containerColor = MaterialTheme.colorScheme.errorContainer,
             contentColor = MaterialTheme.colorScheme.error
         )
     ) {

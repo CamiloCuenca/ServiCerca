@@ -32,7 +32,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.style.TextAlign
@@ -44,8 +43,6 @@ import com.servicerca.app.core.components.button.PrimaryButton
 
 import com.servicerca.app.core.components.input.OtpTextField
 import com.servicerca.app.core.utils.RequestResult
-import com.servicerca.app.ui.theme.Error
-import com.servicerca.app.ui.theme.PrimaryLight
 
 @Composable
 fun VerifyEmailScreen(
@@ -114,8 +111,8 @@ fun VerifyEmailScreen(
             SnackbarHost(hostState = snackbarHostState) { data ->
                 Snackbar(
                     snackbarData = data,
-                    containerColor = if (isError) Error else PrimaryLight,
-                    contentColor = Color.White
+                    containerColor = if (isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
                 )
             }
         }
@@ -137,18 +134,18 @@ fun VerifyEmailScreen(
                     .shadow(
                         elevation = 16.dp,
                         shape = CircleShape,
-                        ambientColor = Color.Cyan,
+                        ambientColor = MaterialTheme.colorScheme.primary,
                         spotColor = MaterialTheme.colorScheme.primary
                     )
                     .clip(CircleShape)
-                    .background(Color.Cyan),
+                    .background(MaterialTheme.colorScheme.primary),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = Icons.Default.Email,
                     contentDescription = null,
                     modifier = Modifier.size(60.dp),
-                    tint = Color.White
+                    tint = MaterialTheme.colorScheme.onPrimary
                 )
             }
 

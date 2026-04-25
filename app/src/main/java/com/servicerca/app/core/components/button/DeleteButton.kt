@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -33,10 +34,10 @@ fun DeleteButton(
         modifier = modifier
             .fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        border = BorderStroke(1.dp, Color.Red), // 👈 borde rojo
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.error),
         colors = ButtonDefaults.buttonColors(
-            containerColor = if (isPressed) Color.Red else Color.White,
-            contentColor = Color.Red
+            containerColor = if (isPressed) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.surface,
+            contentColor = if (isPressed) MaterialTheme.colorScheme.onError else MaterialTheme.colorScheme.error
         ),
         interactionSource = interactionSource
     ) {
@@ -48,7 +49,7 @@ fun DeleteButton(
 
         Text(
             text = text,
-            color = if (isPressed) Color.White else Color.Red
+            color = if (isPressed) MaterialTheme.colorScheme.onError else MaterialTheme.colorScheme.error
         )
     }
 }

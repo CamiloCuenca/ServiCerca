@@ -36,8 +36,8 @@ fun PasswordButton(
         shape = RoundedCornerShape(16.dp),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary), // 👈 borde rojo
         colors = ButtonDefaults.buttonColors(
-            containerColor = if (isPressed) MaterialTheme.colorScheme.primary else Color.White,
-            contentColor = Color.Black
+            containerColor = if (isPressed) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
+            contentColor = if (isPressed) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary
         ),
         interactionSource = interactionSource
     ) {
@@ -49,7 +49,7 @@ fun PasswordButton(
 
         Text(
             text = text,
-            color = if (isPressed) Color.Black else Color.Black
+            color = if (isPressed) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary
         )
     }
 }

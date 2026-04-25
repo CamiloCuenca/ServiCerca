@@ -45,6 +45,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -57,7 +58,10 @@ import com.servicerca.app.core.components.card.ProviderRow
 import com.servicerca.app.core.components.card.ReviewCard
 import com.servicerca.app.core.components.card.ServiceDescriptionSection
 import com.servicerca.app.core.components.card.ServiceDetailHeader
+import com.servicerca.app.core.components.header.SectionHeader
 import com.servicerca.app.core.components.input.ReviewInputField
+import com.servicerca.app.ui.theme.StarColor
+import com.servicerca.app.ui.theme.StarInactiveColor
 
 @Composable
 fun DetailServiceScreen(
@@ -81,6 +85,7 @@ fun DetailServiceScreen(
     val isBookmarked by viewModel.isBookmarked.collectAsStateWithLifecycle()
     val likeCount by viewModel.likeCount.collectAsStateWithLifecycle()
     val canReview by viewModel.canReview.collectAsStateWithLifecycle()
+    val isOwner by viewModel.isOwner.collectAsStateWithLifecycle()
 
     var reviewText by remember { mutableStateOf("") }
     var selectedRating by remember { mutableIntStateOf(5) }
@@ -144,7 +149,7 @@ fun DetailServiceScreen(
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Volver",
-                        tint = Color.White
+                        tint = MaterialTheme.colorScheme.surface
                     )
                 }
 
@@ -161,7 +166,7 @@ fun DetailServiceScreen(
                     Icon(
                         imageVector = Icons.Default.Share,
                         contentDescription = "Compartir",
-                        tint = Color.White
+                        tint = MaterialTheme.colorScheme.surface
                     )
                 }
             }
@@ -271,11 +276,9 @@ fun DetailServiceScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = "Reseñas",
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface
+                        SectionHeader(
+                            title = "Reseñas",
+                            modifier = Modifier.weight(1f)
                         )
                         Text(
                             text = "${comments.size} comentario${if (comments.size != 1) "s" else ""}",
@@ -342,7 +345,7 @@ fun DetailServiceScreen(
                                         Icon(
                                             painter = painterResource(id = R.drawable.ic_star),
                                             contentDescription = "Calificar $ratingValue estrellas",
-                                            tint = if (isSelected) Color(0xFFFFD700) else Color(0xFFE0E0E0),
+                                            tint = if (isSelected) StarColor else StarInactiveColor,
                                             modifier = Modifier.size(28.dp)
                                         )
                                     }
@@ -372,16 +375,34 @@ fun DetailServiceScreen(
             }
         }
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.surface)
-                .padding(horizontal = 16.dp, vertical = 12.dp)
-        ) {
-            PrimaryButton(
-                text = "SOLICITAR SERVICIO →",
-                onClick = { onMakeReservation(serviceId) }
-            )
+        if (!isOwner) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.surface)
+                    .padding(horizontal = 16.dp, vertical = 12.dp)
+            ) {
+                PrimaryButton(
+                    text = "SOLICITAR SERVICIO →",
+                    onClick = { onMakeReservation(serviceId) }
+                )
+            }
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.surface)
+                    .padding(horizontal = 16.dp, vertical = 12.dp)
+            ) {
+                Text(
+                    text = "Este servicio es tuyo",
+                    modifier = Modifier.fillMaxWidth().padding(8.dp),
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Bold
+                )
+            }
         }
     }
 }

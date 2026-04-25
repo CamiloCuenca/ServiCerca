@@ -11,17 +11,21 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import com.servicerca.app.R
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+import androidx.compose.material3.MaterialTheme
+
 @Composable
 fun NewServiceTag(){
     Box {
         Surface(
-            color = Color.White,
+            color = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.onSurface,
             shape = RoundedCornerShape(8.dp),
             modifier = Modifier
                 .align(Alignment.TopEnd)
@@ -33,10 +37,10 @@ fun NewServiceTag(){
             ) {
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = "NUEVO",
+                    text = stringResource(R.string.new_tag_label),
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color.DarkGray
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
         }

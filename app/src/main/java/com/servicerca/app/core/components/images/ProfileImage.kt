@@ -30,7 +30,7 @@ fun ProfileImage(url: String) {
     ) {
         Card(
             shape = CircleShape,
-            colors = CardDefaults.cardColors(Color.White),
+            colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surface),
             modifier = Modifier
                 .size(150.dp)
                 .shadow(

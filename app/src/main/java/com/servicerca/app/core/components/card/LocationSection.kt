@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -46,12 +47,12 @@ fun LocationSection(
                 text = "Ubicación",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF1A1C1E)
+                color = MaterialTheme.colorScheme.onBackground
             )
             Text(
                 text = distanceLabel,
                 fontSize = 13.sp,
-                color = Color(0xFF00BCD4),
+                color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Medium
             )
         }
@@ -64,26 +65,26 @@ fun LocationSection(
                 .fillMaxWidth()
                 .height(120.dp)
                 .clip(RoundedCornerShape(16.dp))
-                .background(Color(0xFFE0F7FA)),
+                .background(MaterialTheme.colorScheme.primaryContainer),
             contentAlignment = Alignment.Center
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Box(
                     modifier = Modifier
                         .size(48.dp)
-                        .background(Color(0xFF00BCD4).copy(alpha = 0.2f), CircleShape),
+                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.2f), CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
                     Box(
                         modifier = Modifier
                             .size(32.dp)
-                            .background(Color(0xFF00BCD4).copy(alpha = 0.3f), CircleShape),
+                            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.3f), CircleShape),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_location),
                             contentDescription = "Ubicación",
-                            tint = Color(0xFF00BCD4),
+                            tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(22.dp)
                         )
                     }
@@ -93,7 +94,7 @@ fun LocationSection(
                     text = locationName,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Medium,
-                    color = Color(0xFF1A1C1E)
+                    color = MaterialTheme.colorScheme.onBackground
                 )
             }
         }

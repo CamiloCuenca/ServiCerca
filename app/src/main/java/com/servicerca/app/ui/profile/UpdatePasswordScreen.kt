@@ -33,7 +33,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
@@ -52,6 +51,7 @@ import com.servicerca.app.core.components.alertDialog.SuccessAlertDialog
 import com.servicerca.app.core.components.button.PrimaryButton
 import com.servicerca.app.core.components.input.AppPasswordField
 import com.servicerca.app.core.utils.RequestResult
+import com.servicerca.app.core.components.header.ScreenHeader
 
 @Composable
 fun UpdatePasswordScreen(
@@ -104,7 +104,7 @@ fun UpdatePasswordScreen(
                 Snackbar(
                     containerColor = if (isError) MaterialTheme.colorScheme.error
                                      else MaterialTheme.colorScheme.primary,
-                    contentColor = Color.White
+                    contentColor = MaterialTheme.colorScheme.onPrimary
                 ) {
                     Text(data.visuals.message)
                 }
@@ -139,32 +139,10 @@ fun UpdatePasswordScreen(
             Column(
                 modifier = Modifier.fillMaxWidth()
             ) {
-                // Header: ícono a la izquierda, título centrado
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
-                ) {
-                    IconButton(
-                        onClick = { onBack() },
-                        modifier = Modifier.align(Alignment.CenterStart)
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = null
-                        )
-                    }
-
-                    Text(
-                        text = stringResource(R.string.change_password),
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                }
-                HorizontalDivider(thickness = 2.dp, color = MaterialTheme.colorScheme.outline)
+                ScreenHeader(
+                    title = stringResource(R.string.change_password),
+                    onBack = onBack
+                )
             }
 
             Box(

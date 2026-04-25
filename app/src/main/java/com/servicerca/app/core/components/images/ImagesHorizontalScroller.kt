@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -23,7 +24,10 @@ fun ImagesHorizontalScroller(
         modifier = Modifier
             .fillMaxWidth()
             .padding(4.dp),
-        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 7.dp)
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp),
+        colors = CardDefaults.elevatedCardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        )
     ) {
         LazyRow(
             modifier = Modifier.padding(vertical = 16.dp),

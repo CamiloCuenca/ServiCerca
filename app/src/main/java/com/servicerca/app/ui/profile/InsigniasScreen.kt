@@ -15,7 +15,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -40,6 +39,7 @@ import com.servicerca.app.R
 import com.servicerca.app.core.components.card.CardInsigniasGrid
 import com.servicerca.app.core.components.card.CardMainInsignias
 import com.servicerca.app.core.components.card.CardMessageInsignias
+import com.servicerca.app.core.components.header.ScreenHeader
 
 @Composable
 fun InsigniasScreen(
@@ -94,36 +94,11 @@ fun InsigniasScreen(
                         ) {
 
                             // Header: ícono a la izquierda, título centrado
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 8.dp, vertical = 4.dp)
-                            ) {
-                                IconButton(
-                                    onClick = { onBack() },
-                                    modifier = Modifier.align(Alignment.CenterStart)
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                        contentDescription = null
-                                    )
-                                }
-
-                                Text(
-                                    text = stringResource(R.string.title_insignias),
-                                    style = MaterialTheme.typography.titleLarge,
-                                    fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    textAlign = TextAlign.Center,
-                                    modifier = Modifier
-                                        .align(Alignment.Center)
-                                )
-                            }
-
-                            HorizontalDivider(
-                                thickness = 2.dp,
-                                color = MaterialTheme.colorScheme.outline
+                            ScreenHeader(
+                                title = stringResource(R.string.title_insignias),
+                                onBack = onBack
                             )
+
 
                             // Sección: Achievements (centrado)
                             Column(

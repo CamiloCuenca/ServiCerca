@@ -46,7 +46,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -66,8 +65,6 @@ import com.servicerca.app.core.components.images.ImagesHorizontalScroller
 import com.servicerca.app.core.utils.RequestResult
 import com.servicerca.app.domain.repository.ServiceRepository
 import com.servicerca.app.ui.services.ListService.ListServiceViewModel
-import com.servicerca.app.ui.theme.Error
-import com.servicerca.app.ui.theme.PrimaryLight
 import java.io.InputStream
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -177,8 +174,8 @@ fun EditServiceScreen(
             SnackbarHost(hostState = snackbarHostState) { data ->
                 Snackbar(
                     snackbarData = data,
-                    containerColor = if (isError) Error else PrimaryLight,
-                    contentColor = Color.White
+                    containerColor = if (isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
                 )
             }
         }

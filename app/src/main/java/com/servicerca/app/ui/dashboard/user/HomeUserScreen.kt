@@ -122,6 +122,7 @@ fun HomeUserScreen(
                     isBookmarked = serviceWithRating.isBookmarked,
                     likeCount = serviceWithRating.likeCount,
                     isLiked = serviceWithRating.isLiked,
+                    isOwner = serviceWithRating.isOwner,
                     onBookmarkClick = {
                         viewModel.onBookmarkClick(serviceWithRating.service.id)
                     },

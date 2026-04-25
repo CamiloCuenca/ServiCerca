@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.servicerca.app.R
+import com.servicerca.app.core.components.header.SectionHeader
 
 @Composable
 fun CardInfoprofile(
@@ -39,12 +40,9 @@ fun CardInfoprofile(
         ),
     ) {
         Column {
-            Text(
-                text = stringResource(R.string.info_account),
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .padding(start = 15.dp, top = 15.dp, bottom = 8.dp)
+            SectionHeader(
+                title = stringResource(R.string.info_account),
+                modifier = Modifier.padding(start = 15.dp, top = 15.dp)
             )
 
             Row(
@@ -67,12 +65,6 @@ fun CardInfoprofile(
                     maxLines = 1
                 )
             }
-
-            HorizontalDivider(
-                thickness = 2.dp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(horizontal = 15.dp)
-            )
 
             Row(
                 modifier = Modifier

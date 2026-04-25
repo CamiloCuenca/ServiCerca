@@ -16,7 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import com.servicerca.app.ui.theme.StarColor
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -70,7 +70,7 @@ fun ServiceDetailHeader(
             Text(
                 text = subtitle,
                 fontSize = 14.sp,
-                color = Color.Gray
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -78,7 +78,7 @@ fun ServiceDetailHeader(
                     Icon(
                         imageVector = Icons.Default.Favorite,
                         contentDescription = null,
-                        tint = if (isLiked) Color.Red else Color.Gray,
+                        tint = if (isLiked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(16.dp)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
@@ -86,7 +86,7 @@ fun ServiceDetailHeader(
                         text = likeCount.toString(),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
-                        color = if (isLiked) Color.Red else Color.Gray
+                        color = if (isLiked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                 }
@@ -94,7 +94,7 @@ fun ServiceDetailHeader(
                 Icon(
                     painter = painterResource(id = R.drawable.ic_star),
                     contentDescription = null,
-                    tint = Color(0xFFFFD700),
+                    tint = StarColor,
                     modifier = Modifier.size(16.dp)
                 )
                 Spacer(modifier = Modifier.width(4.dp))
@@ -102,7 +102,7 @@ fun ServiceDetailHeader(
                     text = rating,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFFFFD700)
+                    color = StarColor
                 )
             }
         }
@@ -112,12 +112,12 @@ fun ServiceDetailHeader(
                 text = "$$price",  // Double convertido a String
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF00BCD4)
+                color = MaterialTheme.colorScheme.primary
             )
             Text(
                 text = "por hora",
                 fontSize = 12.sp,
-                color = Color.Gray
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }

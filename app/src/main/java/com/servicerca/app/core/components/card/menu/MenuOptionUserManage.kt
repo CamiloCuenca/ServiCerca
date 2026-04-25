@@ -49,7 +49,7 @@ fun MenuOptionUserManage(
                 Icon(
                     imageVector = icon,
                     contentDescription = text,
-                    tint = if (text.contains("Eliminar")) Color.Red else MaterialTheme.colorScheme.primary
+                    tint = if (text.contains("Eliminar")) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
                 )
             }
         }
@@ -60,7 +60,7 @@ fun MenuOptionUserManage(
             text = text,
             modifier = Modifier.weight(1f),
             style = MaterialTheme.typography.bodyLarge,
-            color = if (text.contains("Eliminar")) Color.Red else Color.Unspecified
+            color = if (text.contains("Eliminar")) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface
         )
 
     }

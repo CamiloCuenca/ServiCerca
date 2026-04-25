@@ -1,5 +1,6 @@
 package com.servicerca.app.core.components.card
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -34,10 +35,13 @@ fun CardServiceImage(
             .size(85.dp)
             .then(if (onClick != null) Modifier.clickable { onClick() } else Modifier),
         colors = CardDefaults.outlinedCardColors(
-            containerColor = MaterialTheme.colorScheme.background,
-            contentColor = Color.Black
+            containerColor = if (imageBytes == null) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.2f) else MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.onSurface
         ),
-        border = CardDefaults.outlinedCardBorder()
+        border = BorderStroke(
+            width = 1.dp,
+            color = if (imageBytes == null) MaterialTheme.colorScheme.primary.copy(alpha = 0.5f) else MaterialTheme.colorScheme.outline
+        )
     ) {
         Box(
             modifier = Modifier
@@ -66,6 +70,7 @@ fun CardServiceImage(
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = "Agregar imagen",
+                    tint = MaterialTheme.colorScheme.primary
                 )
             }
         }
