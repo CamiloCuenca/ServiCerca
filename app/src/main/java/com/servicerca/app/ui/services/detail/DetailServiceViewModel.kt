@@ -11,6 +11,11 @@ import com.servicerca.app.domain.repository.CommentRepository
 import com.servicerca.app.domain.repository.NotificationRepository
 import com.servicerca.app.domain.repository.ServiceRepository
 import com.servicerca.app.domain.repository.UserRepository
+import com.servicerca.app.domain.repository.ReservationRepository
+import com.servicerca.app.domain.model.ReservationStatus
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import com.servicerca.app.data.datastore.SessionDataStore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,7 +39,8 @@ class DetailServiceViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val commentRepository: CommentRepository,
     private val notificationRepository: NotificationRepository,
-    private val sessionDataStore: SessionDataStore
+    private val sessionDataStore: SessionDataStore,
+    private val reservationRepository: ReservationRepository
 ) : ViewModel() {
 
     private val _serviceId = MutableStateFlow<String?>(null)
@@ -123,6 +129,31 @@ class DetailServiceViewModel @Inject constructor(
     val likeCount: StateFlow<Int> = service.map {
         it?.likedBy?.size ?: 0
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val canReview: StateFlow<Boolean> = combine(
+        _serviceId,
+        sessionDataStore.sessionFlow
+    ) { serviceId, session ->
+        Pair(serviceId, session)
+    }.flatMapLatest { (serviceId, session) ->
+        if (serviceId == null || session == null) {
+            flowOf(false)
+        } else {
+            combine(
+                reservationRepository.getReservationsByUser(session.userId),
+                commentRepository.comments
+            ) { userReservations, allComments ->
+                val completedReservations = userReservations.count { 
+                    it.serviceId == serviceId && it.status == ReservationStatus.COMPLETED 
+                }
+                val userComments = allComments.count { 
+                    it.serviceId == serviceId && it.userId == session.userId 
+                }
+                completedReservations > userComments
+            }
+        }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
     fun loadService(serviceId: String) {
         _serviceId.value = serviceId

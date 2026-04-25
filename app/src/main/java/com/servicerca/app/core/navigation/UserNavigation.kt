@@ -65,6 +65,9 @@ fun UserNavigation(
             SearchScreen(
                 onServiceClick = { serviceId ->
                     navController.navigate(DashboardRoutes.DetailService(serviceId))
+                },
+                onBackClick = {
+                    navController.popBackStack()
                 }
             )
         }
@@ -110,6 +113,9 @@ fun UserNavigation(
                 onBackClick = { navController.popBackStack() },
                 onEditService = { serviceId ->
                     navController.navigate(DashboardRoutes.EditService(serviceId))
+                },
+                onServiceClick = { serviceId ->
+                    navController.navigate(DashboardRoutes.DetailService(serviceId))
                 }
             )
         }

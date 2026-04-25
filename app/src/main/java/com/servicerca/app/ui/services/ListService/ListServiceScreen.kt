@@ -33,6 +33,7 @@ import com.servicerca.app.ui.theme.ServiCercaTheme
 fun ListServiceScreen(
     onBackClick: () -> Unit = {},
     onEditService: (String) -> Unit = {},
+    onServiceClick: (String) -> Unit = {},
     viewModel: ListServiceViewModel? = null
 ) {
 
@@ -143,7 +144,7 @@ fun ListServiceScreen(
                 MyServiceCard(
                     service = service,
                     onEdit = { onEditService(service.id) },
-
+                    onClick = { onServiceClick(service.id) },
                     onDelete = {
                         selectedServiceId = service.id
                         showDeleteModal = true

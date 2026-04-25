@@ -363,6 +363,13 @@ private fun MainNavigation(
                 serviceId = route.serviceId,
                 onBack = {
                     navController.popBackStack()
+                },
+                onReservationSuccess = {
+                    if (session.role == UserRole.ADMIN || session.role == UserRole.MODERATOR) {
+                        navController.popBackStack(DashboardRoutes.HomeModerator, inclusive = false)
+                    } else {
+                        navController.popBackStack(DashboardRoutes.HomeUser, inclusive = false)
+                    }
                 }
             )
         }

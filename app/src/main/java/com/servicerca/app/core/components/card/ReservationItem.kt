@@ -44,6 +44,7 @@ fun ReservationItem(
 ) {
 
     Card(
+        onClick = onDetailClick,
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
         elevation = CardDefaults.cardElevation(4.dp),

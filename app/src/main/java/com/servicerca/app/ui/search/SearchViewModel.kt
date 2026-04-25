@@ -24,6 +24,12 @@ data class SearchServiceResult(
     val isBookmarked: Boolean
 )
 
+enum class SearchFilter(val displayName: String) {
+    ALL("Todos"),
+    CHEAPEST("Más económicos"),
+    PREMIUM("Premium")
+}
+
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     serviceRepository: ServiceRepository,
@@ -40,12 +46,16 @@ class SearchViewModel @Inject constructor(
     private val _recentSearches = MutableStateFlow<List<String>>(emptyList())
     val recentSearches: StateFlow<List<String>> = _recentSearches.asStateFlow()
 
+    private val _selectedFilter = MutableStateFlow(SearchFilter.ALL)
+    val selectedFilter: StateFlow<SearchFilter> = _selectedFilter.asStateFlow()
+
     val searchResults: StateFlow<List<SearchServiceResult>> = combine(
         serviceRepository.services,
         userRepository.users,
         sessionDataStore.sessionFlow,
-        _query
-    ) { services, users, session, query ->
+        _query,
+        _selectedFilter
+    ) { services, users, session, query, filter ->
         val normalizedQuery = query.trim()
         if (normalizedQuery.isBlank()) {
             return@combine emptyList()
@@ -54,7 +64,7 @@ class SearchViewModel @Inject constructor(
         val currentUser = users.firstOrNull { it.id == session?.userId }
         val interestingIds = currentUser?.listInteresting?.toSet().orEmpty()
 
-        services
+        var results = services
             .asSequence()
             .filter { it.status != ServiceStatus.DELETED }
             .filter { it.title.contains(normalizedQuery, ignoreCase = true) }
@@ -64,7 +74,14 @@ class SearchViewModel @Inject constructor(
                     isBookmarked = service.id in interestingIds
                 )
             }
-            .toList()
+
+        results = when (filter) {
+            SearchFilter.ALL -> results
+            SearchFilter.CHEAPEST -> results.sortedBy { it.service.priceMin }
+            SearchFilter.PREMIUM -> results.sortedByDescending { it.service.priceMin }
+        }
+
+        results.toList()
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
@@ -75,13 +92,14 @@ class SearchViewModel @Inject constructor(
         serviceRepository.services,
         userRepository.users,
         sessionDataStore.sessionFlow,
-        _selectedCategory
-    ) { services, users, session, selectedCategory ->
+        _selectedCategory,
+        _selectedFilter
+    ) { services, users, session, selectedCategory, filter ->
         val category = selectedCategory ?: return@combine emptyList()
         val currentUser = users.firstOrNull { it.id == session?.userId }
         val interestingIds = currentUser?.listInteresting?.toSet().orEmpty()
 
-        services
+        var results = services
             .asSequence()
             .filter { it.status != ServiceStatus.DELETED }
             .filter { it.type.contains(category.displayName, ignoreCase = true) }
@@ -91,12 +109,23 @@ class SearchViewModel @Inject constructor(
                     isBookmarked = service.id in interestingIds
                 )
             }
-            .toList()
+
+        results = when (filter) {
+            SearchFilter.ALL -> results
+            SearchFilter.CHEAPEST -> results.sortedBy { it.service.priceMin }
+            SearchFilter.PREMIUM -> results.sortedByDescending { it.service.priceMin }
+        }
+
+        results.toList()
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = emptyList()
     )
+
+    fun onFilterSelect(filter: SearchFilter) {
+        _selectedFilter.value = filter
+    }
 
     fun onQueryChange(newQuery: String) {
         _query.value = newQuery

@@ -80,6 +80,7 @@ fun DetailServiceScreen(
     val isLiked by viewModel.isLiked.collectAsState()
     val isBookmarked by viewModel.isBookmarked.collectAsState()
     val likeCount by viewModel.likeCount.collectAsState()
+    val canReview by viewModel.canReview.collectAsState()
 
     var reviewText by remember { mutableStateOf("") }
     var selectedRating by remember { mutableIntStateOf(5) }
@@ -311,58 +312,60 @@ fun DetailServiceScreen(
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(12.dp))
+                    if (canReview) {
+                        Spacer(modifier = Modifier.height(12.dp))
 
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 8.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = "Selecciona tu califiación",
-                            fontSize = 12.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            fontWeight = FontWeight.Medium
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 8.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            repeat(5) { index ->
-                                val ratingValue = index + 1
-                                val isSelected = ratingValue <= selectedRating
-                                IconButton(
-                                    onClick = { selectedRating = ratingValue },
-                                    modifier = Modifier.size(32.dp)
-                                ) {
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.ic_star),
-                                        contentDescription = "Calificar $ratingValue estrellas",
-                                        tint = if (isSelected) Color(0xFFFFD700) else Color(0xFFE0E0E0),
-                                        modifier = Modifier.size(28.dp)
-                                    )
+                            Text(
+                                text = "Selecciona tu califiación",
+                                fontSize = 12.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                fontWeight = FontWeight.Medium
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                repeat(5) { index ->
+                                    val ratingValue = index + 1
+                                    val isSelected = ratingValue <= selectedRating
+                                    IconButton(
+                                        onClick = { selectedRating = ratingValue },
+                                        modifier = Modifier.size(32.dp)
+                                    ) {
+                                        Icon(
+                                            painter = painterResource(id = R.drawable.ic_star),
+                                            contentDescription = "Calificar $ratingValue estrellas",
+                                            tint = if (isSelected) Color(0xFFFFD700) else Color(0xFFE0E0E0),
+                                            modifier = Modifier.size(28.dp)
+                                        )
+                                    }
                                 }
                             }
                         }
-                    }
 
-                    ReviewInputField(
-                        value = reviewText,
-                        onValueChange = { reviewText = it },
-                        onSend = {
-                            if (reviewText.isNotBlank()) {
-                                viewModel.addComment(
-                                    rating = selectedRating,
-                                    text = reviewText
-                                )
-                                reviewText = ""
-                                selectedRating = 5
-                            }
-                        },
-                        modifier = Modifier.padding(horizontal = 16.dp)
-                    )
+                        ReviewInputField(
+                            value = reviewText,
+                            onValueChange = { reviewText = it },
+                            onSend = {
+                                if (reviewText.isNotBlank()) {
+                                    viewModel.addComment(
+                                        rating = selectedRating,
+                                        text = reviewText
+                                    )
+                                    reviewText = ""
+                                    selectedRating = 5
+                                }
+                            },
+                            modifier = Modifier.padding(horizontal = 16.dp)
+                        )
+                    }
 
                     Spacer(modifier = Modifier.height(16.dp))
                 }

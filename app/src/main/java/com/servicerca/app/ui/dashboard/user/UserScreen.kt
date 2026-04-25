@@ -2,6 +2,7 @@ package com.servicerca.app.ui.dashboard.user
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -63,18 +64,34 @@ fun UserScreen(
         !it.hasRoute<MainRoutes.MakeReservation>()
     } ?: true
 
-    val showFab = destination?.let {
-        !it.hasRoute<DashboardRoutes.Insignias>() &&
-        !it.hasRoute<DashboardRoutes.EditProfile>() &&
-        !it.hasRoute<DashboardRoutes.DeleteProfile>() &&
-        !it.hasRoute<DashboardRoutes.UpdatePassword>() &&
-        !it.hasRoute<DashboardRoutes.QrScannerDashboard>() &&
-        !it.hasRoute<DashboardRoutes.QrServiceVerification>() &&
-        !it.hasRoute<DashboardRoutes.ListInteresting>() &&
-        !it.hasRoute<DashboardRoutes.DetailService>() &&
-        !it.hasRoute<DashboardRoutes.Chat>() &&
-        !it.hasRoute<MainRoutes.MakeReservation>()
-    } ?: true
+    var showFab = false
+    var fabIcon = Icons.Default.Add
+    var fabAction: () -> Unit = {}
+
+    destination?.let {
+        when {
+            it.hasRoute<DashboardRoutes.HomeUser>() -> {
+                showFab = true
+                fabIcon = Icons.Default.Add
+                fabAction = onCreateService
+            }
+            it.hasRoute<DashboardRoutes.Profile>() -> {
+                showFab = true
+                fabIcon = Icons.Default.Edit
+                fabAction = { navController.navigate(DashboardRoutes.EditProfile) }
+            }
+            it.hasRoute<DashboardRoutes.ChatList>() -> {
+                showFab = false
+            }
+            it.hasRoute<DashboardRoutes.Reservation>() -> {
+                showFab = false
+            }
+            // Agrega más rutas aquí si necesitas botones flotantes en otras pantallas
+            else -> {
+                showFab = false
+            }
+        }
+    }
 
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -109,13 +126,13 @@ fun UserScreen(
         floatingActionButton = {
             if (showFab) {
                 FloatingActionButton(
-                    onClick = onCreateService,
+                    onClick = fabAction,
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary,
                     shape = MaterialTheme.shapes.medium
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Add,
+                        imageVector = fabIcon,
                         contentDescription = null
                     )
                 }

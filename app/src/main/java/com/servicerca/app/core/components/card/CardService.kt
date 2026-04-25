@@ -53,6 +53,7 @@ fun CardService( // TODO @CAMILOCUENCA luego de tener el firestorage ponerle el 
 
 
     ElevatedCard(
+        onClick = onRequestClick,
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.elevatedCardColors(
