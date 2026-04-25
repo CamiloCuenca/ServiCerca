@@ -33,7 +33,7 @@ sealed class DashboardRoutes {
 
 
     @Serializable
-    data object Historial : DashboardRoutes()
+    data class Historial(val initialTab: Int = 0) : DashboardRoutes()
 
     @Serializable
     data object ManageUser : DashboardRoutes()

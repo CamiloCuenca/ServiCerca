@@ -1,5 +1,6 @@
 package com.servicerca.app.core.components.button
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
@@ -29,7 +30,8 @@ fun ButtonIcon(
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary
-        )
+        ),
+        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp)
     ) {
 
         if (icon != null) {

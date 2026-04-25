@@ -287,6 +287,7 @@ fun DetailsReservationScreen(
                     }
                 },
                 title = stringResource(R.string.cancel_reservation_confirm_title),
+                description = "Esta acción no se puede deshacer y el proveedor será notificado.",
                 textPrimary = stringResource(R.string.keep_my_reservation_action),
                 textSecondary = stringResource(R.string.cancel_reservation_action)
             )
@@ -301,6 +302,7 @@ fun DetailsReservationScreen(
                     showRejectModal = false
                 },
                 title = stringResource(R.string.reject_request_confirm_title),
+                description = "No podrás ver esta solicitud nuevamente si la rechazas.",
                 textPrimary = stringResource(R.string.action_back),
                 textSecondary = stringResource(R.string.reject_request_action)
             )

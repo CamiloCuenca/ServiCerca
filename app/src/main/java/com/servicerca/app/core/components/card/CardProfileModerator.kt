@@ -26,11 +26,13 @@ import com.servicerca.app.R
 fun CardProfileModerator(
     title: String,
     label: String,
-    color: Color
+    color: Color,
+    onClick: () -> Unit = {}
 ){
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 2.dp),
+        onClick = onClick,
         modifier = Modifier
             .size(width = 350.dp, height = 100.dp),
         colors = CardDefaults.cardColors(

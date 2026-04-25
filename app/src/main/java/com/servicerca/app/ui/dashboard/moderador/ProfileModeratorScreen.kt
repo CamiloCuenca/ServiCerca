@@ -134,17 +134,38 @@ fun ProfileModerator (
                 CardProfileModerator(
                     title = stringResource(R.string.pending_profile_moderator),
                     label = state.pendingCount.toString(),
-                    color = WarningLight
+                    color = WarningLight,
+                    onClick = {
+                        navController.navigate(DashboardRoutes.HomeModerator)
+                    }
                 )
                 CardProfileModerator(
                     title = stringResource(R.string.approved_profile_moderator),
                     label = state.approvedCount.toString(),
-                    color = SuccessLight
+                    color = SuccessLight,
+                    onClick = {
+                        navController.navigate(DashboardRoutes.Historial(initialTab = 1)) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
                 )
                 CardProfileModerator(
                     title = stringResource(R.string.rejected_profile_moderator),
                     label = state.rejectedCount.toString(),
-                    color = MaterialTheme.colorScheme.error
+                    color = MaterialTheme.colorScheme.error,
+                    onClick = {
+                        navController.navigate(DashboardRoutes.Historial(initialTab = 2)) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
                 )
 
                 // Panel de moderación
@@ -167,7 +188,7 @@ fun ProfileModerator (
                         }
                     },
                     onHistoryClick = {
-                        navController.navigate(DashboardRoutes.Historial) {
+                        navController.navigate(DashboardRoutes.Historial(initialTab = 0)) {
                             popUpTo(navController.graph.findStartDestination().id) {
                                 saveState = true
                             }

@@ -18,6 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -27,6 +28,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import com.servicerca.app.R
 import com.servicerca.app.core.components.button.ButtonIcon
 import com.servicerca.app.core.components.button.DeleteButton
+import com.servicerca.app.core.components.button.PrimaryButton
 
 @Composable
 fun DeleteReservationScreen (
@@ -195,60 +200,87 @@ fun ConfirmActionModal(
     onConfirm: () -> Unit,
     title: String,
     textPrimary: String,
-    textSecondary: String
+    textSecondary: String,
+    description: String? = null
 ) {
-
     val sheetState = rememberModalBottomSheetState()
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
-        sheetState = sheetState
+        sheetState = sheetState,
+        containerColor = MaterialTheme.colorScheme.surface,
+        dragHandle = { BottomSheetDefaults.DragHandle() }
     ) {
-
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(24.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+                .padding(horizontal = 24.dp)
+                .padding(bottom = 40.dp, top = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
-            Image(
-                painter = painterResource(id = R.drawable.eliminar_perfil),
-                contentDescription = null,
-                modifier = Modifier.size(120.dp)
-            )
-
+            // Icono de alerta premium
             Surface(
-                color = MaterialTheme.colorScheme.errorContainer,
-                shape = RoundedCornerShape(12.dp)
+                modifier = Modifier.size(80.dp),
+                shape = CircleShape,
+                color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.15f)
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Icon(
+                        imageVector = Icons.Default.Warning,
+                        contentDescription = null,
+                        modifier = Modifier.size(40.dp),
+                        tint = MaterialTheme.colorScheme.error
+                    )
+                }
+            }
+
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
                     text = title,
+                    style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.padding(8.dp)
+                    color = MaterialTheme.colorScheme.onSurface,
+                    textAlign = TextAlign.Center
                 )
+                
+                if (description != null) {
+                    Text(
+                        text = description,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(horizontal = 12.dp)
+                    )
+                }
             }
 
+            Column(
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                PrimaryButton(
+                    text = textPrimary,
+                    onClick = onDismiss,
+                    modifier = Modifier.fillMaxWidth()
+                )
 
-            Spacer(Modifier.height(5.dp))
-
-            ButtonIcon(
-                text = textPrimary,
-                onClick = onDismiss,
-                icon = {
-                    Icon(Icons.Default.Favorite, null)
-                }
-            )
-
-            DeleteButton(
-                text = textSecondary,
-                onClick = onConfirm,
-                icon = {
-                    Icon(Icons.Default.Delete, null)
-                }
-            )
+                DeleteButton(
+                    text = textSecondary,
+                    onClick = onConfirm,
+                    modifier = Modifier.fillMaxWidth(),
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.error
+                        )
+                    }
+                )
+            }
         }
     }
 }

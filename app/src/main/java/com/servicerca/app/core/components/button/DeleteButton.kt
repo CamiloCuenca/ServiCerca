@@ -15,7 +15,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -25,14 +24,12 @@ fun DeleteButton(
     modifier: Modifier = Modifier,
     icon: @Composable (() -> Unit)? = null
 ) {
-    // Para detectar el estado presionado
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
 
     Button(
         onClick = onClick,
-        modifier = modifier
-            .fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.error),
         colors = ButtonDefaults.buttonColors(
@@ -41,7 +38,6 @@ fun DeleteButton(
         ),
         interactionSource = interactionSource
     ) {
-        // Icono opcional
         if (icon != null) {
             icon()
             Spacer(modifier = Modifier.width(8.dp))
@@ -53,3 +49,4 @@ fun DeleteButton(
         )
     }
 }
+

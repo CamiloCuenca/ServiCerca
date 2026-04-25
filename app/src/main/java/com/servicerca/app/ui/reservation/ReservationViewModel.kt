@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import com.servicerca.app.domain.repository.UserRepository
+import com.servicerca.app.domain.repository.ChatRepository
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.ZoneId
@@ -27,12 +28,14 @@ data class ReservationUiModel(
     val time: String,
     val status: com.servicerca.app.domain.model.ReservationStatus,
     val otherUserName: String, // Profesional si es "Mis Pedidos" (0), Cliente si es "Mis Trabajos" (1)
+    val otherUserId: String,
     val isIncoming: Boolean // true si es una solicitud recibida (Mis Trabajos)
 )
 @HiltViewModel
 class ReservationViewModel @Inject constructor(
     private val reservationRepository: ReservationRepository,
     private val userRepository: UserRepository,
+    private val chatRepository: ChatRepository,
     private val sessionDataStore: SessionDataStore
 ) : ViewModel() {
 
@@ -121,6 +124,7 @@ class ReservationViewModel @Inject constructor(
                         time = reservation.time,
                         status = reservation.status,
                         otherUserName = otherUser?.let { "${it.name1} ${it.lastname1}" } ?: "Usuario Desconocido",
+                        otherUserId = otherUserId,
                         isIncoming = tab == 1
                     )
                 }
@@ -149,5 +153,17 @@ class ReservationViewModel @Inject constructor(
 
     fun onDateSelected(date: LocalDate) {
         _selectedDate.value = date
+    }
+
+    fun onContactUser(targetUserId: String, onNavigate: (String) -> Unit) {
+        viewModelScope.launch {
+            val userToContact = userRepository.findById(targetUserId) ?: return@launch
+            val chatId = chatRepository.getOrCreateChat(
+                userId = userToContact.id,
+                userName = "${userToContact.name1} ${userToContact.lastname1}",
+                userImage = userToContact.profilePictureUrl
+            )
+            onNavigate(chatId)
+        }
     }
 }

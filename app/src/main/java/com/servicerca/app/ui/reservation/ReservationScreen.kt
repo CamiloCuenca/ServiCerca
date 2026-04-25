@@ -41,6 +41,7 @@ fun ReservationScreen(
     modifier: Modifier = Modifier,
     viewModel: ReservationViewModel = hiltViewModel(),
     onResevationDetails: (String) -> Unit = {},
+    onNavigateToChat: (String) -> Unit = {},
     onQrScanner: () -> Unit = {}
 ) {
     val reservations by viewModel.reservations.collectAsStateWithLifecycle()
@@ -135,7 +136,10 @@ fun ReservationScreen(
             items(reservations) { reservation ->
                 ReservationItem(
                     reservation = reservation,
-                    onDetailClick = { onResevationDetails(reservation.id) }
+                    onDetailClick = { onResevationDetails(reservation.id) },
+                    onChatClick = {
+                        viewModel.onContactUser(reservation.otherUserId, onNavigateToChat)
+                    }
                 )
             }
         }

@@ -171,6 +171,7 @@ fun ListServiceScreen(
                 selectedServiceId = null
             },
             title = "¿Eliminar servicio?",
+            description = "Esta acción eliminará permanentemente el servicio y todas sus estadísticas.",
             textPrimary = "Cancelar",
             textSecondary = "Eliminar servicio"
         )
