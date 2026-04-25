@@ -31,7 +31,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -70,17 +70,17 @@ fun DetailServiceScreen(
         viewModel.loadService(serviceId)
     }
 
-    val service by viewModel.service.collectAsState()
-    val provider = viewModel.provider.collectAsState().value
-    val comments by viewModel.comments.collectAsState()
-    val averageRating by viewModel.averageRating.collectAsState()
-    val providerLevel by viewModel.providerLevel.collectAsState()
-    val providerAverageRating by viewModel.providerAverageRating.collectAsState()
-    val providerCommentCount by viewModel.providerCommentCount.collectAsState()
-    val isLiked by viewModel.isLiked.collectAsState()
-    val isBookmarked by viewModel.isBookmarked.collectAsState()
-    val likeCount by viewModel.likeCount.collectAsState()
-    val canReview by viewModel.canReview.collectAsState()
+    val service by viewModel.service.collectAsStateWithLifecycle()
+    val provider = viewModel.provider.collectAsStateWithLifecycle().value
+    val comments by viewModel.comments.collectAsStateWithLifecycle()
+    val averageRating by viewModel.averageRating.collectAsStateWithLifecycle()
+    val providerLevel by viewModel.providerLevel.collectAsStateWithLifecycle()
+    val providerAverageRating by viewModel.providerAverageRating.collectAsStateWithLifecycle()
+    val providerCommentCount by viewModel.providerCommentCount.collectAsStateWithLifecycle()
+    val isLiked by viewModel.isLiked.collectAsStateWithLifecycle()
+    val isBookmarked by viewModel.isBookmarked.collectAsStateWithLifecycle()
+    val likeCount by viewModel.likeCount.collectAsStateWithLifecycle()
+    val canReview by viewModel.canReview.collectAsStateWithLifecycle()
 
     var reviewText by remember { mutableStateOf("") }
     var selectedRating by remember { mutableIntStateOf(5) }

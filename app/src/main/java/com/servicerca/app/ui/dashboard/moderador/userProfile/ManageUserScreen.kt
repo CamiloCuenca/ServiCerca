@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,8 +30,8 @@ fun ManageUserScreen(
     viewModel: ManageUserViewModel = hiltViewModel(),
     onSeeProfile: (String) -> Unit = {}
 ) {
-    val users by viewModel.users.collectAsState()
-    val searchQuery by viewModel.searchQuery.collectAsState()
+    val users by viewModel.users.collectAsStateWithLifecycle()
+    val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier

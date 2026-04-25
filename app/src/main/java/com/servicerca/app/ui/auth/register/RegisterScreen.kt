@@ -31,7 +31,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -71,7 +71,7 @@ fun RegisterScreen(
 
     val opciones = listOf("Hogar", "Tecnología", "Mecánica", "Salud", "Belleza")
     val snackbarHostState = remember { SnackbarHostState() }
-    val registerResult by viewModel.registerResult.collectAsState()
+    val registerResult by viewModel.registerResult.collectAsStateWithLifecycle()
 
 
     // Efecto para mostrar el snackbar cuando hay resultado

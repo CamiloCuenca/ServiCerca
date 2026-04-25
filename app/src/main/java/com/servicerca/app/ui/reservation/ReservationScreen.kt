@@ -16,7 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -44,10 +44,10 @@ fun ReservationScreen(
     onResevationDetails: (String) -> Unit = {},
     onQrScanner: () -> Unit = {}
 ) {
-    val reservations by viewModel.reservations.collectAsState()
-    val selectedTab by viewModel.selectedTab.collectAsState()
-    val selectedDate by viewModel.selectedDate.collectAsState()
-    val markedDates by viewModel.markedDates.collectAsState()
+    val reservations by viewModel.reservations.collectAsStateWithLifecycle()
+    val selectedTab by viewModel.selectedTab.collectAsStateWithLifecycle()
+    val selectedDate by viewModel.selectedDate.collectAsStateWithLifecycle()
+    val markedDates by viewModel.markedDates.collectAsStateWithLifecycle()
 
     // Formatear la fecha seleccionada para el título
     val dateTitle = remember(selectedDate) {

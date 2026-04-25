@@ -21,6 +21,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.servicerca.app.R
 import com.servicerca.app.core.components.button.OutlineButton
 import com.servicerca.app.core.components.button.PrimaryButton
@@ -41,7 +42,7 @@ fun LoginScreen(
 ) {
     val scrollState = rememberScrollState()
     val snackBarHostState = remember { SnackbarHostState() }
-    val loginResult by viewModel.loginResult.collectAsState()
+    val loginResult by viewModel.loginResult.collectAsStateWithLifecycle()
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 

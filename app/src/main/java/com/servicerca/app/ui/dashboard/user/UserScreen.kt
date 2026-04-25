@@ -20,6 +20,7 @@ import com.servicerca.app.core.navigation.DashboardRoutes
 import com.servicerca.app.core.navigation.MainRoutes
 import com.servicerca.app.core.navigation.UserNavigation
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.servicerca.app.ui.notifications.NotificationViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -95,7 +96,7 @@ fun UserScreen(
 
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val unreadCount by viewModel.unreadCount.collectAsState()
+    val unreadCount by viewModel.unreadCount.collectAsStateWithLifecycle()
     val notificationCount = unreadCount
 
 

@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -50,7 +50,7 @@ fun AppNavigation(
     sessionViewModel: SessionViewModel = hiltViewModel()
 ) {
     // Observa el estado de la sesión desde el ViewModel
-    val sessionState by sessionViewModel.sessionState.collectAsState()
+    val sessionState by sessionViewModel.sessionState.collectAsStateWithLifecycle()
     // Estado local para forzar la navegación inmediatamente después del login,
     // mientras DataStore/SessionViewModel actualizan su flujo.
     var forcedSession by remember { mutableStateOf<UserSession?>(null) }

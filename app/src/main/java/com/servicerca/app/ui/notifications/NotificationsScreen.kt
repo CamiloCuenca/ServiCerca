@@ -46,7 +46,7 @@ import com.servicerca.app.R
 import com.servicerca.app.core.components.notifications.ContainerNotifications
 import com.servicerca.app.domain.model.NotificationType
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -56,7 +56,7 @@ fun NotificationsScreen (
     onNotificationClick: (NotificationType, String) -> Unit = { _, _ -> },
     viewModel: NotificationViewModel = hiltViewModel()
 ){
-    val notifications by viewModel.notifications.collectAsState()
+    val notifications by viewModel.notifications.collectAsStateWithLifecycle()
     Scaffold(
         modifier = Modifier.fillMaxSize()
     ) { paddingValues ->
@@ -112,7 +112,6 @@ fun NotificationsScreen (
                         }
                     }
                 }
-                HorizontalDivider(thickness = 2.dp, color = MaterialTheme.colorScheme.outline)
             }
 
             notifications.forEach { notification ->

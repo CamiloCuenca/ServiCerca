@@ -14,7 +14,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.SearchOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalInspectionMode
@@ -51,12 +51,12 @@ fun SearchScreen(
         viewModel ?: hiltViewModel<SearchViewModel>()
     }
 
-    val query = actualViewModel?.query?.collectAsState()?.value.orEmpty()
-    val searchResults = actualViewModel?.searchResults?.collectAsState()?.value.orEmpty()
-    val recentSearches = actualViewModel?.recentSearches?.collectAsState()?.value.orEmpty()
-    val selectedCategory = actualViewModel?.selectedCategory?.collectAsState()?.value
-    val categoryResults = actualViewModel?.categoryResults?.collectAsState()?.value.orEmpty()
-    val selectedFilter = actualViewModel?.selectedFilter?.collectAsState()?.value ?: SearchFilter.ALL
+    val query = actualViewModel?.query?.collectAsStateWithLifecycle()?.value.orEmpty()
+    val searchResults = actualViewModel?.searchResults?.collectAsStateWithLifecycle()?.value.orEmpty()
+    val recentSearches = actualViewModel?.recentSearches?.collectAsStateWithLifecycle()?.value.orEmpty()
+    val selectedCategory = actualViewModel?.selectedCategory?.collectAsStateWithLifecycle()?.value
+    val categoryResults = actualViewModel?.categoryResults?.collectAsStateWithLifecycle()?.value.orEmpty()
+    val selectedFilter = actualViewModel?.selectedFilter?.collectAsStateWithLifecycle()?.value ?: SearchFilter.ALL
 
     Column(
         modifier = modifier

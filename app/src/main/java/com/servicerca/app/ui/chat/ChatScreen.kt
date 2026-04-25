@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,7 +35,7 @@ fun ChatScreen(
     onBack: () -> Unit = {}
 ){
 
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val listState = rememberLazyListState()
 
     // Scroll to the bottom whenever a new message is added
@@ -77,7 +77,10 @@ fun ChatScreen(
             item {
                 androidx.compose.foundation.layout.Spacer(modifier = Modifier.height(16.dp))
             }
-            items(uiState.messages) { message ->
+            items(
+                items = uiState.messages,
+                key = { message -> message.hashCode() } // Using hashCode as a unique key for the message content
+            ) { message ->
                 MessageBubble(
                     message = message.message,
                     time = message.time,
