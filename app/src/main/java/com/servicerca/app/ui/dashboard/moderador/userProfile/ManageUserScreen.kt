@@ -96,6 +96,7 @@ fun ManageUserScreen(
                     name = "${user.name1} ${user.lastname1}",
                     email = user.email,
                     imageProfile = user.profilePictureUrl,
+                    isSuspended = user.isSuspended,
                     onSeeProfile = { onSeeProfile(user.id) },
                     onSuspendProfile = { viewModel.suspendUser(user.id) },
                     onDeleteProfile = { viewModel.deleteUser(user.id) }

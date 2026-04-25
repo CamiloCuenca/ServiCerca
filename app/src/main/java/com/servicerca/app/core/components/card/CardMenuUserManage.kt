@@ -5,10 +5,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.LockOpen
 import androidx.compose.material.icons.filled.RemoveRedEye
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -19,17 +21,20 @@ import com.servicerca.app.core.components.card.menu.MenuOptionUserManage
 
 @Composable
 fun CardMenuUserManage (
+    isSuspended: Boolean = false,
     onSeeProfile: () -> Unit = {},
     onSuspendProfile: () -> Unit = {},
     onDeleteProfile: () -> Unit = {}
 ){
 
     ElevatedCard(
-        modifier = Modifier
-            .fillMaxWidth(1f),
+        modifier = Modifier.fillMaxWidth(1f),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(4.dp),
-
+        colors = CardDefaults.elevatedCardColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.onSurface
+        )
     ) {
         MenuOptionUserManage(
             text = stringResource(R.string.menu_option_see_profile),
@@ -37,8 +42,8 @@ fun CardMenuUserManage (
             onClick = onSeeProfile
         )
         MenuOptionUserManage(
-            text = stringResource(R.string.menu_option_suspend_profile),
-            icon = Icons.Default.Block,
+            text = if (isSuspended) "Activar cuenta" else stringResource(R.string.menu_option_suspend_profile),
+            icon = if (isSuspended) Icons.Default.LockOpen else Icons.Default.Block,
             onClick = onSuspendProfile
         )
         HorizontalDivider()

@@ -40,7 +40,13 @@ fun MenuOptionUserManage(
 
         Card(
             shape = RoundedCornerShape(12.dp),
-            modifier = Modifier.size(40.dp)
+            modifier = Modifier.size(40.dp),
+            colors = androidx.compose.material3.CardDefaults.cardColors(
+                containerColor = if (text.contains("Eliminar"))
+                    MaterialTheme.colorScheme.errorContainer
+                else
+                    MaterialTheme.colorScheme.primaryContainer
+            )
         ) {
             Box(
                 modifier = Modifier.fillMaxSize(),
