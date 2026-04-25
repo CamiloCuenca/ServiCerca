@@ -43,7 +43,7 @@ import com.servicerca.app.R
 import com.servicerca.app.core.components.button.ButtonIconDecline
 
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
@@ -53,7 +53,7 @@ fun RejectReasonScreen(
     onRejectSuccess: () -> Unit = {},
     viewModel: RejectReasonViewModel = hiltViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(serviceId) {
         serviceId?.let { viewModel.loadService(it) }

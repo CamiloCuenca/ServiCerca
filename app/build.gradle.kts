@@ -23,7 +23,8 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -71,6 +72,7 @@ dependencies {
     implementation("com.airbnb.android:lottie-compose:6.7.1")
     implementation("com.kizitonwose.calendar:compose:2.6.0")
     implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.maps.android)
     implementation(libs.maps.compose)
     implementation("com.google.zxing:core:3.5.4")

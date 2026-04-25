@@ -39,7 +39,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -74,7 +74,7 @@ fun CreateServiceScreen(
     onServiceCreated: () -> Unit = {},
     viewModel: CreateServiceViewModel = hiltViewModel(),
 ) {
-    val createResult by viewModel.createResult.collectAsState()
+    val createResult by viewModel.createResult.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     var isError by remember { mutableStateOf(false) }
     var expanded by remember { mutableStateOf(false) }
@@ -166,7 +166,7 @@ fun CreateServiceScreen(
 
                 Spacer(modifier = Modifier.height(2.dp))
 
-                val images by viewModel.images.collectAsState()
+                val images by viewModel.images.collectAsStateWithLifecycle()
 
                 // Launcher para pickear imágenes desde el almacenamiento
                 val context = LocalContext.current

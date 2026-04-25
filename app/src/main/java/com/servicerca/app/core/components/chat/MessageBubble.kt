@@ -51,7 +51,7 @@ fun MessageBubble(
                 model = imageProfile,
                 contentDescription = null,
                 modifier = Modifier
-                    .size(32.dp)
+                    .size(36.dp)
                     .clip(CircleShape)
                     .align(Alignment.Bottom),
                 contentScale = ContentScale.Crop,
@@ -59,36 +59,43 @@ fun MessageBubble(
                 error = painterResource(R.drawable.primo_de_juan_camilo)
             )
 
-            Spacer(Modifier.width(6.dp))
+            Spacer(Modifier.width(8.dp))
         }
 
         Column(
             horizontalAlignment = if (isMine) Alignment.End else Alignment.Start
         ) {
+            val bubbleShape = if (isMine) {
+                RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp, bottomStart = 20.dp, bottomEnd = 4.dp)
+            } else {
+                RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp, bottomStart = 4.dp, bottomEnd = 20.dp)
+            }
 
             Box(
                 modifier = Modifier
                     .background(
                         color = if (isMine) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
-                        shape = RoundedCornerShape(16.dp)
+                        shape = bubbleShape
                     )
-                    .padding(12.dp)
-                    .widthIn(max = 260.dp)
+                    .padding(horizontal = 16.dp, vertical = 12.dp)
+                    .widthIn(max = 280.dp)
             ) {
                 Text(
                     text = message,
                     color = if (isMine) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
-                    fontWeight = if (isMine) FontWeight.SemiBold else FontWeight.Normal,
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Normal,
+                    lineHeight = 22.sp
                 )
             }
 
-            Spacer(Modifier.height(2.dp))
+            Spacer(Modifier.height(4.dp))
 
             Text(
                 text = time,
-                fontSize = 12.sp,
-                color = if (isMine && !isRead) MaterialTheme.colorScheme.primary else Color.Gray,
-                modifier = Modifier.padding(horizontal = 8.dp)
+                style = MaterialTheme.typography.labelSmall,
+                color = if (isMine && !isRead) MaterialTheme.colorScheme.primary.copy(alpha = 0.8f) else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                modifier = Modifier.padding(horizontal = 4.dp)
             )
         }
     }

@@ -156,6 +156,10 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
         return Result.success(!alreadyInList)
     }
 
+    override fun findByEmail(email: String): User? {
+        return users.value.firstOrNull { it.email.equals(email, ignoreCase = true) }
+    }
+
     private fun fetchUsers(): List<User> {
 
 
@@ -213,7 +217,7 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
                 profilePictureUrl = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEga-7mA9kd7EnROYLMEYwURS2xlW1uWK8eWC8F6X3RFuCrJQLnd5eJ8KNOqXeVNuUVM0c4X31Uoz7NlQKJ4QxFfF6EDWAwgT6y1F_HgZ23As74U0wOHy14ClTNC9kP5KJHgPouBaogO5IpYsvxGmDCYlJ9do4tNb9eb6fYBMMSIG3zEcAN-7y2lIrvTwOyb/s320/WhatsApp%20Image%202026-03-04%20at%2023.04.58.jpeg",
                 completedServices = 7,
                 totalPoints = 1000,
-                rating = 4.9,
+                rating = 0.0,
                 memberSince = 2024,
                 pendingReviews = 8,
                 approvedReviews = 4,

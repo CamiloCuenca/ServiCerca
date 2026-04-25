@@ -37,7 +37,7 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,6 +47,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -68,9 +69,10 @@ import java.time.format.DateTimeFormatter
 fun MakeReservation(
     serviceId: String,
     viewModel: MakeReservationViewModel = hiltViewModel(),
-    onBack: () -> Unit = {}
+    onBack: () -> Unit = {},
+    onReservationSuccess: () -> Unit = onBack
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(serviceId) {
         viewModel.loadServiceDetails(serviceId)
@@ -82,12 +84,23 @@ fun MakeReservation(
     // Manejar éxito de la reserva
     LaunchedEffect(uiState.isSuccess) {
         if (uiState.isSuccess) {
+            launch {
+                snackbarHostState.showSnackbar(
+                    message = reservationRequestedSuccess,
+                    withDismissAction = true
+                )
+            }
+            delay(1500)
+            onReservationSuccess()
+        }
+    }
+
+    LaunchedEffect(uiState.error) {
+        uiState.error?.let {
             snackbarHostState.showSnackbar(
-                message = reservationRequestedSuccess,
+                message = it,
                 withDismissAction = true
             )
-            delay(1500)
-            onBack()
         }
     }
 
@@ -237,7 +250,7 @@ fun MakeReservation(
                                     message = message
                                 )
                             },
-                            enabled = uiState.service != null && !uiState.isLoading
+                            enabled = uiState.service != null && !uiState.isLoading && !uiState.isSuccess
                         ) {
                             Text(stringResource(R.string.confirm_reservation_button))
                             Spacer(modifier = Modifier.width(8.dp))

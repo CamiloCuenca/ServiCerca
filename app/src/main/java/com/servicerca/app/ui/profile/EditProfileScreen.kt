@@ -35,7 +35,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -73,11 +73,11 @@ fun EditProfileScreen(
     onSaveSuccess: () -> Unit = {},
     viewModel: EditProfileViewModel = hiltViewModel()
 ) {
-    val saveResult by viewModel.saveResult.collectAsState()
-    val isLoading by viewModel.isLoading.collectAsState()
-    val profilePictureUrl by viewModel.profilePictureUrl.collectAsState()
-    val email by viewModel.email.collectAsState()
-    val role by viewModel.role.collectAsState()
+    val saveResult by viewModel.saveResult.collectAsStateWithLifecycle()
+    val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
+    val profilePictureUrl by viewModel.profilePictureUrl.collectAsStateWithLifecycle()
+    val email by viewModel.email.collectAsStateWithLifecycle()
+    val role by viewModel.role.collectAsStateWithLifecycle()
     var showSuccessDialog by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -174,8 +174,6 @@ fun EditProfileScreen(
                             modifier = Modifier.align(Alignment.Center)
                         )
                     }
-
-                    HorizontalDivider(thickness = 2.dp, color = MaterialTheme.colorScheme.outline)
 
                     // ── Avatar ──
                     Column(

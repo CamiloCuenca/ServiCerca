@@ -107,10 +107,10 @@ fun CalendarCard(
                                 Box(
                                     modifier = Modifier
                                         .padding(top = 2.dp)
-                                        .height(4.dp)
+                                        .height(6.dp)
                                         .aspectRatio(1f)
                                         .background(
-                                            MaterialTheme.colorScheme.primary,
+                                            MaterialTheme.colorScheme.error,
                                             shape = CircleShape
                                         )
                                 )

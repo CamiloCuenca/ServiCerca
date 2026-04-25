@@ -45,7 +45,7 @@ import com.servicerca.app.core.components.button.ButtonIcon
 import com.servicerca.app.core.components.button.ButtonIconDecline
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import coil3.compose.AsyncImage
 import com.servicerca.app.domain.model.ServiceStatus
@@ -60,7 +60,7 @@ fun DetailsVerificationModeratorScreen(
     onApproveSuccess: () -> Unit = {},
     viewModel: DetailsVerificationViewModel = hiltViewModel()
 ){
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val service = uiState.service
 
     LaunchedEffect(serviceId) {

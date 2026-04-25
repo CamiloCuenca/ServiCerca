@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,6 +40,9 @@ import androidx.navigation.toRoute
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.servicerca.app.ui.auth.register.RegisterViewModel
 import com.servicerca.app.ui.reservation.MakeReservation
+import com.servicerca.app.ui.chat.ChatScreen
+import com.servicerca.app.ui.qr.ProviderVerificationScreen
+import com.servicerca.app.ui.qr.ServiceVerificationScreen
 
 
 @Composable
@@ -47,7 +50,7 @@ fun AppNavigation(
     sessionViewModel: SessionViewModel = hiltViewModel()
 ) {
     // Observa el estado de la sesión desde el ViewModel
-    val sessionState by sessionViewModel.sessionState.collectAsState()
+    val sessionState by sessionViewModel.sessionState.collectAsStateWithLifecycle()
     // Estado local para forzar la navegación inmediatamente después del login,
     // mientras DataStore/SessionViewModel actualizan su flujo.
     var forcedSession by remember { mutableStateOf<UserSession?>(null) }
@@ -307,11 +310,33 @@ private fun MainNavigation(
                 onBackClick = {
                     navController.popBackStack()
                 },
-                onQr = {
-                    // Si se requiere QR desde aquí, asegurar que la ruta exista o manejarla
-                    navController.navigate(MainRoutes.QrService)
+                onQr = { id, isProvider ->
+                    if (isProvider) {
+                        navController.navigate(MainRoutes.QrScanner)
+                    } else {
+                        navController.navigate(MainRoutes.QrService(id))
+                    }
+                },
+                onNavigateToChat = { chatId ->
+                    navController.navigate(MainRoutes.Chat(chatId))
                 }
             )
+        }
+
+        composable<MainRoutes.Chat> {
+            ChatScreen(onBack = { navController.popBackStack() })
+        }
+
+        composable<MainRoutes.QrService> { backStackEntry ->
+            val route = backStackEntry.toRoute<MainRoutes.QrService>()
+            ServiceVerificationScreen(
+                reservationId = route.reservationId,
+                onBackClick = { navController.popBackStack() }
+            )
+        }
+
+        composable<MainRoutes.QrScanner> {
+            ProviderVerificationScreen(onBackClick = { navController.popBackStack() })
         }
 
         composable<MainRoutes.Map>{
@@ -338,6 +363,13 @@ private fun MainNavigation(
                 serviceId = route.serviceId,
                 onBack = {
                     navController.popBackStack()
+                },
+                onReservationSuccess = {
+                    if (session.role == UserRole.ADMIN || session.role == UserRole.MODERATOR) {
+                        navController.popBackStack(DashboardRoutes.HomeModerator, inclusive = false)
+                    } else {
+                        navController.popBackStack(DashboardRoutes.HomeUser, inclusive = false)
+                    }
                 }
             )
         }

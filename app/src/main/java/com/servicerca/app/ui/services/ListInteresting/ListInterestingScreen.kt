@@ -15,7 +15,7 @@ package com.servicerca.app.ui.services.ListInteresting
         import androidx.compose.material3.MaterialTheme
         import androidx.compose.material3.Text
         import androidx.compose.runtime.Composable
-        import androidx.compose.runtime.collectAsState
+        import androidx.lifecycle.compose.collectAsStateWithLifecycle
         import androidx.compose.runtime.getValue
         import androidx.compose.runtime.mutableStateOf
         import androidx.compose.runtime.remember
@@ -44,7 +44,7 @@ package com.servicerca.app.ui.services.ListInteresting
                 emptyList()
             } else {
                 val actualViewModel = viewModel ?: hiltViewModel<ListInterestingViewModel>()
-                val state by actualViewModel.interestingServices.collectAsState()
+                val state by actualViewModel.interestingServices.collectAsStateWithLifecycle()
                 state
             }
 

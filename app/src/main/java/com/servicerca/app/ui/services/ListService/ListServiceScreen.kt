@@ -20,7 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.platform.LocalInspectionMode
 import com.servicerca.app.R
 import com.servicerca.app.core.components.card.MyServiceCard
@@ -33,6 +33,7 @@ import com.servicerca.app.ui.theme.ServiCercaTheme
 fun ListServiceScreen(
     onBackClick: () -> Unit = {},
     onEditService: (String) -> Unit = {},
+    onServiceClick: (String) -> Unit = {},
     viewModel: ListServiceViewModel? = null
 ) {
 
@@ -45,7 +46,7 @@ fun ListServiceScreen(
     val services: List<MyServiceItem> = if (!isInPreview) {
         // Use the provided ViewModel or obtain one via Hilt
         val actualViewModel = viewModel ?: hiltViewModel<ListServiceViewModel>()
-        val servicesDomain by actualViewModel.services.collectAsState()
+        val servicesDomain by actualViewModel.services.collectAsStateWithLifecycle()
         
         val filteredServices = servicesDomain.filter { s ->
             when (selectedTab) {
@@ -143,7 +144,7 @@ fun ListServiceScreen(
                 MyServiceCard(
                     service = service,
                     onEdit = { onEditService(service.id) },
-
+                    onClick = { onServiceClick(service.id) },
                     onDelete = {
                         selectedServiceId = service.id
                         showDeleteModal = true

@@ -90,6 +90,23 @@ class MakeReservationViewModel @Inject constructor(
                 val currentUserId = session?.userId ?: "unknown_user"
                 
                 val reservationDate = Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())
+
+                // Validar que no haya una reserva activa (PENDING o CONFIRMED) para el mismo servicio en la misma fecha
+                val userReservations = reservationRepository.getReservationsByUser(currentUserId).first()
+                val hasActiveReservation = userReservations.any {
+                    it.serviceId == serviceId &&
+                    (it.status == ReservationStatus.PENDING || it.status == ReservationStatus.CONFIRMED) &&
+                    it.date.time == reservationDate.time
+                }
+
+                if (hasActiveReservation) {
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        error = "Ya tienes una reserva activa para este servicio en esta fecha. Selecciona otra fecha u otro servicio."
+                    )
+                    return@launch
+                }
+
                 val reservation = Reservation(
                     id = UUID.randomUUID().toString(),
                     serviceId = serviceId,

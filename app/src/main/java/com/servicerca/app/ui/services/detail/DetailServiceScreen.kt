@@ -31,7 +31,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -70,14 +70,17 @@ fun DetailServiceScreen(
         viewModel.loadService(serviceId)
     }
 
-    val service by viewModel.service.collectAsState()
-    val provider = viewModel.provider.collectAsState().value
-    val comments by viewModel.comments.collectAsState()
-    val averageRating by viewModel.averageRating.collectAsState()
-    val providerLevel by viewModel.providerLevel.collectAsState()
-    val isLiked by viewModel.isLiked.collectAsState()
-    val isBookmarked by viewModel.isBookmarked.collectAsState()
-    val likeCount by viewModel.likeCount.collectAsState()
+    val service by viewModel.service.collectAsStateWithLifecycle()
+    val provider = viewModel.provider.collectAsStateWithLifecycle().value
+    val comments by viewModel.comments.collectAsStateWithLifecycle()
+    val averageRating by viewModel.averageRating.collectAsStateWithLifecycle()
+    val providerLevel by viewModel.providerLevel.collectAsStateWithLifecycle()
+    val providerAverageRating by viewModel.providerAverageRating.collectAsStateWithLifecycle()
+    val providerCommentCount by viewModel.providerCommentCount.collectAsStateWithLifecycle()
+    val isLiked by viewModel.isLiked.collectAsStateWithLifecycle()
+    val isBookmarked by viewModel.isBookmarked.collectAsStateWithLifecycle()
+    val likeCount by viewModel.likeCount.collectAsStateWithLifecycle()
+    val canReview by viewModel.canReview.collectAsStateWithLifecycle()
 
     var reviewText by remember { mutableStateOf("") }
     var selectedRating by remember { mutableIntStateOf(5) }
@@ -233,8 +236,8 @@ fun DetailServiceScreen(
                         name = if (provider != null) "${provider.name1} ${provider.lastname1}" else "Cargando...",
                         avatarUrl = provider?.profilePictureUrl,
                         level = providerLevel,
-                        rating = averageRating.takeIf { it > 0f } ?: 0f,
-                        reviewCount = comments.size,
+                        rating = providerAverageRating,
+                        reviewCount = providerCommentCount,
                         onClick = {}
                     )
 
@@ -309,58 +312,60 @@ fun DetailServiceScreen(
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(12.dp))
+                    if (canReview) {
+                        Spacer(modifier = Modifier.height(12.dp))
 
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 8.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = "Selecciona tu califiación",
-                            fontSize = 12.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            fontWeight = FontWeight.Medium
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 8.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            repeat(5) { index ->
-                                val ratingValue = index + 1
-                                val isSelected = ratingValue <= selectedRating
-                                IconButton(
-                                    onClick = { selectedRating = ratingValue },
-                                    modifier = Modifier.size(32.dp)
-                                ) {
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.ic_star),
-                                        contentDescription = "Calificar $ratingValue estrellas",
-                                        tint = if (isSelected) Color(0xFFFFD700) else Color(0xFFE0E0E0),
-                                        modifier = Modifier.size(28.dp)
-                                    )
+                            Text(
+                                text = "Selecciona tu califiación",
+                                fontSize = 12.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                fontWeight = FontWeight.Medium
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                repeat(5) { index ->
+                                    val ratingValue = index + 1
+                                    val isSelected = ratingValue <= selectedRating
+                                    IconButton(
+                                        onClick = { selectedRating = ratingValue },
+                                        modifier = Modifier.size(32.dp)
+                                    ) {
+                                        Icon(
+                                            painter = painterResource(id = R.drawable.ic_star),
+                                            contentDescription = "Calificar $ratingValue estrellas",
+                                            tint = if (isSelected) Color(0xFFFFD700) else Color(0xFFE0E0E0),
+                                            modifier = Modifier.size(28.dp)
+                                        )
+                                    }
                                 }
                             }
                         }
-                    }
 
-                    ReviewInputField(
-                        value = reviewText,
-                        onValueChange = { reviewText = it },
-                        onSend = {
-                            if (reviewText.isNotBlank()) {
-                                viewModel.addComment(
-                                    rating = selectedRating,
-                                    text = reviewText
-                                )
-                                reviewText = ""
-                                selectedRating = 5
-                            }
-                        },
-                        modifier = Modifier.padding(horizontal = 16.dp)
-                    )
+                        ReviewInputField(
+                            value = reviewText,
+                            onValueChange = { reviewText = it },
+                            onSend = {
+                                if (reviewText.isNotBlank()) {
+                                    viewModel.addComment(
+                                        rating = selectedRating,
+                                        text = reviewText
+                                    )
+                                    reviewText = ""
+                                    selectedRating = 5
+                                }
+                            },
+                            modifier = Modifier.padding(horizontal = 16.dp)
+                        )
+                    }
 
                     Spacer(modifier = Modifier.height(16.dp))
                 }

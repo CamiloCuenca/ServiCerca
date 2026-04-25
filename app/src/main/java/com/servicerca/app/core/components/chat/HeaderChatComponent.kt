@@ -1,7 +1,7 @@
 package com.servicerca.app.core.components.chat
 
-import androidx.annotation.DrawableRes
-import androidx.compose.foundation.Image
+import androidx.compose.ui.layout.ContentScale
+import coil3.compose.AsyncImage
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -31,89 +31,66 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.servicerca.app.R
 
+import androidx.compose.material3.Surface
+import androidx.compose.foundation.clickable
+
 @Composable
 fun HeaderChatComponent(
-    @DrawableRes imageProfile : Int,
-    nameProfile : String = "",
-    onlineStatus : Boolean = false,
-    onBack : () -> Unit = {}
+    imageProfile: Any,
+    nameProfile: String = "",
+    onlineStatus: Boolean = false,
+    onBack: () -> Unit = {}
 ) {
-
-    Column (
-        modifier = Modifier
-            .fillMaxWidth()
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        color = MaterialTheme.colorScheme.surface,
+        shadowElevation = 4.dp
     ) {
-
-    Row {
-        IconButton(
-            onClick = { onBack() },
+        Row(
             modifier = Modifier
-                .align(Alignment.CenterVertically)
+                .fillMaxWidth()
+                .padding(horizontal = 4.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = stringResource(R.string.chat_back_content_description)
-            )
-        }
+            IconButton(onClick = { onBack() }) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = stringResource(R.string.chat_back_content_description),
+                    tint = MaterialTheme.colorScheme.onSurface
+                )
+            }
 
-        Image(
-            painter = painterResource(id = imageProfile),
-            contentDescription = "Foto de perfil",
-            modifier = Modifier
-                .size(40.dp)
-                .clip(CircleShape)
-                .align(Alignment.CenterVertically)
-        )
-
-        Column(
-            modifier = Modifier
-                .align(Alignment.CenterVertically)
-                .padding(start = 8.dp)
-        ) {
-            Text(
-                text = nameProfile,
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                text = if (onlineStatus) stringResource(R.string.chat_online_status) else stringResource(R.string.chat_offline_status),
-                style = MaterialTheme.typography.bodySmall,
-                color = if (onlineStatus) MaterialTheme.colorScheme.primary else Color.Gray
-            )
-        }
-
-        Spacer(modifier = Modifier.weight(1f))
-
-            IconButton(
-                onClick = { onBack() },
+            AsyncImage(
+                model = imageProfile,
+                contentDescription = "Foto de perfil",
                 modifier = Modifier
-                    .size(32.dp)
-                    .align(Alignment.CenterVertically)
+                    .size(44.dp)
+                    .clip(CircleShape),
+                contentScale = ContentScale.Crop,
+                placeholder = painterResource(R.drawable.primo_de_juan_camilo),
+                error = painterResource(R.drawable.primo_de_juan_camilo)
+            )
 
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 12.dp)
             ) {
-                Icon(
-                    imageVector = Icons.Default.Phone,
-                    contentDescription = null
+                Text(
+                    text = nameProfile,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = if (onlineStatus) stringResource(R.string.chat_online_status) else stringResource(R.string.chat_offline_status),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = if (onlineStatus) MaterialTheme.colorScheme.primary else Color.Gray,
+                    fontWeight = if (onlineStatus) FontWeight.SemiBold else FontWeight.Normal
                 )
             }
 
-            IconButton(
-                onClick = { onBack() },
-                modifier = Modifier
-                    .size(32.dp)
-                    .align(Alignment.CenterVertically)
-
-                ) {
-                Icon(
-                    imageVector = Icons.Default.MoreVert,
-                    contentDescription = null
-                )
-            }
         }
-
-        Spacer(modifier = Modifier.height(6.dp))
-        HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outline)
-
     }
 }
 

@@ -1,7 +1,9 @@
 package com.servicerca.app.domain.model
 
     import java.time.Year
+    import androidx.compose.runtime.Immutable
 
+    @Immutable
     data class User(
         val id: String,
         val name1: String,

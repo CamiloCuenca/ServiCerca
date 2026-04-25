@@ -14,7 +14,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,7 +39,7 @@ fun HomeUserScreen(
 
     var query by remember { mutableStateOf("") }
     var selectedCategory by remember { mutableStateOf<Categories?>(null) }
-    val services by viewModel.services.collectAsState() // Observamos la lista
+    val services by viewModel.services.collectAsStateWithLifecycle() // Observamos la lista
     val filteredServices = remember(services, selectedCategory) {
         selectedCategory?.let { category ->
             services.filter {

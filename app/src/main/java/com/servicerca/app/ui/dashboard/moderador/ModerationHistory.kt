@@ -26,15 +26,15 @@ import com.servicerca.app.core.components.card.CardModerationHistory
 import com.servicerca.app.core.components.navigation.TabItemApp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 
 @Composable
 fun ModerationHistory (viewModel: ModerationHistoryViewModel = hiltViewModel()){
-    val selectedTab by viewModel.selectedTab.collectAsState()
+    val selectedTab by viewModel.selectedTab.collectAsStateWithLifecycle()
 
-    val historyItems by viewModel.filteredHistory.collectAsState()
+    val historyItems by viewModel.filteredHistory.collectAsStateWithLifecycle()
 
 
     LazyColumn(

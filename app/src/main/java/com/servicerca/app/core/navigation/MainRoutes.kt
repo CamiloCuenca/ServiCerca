@@ -47,7 +47,7 @@ sealed class MainRoutes {
     data object ServiceList : MainRoutes()
 
     @Serializable
-    data object QrService : MainRoutes()
+    data class QrService(val reservationId: String) : MainRoutes()
 
     @Serializable
     data object QrScanner : MainRoutes()
@@ -56,6 +56,9 @@ sealed class MainRoutes {
 
     @Serializable
     data object Insignias : MainRoutes()
+
+    @Serializable
+    data class Chat(val chatId: String) : MainRoutes()
 
     @Serializable
     data class ServiceDetail(val serviceId: String) : MainRoutes()

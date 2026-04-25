@@ -20,7 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -55,8 +55,8 @@ fun ProfileModerator (
     onUpdatePassword: () -> Unit,
     viewModel: ProfileViewModel = hiltViewModel()
 ){
-    val uiState by viewModel.uiState.collectAsState()
-    val selectedLanguageTag by viewModel.selectedLanguageTag.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val selectedLanguageTag by viewModel.selectedLanguageTag.collectAsStateWithLifecycle()
     var showConfirmDialog by remember { mutableStateOf(false) }
     var showLanguageDialog by remember { mutableStateOf(false) }
 

@@ -1,7 +1,9 @@
 package com.servicerca.app.domain.model
 
 import java.util.Date
+import androidx.compose.runtime.Immutable
 
+@Immutable
 data class Reservation(
     val id: String,
     val serviceId: String,

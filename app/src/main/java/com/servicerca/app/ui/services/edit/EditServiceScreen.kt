@@ -39,7 +39,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -80,8 +80,8 @@ fun EditServiceScreen(
     viewModel: EditServiceViewModel = hiltViewModel(),
     listViewModel: ListServiceViewModel = hiltViewModel()
 ) {
-    val saveResult by viewModel.saveResult.collectAsState()
-    val deleteResult by viewModel.deleteResult.collectAsState()
+    val saveResult by viewModel.saveResult.collectAsStateWithLifecycle()
+    val deleteResult by viewModel.deleteResult.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     var isError by remember { mutableStateOf(false) }
     var expanded by remember { mutableStateOf(false) }
@@ -89,7 +89,7 @@ fun EditServiceScreen(
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
-    val services by listViewModel.services.collectAsState()
+    val services by listViewModel.services.collectAsStateWithLifecycle()
     
     LaunchedEffect(serviceId, services) {
         services.find { it.id == serviceId }?.let { service ->
@@ -226,7 +226,7 @@ fun EditServiceScreen(
                 modifier = Modifier.padding(horizontal = 8.dp)
             )
 
-            val images by viewModel.images.collectAsState()
+            val images by viewModel.images.collectAsStateWithLifecycle()
             val context = LocalContext.current
             val launcher = rememberLauncherForActivityResult(
                 contract = ActivityResultContracts.GetContent(),

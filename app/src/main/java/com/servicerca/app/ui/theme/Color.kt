@@ -19,13 +19,13 @@ val TextPrimaryDark = Color(0xFFF8FDFF)   // texto claro sobre fondos oscuros
 val ErrorDark = Color(0xFFBA1A1A)         // mantengo el mismo rojo para alertas
 
 // Helpers on* colors
-val OnPrimaryLight = TextPrimaryLight
+val OnPrimaryLight = Color(0xFFFFFFFF)
 val OnSecondaryLight = Color(0xFFFFFFFF)
 val OnBackgroundLight = TextPrimaryLight
 val OnSurfaceLight = TextPrimaryLight
 val OnError = Color(0xFFFFFFFF)
 
-val OnPrimaryDark = Color(0xFF001F1F)
+val OnPrimaryDark = Color(0xFFFFFFFF)
 val OnSecondaryDark = Color(0xFFFFFFFF)
 val OnBackgroundDark = TextPrimaryDark
 val OnSurfaceDark = TextPrimaryDark
