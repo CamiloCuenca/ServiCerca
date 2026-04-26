@@ -15,6 +15,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.servicerca.app.ui.dashboard.moderador.DetailsVerificationModeratorScreen
+import com.servicerca.app.ui.dashboard.moderador.RejectReasonScreen
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -297,6 +299,9 @@ private fun MainNavigation(
                         NotificationType.SERVICE -> {
                             navController.navigate(MainRoutes.ServiceDetail(id))
                         }
+                        NotificationType.MODERATION -> {
+                            navController.navigate(MainRoutes.ModeratorServiceDetail(id))
+                        }
                         else -> { /* No-op for System */ }
                     }
                 }
@@ -370,6 +375,29 @@ private fun MainNavigation(
                     } else {
                         navController.popBackStack(DashboardRoutes.HomeUser, inclusive = false)
                     }
+                }
+            )
+        }
+
+        composable<MainRoutes.ModeratorServiceDetail> { backStackEntry ->
+            val route = backStackEntry.toRoute<MainRoutes.ModeratorServiceDetail>()
+            DetailsVerificationModeratorScreen(
+                serviceId = route.serviceId,
+                onBack = { navController.popBackStack() },
+                onRejectClick = { navController.navigate(MainRoutes.RejectReason(route.serviceId)) },
+                onApproveSuccess = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable<MainRoutes.RejectReason> { backStackEntry ->
+            val route = backStackEntry.toRoute<MainRoutes.RejectReason>()
+            RejectReasonScreen(
+                serviceId = route.serviceId,
+                onBack = { navController.popBackStack() },
+                onRejectSuccess = {
+                    navController.popBackStack()
                 }
             )
         }

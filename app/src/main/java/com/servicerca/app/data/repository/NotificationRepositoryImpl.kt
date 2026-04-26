@@ -92,13 +92,15 @@ class NotificationRepositoryImpl @Inject constructor() : NotificationRepository 
             ),
             Notification(
                 id = "6",
-                userId = "1",
-                title = "Nueva publicación",
-                message = "¡Tu publicación \"Mantenimiento de PC\" ya está disponible!",
-                date = "10 oct",
-                imageRes = R.drawable.nueva_publicacion,
-                isRead = true
-            )
+                userId = "MODERATOR_ROLE",
+                title = "Revisión Pendiente",
+                message = "El servicio \"Reparación de Techos\" requiere validación.",
+                date = "2 h",
+                imageRes = R.drawable.nueva_solicitud_servicio,
+                isRead = false,
+                notificationType = com.servicerca.app.domain.model.NotificationType.MODERATION,
+                targetId = "1"
+            ),
         )
     }
 }

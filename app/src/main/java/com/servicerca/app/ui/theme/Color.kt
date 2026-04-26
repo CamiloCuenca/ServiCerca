@@ -13,13 +13,13 @@ val OnErrorLight = Color(0xFFFFFFFF)
 val ErrorContainerLight = Color(0xFFFFDAD6)
 val OnErrorContainerLight = Color(0xFF410002)
 
-// Contrapartes pensadas para modo oscuro
-val PrimaryDark = Color(0xFF4DD9C5)       // Cian brillante pero suave sobre fondos oscuros
-val SecondaryDark = Color(0xFF80CBC4)     // Teal claro para buen contraste
-val SurfaceDark = Color(0xFF1E2A2A)       // Verde-teal muy oscuro (no gris plano)
-val BackgroundDark = Color(0xFF121A1A)    // Fondo casi negro con tinte teal
-val TextPrimaryDark = Color(0xFFE8F5F4)   // Blanco suavizado con tinte teal
-val ErrorDark = Color(0xFFFFB4AB)         // Rojo más claro para mejor contraste en oscuro
+// Contrapartes pensadas para modo oscuro (Azules Profundos - Sapphire & Midnight)
+val PrimaryDark = Color(0xFF5C9DFF)       // Azul Zafiro brillante pero suave
+val SecondaryDark = Color(0xFF2E5A9D)     // Azul Medianoche
+val SurfaceDark = Color(0xFF161B26)       // Azul Pizarra profundo
+val BackgroundDark = Color(0xFF0A0D14)    // Negro con tinte azul medianoche
+val TextPrimaryDark = Color(0xFFE6E9EF)   // Blanco azulado suave
+val ErrorDark = Color(0xFFFFB4AB)         // Rojo material estándar dark
 val OnErrorDark = Color(0xFF690005)
 val ErrorContainerDark = Color(0xFF93000A)
 val OnErrorContainerDark = Color(0xFFFFDAD6)
@@ -31,8 +31,8 @@ val OnBackgroundLight = TextPrimaryLight
 val OnSurfaceLight = TextPrimaryLight
 
 // Helpers on* colors (Dark)
-val OnPrimaryDark = Color(0xFF00251F)     // Oscuro sobre primario brillante
-val OnSecondaryDark = Color(0xFF003733)   // Oscuro sobre secundario claro
+val OnPrimaryDark = Color(0xFFFFFFFF)
+val OnSecondaryDark = Color(0xFFFFFFFF)
 val OnBackgroundDark = TextPrimaryDark
 val OnSurfaceDark = TextPrimaryDark
 

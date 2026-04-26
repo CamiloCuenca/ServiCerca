@@ -1,5 +1,6 @@
 package com.servicerca.app.ui.services.create
 
+
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -9,8 +10,11 @@ import com.servicerca.app.core.utils.RequestResult
 import com.servicerca.app.core.utils.ValidatedField
 import com.servicerca.app.data.datastore.SessionDataStore
 import com.servicerca.app.domain.model.Location
-import com.servicerca.app.domain.model.Service
 import com.servicerca.app.domain.model.ServiceStatus
+import com.servicerca.app.domain.model.Notification
+import com.servicerca.app.domain.model.NotificationType
+import com.servicerca.app.domain.model.Service
+import com.servicerca.app.domain.repository.NotificationRepository
 import com.servicerca.app.domain.repository.ServiceRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -26,6 +30,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CreateServiceViewModel @Inject constructor(
     private val serviceRepository: ServiceRepository,
+    private val notificationRepository: NotificationRepository,
     private val sessionDataStore: SessionDataStore,
     @param:ApplicationContext private val context: Context
 ) : ViewModel() {
@@ -194,6 +199,19 @@ class CreateServiceViewModel @Inject constructor(
 
                 // Guardar en repositorio
                 serviceRepository.save(service)
+
+                // Notificar a los moderadores
+                val notification = Notification(
+                    id = UUID.randomUUID().toString(),
+                    userId = "MODERATOR_ROLE", // O un ID específico si fuera necesario
+                    title = context.getString(R.string.notification_moderation_title),
+                    message = context.getString(R.string.notification_moderation_message, title.value),
+                    date = "Ahora",
+                    imageRes = R.drawable.nueva_solicitud_servicio, // Usar un icono apropiado
+                    notificationType = NotificationType.MODERATION,
+                    targetId = id
+                )
+                notificationRepository.addNotification(notification)
 
                 _createResult.value = RequestResult.Success(context.getString(R.string.service_published_success))
                 // Limpiar formulario
