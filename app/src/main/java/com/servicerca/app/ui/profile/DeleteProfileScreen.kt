@@ -79,16 +79,25 @@ fun DeleteProfileScreen (
     if (uiState.showConfirmationDialog) {
         AlertDialog(
             onDismissRequest = { viewModel.onDismissConfirmationDialog() },
+            containerColor = MaterialTheme.colorScheme.surface,
+            titleContentColor = MaterialTheme.colorScheme.onSurface,
+            textContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
             title = { Text(text = stringResource(R.string.delete_account_confirmation_title)) },
             text = { Text(text = stringResource(R.string.question_confirm_delete_profile)) },
             confirmButton = {
                 TextButton(onClick = { viewModel.onConfirmDelete() }) {
-                    Text(text = stringResource(R.string.delete_button))
+                    Text(
+                        text = stringResource(R.string.delete_button),
+                        color = MaterialTheme.colorScheme.error
+                    )
                 }
             },
             dismissButton = {
                 TextButton(onClick = { viewModel.onDismissConfirmationDialog() }) {
-                    Text(text = stringResource(R.string.delete_account_cancel_button))
+                    Text(
+                        text = stringResource(R.string.delete_account_cancel_button),
+                        color = MaterialTheme.colorScheme.primary
+                    )
                 }
             }
         )
@@ -98,6 +107,9 @@ fun DeleteProfileScreen (
     if (uiState.showReAuthDialog) {
         AlertDialog(
             onDismissRequest = { viewModel.onDismissReAuthDialog() },
+            containerColor = MaterialTheme.colorScheme.surface,
+            titleContentColor = MaterialTheme.colorScheme.onSurface,
+            textContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
             title = { Text(text = stringResource(R.string.delete_account_password_label)) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -127,13 +139,19 @@ fun DeleteProfileScreen (
                     if (uiState.isLoading) {
                         CircularProgressIndicator(modifier = Modifier.size(24.dp))
                     } else {
-                        Text(text = stringResource(R.string.delete_account_confirm_button))
+                        Text(
+                            text = stringResource(R.string.delete_account_confirm_button),
+                            color = MaterialTheme.colorScheme.error
+                        )
                     }
                 }
             },
             dismissButton = {
                 TextButton(onClick = { viewModel.onDismissReAuthDialog() }) {
-                    Text(text = stringResource(R.string.delete_account_cancel_button))
+                    Text(
+                        text = stringResource(R.string.delete_account_cancel_button),
+                        color = MaterialTheme.colorScheme.primary
+                    )
                 }
             }
         )

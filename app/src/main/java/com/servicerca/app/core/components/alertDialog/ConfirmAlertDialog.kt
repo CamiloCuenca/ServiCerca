@@ -17,9 +17,9 @@ fun ConfirmAlertDialog(
         title = { Text(text = "¿Está seguro que quieres cerrar sesión?") },
         text = { Text(text = "Está a punto de cerrar sesión.") },
         onDismissRequest = { onShowExitDialogChange(false) },
-        containerColor = MaterialTheme.colorScheme.background, // color de fondo del dialogo
-        titleContentColor = MaterialTheme.colorScheme.onBackground, // color del titulo
-        textContentColor = MaterialTheme.colorScheme.onSurface, // color del texto
+        containerColor = MaterialTheme.colorScheme.surface, // color de fondo del dialogo
+        titleContentColor = MaterialTheme.colorScheme.onSurface, // color del titulo
+        textContentColor = MaterialTheme.colorScheme.onSurfaceVariant, // color del texto
         confirmButton = {
             TextButton(
                 onClick = {

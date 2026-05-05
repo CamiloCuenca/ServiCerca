@@ -525,4 +525,6 @@
     <string name="qr_reservation_not_found_message">No se encontró la reserva asociada al QR.</string>
     <string name="qr_not_your_reservations_message">Este QR no corresponde a tus reservas.</string>
     <string name="service_completed_reservation_closed_message">El servicio fue completado exitosamente. La reserva ha sido cerrada.</string>
+    <string name="notification_moderation_title">Nueva revisión pendiente</string>
+    <string name="notification_moderation_message">Se ha publicado el servicio \"%1$s\". Requiere tu aprobación.</string>
 </resources>

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.servicerca.app.data.datastore.SessionDataStore
 import com.servicerca.app.domain.model.Notification
+import com.servicerca.app.domain.model.UserRole
 import com.servicerca.app.domain.repository.NotificationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.StateFlow
@@ -25,7 +26,11 @@ class NotificationViewModel @Inject constructor(
         sessionDataStore.sessionFlow
     ) { notifications, session ->
         val currentUserId = session?.userId
-        notifications.filter { it.userId == currentUserId }
+        val isModerator = session?.role == UserRole.MODERATOR || session?.role == UserRole.ADMIN
+        
+        notifications.filter { 
+            it.userId == currentUserId || (isModerator && it.userId == "MODERATOR_ROLE")
+        }
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),

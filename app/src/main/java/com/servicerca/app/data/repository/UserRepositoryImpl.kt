@@ -181,6 +181,7 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
                 memberSince = 2024,
                 isEmailVerified = true,
                 approvedReviews = 6,
+                role = UserRole.ADMIN,
                 listInteresting = listOf("1", "6")
             ),
 

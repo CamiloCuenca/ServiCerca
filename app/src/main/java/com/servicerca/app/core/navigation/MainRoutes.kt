@@ -63,4 +63,10 @@ sealed class MainRoutes {
     @Serializable
     data class ServiceDetail(val serviceId: String) : MainRoutes()
 
+    @Serializable
+    data class ModeratorServiceDetail(val serviceId: String) : MainRoutes()
+
+    @Serializable
+    data class RejectReason(val serviceId: String) : MainRoutes()
+
 }
