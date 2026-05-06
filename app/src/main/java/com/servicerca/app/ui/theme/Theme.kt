@@ -8,6 +8,8 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.graphics.Color
 
@@ -58,6 +60,8 @@ private val LightColorScheme = lightColorScheme(
     onErrorContainer = OnErrorContainerLight
 )
 
+val LocalAppIsDark = compositionLocalOf { false }
+
 @Composable
 fun ServiCercaTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -75,11 +79,13 @@ fun ServiCercaTheme(
         else -> LightColorScheme
     }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
-    )
+    CompositionLocalProvider(LocalAppIsDark provides darkTheme) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = Typography,
+            content = content
+        )
+    }
 }
 
 /**

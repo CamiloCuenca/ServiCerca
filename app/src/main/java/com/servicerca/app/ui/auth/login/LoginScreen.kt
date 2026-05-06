@@ -2,7 +2,9 @@ package com.servicerca.app.ui.auth.login
 
 import android.util.Log
 import androidx.compose.foundation.Image
+import com.servicerca.app.ui.theme.LocalAppIsDark
 import androidx.compose.foundation.clickable
+import com.servicerca.app.ui.theme.LocalAppIsDark
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -115,10 +117,11 @@ fun LoginScreen(
 
                 Spacer(modifier = Modifier.height(48.dp))
 
+                val logoRes = if (LocalAppIsDark.current) R.drawable.logo_oscuro else R.drawable.logo_servicerca
                 Image(
-                    painter = painterResource(id = R.drawable.logo_servicerca),
+                    painter = painterResource(id = logoRes),
                     contentDescription = null,
-                    modifier = Modifier.size(72.dp)
+                    modifier = Modifier.size(90.dp)
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))

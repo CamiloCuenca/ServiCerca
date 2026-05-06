@@ -21,6 +21,9 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.filled.Check
+import com.servicerca.app.data.datastore.AppThemeMode
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -73,8 +76,10 @@ fun ProfileScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val selectedLanguageTag by viewModel.selectedLanguageTag.collectAsStateWithLifecycle()
+    val selectedThemeMode by viewModel.selectedThemeMode.collectAsStateWithLifecycle()
     var showConfirmDialog by remember { mutableStateOf(false) }
     var showLanguageDialog by remember { mutableStateOf(false) }
+    var showThemeDialog by remember { mutableStateOf(false) }
     var selectedInsignia by remember { mutableStateOf<InsigniaUiModel?>(null) }
 
     when (val state = uiState) {
@@ -184,7 +189,8 @@ fun ProfileScreen(
                     onEdit = onEditProflie,
                     onUpdatePass = onUpdatePassword,
                     onDelete = onDeleteProfile,
-                    onChangeLanguage = { showLanguageDialog = true }
+                    onChangeLanguage = { showLanguageDialog = true },
+                    onChangeTheme = { showThemeDialog = true }
                 )
             }
         }
@@ -214,6 +220,17 @@ fun ProfileScreen(
             onLanguageSelected = { tag ->
                 viewModel.setLanguage(tag)
                 showLanguageDialog = false
+            }
+        )
+    }
+
+    if (showThemeDialog) {
+        ThemePickerDialog(
+            selectedThemeMode = selectedThemeMode,
+            onDismiss = { showThemeDialog = false },
+            onThemeSelected = { mode ->
+                viewModel.setThemeMode(mode)
+                showThemeDialog = false
             }
         )
     }
@@ -339,9 +356,15 @@ fun AccountSettingsSection(
     onEdit: () -> Unit,
     onUpdatePass: () -> Unit,
     onDelete: () -> Unit,
-    onChangeLanguage: () -> Unit
+    onChangeLanguage: () -> Unit,
+    onChangeTheme: () -> Unit
 ) {
     Column(modifier = Modifier.fillMaxWidth().padding(bottom = 20.dp), verticalArrangement = Arrangement.spacedBy(15.dp)) {
+        ButtonIcon(
+            text = "Cambiar Tema / Apariencia",
+            onClick = onChangeTheme,
+            icon = { Icon(Icons.Default.Palette, null) }
+        )
         ButtonIcon(
             text = stringResource(R.string.language_button),
             onClick = onChangeLanguage,
@@ -365,5 +388,86 @@ fun ProfileScreenPreview() {
         onListInteresting = {},
         onLogout = {}
     )
+}
 
+@Composable
+fun ThemePickerDialog(
+    selectedThemeMode: AppThemeMode,
+    onDismiss: () -> Unit,
+    onThemeSelected: (AppThemeMode) -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        containerColor = MaterialTheme.colorScheme.surface,
+        titleContentColor = MaterialTheme.colorScheme.onSurface,
+        textContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        title = { 
+            Text(
+                text = "Seleccionar Tema", 
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold
+            ) 
+        },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                ThemeOptionItem("Por defecto del Sistema", AppThemeMode.SYSTEM_DEFAULT, selectedThemeMode, onThemeSelected)
+                ThemeOptionItem("Modo Claro", AppThemeMode.LIGHT, selectedThemeMode, onThemeSelected)
+                ThemeOptionItem("Modo Oscuro", AppThemeMode.DARK, selectedThemeMode, onThemeSelected)
+            }
+        },
+        confirmButton = {},
+        dismissButton = {
+            TextButton(
+                onClick = onDismiss,
+                colors = androidx.compose.material3.ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.primary)
+            ) {
+                Text(
+                    text = stringResource(android.R.string.cancel),
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
+    )
+}
+
+@Composable
+fun ThemeOptionItem(
+    label: String,
+    mode: AppThemeMode,
+    selectedMode: AppThemeMode,
+    onSelect: (AppThemeMode) -> Unit
+) {
+    val isSelected = mode == selectedMode
+    val containerColor = if (isSelected) MaterialTheme.colorScheme.primary.copy(alpha = 0.15f) else Color.Transparent
+    val contentColor = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+
+    TextButton(
+        onClick = { onSelect(mode) },
+        modifier = Modifier.fillMaxWidth(),
+        colors = androidx.compose.material3.ButtonDefaults.textButtonColors(
+            containerColor = containerColor,
+            contentColor = contentColor
+        ),
+        shape = MaterialTheme.shapes.medium
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp, vertical = 4.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = label,
+                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+            )
+            if (isSelected) {
+                Icon(
+                    imageVector = androidx.compose.material.icons.Icons.Default.Check,
+                    contentDescription = "Selected",
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+        }
+    }
 }

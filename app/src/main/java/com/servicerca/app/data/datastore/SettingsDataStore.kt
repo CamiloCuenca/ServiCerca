@@ -13,6 +13,10 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
+enum class AppThemeMode {
+    SYSTEM_DEFAULT, LIGHT, DARK
+}
+
 private val Context.settingsDataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
 @Singleton
@@ -21,6 +25,7 @@ class SettingsDataStore @Inject constructor(
 ) {
     private object Keys {
         val LANGUAGE_TAG = stringPreferencesKey("language_tag")
+        val THEME_MODE = stringPreferencesKey("theme_mode")
     }
 
     val languageTagFlow: Flow<String> = context.settingsDataStore.data.map { prefs ->
@@ -35,6 +40,25 @@ class SettingsDataStore @Inject constructor(
 
     suspend fun getLanguageTag(): String {
         return languageTagFlow.firstOrNull() ?: SYSTEM_LANGUAGE_TAG
+    }
+
+    val themeModeFlow: Flow<AppThemeMode> = context.settingsDataStore.data.map { prefs ->
+        val themeStr = prefs[Keys.THEME_MODE]
+        if (themeStr != null) {
+            try {
+                AppThemeMode.valueOf(themeStr)
+            } catch (e: Exception) {
+                AppThemeMode.SYSTEM_DEFAULT
+            }
+        } else {
+            AppThemeMode.SYSTEM_DEFAULT
+        }
+    }
+
+    suspend fun saveThemeMode(mode: AppThemeMode) {
+        context.settingsDataStore.edit { prefs ->
+            prefs[Keys.THEME_MODE] = mode.name
+        }
     }
 
     companion object {

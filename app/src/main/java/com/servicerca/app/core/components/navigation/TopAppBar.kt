@@ -1,6 +1,7 @@
 package com.servicerca.app.core.components.navigation
 
 import androidx.compose.foundation.Image
+import com.servicerca.app.ui.theme.LocalAppIsDark
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -42,10 +43,11 @@ fun AppTopAppBar(
             )
         },
         navigationIcon = {
+            val logoRes = if (LocalAppIsDark.current) R.drawable.logo_oscuro else R.drawable.logo_servicerca
             Image(
-                painter = painterResource(id = R.drawable.logo_servicerca),
+                painter = painterResource(id = logoRes),
                 contentDescription = stringResource(R.string.topbar_logo_content_description),
-                modifier = Modifier.size(40.dp)
+                modifier = Modifier.size(70.dp)
             )
         },
 
@@ -104,10 +106,11 @@ fun AppTopAppBarModerator(
             )
         },
         navigationIcon = {
+            val logoRes = if (LocalAppIsDark.current) R.drawable.logo_oscuro else R.drawable.logo_servicerca
             Image(
-                painter = painterResource(id = R.drawable.logo_servicerca),
+                painter = painterResource(id = logoRes),
                 contentDescription = stringResource(R.string.topbar_logo_content_description),
-                modifier = Modifier.size(40.dp)
+                modifier = Modifier.size(70.dp)
             )
         },
 
