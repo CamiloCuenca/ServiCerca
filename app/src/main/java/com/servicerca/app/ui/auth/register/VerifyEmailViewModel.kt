@@ -17,32 +17,22 @@ class VerifyEmailViewModel @Inject constructor(
     private val userRepository: UserRepository
 ) : ViewModel() {
 
-
-    // ── Estado del código OTP ingresado ──────────────────────────────────────
     private val _otpCode = MutableStateFlow("")
     val otpCode: StateFlow<String> = _otpCode.asStateFlow()
 
-    // ── Estado de carga ──────────────────────────────────────────────────────
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
-    // ── Resultado de la verificación ─────────────────────────────────────────
     private val _verifyResult = MutableStateFlow<RequestResult?>(null)
     val verifyResult: StateFlow<RequestResult?> = _verifyResult.asStateFlow()
 
-    // ── Resultado del reenvío ────────────────────────────────────────────────
     private val _resendResult = MutableStateFlow<RequestResult?>(null)
     val resendResult: StateFlow<RequestResult?> = _resendResult.asStateFlow()
 
-    /** Actualiza el código OTP mientras el usuario escribe. */
     fun onOtpChanged(code: String) {
         _otpCode.value = code
     }
 
-    /**
-     * Simula la verificación del código OTP.
-     * En una implementación real aquí iría la llamada al repositorio / Firebase.
-     */
     fun verifyEmail(email: String) {
         if (_otpCode.value.length < 6) {
             _verifyResult.value = RequestResult.Failure("Ingresa el código completo de 6 dígitos")
@@ -56,9 +46,10 @@ class VerifyEmailViewModel @Inject constructor(
                 if (result.isSuccess) {
                     _verifyResult.value = RequestResult.Success("¡Cuenta activada! Redirigiendo al inicio de sesión…")
                 } else {
-                    _verifyResult.value = RequestResult.Failure(result.exceptionOrNull()?.message ?: "Error al verificar")
+                    _verifyResult.value = RequestResult.Failure(
+                        result.exceptionOrNull()?.message ?: "Error al verificar"
+                    )
                 }
-
             } catch (e: Exception) {
                 _verifyResult.value = RequestResult.Failure("Error al verificar: ${e.message}")
             } finally {
@@ -67,16 +58,20 @@ class VerifyEmailViewModel @Inject constructor(
         }
     }
 
-    /**
-     * Simula el reenvío del correo de verificación.
-     * En una implementación real aquí iría `firebaseUser.sendEmailVerification()`.
-     */
-    fun resendEmail() {
+    fun resendEmail(email: String) {
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                // TODO: llamar al repositorio cuando se implemente la lógica real
-                _resendResult.value = RequestResult.Success("Correo reenviado exitosamente")
+                val result = userRepository.resendVerificationEmail(email)
+                if (result.isSuccess) {
+                    _resendResult.value = RequestResult.Success(
+                        "Código reenviado. Revisa tu correo (o Logcat en desarrollo)."
+                    )
+                } else {
+                    _resendResult.value = RequestResult.Failure(
+                        result.exceptionOrNull()?.message ?: "Error al reenviar"
+                    )
+                }
             } catch (e: Exception) {
                 _resendResult.value = RequestResult.Failure("Error al reenviar: ${e.message}")
             } finally {

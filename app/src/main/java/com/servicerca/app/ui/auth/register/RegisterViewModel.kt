@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -142,7 +141,7 @@ class RegisterViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val newUser = User(
-                    id = UUID.randomUUID().toString(),
+                    id = "",
                     name1 = name.value,
                     name2 = SecondName.value,
                     lastname1 = Lastname.value,
@@ -155,7 +154,8 @@ class RegisterViewModel @Inject constructor(
                     profilePictureUrl = "https://cdn-icons-png.flaticon.com/512/149/149071.png", // Avatar por defecto
                 )
 
-                if (userRepository.findByEmail(email.value.trim()) != null) {
+                val existingUser = userRepository.findByEmail(email.value.trim())
+                if (existingUser != null) {
                     _RegisterResult.value = RequestResult.Failure("El correo electrónico ya está registrado")
                     return@launch
                 }

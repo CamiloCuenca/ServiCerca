@@ -195,7 +195,7 @@ fun VerifyEmailScreen(
                     color = MaterialTheme.colorScheme.primary,
                     textDecoration = TextDecoration.Underline,
                     style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.clickable { viewModel.resendEmail() }
+                    modifier = Modifier.clickable { viewModel.resendEmail(email) }
                 )
             }
         }
