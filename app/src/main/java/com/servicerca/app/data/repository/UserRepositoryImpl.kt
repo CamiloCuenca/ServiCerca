@@ -71,8 +71,8 @@ constructor(
 
                 generateAndStoreOtp(uid, user.email)
 
-                // Sign out immediately — user must verify email before logging in
-                auth.signOut()
+                // Mantenemos la sesión activa para que verifyEmail() pueda leer Firestore.
+                // El signOut se hace dentro de verifyEmail() al confirmar el OTP.
 
                 Log.d("UserRepository", "Usuario creado: $uid")
             } else if (user.id.isNotEmpty()) {
@@ -111,17 +111,11 @@ constructor(
     }
 
     override suspend fun verifyEmail(email: String, otpCode: String): Result<Boolean> {
-        val trimmedEmail = email.trim()
         return try {
-            val querySnapshot = usersCollection
-                .whereEqualTo("email", trimmedEmail)
-                .get()
-                .await()
-
-            val userDoc = querySnapshot.documents.firstOrNull()
-                ?: return Result.failure(Exception("Usuario no encontrado"))
-
-            val userId = userDoc.id
+            // Usamos el UID del usuario autenticado directamente — evita una query a la colección
+            // que Firestore rechazaría por reglas de seguridad (PERMISSION_DENIED).
+            val userId = auth.currentUser?.uid
+                ?: return Result.failure(Exception("Sesión expirada. Vuelve a registrarte."))
 
             val otpRef = verificationCodesCollection.document(userId)
             val otpDoc = otpRef.get().await()
@@ -156,10 +150,10 @@ constructor(
 
             // Código correcto: marcar usuario verificado y limpiar OTP
             usersCollection.document(userId).update("isEmailVerified", true).await()
-
-            // Opcional: actualizar FirebaseAuth emailVerified mediante Cloud Function (recomendado)
-
             otpRef.delete().await()
+
+            // Cerrar sesión para que el usuario haga login explícito
+            auth.signOut()
 
             Result.success(true)
         } catch (e: Exception) {
@@ -168,20 +162,14 @@ constructor(
     }
 
     override suspend fun resendVerificationEmail(email: String): Result<Unit> {
-        val trimmedEmail = email.trim()
         return try {
-            val querySnapshot = usersCollection
-                .whereEqualTo("email", trimmedEmail)
-                .get()
-                .await()
+            val userId = auth.currentUser?.uid
+                ?: return Result.failure(Exception("Sesión expirada. Vuelve a registrarte."))
 
-            val userDoc = querySnapshot.documents.firstOrNull()
-                ?: return Result.failure(Exception("Usuario no encontrado"))
-
-            val otpRef = verificationCodesCollection.document(userDoc.id)
+            val otpRef = verificationCodesCollection.document(userId)
             val otpDoc = otpRef.get().await()
 
-            val MIN_RESEND_INTERVAL_MS = 60_000L // 1 minuto
+            val MIN_RESEND_INTERVAL_MS = 60_000L
             if (otpDoc.exists()) {
                 val lastSent = otpDoc.getTimestamp("lastSentAt")?.toDate()?.time ?: 0L
                 if (System.currentTimeMillis() - lastSent < MIN_RESEND_INTERVAL_MS) {
@@ -189,7 +177,7 @@ constructor(
                 }
             }
 
-            generateAndStoreOtp(userDoc.id, trimmedEmail)
+            generateAndStoreOtp(userId, email.trim())
 
             Result.success(Unit)
         } catch (e: Exception) {
