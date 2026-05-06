@@ -2,6 +2,7 @@ package com.servicerca.app.ui.auth.login
 
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.servicerca.app.core.utils.RequestResult
 import com.servicerca.app.core.utils.ValidatedField
 import com.servicerca.app.domain.model.UserRole
@@ -10,6 +11,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -70,23 +72,27 @@ class LoginViewModel @Inject constructor(
             return
         }
 
-        val user = repository.login(email.value.trim(), password.value)
+        viewModelScope.launch {
+            try {
+                val user = repository.login(email.value.trim(), password.value)
 
-        if (user != null) {
-            if (!user.isEmailVerified) {
-                _loginResult.value = RequestResult.Failure("Por favor, verifica tu correo electrónico antes de iniciar sesión.")
-            } else {
-                // Si el usuario es ADMIN navegamos al panel de moderador
-                if (user.role == UserRole.ADMIN) {
-                    _loginResult.value = RequestResult.SuccessLogin(user.id, user.role)
+                if (user != null) {
+                    if (!user.isEmailVerified) {
+                        _loginResult.value = RequestResult.Failure("Por favor, verifica tu correo electrónico antes de iniciar sesión.")
+                    } else {
+                        if (user.role == UserRole.ADMIN) {
+                            _loginResult.value = RequestResult.SuccessLogin(user.id, user.role)
+                        } else {
+                            _loginResult.value = RequestResult.SuccessLogin(user.id, user.role)
+                        }
+                    }
                 } else {
-                    _loginResult.value = RequestResult.SuccessLogin(user.id, user.role)
+                    _loginResult.value = RequestResult.Failure("Credenciales inválidas")
                 }
+            } catch (e: Exception) {
+                _loginResult.value = RequestResult.Failure("Error en el inicio de sesión: ${e.message}")
             }
-        } else {
-            _loginResult.value = RequestResult.Failure("Credenciales inválidas")
         }
-
     }
 
     /**

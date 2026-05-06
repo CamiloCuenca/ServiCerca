@@ -2,54 +2,211 @@ package com.servicerca.app.data.repository
 
 import com.servicerca.app.domain.model.User
 import android.util.Log
+import com.servicerca.app.BuildConfig
+import com.servicerca.app.core.email.JavaMailSender
 import com.servicerca.app.domain.model.UserRole
 import com.servicerca.app.domain.repository.UserRepository
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.Timestamp
 
-@Singleton // Anotamos la clase como Singleton para que Hilt gestione una única instancia
-class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamos la interfaz UserRepository
+@Singleton
+class UserRepositoryImpl @Inject
+constructor(
+    private val auth: FirebaseAuth,
+    private val firestore: FirebaseFirestore
+) : UserRepository {
 
-    // Usamos StateFlow para manejar la lista de usuarios de manera reactiva
     private val _users = MutableStateFlow<List<User>>(emptyList())
     override val users: StateFlow<List<User>> = _users.asStateFlow()
 
-    init {
-        _users.value = fetchUsers()
-    }
+    private val usersCollection = firestore.collection("users")
+    private val verificationCodesCollection = firestore.collection("emailVerificationCodes")
 
-    override fun save(user: User) {
-        val userIndex = _users.value.indexOfFirst { it.id == user.id }
-        if (userIndex != -1) {
-            val updatedList = _users.value.toMutableList()
-            updatedList[userIndex] = user
-            _users.value = updatedList
-        } else {
-            _users.value += user
+    init {
+        usersCollection.addSnapshotListener { snapshot, error ->
+            if (error != null) {
+                Log.e("UserRepository", "Error listening to users", error)
+                return@addSnapshotListener
+            }
+            if (snapshot != null) {
+                try {
+                    val usersList = snapshot.documents.mapNotNull { document ->
+                        try {
+                            document.toObject(User::class.java)
+                        } catch (e: Exception) {
+                            Log.e("UserRepository", "Error converting document to User", e)
+                            null
+                        }
+                    }
+                    _users.value = usersList
+                } catch (e: Exception) {
+                    Log.e("UserRepository", "Error processing snapshot", e)
+                }
+            }
         }
     }
 
-    override fun findById(id: String): User? {
-        return _users.value.firstOrNull { it.id == id }
+    override suspend fun save(user: User) {
+        try {
+            if (user.password.isNotEmpty() && user.id.isEmpty()) {
+                val newAuthUser = auth.createUserWithEmailAndPassword(user.email, user.password).await()
+                val uid = newAuthUser.user?.uid
+                    ?: throw Exception("Error al obtener el UID del usuario creado")
+
+                val userCopy = user.copy(
+                    id = uid,
+                    password = "",
+                    isEmailVerified = false
+                )
+
+                usersCollection.document(uid).set(userCopy).await()
+
+                generateAndStoreOtp(uid, user.email)
+
+                // Sign out immediately — user must verify email before logging in
+                auth.signOut()
+
+                Log.d("UserRepository", "Usuario creado: $uid")
+            } else if (user.id.isNotEmpty()) {
+                usersCollection.document(user.id).set(user).await()
+                Log.d("UserRepository", "Usuario actualizado: ${user.id}")
+            }
+        } catch (e: Exception) {
+            Log.e("UserRepository", "Error al guardar usuario", e)
+            throw e
+        }
     }
 
-    override fun login(email: String, password: String): User? {
-        return _users.value.firstOrNull { it.email == email && it.password == password }
+    override suspend fun findById(id: String): User? {
+        return try {
+            val document = usersCollection.document(id).get().await()
+            document.toObject(User::class.java)
+        } catch (e: Exception) {
+            Log.e("UserRepository", "Error al buscar usuario por ID", e)
+            null
+        }
+    }
+
+    override suspend fun login(email: String, password: String): User? {
+        return try {
+            val responseUser = auth.signInWithEmailAndPassword(email, password).await()
+            val uid = responseUser.user?.uid ?: throw Exception("Usuario no encontrado")
+            val user = findById(uid)
+            if (user != null && !user.isEmailVerified) {
+                auth.signOut()
+            }
+            user
+        } catch (e: Exception) {
+            Log.e("UserRepository", "Error en el inicio de sesión", e)
+            null
+        }
+    }
+
+    override suspend fun verifyEmail(email: String, otpCode: String): Result<Boolean> {
+        val trimmedEmail = email.trim()
+        return try {
+            val querySnapshot = usersCollection
+                .whereEqualTo("email", trimmedEmail)
+                .get()
+                .await()
+
+            val userDoc = querySnapshot.documents.firstOrNull()
+                ?: return Result.failure(Exception("Usuario no encontrado"))
+
+            val userId = userDoc.id
+
+            val otpRef = verificationCodesCollection.document(userId)
+            val otpDoc = otpRef.get().await()
+
+            if (!otpDoc.exists()) {
+                return Result.failure(Exception("Código expirado o no encontrado. Solicita uno nuevo."))
+            }
+
+            val storedCode = otpDoc.getString("code")
+                ?: return Result.failure(Exception("Código inválido"))
+            val expiresAt = otpDoc.getLong("expiresAt") ?: 0L
+            val attempts = (otpDoc.getLong("attempts") ?: 0L).toInt()
+            val status = otpDoc.getString("status") ?: "pending"
+
+            // Verificar estado
+            if (status == "blocked") return Result.failure(Exception("Demasiados intentos. Solicita un nuevo código."))
+            if (System.currentTimeMillis() > expiresAt) {
+                otpRef.delete().await()
+                return Result.failure(Exception("El código ha expirado. Solicita uno nuevo."))
+            }
+
+            if (storedCode != otpCode.trim()) {
+                // Incrementar intentos y bloquear si supera umbral
+                val nextAttempts = attempts + 1
+                val updates = mutableMapOf<String, Any>("attempts" to nextAttempts)
+                if (nextAttempts >= 5) {
+                    updates["status"] = "blocked"
+                }
+                otpRef.update(updates).await()
+                return Result.failure(Exception("Código incorrecto. Intentos restantes: ${maxOf(0, 5 - nextAttempts)}"))
+            }
+
+            // Código correcto: marcar usuario verificado y limpiar OTP
+            usersCollection.document(userId).update("isEmailVerified", true).await()
+
+            // Opcional: actualizar FirebaseAuth emailVerified mediante Cloud Function (recomendado)
+
+            otpRef.delete().await()
+
+            Result.success(true)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun resendVerificationEmail(email: String): Result<Unit> {
+        val trimmedEmail = email.trim()
+        return try {
+            val querySnapshot = usersCollection
+                .whereEqualTo("email", trimmedEmail)
+                .get()
+                .await()
+
+            val userDoc = querySnapshot.documents.firstOrNull()
+                ?: return Result.failure(Exception("Usuario no encontrado"))
+
+            val otpRef = verificationCodesCollection.document(userDoc.id)
+            val otpDoc = otpRef.get().await()
+
+            val MIN_RESEND_INTERVAL_MS = 60_000L // 1 minuto
+            if (otpDoc.exists()) {
+                val lastSent = otpDoc.getTimestamp("lastSentAt")?.toDate()?.time ?: 0L
+                if (System.currentTimeMillis() - lastSent < MIN_RESEND_INTERVAL_MS) {
+                    return Result.failure(Exception("Espera un momento antes de reenviar el código."))
+                }
+            }
+
+            generateAndStoreOtp(userDoc.id, trimmedEmail)
+
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Log.e("UserRepository", "Error al reenviar verificación", e)
+            Result.failure(e)
+        }
     }
 
     override suspend fun deleteAccount(userId: String): Result<Unit> {
-        Log.d("UserRepository", "Intentando eliminar usuario con ID: $userId")
         return try {
             val user = _users.value.firstOrNull { it.id == userId }
             if (user != null) {
+                usersCollection.document(userId).delete().await()
+                auth.currentUser?.delete()?.await()
                 _users.value = _users.value.filter { it.id != userId }
-                Log.d("UserRepository", "Usuario eliminado. Nueva lista size: ${_users.value.size}")
                 Result.success(Unit)
             } else {
-                Log.w("UserRepository", "No se encontró el usuario para eliminar")
                 Result.failure(Exception("Usuario no encontrado"))
             }
         } catch (e: Exception) {
@@ -59,15 +216,12 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
     }
 
     override suspend fun suspendAccount(userId: String): Result<Unit> {
-        Log.d("UserRepository", "Intentando suspender usuario con ID: $userId")
         return try {
             val userIndex = _users.value.indexOfFirst { it.id == userId }
             if (userIndex != -1) {
-                val updatedList = _users.value.toMutableList()
-                val user = updatedList[userIndex]
-                updatedList[userIndex] = user.copy(isSuspended = !user.isSuspended)
-                _users.value = updatedList
-                Log.d("UserRepository", "Estado de suspensión cambiado para el usuario $userId")
+                val user = _users.value[userIndex]
+                val updatedUser = user.copy(isSuspended = !user.isSuspended)
+                usersCollection.document(userId).set(updatedUser).await()
                 Result.success(Unit)
             } else {
                 Result.failure(Exception("Usuario no encontrado"))
@@ -77,40 +231,25 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
         }
     }
 
-    override suspend fun verifyEmail(email: String, otpCode: String): Result<Boolean> {
-        val trimmedEmail = email.trim()
-        val userIndex = _users.value.indexOfFirst { it.email == trimmedEmail }
-
-        if (userIndex != -1) {
-            val updatedList = _users.value.toMutableList()
-            val user = updatedList[userIndex]
-            updatedList[userIndex] = user.copy(isEmailVerified = true)
-            _users.value = updatedList
-            return Result.success(true)
-        }
-        return Result.failure(Exception("Usuario no encontrado"))
-    }
-
     override suspend fun initiatePasswordRecovery(email: String): Result<Unit> {
         val trimmedEmail = email.trim()
-        val user = _users.value.find { it.email == trimmedEmail }
-        return if (user != null) {
+        return try {
+            auth.sendPasswordResetEmail(trimmedEmail).await()
             Result.success(Unit)
-        } else {
+        } catch (e: Exception) {
+            Log.e("UserRepository", "Error al iniciar recuperación de contraseña", e)
             Result.failure(Exception("No existe una cuenta asociada a este correo"))
         }
     }
 
     override suspend fun resetPassword(email: String, code: String, newPassword: String): Result<Unit> {
-        val trimmedEmail = email.trim()
-        val userIndex = _users.value.indexOfFirst { it.email == trimmedEmail }
-        if (userIndex != -1) {
-            val updatedList = _users.value.toMutableList()
-            updatedList[userIndex] = updatedList[userIndex].copy(password = newPassword)
-            _users.value = updatedList
-            return Result.success(Unit)
+        return try {
+            auth.confirmPasswordReset(code, newPassword).await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Log.e("UserRepository", "Error al restablecer contraseña", e)
+            Result.failure(Exception("Error al restablecer contraseña: ${e.message}"))
         }
-        return Result.failure(Exception("Error al restablecer contraseña: Usuario no encontrado"))
     }
 
     override suspend fun updatePassword(
@@ -118,160 +257,89 @@ class UserRepositoryImpl @Inject constructor(): UserRepository { // Implementamo
         currentPassword: String,
         newPassword: String
     ): Result<Unit> {
-        val userIndex = _users.value.indexOfFirst { it.id == userId }
-        if (userIndex == -1) {
-            return Result.failure(Exception("Usuario no encontrado"))
+        return try {
+            val user = auth.currentUser ?: throw Exception("Usuario no autenticado")
+            val credential = com.google.firebase.auth.EmailAuthProvider.getCredential(
+                user.email ?: throw Exception("Email del usuario no disponible"),
+                currentPassword
+            )
+            user.reauthenticate(credential).await()
+            user.updatePassword(newPassword).await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Log.e("UserRepository", "Error al actualizar contraseña", e)
+            Result.failure(Exception("La contraseña actual es incorrecta o error en la actualización"))
         }
-
-        val user = _users.value[userIndex]
-        if (user.password != currentPassword) {
-            return Result.failure(Exception("La contraseña actual es incorrecta"))
-        }
-
-        val updatedList = _users.value.toMutableList()
-        updatedList[userIndex] = user.copy(password = newPassword)
-        _users.value = updatedList
-        return Result.success(Unit)
     }
 
     override suspend fun toggleInterestingService(userId: String, serviceId: String): Result<Boolean> {
         val userIndex = _users.value.indexOfFirst { it.id == userId }
-        if (userIndex == -1) {
-            return Result.failure(Exception("Usuario no encontrado"))
-        }
+        if (userIndex == -1) return Result.failure(Exception("Usuario no encontrado"))
 
-        val usersUpdated = _users.value.toMutableList()
-        val user = usersUpdated[userIndex]
+        val user = _users.value[userIndex]
         val alreadyInList = serviceId in user.listInteresting
-
         val nextInteresting = if (alreadyInList) {
             user.listInteresting - serviceId
         } else {
             user.listInteresting + serviceId
         }
-
-        usersUpdated[userIndex] = user.copy(listInteresting = nextInteresting)
-        _users.value = usersUpdated
-
-        return Result.success(!alreadyInList)
+        val updatedUser = user.copy(listInteresting = nextInteresting)
+        return try {
+            usersCollection.document(userId).set(updatedUser).await()
+            Result.success(!alreadyInList)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 
     override fun findByEmail(email: String): User? {
         return users.value.firstOrNull { it.email.equals(email, ignoreCase = true) }
     }
 
-    private fun fetchUsers(): List<User> {
+    private suspend fun generateAndStoreOtp(userId: String, email: String) {
+        val code = (100000..999999).random().toString()
+        val expiresAt = System.currentTimeMillis() + (24 * 60 * 60 * 1000L)
 
-
-        return listOf(
-            User(
-                id = "1",
-                name1 = "Juan",
-                name2 = "Camilo",
-                lastname1 = "Cuenca",
-                lastname2 = "Sepulveda",
-                city = "Ciudad 1",
-                address = "Calle 123",
-                email = "juanc.cuencas@uqvirtual.edu.co",
-                password = "123456",
-                profilePictureUrl = "https://m.media-amazon.com/images/I/41g6jROgo0L.png",
-                completedServices = 12,
-                totalPoints = 1250,
-                rating = 4.5,
-                memberSince = 2024,
-                isEmailVerified = true,
-                approvedReviews = 6,
-                role = UserRole.ADMIN,
-                listInteresting = listOf("1", "6")
-            ),
-
-            User(
-                id = "2",
-                name1 = "Sienna",
-                name2 = "Maria",
-                lastname1 = "Martinez",
-                lastname2 = "Toro",
-                city = "Pereira",
-                address = "Calle 456",
-                email = "maria@email.com",
-                password = "222222",
-                profilePictureUrl = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh3ixabRmfyRl92F78X1RNNDj2hhogCUofBWTVX977EHxGS4-BMcuI7Y39Y3ZjK3tJPANYHe8AiIyjv1CeEsNzjIcCaj4aQAklofVLW73gv-dqMxGJEUqYa-poX6UkJW5Z_YBAfSk9BrB8YHT5F4Rz3n7bxxMnBEVyNpi8RKfnVhBbrgEmqL5yVtC70CKU/s320/WhatsApp%20Image%202026-04-16%20at%2002.32.41.jpeg",
-                completedServices = 50,
-                totalPoints = 1650,
-                rating = 4.7,
-                memberSince = 2023,
-                isEmailVerified = true,
-                approvedReviews = 10,
-                listInteresting = listOf("3", "6")
-            ),
-
-            User(
-                id = "3",
-                name1 = "Diego",
-                name2 = "Alexander",
-                lastname1 = "Jimenez",
-                lastname2 = "Lothbrok",
-                city = "Armenia",
-                address = "Calle 777",
-                email = "diego@email.com",
-                password = "111111",
-                profilePictureUrl = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEga-7mA9kd7EnROYLMEYwURS2xlW1uWK8eWC8F6X3RFuCrJQLnd5eJ8KNOqXeVNuUVM0c4X31Uoz7NlQKJ4QxFfF6EDWAwgT6y1F_HgZ23As74U0wOHy14ClTNC9kP5KJHgPouBaogO5IpYsvxGmDCYlJ9do4tNb9eb6fYBMMSIG3zEcAN-7y2lIrvTwOyb/s320/WhatsApp%20Image%202026-03-04%20at%2023.04.58.jpeg",
-                completedServices = 7,
-                totalPoints = 1000,
-                rating = 0.0,
-                memberSince = 2024,
-                pendingReviews = 8,
-                approvedReviews = 4,
-                rejectReviews = 3,
-                isEmailVerified = true,
-                listInteresting = listOf("3", "6")
-            ),
-
-            User(
-                id = "4",
-                name1 = "Carlos",
-                name2 = "Scott",
-                lastname1 = "Toro",
-                lastname2 = "Kennedy",
-                city = "Armenia",
-                address = "Calle 789",
-                email = "carlos@email.com",
-                password = "333333",
-                profilePictureUrl = "https://i.pinimg.com/originals/ae/90/f5/ae90f5c41e36d420e8175f072367ead9.jpg",
-                role = UserRole.ADMIN,
-                memberSince = 2022,
-                pendingReviews = 12,
-                approvedReviews = 25,
-                completedServices = 55,
-                totalPoints = 4500,
-                rating = 4.85,
-                rejectReviews = 6,
-                isEmailVerified = true,
-                listInteresting = listOf("3", "6")
-            ),
-
-            User(
-                id = "5",
-                name1 = "Fede",
-                name2 = "",
-                lastname1 = "Alvarez",
-                lastname2 = "Muñoz",
-                city = "Armenia",
-                address = "Carrera 16 16 35",
-                email = "fede@email.com",
-                password = "000000",
-                profilePictureUrl = "https://i.pinimg.com/originals/86/40/3a/86403adfcbc94ba53887be6543a8f6b2.jpg",
-                completedServices = 724,
-                totalPoints = 10000,
-                rating = 4.9,
-                memberSince = 2024,
-                pendingReviews = 18,
-                approvedReviews = 15024,
-                rejectReviews = 1,
-                isEmailVerified = true
+        verificationCodesCollection.document(userId).set(
+            mapOf(
+                "code" to code,
+                "email" to email,
+                "createdAt" to FieldValue.serverTimestamp(),
+                "lastSentAt" to FieldValue.serverTimestamp(),
+                "attempts" to 0,
+                "status" to "pending",
+                "expiresAt" to expiresAt
             )
+        ).await()
 
-        )
+        // Intentar enviar correo usando JavaMail (SMTP) si las credenciales están configuradas
+        try {
+            // Evitar enviar en blanco (BuildConfig tiene valores por defecto vacíos si no se configuran)
+            if (BuildConfig.SMTP_USER.isNotBlank() && BuildConfig.SMTP_PASSWORD.isNotBlank()) {
+                val subject = "Verifica tu correo en ServiCerca — Código OTP"
+                val text = "Tu código de verificación en ServiCerca es: $code\n\nSi no creaste esta cuenta, ignora este correo."
+                val html = "<p>Hola,</p><p>Tu código de verificación en <strong>ServiCerca</strong> es:</p><h2 style=\"letter-spacing:6px\">$code</h2><p>Si no solicitaste este código, puedes ignorar este correo.</p>"
+
+                val sendResult = JavaMailSender.sendEmail(email, subject, text, html)
+                if (sendResult.isSuccess) {
+                    Log.d("UserRepository", "OTP enviado por SMTP a $email")
+                    // Marcar enviado y actualizar sentAt/lastSentAt
+                    verificationCodesCollection.document(userId).update(mapOf(
+                        "status" to "sent",
+                        "sentAt" to FieldValue.serverTimestamp(),
+                        "lastSentAt" to FieldValue.serverTimestamp()
+                    )).await()
+                } else {
+                    Log.e("UserRepository", "Fallo envío SMTP a $email: ${sendResult.exceptionOrNull()}")
+                    Log.d("OTP_DEBUG", "Código de verificación para $email: $code")
+                }
+            } else {
+                // Sin credenciales SMTP, usar Logcat como fallback (desarrollo)
+                Log.d("OTP_DEBUG", "Código de verificación para $email: $code")
+            }
+        } catch (e: Exception) {
+            Log.e("UserRepository", "Error al enviar OTP por SMTP", e)
+            Log.d("OTP_DEBUG", "Código de verificación para $email: $code")
+        }
     }
-
 }
