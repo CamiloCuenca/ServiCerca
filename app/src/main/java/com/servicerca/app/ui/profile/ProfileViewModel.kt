@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.servicerca.app.core.i18n.LanguageManager
 import com.servicerca.app.data.datastore.SessionDataStore
 import com.servicerca.app.data.datastore.SettingsDataStore
+import com.servicerca.app.data.datastore.AppThemeMode
 import com.servicerca.app.domain.model.User
 import com.servicerca.app.domain.model.ServiceStatus
 import com.servicerca.app.domain.repository.CommentRepository
@@ -46,6 +47,7 @@ class ProfileViewModel @Inject constructor(
     private val serviceRepository: ServiceRepository,
     private val commentRepository: CommentRepository,
     private val sessionDataStore: SessionDataStore,
+    private val settingsDataStore: SettingsDataStore,
     private val getEarnedInsigniasUseCase: GetEarnedInsigniasUseCase,
     private val languageManager: LanguageManager
 ) : ViewModel() {
@@ -56,8 +58,12 @@ class ProfileViewModel @Inject constructor(
     private val _selectedLanguageTag = MutableStateFlow(SettingsDataStore.SYSTEM_LANGUAGE_TAG)
     val selectedLanguageTag: StateFlow<String> = _selectedLanguageTag.asStateFlow()
 
+    private val _selectedThemeMode = MutableStateFlow(AppThemeMode.SYSTEM_DEFAULT)
+    val selectedThemeMode: StateFlow<AppThemeMode> = _selectedThemeMode.asStateFlow()
+
     init {
         observeLanguageTag()
+        observeThemeMode()
         loadUserProfile()
         observeServiceCounts()
         observeAverageRating()
@@ -67,6 +73,14 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             languageManager.selectedLanguageTag.collectLatest { tag ->
                 _selectedLanguageTag.value = tag
+            }
+        }
+    }
+
+    private fun observeThemeMode() {
+        viewModelScope.launch {
+            settingsDataStore.themeModeFlow.collectLatest { mode ->
+                _selectedThemeMode.value = mode
             }
         }
     }
@@ -245,6 +259,12 @@ class ProfileViewModel @Inject constructor(
     fun setLanguage(tag: String) {
         viewModelScope.launch {
             languageManager.setLanguage(tag)
+        }
+    }
+
+    fun setThemeMode(mode: AppThemeMode) {
+        viewModelScope.launch {
+            settingsDataStore.saveThemeMode(mode)
         }
     }
 }
