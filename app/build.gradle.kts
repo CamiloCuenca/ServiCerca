@@ -67,8 +67,13 @@ android {
     }
     packaging {
         resources {
-            excludes += "META-INF/NOTICE.md"
-            excludes += "META-INF/LICENSE.md"
+            excludes += setOf(
+                "META-INF/NOTICE.md",
+                "META-INF/NOTICE*",
+                "META-INF/LICENSE.md",
+                "META-INF/LICENSE*",
+                "META-INF/*.md"
+            )
         }
     }
 }
