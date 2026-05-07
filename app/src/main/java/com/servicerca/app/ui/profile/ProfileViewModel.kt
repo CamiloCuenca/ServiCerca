@@ -179,48 +179,46 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = ProfileUiState.Loading
             val session = sessionDataStore.sessionFlow.firstOrNull()
-            if (session != null) {
-                userRepository.users.collectLatest { allUsers ->
-                    val user = allUsers.find { it.id == session.userId }
-                    if (user != null) {
-                        val insignias = getEarnedInsigniasUseCase(user).map { it.toUiModel() }
-                        val levelInfo = calculateLevelInfo(user.totalPoints, user.rating)
-                        updateSuccessState { current ->
-                            current.copy(
-                                user = user,
-                                insignias = insignias,
-                                averageRating = user.rating,
-                                totalXp = user.totalPoints,
-                                level = levelInfo.level,
-                                xpInLevel = levelInfo.xpInLevel,
-                                xpRequiredForNextLevel = levelInfo.xpRequiredForNextLevel,
-                                levelName = levelInfo.levelName,
-                                progress = levelInfo.progress
-                            )
-                        } ?: run {
-                            // First time success
-                            val services = serviceRepository.services.value
-                            _uiState.value = ProfileUiState.Success(
-                                user = user,
-                                insignias = insignias,
-                                pendingCount = services.count { it.status == ServiceStatus.PENDING },
-                                approvedCount = services.count { it.status == ServiceStatus.APPROVED },
-                                rejectedCount = services.count { it.status == ServiceStatus.REJECTED },
-                                averageRating = user.rating,
-                                totalXp = user.totalPoints,
-                                level = levelInfo.level,
-                                xpInLevel = levelInfo.xpInLevel,
-                                xpRequiredForNextLevel = levelInfo.xpRequiredForNextLevel,
-                                levelName = levelInfo.levelName,
-                                progress = levelInfo.progress
-                            )
-                        }
-                    } else {
-                        _uiState.value = ProfileUiState.Error("Usuario no encontrado")
-                    }
-                }
-            } else {
+            if (session == null) {
                 _uiState.value = ProfileUiState.Error("Sesión no encontrada")
+                return@launch
+            }
+            userRepository.observeUser(session.userId).collectLatest { user ->
+                if (user != null) {
+                    val insignias = getEarnedInsigniasUseCase(user).map { it.toUiModel() }
+                    val levelInfo = calculateLevelInfo(user.totalPoints, user.rating)
+                    updateSuccessState { current ->
+                        current.copy(
+                            user = user,
+                            insignias = insignias,
+                            averageRating = user.rating,
+                            totalXp = user.totalPoints,
+                            level = levelInfo.level,
+                            xpInLevel = levelInfo.xpInLevel,
+                            xpRequiredForNextLevel = levelInfo.xpRequiredForNextLevel,
+                            levelName = levelInfo.levelName,
+                            progress = levelInfo.progress
+                        )
+                    } ?: run {
+                        val services = serviceRepository.services.value
+                        _uiState.value = ProfileUiState.Success(
+                            user = user,
+                            insignias = insignias,
+                            pendingCount = services.count { it.status == ServiceStatus.PENDING },
+                            approvedCount = services.count { it.status == ServiceStatus.APPROVED },
+                            rejectedCount = services.count { it.status == ServiceStatus.REJECTED },
+                            averageRating = user.rating,
+                            totalXp = user.totalPoints,
+                            level = levelInfo.level,
+                            xpInLevel = levelInfo.xpInLevel,
+                            xpRequiredForNextLevel = levelInfo.xpRequiredForNextLevel,
+                            levelName = levelInfo.levelName,
+                            progress = levelInfo.progress
+                        )
+                    }
+                } else {
+                    _uiState.value = ProfileUiState.Error("Usuario no encontrado")
+                }
             }
         }
     }
