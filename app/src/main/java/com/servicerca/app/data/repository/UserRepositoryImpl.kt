@@ -8,9 +8,12 @@ import com.servicerca.app.domain.model.UserRole
 import com.servicerca.app.domain.repository.UserRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -83,6 +86,19 @@ constructor(
             Log.e("UserRepository", "Error al guardar usuario", e)
             throw e
         }
+    }
+
+    override fun observeUser(userId: String): Flow<User?> = callbackFlow {
+        val registration = usersCollection.document(userId)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    Log.e("UserRepository", "Error observing user $userId", error)
+                    trySend(null)
+                    return@addSnapshotListener
+                }
+                trySend(snapshot?.toObject(User::class.java))
+            }
+        awaitClose { registration.remove() }
     }
 
     override suspend fun findById(id: String): User? {
