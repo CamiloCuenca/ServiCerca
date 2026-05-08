@@ -41,6 +41,12 @@ android {
         buildConfigField("String", "SMTP_HOST", if (smtpHost != null) "\"$smtpHost\"" else "\"smtp.gmail.com\"")
         buildConfigField("String", "SMTP_PORT", if (smtpPort != null) "\"$smtpPort\"" else "\"587\"")
         buildConfigField("String", "SMTP_FROM", if (smtpFrom != null) "\"$smtpFrom\"" else "\"no-reply@servicerca.app\"")
+
+        val cloudinaryCloudName: String? = (localProps.getProperty("cloudinaryCloudName") ?: project.findProperty("cloudinaryCloudName")) as? String
+        val cloudinaryUploadPreset: String? = (localProps.getProperty("cloudinaryUploadPreset") ?: project.findProperty("cloudinaryUploadPreset")) as? String
+
+        buildConfigField("String", "CLOUDINARY_CLOUD_NAME", if (cloudinaryCloudName != null) "\"$cloudinaryCloudName\"" else "\"\"")
+        buildConfigField("String", "CLOUDINARY_UPLOAD_PRESET", if (cloudinaryUploadPreset != null) "\"$cloudinaryUploadPreset\"" else "\"\"")
     }
 
     buildTypes {
@@ -142,4 +148,10 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
 
     implementation(libs.data.store)
+
+
+    // --- Cloudinary
+    implementation("com.cloudinary:kotlin-url-gen:1.7.0")
+
+
 }

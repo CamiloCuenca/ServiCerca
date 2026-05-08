@@ -3,6 +3,8 @@ package com.servicerca.app.ui.profile
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.servicerca.app.BuildConfig
+import com.servicerca.app.core.cloudinary.CloudinaryUploader
 import com.servicerca.app.core.utils.RequestResult
 import com.servicerca.app.core.utils.ValidatedField
 import com.servicerca.app.data.datastore.SessionDataStore
@@ -73,6 +75,9 @@ class EditProfileViewModel @Inject constructor(
 
     private val _profilePictureUrl = MutableStateFlow("")
     val profilePictureUrl: StateFlow<String> = _profilePictureUrl.asStateFlow()
+
+    // Bytes de la imagen seleccionada; null si el usuario no cambió la foto
+    private var pendingImageBytes: ByteArray? = null
 
     private val _email = MutableStateFlow("")
     val email: StateFlow<String> = _email.asStateFlow()
@@ -146,6 +151,26 @@ class EditProfileViewModel @Inject constructor(
                 if (session != null) {
                     val currentUser = userRepository.findById(session.userId)
                     if (currentUser != null) {
+                        // Si hay una imagen nueva pendiente, subirla a Cloudinary primero
+                        val bytes = pendingImageBytes
+                        if (bytes != null) {
+                            val uploadResult = CloudinaryUploader.uploadImage(
+                                imageBytes = bytes,
+                                cloudName = BuildConfig.CLOUDINARY_CLOUD_NAME,
+                                uploadPreset = BuildConfig.CLOUDINARY_UPLOAD_PRESET
+                            )
+                            if (uploadResult.isSuccess) {
+                                _profilePictureUrl.value = uploadResult.getOrThrow()
+                                pendingImageBytes = null
+                            } else {
+                                _saveResult.value = RequestResult.Failure(
+                                    "Error al subir la imagen: ${uploadResult.exceptionOrNull()?.message}"
+                                )
+                                _isLoading.value = false
+                                return@launch
+                            }
+                        }
+
                         val updatedUser = currentUser.copy(
                             name1 = firstName.value,
                             name2 = middleName.value.ifBlank { null },
@@ -176,11 +201,14 @@ class EditProfileViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val session = sessionDataStore.sessionFlow.firstOrNull() ?: return@launch
+                // Guardar bytes para subirlos en saveProfile()
+                pendingImageBytes = imageBytes
+                // Previsualizar localmente mientras no se guarda
                 val cacheFile = File(context.cacheDir, "profile_edit_${session.userId}.jpg")
                 cacheFile.writeBytes(imageBytes)
                 _profilePictureUrl.value = "file://${cacheFile.absolutePath}"
             } catch (e: Exception) {
-                // Manejar error si es necesario
+                // Error silencioso al previsualizar
             }
         }
     }
