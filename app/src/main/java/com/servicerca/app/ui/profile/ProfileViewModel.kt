@@ -13,12 +13,15 @@ import com.servicerca.app.domain.repository.ServiceRepository
 import com.servicerca.app.domain.repository.UserRepository
 import com.servicerca.app.domain.usecase.GetEarnedInsigniasUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -41,6 +44,7 @@ sealed class ProfileUiState {
     ) : ProfileUiState()
 }
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val userRepository: UserRepository,
@@ -87,7 +91,8 @@ class ProfileViewModel @Inject constructor(
 
     private fun observeAverageRating() {
         viewModelScope.launch {
-            val session = sessionDataStore.sessionFlow.firstOrNull() ?: return@launch
+            // Esperar a que la sesión esté disponible antes de observar
+            val session = sessionDataStore.sessionFlow.filterNotNull().first()
             val userId = session.userId
 
             combine(
@@ -95,12 +100,8 @@ class ProfileViewModel @Inject constructor(
                 commentRepository.comments
             ) { services, allComments ->
                 val myServiceIds = services.filter { it.ownerId == userId }.map { it.id }
-                val myComments = allComments.filter { it.serviceId in myServiceIds }
-
-                // We no longer calculate average from comments locally to ensure SSOT with User model
-                // But we still observe comments to trigger UI updates if necessary
-                Unit
-            }.collect { 
+                allComments.filter { it.serviceId in myServiceIds }
+            }.collect {
                 updateSuccessState { current ->
                     val levelInfo = calculateLevelInfo(current.user.totalPoints, current.user.rating)
                     current.copy(
@@ -130,20 +131,16 @@ class ProfileViewModel @Inject constructor(
     private fun calculateLevelInfo(totalXp: Int, avgRating: Double): LevelInfo {
         val levels = listOf(500, 1300, 2500, 4300, 7000)
         val levelNames = listOf("Principiante", "Colaborador", "Confiable", "Profesional local", "Experto local")
-        
+
         var currentLevel = 1
         var xpRequiredForCurrent = 0
         var xpRequiredForNext = levels[0]
-        
+
         for (i in levels.indices) {
             if (totalXp >= levels[i]) {
                 currentLevel = i + 2
                 xpRequiredForCurrent = levels[i]
-                if (i + 1 < levels.size) {
-                    xpRequiredForNext = levels[i + 1]
-                } else {
-                    xpRequiredForNext = levels.last()
-                }
+                xpRequiredForNext = if (i + 1 < levels.size) levels[i + 1] else levels.last()
             } else {
                 xpRequiredForNext = levels[i]
                 break
@@ -152,13 +149,9 @@ class ProfileViewModel @Inject constructor(
 
         val clampedLevel = currentLevel.coerceAtMost(5)
         val levelName = levelNames[(clampedLevel - 1).coerceIn(0, 4)]
-        
-        val xpInLevel = if (totalXp >= levels.last()) {
-            levels.last()
-        } else {
-            totalXp - xpRequiredForCurrent
-        }
-        
+
+        val xpInLevel = if (totalXp >= levels.last()) levels.last() else totalXp - xpRequiredForCurrent
+
         val range = xpRequiredForNext - xpRequiredForCurrent
         val progress = if (totalXp >= levels.last()) {
             1.0f
@@ -180,11 +173,13 @@ class ProfileViewModel @Inject constructor(
     private fun observeServiceCounts() {
         viewModelScope.launch {
             serviceRepository.services.collectLatest { services ->
-                updateSuccessState { it.copy(
-                    pendingCount = services.count { it.status == ServiceStatus.PENDING },
-                    approvedCount = services.count { it.status == ServiceStatus.APPROVED },
-                    rejectedCount = services.count { it.status == ServiceStatus.REJECTED }
-                ) }
+                updateSuccessState {
+                    it.copy(
+                        pendingCount = services.count { s -> s.status == ServiceStatus.PENDING },
+                        approvedCount = services.count { s -> s.status == ServiceStatus.APPROVED },
+                        rejectedCount = services.count { s -> s.status == ServiceStatus.REJECTED }
+                    )
+                }
             }
         }
     }
@@ -192,48 +187,50 @@ class ProfileViewModel @Inject constructor(
     fun loadUserProfile() {
         viewModelScope.launch {
             _uiState.value = ProfileUiState.Loading
-            val session = sessionDataStore.sessionFlow.firstOrNull()
-            if (session == null) {
-                _uiState.value = ProfileUiState.Error("Sesión no encontrada")
-                return@launch
-            }
-            userRepository.observeUser(session.userId).collectLatest { user ->
-                if (user != null) {
-                    val insignias = getEarnedInsigniasUseCase(user).map { it.toUiModel() }
-                    val levelInfo = calculateLevelInfo(user.totalPoints, user.rating)
-                    updateSuccessState { current ->
-                        current.copy(
-                            user = user,
-                            insignias = insignias,
-                            averageRating = user.rating,
-                            totalXp = user.totalPoints,
-                            level = levelInfo.level,
-                            xpInLevel = levelInfo.xpInLevel,
-                            xpRequiredForNextLevel = levelInfo.xpRequiredForNextLevel,
-                            levelName = levelInfo.levelName,
-                            progress = levelInfo.progress
-                        )
-                    } ?: run {
-                        val services = serviceRepository.services.value
-                        _uiState.value = ProfileUiState.Success(
-                            user = user,
-                            insignias = insignias,
-                            pendingCount = services.count { it.status == ServiceStatus.PENDING },
-                            approvedCount = services.count { it.status == ServiceStatus.APPROVED },
-                            rejectedCount = services.count { it.status == ServiceStatus.REJECTED },
-                            averageRating = user.rating,
-                            totalXp = user.totalPoints,
-                            level = levelInfo.level,
-                            xpInLevel = levelInfo.xpInLevel,
-                            xpRequiredForNextLevel = levelInfo.xpRequiredForNextLevel,
-                            levelName = levelInfo.levelName,
-                            progress = levelInfo.progress
-                        )
-                    }
-                } else {
-                    _uiState.value = ProfileUiState.Error("Usuario no encontrado")
+
+            // flatMapLatest: cuando la sesión cambia (login/logout) se reinicia la observación del usuario
+            sessionDataStore.sessionFlow
+                .filterNotNull()           // esperar hasta que haya sesión guardada
+                .flatMapLatest { session ->
+                    userRepository.observeUser(session.userId)
                 }
-            }
+                .collectLatest { user ->
+                    if (user != null) {
+                        val insignias = getEarnedInsigniasUseCase(user).map { it.toUiModel() }
+                        val levelInfo = calculateLevelInfo(user.totalPoints, user.rating)
+                        updateSuccessState { current ->
+                            current.copy(
+                                user = user,
+                                insignias = insignias,
+                                averageRating = user.rating,
+                                totalXp = user.totalPoints,
+                                level = levelInfo.level,
+                                xpInLevel = levelInfo.xpInLevel,
+                                xpRequiredForNextLevel = levelInfo.xpRequiredForNextLevel,
+                                levelName = levelInfo.levelName,
+                                progress = levelInfo.progress
+                            )
+                        } ?: run {
+                            val services = serviceRepository.services.value
+                            _uiState.value = ProfileUiState.Success(
+                                user = user,
+                                insignias = insignias,
+                                pendingCount = services.count { it.status == ServiceStatus.PENDING },
+                                approvedCount = services.count { it.status == ServiceStatus.APPROVED },
+                                rejectedCount = services.count { it.status == ServiceStatus.REJECTED },
+                                averageRating = user.rating,
+                                totalXp = user.totalPoints,
+                                level = levelInfo.level,
+                                xpInLevel = levelInfo.xpInLevel,
+                                xpRequiredForNextLevel = levelInfo.xpRequiredForNextLevel,
+                                levelName = levelInfo.levelName,
+                                progress = levelInfo.progress
+                            )
+                        }
+                    } else {
+                        _uiState.value = ProfileUiState.Error("Usuario no encontrado")
+                    }
+                }
         }
     }
 
@@ -266,5 +263,3 @@ class ProfileViewModel @Inject constructor(
         }
     }
 }
-
-

@@ -3,7 +3,9 @@ package com.servicerca.app.ui.services.edit
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.servicerca.app.BuildConfig
 import com.servicerca.app.R
+import com.servicerca.app.core.cloudinary.CloudinaryUploader
 import com.servicerca.app.core.utils.RequestResult
 import com.servicerca.app.core.utils.ValidatedField
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,7 +14,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
@@ -163,13 +164,23 @@ class EditServiceViewModel @Inject constructor(
             _isLoading.value = true
             try {
                 var photoUrl = service.photoUrl
-                
-                // Si hay nuevas imágenes, guardamos la primera en cache (similar a CreateService)
+
+                // Si hay nuevas imágenes, subirlas a Cloudinary
                 if (_images.value.isNotEmpty()) {
-                    val firstImage = _images.value.first()
-                    val cacheFile = File(context.cacheDir, "service_edit_${service.id}.jpg")
-                    cacheFile.writeBytes(firstImage)
-                    photoUrl = "file://${cacheFile.absolutePath}"
+                    val uploadResult = CloudinaryUploader.uploadImage(
+                        imageBytes = _images.value.first(),
+                        cloudName = BuildConfig.CLOUDINARY_CLOUD_NAME,
+                        uploadPreset = BuildConfig.CLOUDINARY_UPLOAD_PRESET
+                    )
+                    if (uploadResult.isSuccess) {
+                        photoUrl = uploadResult.getOrThrow()
+                    } else {
+                        _saveResult.value = RequestResult.Failure(
+                            "Error al subir imagen: ${uploadResult.exceptionOrNull()?.message}"
+                        )
+                        _isLoading.value = false
+                        return@launch
+                    }
                 }
 
                 val updatedService = service.copy(

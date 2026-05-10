@@ -1,11 +1,11 @@
 package com.servicerca.app.ui.services.create
 
-
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.servicerca.app.BuildConfig
 import com.servicerca.app.R
+import com.servicerca.app.core.cloudinary.CloudinaryUploader
 import com.servicerca.app.core.utils.RequestResult
 import com.servicerca.app.core.utils.ValidatedField
 import com.servicerca.app.data.datastore.SessionDataStore
@@ -23,7 +23,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import java.io.File
 import java.util.UUID
 import javax.inject.Inject
 
@@ -35,7 +34,6 @@ class CreateServiceViewModel @Inject constructor(
     @param:ApplicationContext private val context: Context
 ) : ViewModel() {
 
-    // ── Categorías disponibles ─────────────────────────────────────────────
     val categories = listOf(
         context.getString(R.string.category_plumbing),
         context.getString(R.string.category_electricity),
@@ -47,8 +45,6 @@ class CreateServiceViewModel @Inject constructor(
         context.getString(R.string.category_locksmith),
         context.getString(R.string.category_other)
     )
-
-    // ── Campos del formulario ──────────────────────────────────────────────
 
     val title = ValidatedField("") { value ->
         when {
@@ -95,7 +91,6 @@ class CreateServiceViewModel @Inject constructor(
         }
     }
 
-    // ── Imágenes temporales en memoria (ByteArray) ─────────────────────────
     private val _images = MutableStateFlow<List<ByteArray>>(emptyList())
     val images: StateFlow<List<ByteArray>> = _images.asStateFlow()
 
@@ -118,15 +113,11 @@ class CreateServiceViewModel @Inject constructor(
         _images.value = emptyList()
     }
 
-    // ── Estado de la operación ─────────────────────────────────────────────
-
     private val _createResult = MutableStateFlow<RequestResult?>(null)
     val createResult: StateFlow<RequestResult?> = _createResult.asStateFlow()
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
-
-    // ── Validación global ──────────────────────────────────────────────────
 
     val isFormValid: Boolean
         get() = title.isValid
@@ -136,21 +127,13 @@ class CreateServiceViewModel @Inject constructor(
                 && maxValue.isValid
                 && _images.value.size >= 1
 
-    // ── Acciones ──────────────────────────────────────────────────────────
-
-    /**
-     * Publica el servicio. Valida todos los campos antes de proceder.
-     * En una implementación real, aquí va la llamada al repositorio.
-     */
     fun createService() {
-        // Forzar validación visual de todos los campos
         title.touch()
         category.touch()
         description.touch()
         minValue.touch()
         maxValue.touch()
 
-        // Touch images -> forzar error si no hay imágenes
         if (_images.value.isEmpty()) {
             _createResult.value = RequestResult.Failure(context.getString(R.string.error_add_at_least_one_image))
             return
@@ -164,7 +147,6 @@ class CreateServiceViewModel @Inject constructor(
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                // Obtener sesión actual
                 val session = sessionDataStore.sessionFlow.first()
                 val ownerId = session?.userId
                 if (ownerId.isNullOrBlank()) {
@@ -173,14 +155,26 @@ class CreateServiceViewModel @Inject constructor(
                     return@launch
                 }
 
-                // Construir service
-                val id = UUID.randomUUID().toString()
-                // Guardar la primera imagen en un archivo temporal en cache y usar su URI
-                val firstImage = _images.value.first()
-                val cacheFile = File(context.cacheDir, "service_$id.jpg")
-                cacheFile.writeBytes(firstImage)
-                val fileUri = "file://${cacheFile.absolutePath}"
+                // Subir todas las imágenes a Cloudinary antes de guardar el servicio
+                val photoUrls = mutableListOf<String>()
+                for (imageBytes in _images.value) {
+                    val uploadResult = CloudinaryUploader.uploadImage(
+                        imageBytes = imageBytes,
+                        cloudName = BuildConfig.CLOUDINARY_CLOUD_NAME,
+                        uploadPreset = BuildConfig.CLOUDINARY_UPLOAD_PRESET
+                    )
+                    if (uploadResult.isSuccess) {
+                        photoUrls.add(uploadResult.getOrThrow())
+                    } else {
+                        _createResult.value = RequestResult.Failure(
+                            "Error al subir imagen: ${uploadResult.exceptionOrNull()?.message}"
+                        )
+                        _isLoading.value = false
+                        return@launch
+                    }
+                }
 
+                val id = UUID.randomUUID().toString()
                 val service = Service(
                     id = id,
                     title = title.value,
@@ -190,35 +184,32 @@ class CreateServiceViewModel @Inject constructor(
                     priceMax = maxValue.value.toDouble(),
                     status = ServiceStatus.PENDING,
                     type = category.value,
-                    photoUrl = fileUri,
+                    photoUrl = photoUrls.first(),
                     ownerId = ownerId
                 )
 
-                // Log para depuración: verificar el archivo generado
-                Log.d("CreateServiceVM", "wrote image to fileUri=$fileUri size=${cacheFile.length()}")
-
-                // Guardar en repositorio
                 serviceRepository.save(service)
 
-                // Notificar a los moderadores
+                // Notificar a los moderadores del nuevo servicio pendiente
                 val notification = Notification(
                     id = UUID.randomUUID().toString(),
-                    userId = "MODERATOR_ROLE", // O un ID específico si fuera necesario
+                    userId = "MODERATOR_ROLE",
                     title = context.getString(R.string.notification_moderation_title),
                     message = context.getString(R.string.notification_moderation_message, title.value),
                     date = "Ahora",
-                    imageRes = R.drawable.nueva_solicitud_servicio, // Usar un icono apropiado
+                    imageRes = R.drawable.nueva_solicitud_servicio,
                     notificationType = NotificationType.MODERATION,
                     targetId = id
                 )
                 notificationRepository.addNotification(notification)
 
                 _createResult.value = RequestResult.Success(context.getString(R.string.service_published_success))
-                // Limpiar formulario
                 resetForm()
                 clearImages()
             } catch (e: Exception) {
-                _createResult.value = RequestResult.Failure(context.getString(R.string.error_publishing_service, e.message ?: ""))
+                _createResult.value = RequestResult.Failure(
+                    context.getString(R.string.error_publishing_service, e.message ?: "")
+                )
             } finally {
                 _isLoading.value = false
             }

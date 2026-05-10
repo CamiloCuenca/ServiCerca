@@ -31,6 +31,7 @@ import java.util.Date
 import java.util.Locale
 import java.util.UUID
 import javax.inject.Inject
+import android.util.Log
 import com.servicerca.app.R
 
 @HiltViewModel
@@ -166,76 +167,57 @@ class DetailServiceViewModel @Inject constructor(
         _serviceId.value = serviceId
     }
 
-    fun addComment(
-        rating: Int,
-        text: String
-    ) {
+    fun addComment(rating: Int, text: String) {
         val s = service.value ?: return
         val serviceId = s.id
         val ownerId = s.ownerId
         viewModelScope.launch {
-            val session = sessionDataStore.sessionFlow.firstOrNull()
-            if (session != null) {
-                val currentUser = userRepository.findById(session.userId)
-                if (currentUser != null) {
-                    val fallbackAvatar = "https://picsum.photos/200?random=${currentUser.id.hashCode() % 100}"
-                    val comment = Comment(
-                        id = UUID.randomUUID().toString(),
-                        userId = currentUser.id,
-                        serviceId = serviceId,
-                        userName = "${currentUser.name1} ${currentUser.lastname1}",
-                        userAvatar = currentUser.profilePictureUrl.ifEmpty { fallbackAvatar },
-                        rating = rating,
-                        text = text,
-                        date = System.currentTimeMillis(),
-                        timeAgo = "Ahora"
-                    )
-                    commentRepository.save(comment)
-                    
-                    // Actualizar puntos y rating del proveedor
-                    val providerId = ownerId
-                    val providerUser = userRepository.findById(providerId)
-                    if (providerUser != null) {
-                        val allComments = commentRepository.comments.value
-                        val allServices = serviceRepository.services.value
-                        
-                        val providerServiceIds = allServices.filter { it.ownerId == providerId }.map { it.id }
-                        val providerComments = allComments.filter { it.serviceId in providerServiceIds }
-                        
-                        val newAvg = if (providerComments.isEmpty()) rating.toDouble() 
-                                    else providerComments.map { it.rating }.average()
-                        
-                        val xpGained = rating * 50
-                        
-                        val updatedProvider = providerUser.copy(
-                            rating = newAvg,
-                            totalPoints = providerUser.totalPoints + xpGained,
-                            completedServices = providerUser.completedServices + 1
-                        )
-                        userRepository.save(updatedProvider)
-                    }
-                    
-                    // Enviar notificación al dueño del servicio
-                    val context = sessionDataStore.context
-                    val title = context.getString(com.servicerca.app.R.string.new_comment_title)
-                    val message = context.getString(
-                        com.servicerca.app.R.string.new_comment_message_format,
-                        currentUser.name1,
-                        text,
-                        rating
-                    )
+            try {
+                val session = sessionDataStore.sessionFlow.firstOrNull() ?: return@launch
+                val currentUser = userRepository.findById(session.userId) ?: return@launch
 
-                    val notification = Notification(
+                val fallbackAvatar = "https://picsum.photos/200?random=${currentUser.id.hashCode() % 100}"
+                val comment = Comment(
+                    id = UUID.randomUUID().toString(),
+                    userId = currentUser.id,
+                    serviceId = serviceId,
+                    userName = "${currentUser.name1} ${currentUser.lastname1}",
+                    userAvatar = currentUser.profilePictureUrl.ifEmpty { fallbackAvatar },
+                    rating = rating,
+                    text = text,
+                    date = System.currentTimeMillis(),
+                    timeAgo = "Ahora"
+                )
+                commentRepository.save(comment)
+
+                // Actualizar rating y puntos del proveedor con campos específicos (no full set)
+                val allComments = commentRepository.comments.value + comment
+                val allServices = serviceRepository.services.value
+                val providerServiceIds = allServices.filter { it.ownerId == ownerId }.map { it.id }
+                val providerComments = allComments.filter { it.serviceId in providerServiceIds }
+                val newAvg = providerComments.map { it.rating }.average()
+                val xpGained = rating * 50
+
+                userRepository.updateProviderStats(
+                    providerId = ownerId,
+                    newRating = newAvg,
+                    xpIncrement = xpGained
+                )
+
+                // Notificar al dueño del servicio
+                notificationRepository.addNotification(
+                    Notification(
                         id = UUID.randomUUID().toString(),
                         userId = ownerId,
-                        title = title,
-                        message = message,
+                        title = "Nueva reseña recibida",
+                        message = "${currentUser.name1} comentó en tu servicio: \"$text\" ($rating★)",
                         date = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date()),
                         imageRes = com.servicerca.app.R.drawable.insignia_chat,
                         isRead = false
                     )
-                    notificationRepository.addNotification(notification)
-                }
+                )
+            } catch (e: Exception) {
+                android.util.Log.e("DetailServiceVM", "Error al agregar comentario", e)
             }
         }
     }

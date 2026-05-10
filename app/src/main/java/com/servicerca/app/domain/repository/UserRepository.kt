@@ -19,4 +19,5 @@ interface UserRepository {
     suspend fun resetPassword(email: String, code: String, newPassword: String): Result<Unit>
     suspend fun updatePassword(userId: String, currentPassword: String, newPassword: String): Result<Unit>
     suspend fun toggleInterestingService(userId: String, serviceId: String): Result<Boolean>
+    suspend fun updateProviderStats(providerId: String, newRating: Double, xpIncrement: Int)
 }
