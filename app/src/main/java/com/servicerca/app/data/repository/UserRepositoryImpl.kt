@@ -43,7 +43,9 @@ constructor(
                 try {
                     val usersList = snapshot.documents.mapNotNull { document ->
                         try {
+                            // Usar document.id como fallback si el campo "id" está vacío
                             document.toObject(User::class.java)
+                                ?.let { if (it.id.isBlank()) it.copy(id = document.id) else it }
                         } catch (e: Exception) {
                             Log.e("UserRepository", "Error converting document to User", e)
                             null
@@ -96,7 +98,9 @@ constructor(
                     trySend(null)
                     return@addSnapshotListener
                 }
-                trySend(snapshot?.toObject(User::class.java))
+                val user = snapshot?.toObject(User::class.java)
+                    ?.let { if (it.id.isBlank()) it.copy(id = snapshot.id) else it }
+                trySend(user)
             }
         awaitClose { registration.remove() }
     }
@@ -105,6 +109,7 @@ constructor(
         return try {
             val document = usersCollection.document(id).get().await()
             document.toObject(User::class.java)
+                ?.let { if (it.id.isBlank()) it.copy(id = document.id) else it }
         } catch (e: Exception) {
             Log.e("UserRepository", "Error al buscar usuario por ID", e)
             null
@@ -276,22 +281,36 @@ constructor(
         }
     }
 
-    override suspend fun toggleInterestingService(userId: String, serviceId: String): Result<Boolean> {
-        val userIndex = _users.value.indexOfFirst { it.id == userId }
-        if (userIndex == -1) return Result.failure(Exception("Usuario no encontrado"))
-
-        val user = _users.value[userIndex]
-        val alreadyInList = serviceId in user.listInteresting
-        val nextInteresting = if (alreadyInList) {
-            user.listInteresting - serviceId
-        } else {
-            user.listInteresting + serviceId
+    override suspend fun updateProviderStats(providerId: String, newRating: Double, xpIncrement: Int) {
+        try {
+            usersCollection.document(providerId).update(
+                mapOf(
+                    "rating" to newRating,
+                    "totalPoints" to FieldValue.increment(xpIncrement.toLong()),
+                    "completedServices" to FieldValue.increment(1L)
+                )
+            ).await()
+        } catch (e: Exception) {
+            Log.e("UserRepository", "Error actualizando stats del proveedor $providerId", e)
         }
-        val updatedUser = user.copy(listInteresting = nextInteresting)
+    }
+
+    override suspend fun toggleInterestingService(userId: String, serviceId: String): Result<Boolean> {
+        val user = _users.value.firstOrNull { it.id == userId }
+            ?: return Result.failure(Exception("Usuario no encontrado"))
+
+        val alreadyInList = serviceId in user.listInteresting
+        val fieldUpdate: Any = if (alreadyInList) {
+            FieldValue.arrayRemove(serviceId)
+        } else {
+            FieldValue.arrayUnion(serviceId)
+        }
+
         return try {
-            usersCollection.document(userId).set(updatedUser).await()
+            usersCollection.document(userId).update("listInteresting", fieldUpdate).await()
             Result.success(!alreadyInList)
         } catch (e: Exception) {
+            Log.e("UserRepository", "Error en toggleInterestingService", e)
             Result.failure(e)
         }
     }

@@ -10,13 +10,15 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ListInterestingViewModel @Inject constructor(
-    sessionDataStore: SessionDataStore,
-    userRepository: UserRepository,
+    private val sessionDataStore: SessionDataStore,
+    private val userRepository: UserRepository,
     serviceRepository: ServiceRepository
 ) : ViewModel() {
 
@@ -33,4 +35,11 @@ class ListInterestingViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = emptyList()
     )
+
+    fun onRemoveBookmark(serviceId: String) {
+        viewModelScope.launch {
+            val userId = sessionDataStore.sessionFlow.firstOrNull()?.userId ?: return@launch
+            userRepository.toggleInterestingService(userId, serviceId)
+        }
+    }
 }

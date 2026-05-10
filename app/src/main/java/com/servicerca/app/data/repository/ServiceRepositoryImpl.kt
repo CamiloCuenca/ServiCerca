@@ -1,6 +1,9 @@
 package com.servicerca.app.data.repository
 
-
+import android.util.Log
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.DocumentSnapshot
 import com.servicerca.app.domain.model.Location
 import com.servicerca.app.domain.model.Service
 import com.servicerca.app.domain.model.ServiceStatus
@@ -12,38 +15,71 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class ServiceRepositoryImpl @Inject constructor() : ServiceRepository {
+class ServiceRepositoryImpl @Inject constructor(
+    private val firestore: FirebaseFirestore
+) : ServiceRepository {
 
-    // Lista reactiva de servicios en memoria
     private val _services = MutableStateFlow<List<Service>>(emptyList())
     override val services: StateFlow<List<Service>> = _services.asStateFlow()
 
+    private val servicesCollection = firestore.collection("services")
+
     init {
-        _services.value = fetchInitialServices()
+        observeAllServices()
+    }
+
+    private fun observeAllServices() {
+        servicesCollection.addSnapshotListener { snapshot, error ->
+            if (error != null) {
+                Log.e("ServiceRepository", "Error observando servicios", error)
+                return@addSnapshotListener
+            }
+            if (snapshot != null) {
+                _services.value = snapshot.documents.mapNotNull { it.toService() }
+            }
+        }
     }
 
     override suspend fun save(service: Service) {
-        _services.value += service
+        try {
+            servicesCollection.document(service.id).set(service.toFirestoreMap()).await()
+        } catch (e: Exception) {
+            Log.e("ServiceRepository", "Error guardando servicio", e)
+            throw e
+        }
     }
 
     override suspend fun update(service: Service) {
-        _services.value = _services.value.map {
-            if (it.id == service.id) service else it
+        try {
+            servicesCollection.document(service.id).set(service.toFirestoreMap()).await()
+        } catch (e: Exception) {
+            Log.e("ServiceRepository", "Error actualizando servicio", e)
+            throw e
         }
     }
 
     override suspend fun delete(id: String) {
-        _services.value = _services.value.map {
-            if (it.id == id) it.copy(status = ServiceStatus.DELETED) else it
+        try {
+            servicesCollection.document(id).update("status", ServiceStatus.DELETED.name).await()
+        } catch (e: Exception) {
+            Log.e("ServiceRepository", "Error eliminando servicio", e)
+            throw e
         }
     }
 
     override suspend fun findById(id: String): Service? {
-        return _services.value.find { it.id == id }
+        return try {
+            val doc = servicesCollection.document(id).get().await()
+            doc.toService()
+        } catch (e: Exception) {
+            Log.e("ServiceRepository", "Error buscando servicio por id", e)
+            null
+        }
     }
 
     override fun findByOwnerId(ownerId: String): StateFlow<List<Service>> {
@@ -77,178 +113,55 @@ class ServiceRepositoryImpl @Inject constructor() : ServiceRepository {
     }
 
     override suspend fun toggleLike(serviceId: String, userId: String) {
-        val currentServices = _services.value
-        val updatedServices = currentServices.map { service ->
-            if (service.id == serviceId) {
-                val newLikedBy = if (service.likedBy.contains(userId)) {
-                    service.likedBy.filter { it != userId }
-                } else {
-                    service.likedBy + userId
-                }
-                service.copy(likedBy = newLikedBy)
+        try {
+            val service = _services.value.find { it.id == serviceId } ?: return
+            val fieldUpdate: Any = if (service.likedBy.contains(userId)) {
+                FieldValue.arrayRemove(userId)
             } else {
-                service
+                FieldValue.arrayUnion(userId)
             }
+            servicesCollection.document(serviceId).update("likedBy", fieldUpdate).await()
+        } catch (e: Exception) {
+            Log.e("ServiceRepository", "Error en toggleLike", e)
         }
-        _services.value = updatedServices
     }
 
-    private fun fetchInitialServices(): List<Service> {
-        return listOf(
+    private fun Service.toFirestoreMap(): Map<String, Any?> = mapOf(
+        "id" to id,
+        "title" to title,
+        "description" to description,
+        "latitude" to location.latitude,
+        "longitude" to location.longitude,
+        "priceMin" to priceMin,
+        "priceMax" to priceMax,
+        "status" to status.name,
+        "type" to type,
+        "photoUrl" to photoUrl,
+        "ownerId" to ownerId,
+        "likedBy" to likedBy
+    )
+
+    private fun DocumentSnapshot.toService(): Service? {
+        return try {
             Service(
-                id = "1",
-                title = "Plomería General",
-                description = "Reparación de tuberías, fugas de agua y mantenimiento de baños.",
-                location = Location(4.533887, -75.671333),
-                priceMin = 30000.0,
-                priceMax = 80000.0,
-                status = ServiceStatus.PENDING,
-                type = "Hogar",
-                photoUrl = "https://projectssdn.com/wp-content/uploads/elementor/thumbs/plomeria-en-general-qp5x9n6u64ze4tk30xqoxt57okaxdr7apr7hp13vds.png",
-                ownerId = "1"
-            ),
-            Service(
-                id = "2",
-                title = "Electricista Residencial",
-                description = "Instalaciones eléctricas, cambio de breakers y cableado.",
-                location = Location(4.535000, -75.675000),
-                priceMin = 45000.0,
-                priceMax = 150000.0,
-                status = ServiceStatus.PENDING,
-                type = "Electricidad",
-                photoUrl = "https://comfenalcoquindio.com/wp-content/uploads/2022/05/tecnico-electricista-en-construccion-residencial-1.jpg",
-                ownerId = "2"
-            ),
-            Service(
-                id = "3",
-                title = "Limpieza de Muebles",
-                description = "Lavado profundo de sofás, colchones y sillas de comedor.",
-                location = Location(4.540000, -75.660000),
-                priceMin = 60000.0,
-                priceMax = 200000.0,
-                status = ServiceStatus.APPROVED,
-                type = "Hogar",
-                photoUrl = "https://extremecleangm.com/wp-content/uploads/2025/01/Lavado-de-Muebles-Iniciando-el-2025.jpg",
-                ownerId = "1"
-            ),
-            Service(
-                id = "4",
-                title = "Reparación de equipos de Cómputo",
-                description = "Ofrezco servicio técnico especializado para computadores de escritorio y portátiles. " +
-                        "Diagnosticamos y solucionamos fallas de hardware y software, realizamos mantenimiento preventivo " +
-                        "y correctivo, eliminación de virus, optimización del sistema, instalación de programas y reemplazo " +
-                        "de componentes. Nuestro objetivo es recuperar el rendimiento de tu equipo de forma rápida, segura y confiable.",
-                location = Location(4.511738004282885, -75.69229701639676),
-                priceMin = 150000.0,
-                priceMax = 300000.0,
-                status = ServiceStatus.REJECTED,
-                type = "Tecnología",
-                photoUrl = "https://cdn.pixabay.com/photo/2014/08/26/21/27/service-428539_1280.jpg",
-                ownerId = "3"
-            ),
-            Service(
-                id = "5",
-                title = "Decoraciones para eventos",
-                description = "Ofrezco servicio de decoración para todo tipo de eventos, creando ambientes únicos y memorables " +
-                        "según el estilo y la ocasión. Realizo decoraciones para cumpleaños, bodas, aniversarios, bautizos, " +
-                        "eventos empresariales y celebraciones especiales. Utilizo globos, telas, arreglos temáticos y detalles" +
-                        " personalizados para transformar cada espacio y hacer de tu evento un momento especial e inolvidable.",
-                location = Location(4.535000, -75.675000),
-                priceMin = 500000.0,
-                priceMax = 1800000.0,
-                status = ServiceStatus.REJECTED,
-                type = "Hogar",
-                photoUrl = "https://cdn.pixabay.com/photo/2018/09/05/08/05/party-3655712_1280.jpg",
-                ownerId = "2"
-            ),
-            Service(
-                id = "6",
-                title = "Desarrollador de páginas web",
-                description = "Ofrezco servicio de desarrollo de páginas web modernas, funcionales y adaptadas a las necesidades " +
-                        "de cada cliente. Diseñamos sitios web profesionales para empresas, emprendimientos y proyectos personales," +
-                        " optimizados para dispositivos móviles y con una navegación rápida y segura. Nuestro objetivo es ayudarte " +
-                        "a fortalecer tu presencia en internet y atraer más clientes a través de una plataforma digital atractiva y " +
-                        "eficiente.",
-                location = Location(4.511738004282885, -75.69229701639676),
-                priceMin = 1000000.0,
-                priceMax = 2500000.0,
-                status = ServiceStatus.APPROVED,
-                type = "Tecnología",
-                photoUrl = "https://cdn.pixabay.com/photo/2025/09/09/08/52/design-9824072_1280.jpg",
-                ownerId = "3"
-            ),
-            Service(
-                id = "7",
-                title = "Diseño de Logotipos",
-                description = "Creación de identidad visual para tu marca o emprendimiento.",
-                location = Location(4.540000, -75.665000),
-                priceMin = 80000.0,
-                priceMax = 250000.0,
-                status = ServiceStatus.PENDING,
-                type = "Diseño",
-                photoUrl = "https://limagemarketing.es/wp-content/uploads/la-importancia-del-logotipo.jpg",
-                ownerId = "3"
-            ),
-            Service(
-                id = "8",
-                title = "Instalación de Aire Acondicionado",
-                description = "Montaje y mantenimiento de unidades de aire para hogar y oficina.",
-                location = Location(4.533000, -75.670000),
-                priceMin = 120000.0,
-                priceMax = 400000.0,
-                status = ServiceStatus.REJECTED,
-                type = "Técnico",
-                photoUrl = "https://img.multimap.es/wp-content/uploads/2023/07/instalar-ac-2048x1349.jpg",
-                ownerId = "1"
-            ),
-            Service(
-                id = "9",
-                title = "Asesoría Contable",
-                description = "Gestión de impuestos y contabilidad para personas naturales.",
-                location = Location(4.538000, -75.672000),
-                priceMin = 100000.0,
-                priceMax = 300000.0,
-                status = ServiceStatus.APPROVED,
-                type = "Profesional",
-                photoUrl = "https://colchadoyasociados.com/wp-content/uploads/2021/12/asesoria-contable.jpg",
-                ownerId = "2"
-            ),
-            Service(
-                id = "10",
-                title = "Clases de Guitarra",
-                description = "Aprende a tocar desde cero, nivel principiante e intermedio.",
-                location = Location(4.542000, -75.658000),
-                priceMin = 40000.0,
-                priceMax = 80000.0,
-                status = ServiceStatus.APPROVED,
-                type = "Educación",
-                photoUrl = "https://virtuosso.com/blog/wp-content/uploads/2011/12/inversiones-de-acordes-guitarra-.jpg",
-                ownerId = "5"
-            ),
-            Service(
-                id = "11",
-                title = "Entrenamiento Personal",
-                description = "Rutinas personalizadas para gimnasio o en casa.",
-                location = Location(4.535500, -75.668000),
-                priceMin = 50000.0,
-                priceMax = 150000.0,
-                status = ServiceStatus.PENDING,
-                type = "Salud",
-                photoUrl = "https://c.pxhere.com/images/7b/62/52b0545aeddbd39beef6a6543304-1706250.jpg!d",
-                ownerId = "5"
-            ),
-            Service(
-                id = "12",
-                title = "Cuidado de Mascotas",
-                description = "Paseos y cuidado diario para perros y gatos.",
-                location = Location(4.537000, -75.670500),
-                priceMin = 25000.0,
-                priceMax = 60000.0,
-                status = ServiceStatus.REJECTED,
-                type = "Mascotas",
-                photoUrl = "https://laredhispana.org/wp-content/uploads/2022/07/cuidado-de-mascotas-en-vacaciones.jpg",
-                ownerId = "5"
+                id = getString("id") ?: this.id,
+                title = getString("title") ?: "",
+                description = getString("description") ?: "",
+                location = Location(
+                    latitude = getDouble("latitude") ?: 0.0,
+                    longitude = getDouble("longitude") ?: 0.0
+                ),
+                priceMin = getDouble("priceMin") ?: 0.0,
+                priceMax = getDouble("priceMax") ?: 0.0,
+                status = ServiceStatus.valueOf(getString("status") ?: ServiceStatus.PENDING.name),
+                type = getString("type") ?: "",
+                photoUrl = getString("photoUrl") ?: "",
+                ownerId = getString("ownerId") ?: "",
+                likedBy = (get("likedBy") as? List<*>)?.filterIsInstance<String>() ?: emptyList()
             )
-        )
+        } catch (e: Exception) {
+            Log.e("ServiceRepository", "Error parseando documento ${this.id}", e)
+            null
+        }
     }
 }
