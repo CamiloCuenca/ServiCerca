@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -14,7 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.flow.StateFlow
 import com.servicerca.app.ui.dashboard.moderador.DetailsVerificationModeratorScreen
 import com.servicerca.app.ui.dashboard.moderador.RejectReasonScreen
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -49,7 +50,8 @@ import com.servicerca.app.ui.qr.ServiceVerificationScreen
 
 @Composable
 fun AppNavigation(
-    sessionViewModel: SessionViewModel = hiltViewModel()
+    sessionViewModel: SessionViewModel = hiltViewModel(),
+    pendingOobCode: StateFlow<String?>
 ) {
     // Observa el estado de la sesión desde el ViewModel
     val sessionState by sessionViewModel.sessionState.collectAsStateWithLifecycle()
@@ -67,20 +69,21 @@ fun AppNavigation(
             }
             is SessionState.NotAuthenticated -> {
                 // Si ya forzamos una sesión localmente (por ejemplo justo después del login), mostrar MainNavigation
-                if (forcedSession != null) {
+                            if (forcedSession != null) {
                     MainNavigation(session = forcedSession!!, onLogout = {
-                        // Aseguramos limpiar tanto DataStore como la sesión forzada
                         sessionViewModel.logout()
                         forcedSession = null
                     })
                 } else {
-                    AuthNavigation(onLoginSuccess = { userId, role ->
-                        Log.d("AppNavigation", "onLoginSuccess received: userId=$userId, role=$role")
-                        // Guardar en DataStore y forzar navegación inmediata
-                        sessionViewModel.login(userId, role)
-                        forcedSession = UserSession(userId = userId, role = role)
-                        Log.d("AppNavigation", "forcedSession set: $forcedSession")
-                    })
+                    AuthNavigation(
+                        pendingOobCode = pendingOobCode,
+                        onLoginSuccess = { userId, role ->
+                            Log.d("AppNavigation", "onLoginSuccess received: userId=$userId, role=$role")
+                            sessionViewModel.login(userId, role)
+                            forcedSession = UserSession(userId = userId, role = role)
+                            Log.d("AppNavigation", "forcedSession set: $forcedSession")
+                        }
+                    )
                 }
             }
             is SessionState.Authenticated -> MainNavigation(
@@ -99,8 +102,21 @@ fun AppNavigation(
 
 
 @Composable
-private fun AuthNavigation(onLoginSuccess: (String, UserRole) -> Unit) {
+private fun AuthNavigation(
+    pendingOobCode: StateFlow<String?>,
+    onLoginSuccess: (String, UserRole) -> Unit
+) {
     val navController = rememberNavController()
+    val oobCode by pendingOobCode.collectAsStateWithLifecycle()
+
+    // Cuando llega un oobCode desde el deep link, navegar a la pantalla de Reset
+    LaunchedEffect(oobCode) {
+        val code = oobCode ?: return@LaunchedEffect
+        navController.navigate(MainRoutes.Reset(oobCode = code)) {
+            // Quitar la pantalla de Recover del backstack si está en él
+            popUpTo(MainRoutes.RecoverPassword::class) { inclusive = true }
+        }
+    }
 
     NavHost(
         navController = navController,
@@ -163,12 +179,9 @@ private fun AuthNavigation(onLoginSuccess: (String, UserRole) -> Unit) {
             RecoverPasswordScreen(
                 onNavigateToLogin = {
                     navController.navigate(MainRoutes.Login)
-                }
-                , onBackClick = {
-                    navController.popBackStack()
                 },
-                onNavigateToResetPassword = { email ->
-                    navController.navigate(MainRoutes.Reset(email = email))
+                onBackClick = {
+                    navController.popBackStack()
                 }
             )
         }
@@ -178,9 +191,8 @@ private fun AuthNavigation(onLoginSuccess: (String, UserRole) -> Unit) {
         composable<MainRoutes.Reset> { backStackEntry ->
             val route = backStackEntry.toRoute<MainRoutes.Reset>()
             ResetPassword(
-                email = route.email,
+                oobCode = route.oobCode,
                 onNavigateToLogin = {
-
                     navController.navigate(MainRoutes.Login) {
                         popUpTo(navController.graph.findStartDestination().id) { inclusive = true }
                     }

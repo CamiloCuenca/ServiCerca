@@ -1,5 +1,7 @@
 package com.servicerca.app
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -15,6 +17,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.servicerca.app.data.datastore.AppThemeMode
 import com.servicerca.app.data.datastore.SettingsDataStore
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
@@ -27,6 +32,11 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var settingsDataStore: SettingsDataStore
 
+    // oobCode extraído del deep link de Firebase Password Reset.
+    // Se expone como StateFlow para que AppNavigation lo observe.
+    private val _pendingOobCode = MutableStateFlow<String?>(null)
+    val pendingOobCode: StateFlow<String?> = _pendingOobCode.asStateFlow()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -34,6 +44,9 @@ class MainActivity : AppCompatActivity() {
             languageManager.applySavedLanguage()
         }
         enableEdgeToEdge()
+
+        // Manejar el intent inicial (app abierta desde un deep link)
+        handleIntent(intent)
 
         setContent {
             val themeMode by settingsDataStore.themeModeFlow.collectAsStateWithLifecycle(
@@ -47,9 +60,27 @@ class MainActivity : AppCompatActivity() {
             }
 
             ServiCercaTheme(darkTheme = isDarkTheme) {
-                AppNavigation()
+                AppNavigation(pendingOobCode = pendingOobCode)
             }
         }
+    }
+
+    // Manejar intents recibidos mientras la app está en primer plano
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        handleIntent(intent)
+    }
+
+    /**
+     * Extrae el oobCode del Intent si viene de un deep link de Firebase
+     * Password Reset. El link tiene la forma:
+     *   servicerca://reset-password?oobCode=XXXX
+     * o bien un Firebase Dynamic Link con el mismo query param.
+     */
+    private fun handleIntent(intent: Intent?) {
+        val data: Uri = intent?.data ?: return
+        val oobCode = data.getQueryParameter("oobCode") ?: return
+        _pendingOobCode.value = oobCode
     }
 }
 
