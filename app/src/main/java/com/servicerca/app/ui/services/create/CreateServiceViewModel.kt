@@ -113,6 +113,13 @@ class CreateServiceViewModel @Inject constructor(
         _images.value = emptyList()
     }
 
+    private val _selectedLocation = MutableStateFlow<Location?>(null)
+    val selectedLocation: StateFlow<Location?> = _selectedLocation.asStateFlow()
+
+    fun setLocation(latitude: Double, longitude: Double) {
+        _selectedLocation.value = Location(latitude, longitude)
+    }
+
     private val _createResult = MutableStateFlow<RequestResult?>(null)
     val createResult: StateFlow<RequestResult?> = _createResult.asStateFlow()
 
@@ -179,7 +186,7 @@ class CreateServiceViewModel @Inject constructor(
                     id = id,
                     title = title.value,
                     description = description.value,
-                    location = Location(0.0, 0.0), // TODO: obtener ubicación real desde UI
+                    location = _selectedLocation.value ?: Location(0.0, 0.0),
                     priceMin = minValue.value.toDouble(),
                     priceMax = maxValue.value.toDouble(),
                     status = ServiceStatus.PENDING,
@@ -226,5 +233,6 @@ class CreateServiceViewModel @Inject constructor(
         description.reset()
         minValue.reset()
         maxValue.reset()
+        _selectedLocation.value = null
     }
 }

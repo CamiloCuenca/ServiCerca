@@ -51,6 +51,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.servicerca.app.R
+import com.mapbox.geojson.Point
 import com.servicerca.app.core.components.Map.MapBox
 import com.servicerca.app.core.components.button.PrimaryButton
 import com.servicerca.app.core.components.button.ReactionIconButton
@@ -254,7 +255,13 @@ fun DetailServiceScreen(
                     MapBox(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(180.dp)
+                            .height(180.dp),
+                        showMyLocationButton = false,
+                        markerPoint = service?.location?.let { loc ->
+                            if (loc.latitude != 0.0 || loc.longitude != 0.0)
+                                Point.fromLngLat(loc.longitude, loc.latitude)
+                            else null
+                        }
                     )
 
                     HorizontalDivider(

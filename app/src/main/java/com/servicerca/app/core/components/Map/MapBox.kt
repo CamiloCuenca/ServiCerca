@@ -1,6 +1,9 @@
 package com.servicerca.app.core.components.Map
 
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Paint
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
@@ -11,6 +14,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,6 +29,10 @@ import com.mapbox.maps.extension.compose.MapEffect
 import com.mapbox.maps.extension.compose.MapboxMap
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
 import com.mapbox.maps.plugin.PuckBearing
+import com.mapbox.maps.plugin.annotation.annotations
+import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager
+import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
+import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
 import com.mapbox.maps.plugin.locationcomponent.createDefault2DPuck
 import com.mapbox.maps.plugin.locationcomponent.location
 import com.mapbox.maps.plugin.viewport.data.DefaultViewportTransitionOptions
@@ -32,14 +40,12 @@ import com.mapbox.maps.plugin.viewport.data.DefaultViewportTransitionOptions
 @Composable
 fun MapBox(
     modifier: Modifier = Modifier,
-    showMyLocationButton: Boolean = true // Mostrar botón de mi ubicación
+    showMyLocationButton: Boolean = true,
+    markerPoint: Point? = null
 ) {
-
-    // Estado para manejar permisos de ubicación
     val permissionState = rememberLocationPermissionState()
     var shouldFollowUser by remember { mutableStateOf(false) }
 
-    // Configurar el estado inicial del mapa
     val mapViewportState = rememberMapViewportState {
         setCameraOptions {
             zoom(8.0)
@@ -47,13 +53,38 @@ fun MapBox(
         }
     }
 
-    Box(modifier = modifier) {
+    var markerManager: PointAnnotationManager? by remember { mutableStateOf(null) }
+    val markerBitmap = remember { createMapMarkerBitmap() }
 
+    // Actualizar pin cuando cambia la ubicación seleccionada o cuando el manager está listo
+    LaunchedEffect(markerPoint, markerManager) {
+        val manager = markerManager ?: return@LaunchedEffect
+        manager.deleteAll()
+
+        markerPoint?.let { point ->
+            manager.create(
+                PointAnnotationOptions()
+                    .withPoint(point)
+                    .withIconImage(markerBitmap)
+                    .withIconSize(1.0)
+            )
+            mapViewportState.setCameraOptions {
+                center(point)
+                zoom(14.0)
+            }
+        }
+    }
+
+    Box(modifier = modifier) {
         MapboxMap(
             modifier = Modifier.matchParentSize(),
             mapViewportState = mapViewportState
-        ){
-            // Configurar ubicación del usuario si tiene permiso y quiere seguirla
+        ) {
+            // Crear annotation manager una sola vez cuando el mapa esté listo
+            MapEffect(Unit) { mapView ->
+                markerManager = mapView.annotations.createPointAnnotationManager()
+            }
+
             if (permissionState.hasPermission && shouldFollowUser) {
                 MapEffect(key1 = "follow_puck") { mapView ->
                     mapView.location.updateSettings {
@@ -62,7 +93,6 @@ fun MapBox(
                         puckBearing = PuckBearing.COURSE
                         puckBearingEnabled = true
                     }
-
                     mapViewportState.transitionToFollowPuckState(
                         defaultTransitionOptions = DefaultViewportTransitionOptions.Builder()
                             .maxDurationMs(1500)
@@ -72,14 +102,13 @@ fun MapBox(
             }
         }
 
-        // Botón de mi ubicación
         if (showMyLocationButton) {
             FloatingActionButton(
                 onClick = {
                     if (permissionState.hasPermission) {
                         shouldFollowUser = true
                     } else {
-                        permissionState.requestPermission() // Solicitar permiso si no lo tiene
+                        permissionState.requestPermission()
                     }
                 },
                 modifier = Modifier
@@ -94,12 +123,51 @@ fun MapBox(
             }
         }
     }
-
 }
 
-/**
- * Estado para manejar el permiso de ubicación de forma controlada
- */
+internal fun createMapMarkerBitmap(): Bitmap {
+    val w = 32
+    val h = 44
+    val bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
+    val canvas = Canvas(bitmap)
+
+    val cx = w / 2f
+    val r = w / 2f - 2f
+    val cy = r + 2f
+
+    val paintBlue = Paint().apply {
+        color = 0xFF1565C0.toInt()
+        isAntiAlias = true
+        style = Paint.Style.FILL
+    }
+    val paintWhiteFill = Paint().apply {
+        color = android.graphics.Color.WHITE
+        isAntiAlias = true
+        style = Paint.Style.FILL
+    }
+    val paintWhiteStroke = Paint().apply {
+        color = android.graphics.Color.WHITE
+        isAntiAlias = true
+        style = Paint.Style.STROKE
+        strokeWidth = 2.5f
+    }
+
+    canvas.drawCircle(cx, cy, r, paintBlue)
+    canvas.drawCircle(cx, cy, r, paintWhiteStroke)
+
+    val tip = android.graphics.Path().apply {
+        moveTo(cx - r * 0.55f, cy + r * 0.7f)
+        lineTo(cx, h.toFloat() - 1f)
+        lineTo(cx + r * 0.55f, cy + r * 0.7f)
+        close()
+    }
+    canvas.drawPath(tip, paintBlue)
+
+    canvas.drawCircle(cx, cy, r * 0.35f, paintWhiteFill)
+
+    return bitmap
+}
+
 class LocationPermissionState(
     hasPermission: Boolean = false,
     val requestPermission: () -> Unit = {}
@@ -111,22 +179,18 @@ class LocationPermissionState(
         internal set
 }
 
-
 @Composable
 fun rememberLocationPermissionState(
     permission: String = android.Manifest.permission.ACCESS_FINE_LOCATION
 ): LocationPermissionState {
     val context = LocalContext.current
 
-    // Verificar el estado inicial del permiso
     val initialPermission = remember {
         ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
     }
 
-    // Estado para manejar el permiso
     val state = remember { LocationPermissionState(hasPermission = initialPermission) }
 
-    // Lanzador para solicitar el permiso
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { granted ->
@@ -134,7 +198,6 @@ fun rememberLocationPermissionState(
         state.hasPermission = granted
     }
 
-    // Recordar el estado del permiso
     return remember(state, launcher) {
         LocationPermissionState(
             hasPermission = state.hasPermission,
@@ -144,5 +207,3 @@ fun rememberLocationPermissionState(
         }
     }
 }
-
-// TODO @CamiloCuenca me quede en la parte 6 de la guia del mapa
