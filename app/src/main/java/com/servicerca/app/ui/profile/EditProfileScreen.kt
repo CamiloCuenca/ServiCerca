@@ -1,6 +1,9 @@
 package com.servicerca.app.ui.profile
 
 import android.util.Log
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import java.io.ByteArrayOutputStream
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -188,10 +191,23 @@ fun EditProfileScreen(
                                 if (uri != null) {
                                     try {
                                         val inputStream: InputStream? = context.contentResolver.openInputStream(uri)
-                                        val bytes = inputStream?.readBytes()
-                                        inputStream?.close()
-                                        if (bytes != null) {
-                                            viewModel.onPictureChanged(bytes)
+                                        if (inputStream != null) {
+                                            val bitmap = BitmapFactory.decodeStream(inputStream)
+                                            inputStream.close()
+                                            
+                                            if (bitmap != null) {
+                                                val maxDimension = 800
+                                                val ratio = minOf(maxDimension.toFloat() / bitmap.width, maxDimension.toFloat() / bitmap.height)
+                                                val width = (ratio * bitmap.width).toInt()
+                                                val height = (ratio * bitmap.height).toInt()
+                                                
+                                                val resizedBitmap = Bitmap.createScaledBitmap(bitmap, width, height, true)
+                                                val outputStream = ByteArrayOutputStream()
+                                                resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 80, outputStream)
+                                                val bytes = outputStream.toByteArray()
+                                                
+                                                viewModel.onPictureChanged(bytes)
+                                            }
                                         }
                                     } catch (e: Exception) {
                                         Log.e("EditProfile", "Error loading image", e)
@@ -344,8 +360,9 @@ fun EditProfileScreen(
 
                     Box(modifier = Modifier.padding(vertical = 20.dp)) {
                         PrimaryButton(
-                            text = stringResource(R.string.btn_edit_profile),
-                            onClick = { viewModel.saveProfile() }
+                            text = if (isLoading) "Guardando..." else stringResource(R.string.btn_edit_profile),
+                            onClick = { viewModel.saveProfile() },
+                            enabled = !isLoading
                         )
                     }
                 }

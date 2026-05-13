@@ -76,6 +76,8 @@ class EditProfileViewModel @Inject constructor(
     private val _profilePictureUrl = MutableStateFlow("")
     val profilePictureUrl: StateFlow<String> = _profilePictureUrl.asStateFlow()
 
+    private var originalProfilePictureUrl = ""
+
     // Bytes de la imagen seleccionada; null si el usuario no cambió la foto
     private var pendingImageBytes: ByteArray? = null
 
@@ -113,6 +115,7 @@ class EditProfileViewModel @Inject constructor(
                         phone.loadInitialValue(user.phoneNumber)
                         city.loadInitialValue(user.city)
                         _profilePictureUrl.value = user.profilePictureUrl
+                        originalProfilePictureUrl = user.profilePictureUrl
                         _email.value = user.email
                         _role.value = user.role.name
                     }
@@ -166,6 +169,8 @@ class EditProfileViewModel @Inject constructor(
                                 _saveResult.value = RequestResult.Failure(
                                     "Error al subir la imagen: ${uploadResult.exceptionOrNull()?.message}"
                                 )
+                                _profilePictureUrl.value = originalProfilePictureUrl
+                                pendingImageBytes = null
                                 _isLoading.value = false
                                 return@launch
                             }
@@ -182,11 +187,14 @@ class EditProfileViewModel @Inject constructor(
                             profilePictureUrl = _profilePictureUrl.value
                         )
                         userRepository.save(updatedUser)
+                        originalProfilePictureUrl = _profilePictureUrl.value
                         _saveResult.value = RequestResult.Success("Perfil actualizado correctamente")
                     }
                 }
             } catch (e: Exception) {
                 _saveResult.value = RequestResult.Failure("Error al guardar: ${e.message}")
+                _profilePictureUrl.value = originalProfilePictureUrl
+                pendingImageBytes = null
             } finally {
                 _isLoading.value = false
             }
