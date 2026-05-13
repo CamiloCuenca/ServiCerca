@@ -42,16 +42,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.airbnb.lottie.compose.LottieAnimation
-
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
@@ -64,14 +60,14 @@ import kotlinx.coroutines.delay
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ResetPassword(
-    email: String,
+    oobCode: String,
     viewModel: ResetPasswordViewModel = hiltViewModel(),
     onNavigateToLogin: () -> Unit,
     onBackClick: () -> Unit
 ) {
-
-    // Estado para el icono de visibilizacion de contraseña
     var passwordVisible by remember { mutableStateOf(false) }
+    var confirmPasswordVisible by remember { mutableStateOf(false) }
+
     val snackBarHostState = remember { SnackbarHostState() }
     val resetResult by viewModel.resetResult.collectAsStateWithLifecycle()
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -81,45 +77,41 @@ fun ResetPassword(
     val progress by animateLottieCompositionAsState(
         composition = composition,
         iterations = 1,
-        speed = 1.0f 
+        speed = 1.0f
     )
 
     LaunchedEffect(resetResult) {
         resetResult?.let { result ->
-            val message = when(result){
+            val message = when (result) {
                 is RequestResult.Success -> result.message
                 is RequestResult.Failure -> result.errorMessage
-                else -> {}
+                else -> return@let
             }
 
             keyboardController?.hide()
             focusManager.clearFocus()
-            // Muestra el snackbar y espera a que se oculte o descarte
+
             snackBarHostState.showSnackbar(
-                message = message as String,
+                message = message,
                 duration = SnackbarDuration.Short
             )
 
-            // Si el login fue exitoso, esperamos un momento para que el usuario vea el mensaje y navegamos
             if (result is RequestResult.Success) {
-                delay(300)
-
+                delay(500)
                 onNavigateToLogin()
-
             }
 
-            // Limpiamos el resultado en el ViewModel para evitar que el efecto se dispare de nuevo innecesariamente
-            viewModel.resetResult()
+            viewModel.clearResult()
         }
     }
+
     Scaffold(
         snackbarHost = {
             SnackbarHost(snackBarHostState) { data ->
-                // Personalización del color según el tipo de resultado
-                // Nota: Usamos una variable local para capturar el estado actual del error antes de que se resetee
                 val isError = resetResult is RequestResult.Failure
                 Snackbar(
-                    containerColor = if(isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                    containerColor = if (isError) MaterialTheme.colorScheme.error
+                                     else MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary
                 ) {
                     Text(data.visuals.message)
@@ -172,7 +164,7 @@ fun ResetPassword(
 
             // — Título —
             Text(
-                text = "Restablecer contraseña",
+                text = "Nueva contraseña",
                 style = MaterialTheme.typography.headlineMedium
             )
 
@@ -180,56 +172,19 @@ fun ResetPassword(
 
             // — Descripción —
             Text(
-                text = "Introduce el código de recuperación enviado a $email y define tu nueva contraseña.",
+                text = "Elige una nueva contraseña segura para tu cuenta.",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Leyenda de campos obligatorios
-            Text(
-                text = buildAnnotatedString {
-                    withStyle(SpanStyle(color = MaterialTheme.colorScheme.error)) { append("*") }
-                    append(" Campos obligatorios")
-                },
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // — Campo: Código de recuperación —
-            AppTextField(
-                value = viewModel.codeReset.value,
-                onValueChange = { viewModel.codeReset.onChange(it) },
-                label = "Código de recuperación",
-                placeholder = "Ej: 123456",
-                required = true,
-                modifier = Modifier
-                    .fillMaxWidth(),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Next
-                ),
-                isError = viewModel.codeReset.error != null,
-                supportingText = viewModel.codeReset.error?.let { error ->
-                    { Text(text = error) }
-                },
-
-
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(32.dp))
 
             // — Campo: Nueva contraseña —
             AppTextField(
                 value = viewModel.newPassword.value,
                 onValueChange = { viewModel.newPassword.onChange(it) },
                 label = "Nueva contraseña",
-                placeholder = "Mínimo 8 caracteres",
+                placeholder = "Mínimo 6 caracteres",
                 required = true,
                 isPassword = !passwordVisible,
                 trailingIcon = {
@@ -242,17 +197,48 @@ fun ResetPassword(
                         )
                     }
                 },
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Next
+                ),
+                isError = viewModel.newPassword.error != null,
+                supportingText = viewModel.newPassword.error?.let { error ->
+                    { Text(text = error) }
+                }
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // — Campo: Confirmar contraseña —
+            AppTextField(
+                value = viewModel.confirmPassword.value,
+                onValueChange = { viewModel.confirmPassword.onChange(it) },
+                label = "Confirmar contraseña",
+                placeholder = "Repite tu contraseña",
+                required = true,
+                isPassword = !confirmPasswordVisible,
+                trailingIcon = {
+                    IconButton(onClick = { confirmPasswordVisible = !confirmPasswordVisible }) {
+                        Icon(
+                            imageVector = if (confirmPasswordVisible) Icons.Default.VisibilityOff
+                                          else Icons.Default.Visibility,
+                            contentDescription = if (confirmPasswordVisible) "Ocultar contraseña"
+                                                 else "Mostrar contraseña"
+                        )
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Password,
                     imeAction = ImeAction.Done
                 ),
-                isError = viewModel.newPassword.error != null,
-                supportingText = viewModel.newPassword.error?.let { error ->
+                isError = viewModel.confirmPassword.error != null,
+                supportingText = viewModel.confirmPassword.error?.let { error ->
                     { Text(text = error) }
-                },
+                }
             )
 
             Spacer(modifier = Modifier.height(32.dp))
@@ -260,27 +246,26 @@ fun ResetPassword(
             // — Botón de acción —
             PrimaryButton(
                 text = "Restablecer contraseña",
-                onClick = {viewModel.reset()},
+                onClick = { viewModel.reset(oobCode) },
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
-            // — Link: reenviar código —
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = "¿No te llegó el código? ",
+                    text = "¿Ya recordaste tu clave? ",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
-                    text = "Reenviar",
+                    text = "Inicia sesión",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.clickable(onClick = { /* TODO: lógica de reenvío */ })
+                    modifier = Modifier.clickable { onNavigateToLogin() }
                 )
             }
 
@@ -289,54 +274,12 @@ fun ResetPassword(
     }
 }
 
-// ——— Funciones de validación ———
-
-/**
- * Valida que el código de restablecimiento tenga exactamente 6 caracteres
- * y esté compuesto únicamente por letras y dígitos (alfanumérico).
- *
- * @param code El código ingresado por el usuario.
- * @return Un mensaje de error si el código no es válido, o null si es correcto.
- */
-fun validateResetCode(code: String): String? {
-    return when {
-        code.isBlank()                              -> "El código no puede estar vacío"
-        code.length != 6                            -> "El código debe tener exactamente 6 caracteres"
-        !code.matches(Regex("^[a-zA-Z0-9]{6}$"))   -> "El código solo puede contener letras y números"
-        else                                        -> null
-    }
-}
-
-/**
- * Valida que la nueva contraseña cumpla los requisitos mínimos de seguridad:
- * - No puede estar vacía
- * - Mínimo 8 caracteres
- * - Al menos una letra mayúscula
- * - Al menos una letra minúscula
- * - Al menos un dígito
- *
- * @param password La contraseña ingresada por el usuario.
- * @return Un mensaje de error si no es válida, o null si cumple todos los requisitos.
- */
-fun validatePassword(password: String): String? {
-    return when {
-        password.isBlank()                 -> "La contraseña no puede estar vacía"
-        password.length < 8                -> "La contraseña debe tener al menos 8 caracteres"
-        !password.any { it.isUpperCase() } -> "Debe contener al menos una letra mayúscula"
-        !password.any { it.isLowerCase() } -> "Debe contener al menos una letra minúscula"
-        !password.any { it.isDigit() }     -> "Debe contener al menos un número"
-        else                               -> null
-    }
-}
-
-// ——— Preview ———
-
 @Composable
 @Preview(showBackground = true, showSystemUi = true)
 fun ResetPasswordPreview() {
     ResetPassword(
-        email = "usuario@ejemplo.com",
+        oobCode = "preview-oob-code",
         onNavigateToLogin = {},
         onBackClick = {}
     )
-}
+}

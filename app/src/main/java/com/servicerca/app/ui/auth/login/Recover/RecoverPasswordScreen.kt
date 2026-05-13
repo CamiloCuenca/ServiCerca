@@ -50,15 +50,14 @@ import com.servicerca.app.R
 import com.servicerca.app.core.components.button.PrimaryButton
 import com.servicerca.app.core.components.input.AppTextField
 import com.servicerca.app.core.utils.RequestResult
-import kotlinx.coroutines.delay
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecoverPasswordScreen(
     viewModel: RecoverPasswordViewModel = hiltViewModel(),
     onBackClick: () -> Unit,
-    onNavigateToLogin: () -> Unit,
-    onNavigateToResetPassword: (String) -> Unit
+    onNavigateToLogin: () -> Unit
 ) {
 
 
@@ -78,28 +77,22 @@ fun RecoverPasswordScreen(
     LaunchedEffect(recoverResult) {
         recoverResult?.let { result ->
             val message = when(result){
-                is RequestResult.Success -> result.message
+                is RequestResult.Success -> "¡Revisa tu correo y toca el enlace para restablecer tu contraseña!"
                 is RequestResult.Failure -> result.errorMessage
-                else -> {}
+                else -> return@let
             }
 
             keyboardController?.hide()
             focusManager.clearFocus()
-            // Muestra el snackbar y espera a que se oculte o descarte
+
             snackBarHostState.showSnackbar(
-                message = message as String,
-                duration = SnackbarDuration.Short
+                message = message,
+                duration = SnackbarDuration.Long
             )
 
-            // Si el login fue exitoso, esperamos un momento para que el usuario vea el mensaje y navegamos
-            if (result is RequestResult.Success) {
-                delay(300)
+            // No navegamos aquí: el deep link del email abrirá la app
+            // y AppNavigation detectará el oobCode para ir a ResetPassword.
 
-                onNavigateToResetPassword(viewModel.email.value.trim())
-
-            }
-
-            // Limpiamos el resultado en el ViewModel para evitar que el efecto se dispare de nuevo innecesariamente
             viewModel.resetRecoverResult()
         }
     }
@@ -243,9 +236,8 @@ fun RecoverPasswordScreen(
 @Preview(showBackground = true, showSystemUi = true)
 fun RecoverPasswordScreenPreview() {
     RecoverPasswordScreen(
-        onNavigateToLogin = {}
-        , onBackClick = {},
-        onNavigateToResetPassword = {}
+        onNavigateToLogin = {},
+        onBackClick = {}
     )
 }
 
