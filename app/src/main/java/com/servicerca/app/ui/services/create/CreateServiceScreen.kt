@@ -23,6 +23,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.AddLocationAlt
 import androidx.compose.material.icons.filled.ArrowCircleRight
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -36,10 +37,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -55,14 +56,18 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.mapbox.geojson.Point
 import com.servicerca.app.R
+import com.servicerca.app.core.components.Map.LocationPickerMap
 import com.servicerca.app.core.components.Map.MapBox
 import com.servicerca.app.core.components.button.ButtonCreateService
 import com.servicerca.app.core.components.images.ImagesHorizontalScroller
 import com.servicerca.app.core.components.input.AppTextField
 import com.servicerca.app.core.utils.RequestResult
-
 import java.io.InputStream
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -73,9 +78,11 @@ fun CreateServiceScreen(
     viewModel: CreateServiceViewModel = hiltViewModel(),
 ) {
     val createResult by viewModel.createResult.collectAsStateWithLifecycle()
+    val selectedLocation by viewModel.selectedLocation.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     var isError by remember { mutableStateOf(false) }
     var expanded by remember { mutableStateOf(false) }
+    var showLocationPicker by remember { mutableStateOf(false) }
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
@@ -88,11 +95,10 @@ fun CreateServiceScreen(
                 focusManager.clearFocus()
                 snackbarHostState.showSnackbar(result.message)
                 viewModel.resetCreateResult()
-                // Notificar al caller y regresar a la pantalla anterior
                 onServiceCreated()
                 onBack()
             }
-            is RequestResult.SuccessLogin -> Unit // No aplica en esta pantalla
+            is RequestResult.SuccessLogin -> Unit
             is RequestResult.Failure -> {
                 isError = true
                 keyboardController?.hide()
@@ -101,6 +107,31 @@ fun CreateServiceScreen(
                 viewModel.resetCreateResult()
             }
             null -> Unit
+        }
+    }
+
+    // Dialog de pantalla completa para seleccionar ubicación en el mapa
+    if (showLocationPicker) {
+        Dialog(
+            onDismissRequest = { showLocationPicker = false },
+            properties = DialogProperties(
+                usePlatformDefaultWidth = false,
+                dismissOnBackPress = true,
+                dismissOnClickOutside = false
+            )
+        ) {
+            Surface(modifier = Modifier.fillMaxSize()) {
+                LocationPickerMap(
+                    modifier = Modifier.fillMaxSize(),
+                    initialLat = selectedLocation?.latitude ?: 4.4687891,
+                    initialLng = selectedLocation?.longitude ?: -75.6491181,
+                    onLocationConfirmed = { lat, lng ->
+                        viewModel.setLocation(lat, lng)
+                        showLocationPicker = false
+                    },
+                    onDismiss = { showLocationPicker = false }
+                )
+            }
         }
     }
 
@@ -125,7 +156,7 @@ fun CreateServiceScreen(
             verticalArrangement = Arrangement.SpaceBetween
         ) {
 
-            Column{
+            Column {
                 // Header: ícono a la izquierda, título centrado
                 Box(
                     modifier = Modifier
@@ -166,24 +197,19 @@ fun CreateServiceScreen(
 
                 val images by viewModel.images.collectAsStateWithLifecycle()
 
-                // Launcher para pickear imágenes desde el almacenamiento
                 val context = LocalContext.current
                 val launcher = rememberLauncherForActivityResult(
                     contract = ActivityResultContracts.GetContent(),
                     onResult = { uri ->
                         if (uri != null) {
-                            // Convertir Uri a ByteArray
                             try {
                                 val inputStream: InputStream? = context.contentResolver.openInputStream(uri)
                                 val bytes = inputStream?.readBytes()
                                 inputStream?.close()
-                                if (bytes != null) {
-                                    viewModel.addImage(bytes)
-                                }
-                                            } catch (e: Exception) {
-                                                // Log para depuración si la conversión falla
-                                                Log.w("CreateService", "failed to read image uri", e)
-                                            }
+                                if (bytes != null) viewModel.addImage(bytes)
+                            } catch (e: Exception) {
+                                Log.w("CreateService", "failed to read image uri", e)
+                            }
                         }
                     }
                 )
@@ -207,7 +233,7 @@ fun CreateServiceScreen(
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                // ── Categoría (dropdown con colores del tema) ─────────────
+                // ── Categoría (dropdown) ─────────────────────────────────
                 ExposedDropdownMenuBox(
                     expanded = expanded,
                     onExpandedChange = { expanded = !expanded }
@@ -246,10 +272,7 @@ fun CreateServiceScreen(
                         viewModel.categories.forEach { option ->
                             DropdownMenuItem(
                                 text = {
-                                    Text(
-                                        text = option,
-                                        fontWeight = FontWeight.Medium
-                                    )
+                                    Text(text = option, fontWeight = FontWeight.Medium)
                                 },
                                 onClick = {
                                     viewModel.category.onChange(option)
@@ -275,7 +298,7 @@ fun CreateServiceScreen(
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                // Precios
+                // ── Precios ───────────────────────────────────────────────
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -299,45 +322,53 @@ fun CreateServiceScreen(
                         isError = viewModel.maxValue.error != null,
                         supportingText = viewModel.maxValue.error?.let { msg -> { Text(msg) } }
                     )
-
                 }
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                // ── Botón agregar ubicación ───────────────────────────────
+                // ── Botón de ubicación ────────────────────────────────────
                 androidx.compose.material3.Button(
-                    onClick = { /* TODO: abrir selector de mapa */ },
+                    onClick = { showLocationPicker = true },
                     modifier = Modifier
                         .padding(vertical = 8.dp, horizontal = 4.dp)
                         .size(DpSize(width = androidx.compose.ui.unit.Dp.Infinity, height = 70.dp))
                         .fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp),
                     colors = androidx.compose.material3.ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
+                        containerColor = if (selectedLocation != null)
+                            MaterialTheme.colorScheme.secondary
+                        else
+                            MaterialTheme.colorScheme.primary,
                         contentColor = MaterialTheme.colorScheme.onPrimary
                     ),
                     elevation = androidx.compose.material3.ButtonDefaults.buttonElevation(
                         pressedElevation = 8.dp,
-                        defaultElevation = 4.dp,
-                        hoveredElevation = 6.dp,
-                        focusedElevation = 6.dp
+                        defaultElevation = 4.dp
                     )
                 ) {
                     Row {
                         Icon(
-                            imageVector = Icons.Default.AddLocationAlt,
+                            imageVector = if (selectedLocation != null)
+                                Icons.Default.CheckCircle
+                            else
+                                Icons.Default.AddLocationAlt,
                             contentDescription = stringResource(R.string.add_location_content_description),
                             modifier = Modifier.align(Alignment.CenterVertically)
                         )
                         Spacer(modifier = Modifier.width(20.dp))
                         Column {
                             Text(
-                                text = stringResource(R.string.title_location_service),
+                                text = if (selectedLocation != null)
+                                    "Ubicación seleccionada"
+                                else
+                                    stringResource(R.string.title_location_service),
                                 style = MaterialTheme.typography.bodyLarge,
                                 modifier = Modifier.align(Alignment.Start)
                             )
                             Text(
-                                text = stringResource(R.string.description_location_service),
+                                text = selectedLocation?.let { loc ->
+                                    "Lat: ${"%.4f".format(loc.latitude)}, Lng: ${"%.4f".format(loc.longitude)}"
+                                } ?: stringResource(R.string.description_location_service),
                                 style = MaterialTheme.typography.bodySmall,
                                 modifier = Modifier.align(Alignment.Start)
                             )
@@ -351,16 +382,20 @@ fun CreateServiceScreen(
                     }
                 }
 
-                // ── Mapa ──────────────────────────────────────────────────
+                // ── Vista previa del mapa con el pin seleccionado ────────
                 MapBox(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(200.dp)
+                        .height(200.dp),
+                    showMyLocationButton = false,
+                    markerPoint = selectedLocation?.let {
+                        Point.fromLngLat(it.longitude, it.latitude)
+                    }
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                // ── Botón publicar → conectado al ViewModel ───────────────
+                // ── Botón publicar ────────────────────────────────────────
                 ButtonCreateService(
                     text = stringResource(R.string.publish_service_button),
                     onClick = { viewModel.createService() },
@@ -372,13 +407,8 @@ fun CreateServiceScreen(
                             modifier = Modifier.align(Alignment.End)
                         )
                     }
-
                 )
-
-
             }
-
         }
     }
-
 }

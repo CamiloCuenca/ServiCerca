@@ -344,10 +344,11 @@ private fun MainNavigation(
             ProviderVerificationScreen(onBackClick = { navController.popBackStack() })
         }
 
-        composable<MainRoutes.Map>{
+        composable<MainRoutes.Map> {
             MapScreen(
-                onBackClick = {
-                    navController.popBackStack()
+                onBackClick = { navController.popBackStack() },
+                onServiceDetailClick = { serviceId ->
+                    navController.navigate(MainRoutes.ServiceDetail(serviceId))
                 }
             )
         }
@@ -356,8 +357,9 @@ private fun MainNavigation(
             val route = backStackEntry.toRoute<MainRoutes.ServiceDetail>()
             DetailServiceScreen(
                 serviceId = route.serviceId,
-                onBack = {
-                    navController.popBackStack()
+                onBack = { navController.popBackStack() },
+                onMakeReservation = { id ->
+                    navController.navigate(MainRoutes.MakeReservation(id))
                 }
             )
         }
