@@ -33,14 +33,14 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
-            <!-- Deep link para recuperación de contraseña vía Firebase -->
+            
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <!-- Esquema personalizado como fallback sin Dynamic Links -->
-                <data android:scheme="servicerca" android:host="reset-password" />
+                <data android:scheme="https"
+                      android:host="servicerca-6ee07.firebaseapp.com"
+                      android:pathPrefix="/__/auth/action" />
             </intent-filter>
         </activity>
     </application>

@@ -90,9 +90,10 @@ fun RecoverPasswordScreen(
                 duration = SnackbarDuration.Long
             )
 
-            // No navegamos aquí: el deep link del email abrirá la app
-            // y AppNavigation detectará el oobCode para ir a ResetPassword.
-
+            if (result is RequestResult.Success) {
+                // Navegamos al login para que inicie sesión tras cambiarla en la web
+                onNavigateToLogin()
+            }
             viewModel.resetRecoverResult()
         }
     }

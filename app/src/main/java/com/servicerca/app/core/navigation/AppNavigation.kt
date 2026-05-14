@@ -50,8 +50,7 @@ import com.servicerca.app.ui.qr.ServiceVerificationScreen
 
 @Composable
 fun AppNavigation(
-    sessionViewModel: SessionViewModel = hiltViewModel(),
-    pendingOobCode: StateFlow<String?>
+    sessionViewModel: SessionViewModel = hiltViewModel()
 ) {
     // Observa el estado de la sesión desde el ViewModel
     val sessionState by sessionViewModel.sessionState.collectAsStateWithLifecycle()
@@ -76,7 +75,6 @@ fun AppNavigation(
                     })
                 } else {
                     AuthNavigation(
-                        pendingOobCode = pendingOobCode,
                         onLoginSuccess = { userId, role ->
                             Log.d("AppNavigation", "onLoginSuccess received: userId=$userId, role=$role")
                             sessionViewModel.login(userId, role)
@@ -103,20 +101,9 @@ fun AppNavigation(
 
 @Composable
 private fun AuthNavigation(
-    pendingOobCode: StateFlow<String?>,
     onLoginSuccess: (String, UserRole) -> Unit
 ) {
     val navController = rememberNavController()
-    val oobCode by pendingOobCode.collectAsStateWithLifecycle()
-
-    // Cuando llega un oobCode desde el deep link, navegar a la pantalla de Reset
-    LaunchedEffect(oobCode) {
-        val code = oobCode ?: return@LaunchedEffect
-        navController.navigate(MainRoutes.Reset(oobCode = code)) {
-            // Quitar la pantalla de Recover del backstack si está en él
-            popUpTo(MainRoutes.RecoverPassword::class) { inclusive = true }
-        }
-    }
 
     NavHost(
         navController = navController,
@@ -186,11 +173,15 @@ private fun AuthNavigation(
             )
         }
 
-
-
-        composable<MainRoutes.Reset> { backStackEntry ->
-            val route = backStackEntry.toRoute<MainRoutes.Reset>()
-            ResetPassword(
+        composable<MainRoutes.ResetPassword>(
+            deepLinks = listOf(
+                androidx.navigation.navDeepLink<MainRoutes.ResetPassword>(
+                    basePath = "https://servicerca-6ee07.firebaseapp.com/__/auth/action"
+                )
+            )
+        ) { backStackEntry ->
+            val route = backStackEntry.toRoute<MainRoutes.ResetPassword>()
+            com.servicerca.app.ui.auth.login.Reset.ResetPassword(
                 oobCode = route.oobCode,
                 onNavigateToLogin = {
                     navController.navigate(MainRoutes.Login) {
@@ -202,6 +193,10 @@ private fun AuthNavigation(
                 }
             )
         }
+
+
+
+
 
             composable<MainRoutes.VerifyEmail> { backStackEntry ->
                 val route = backStackEntry.toRoute<MainRoutes.VerifyEmail>()
