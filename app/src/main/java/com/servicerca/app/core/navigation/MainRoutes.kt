@@ -20,11 +20,19 @@ sealed class MainRoutes {
     data object RecoverPassword : MainRoutes()
 
     @Serializable
+    data class ResetPassword(
+        val oobCode: String,
+        val mode: String? = null,
+        val apiKey: String? = null,
+        val lang: String? = null,
+        val continueUrl: String? = null
+    ) : MainRoutes()
+
+    @Serializable
     data class VerifyEmail(val email: String) : MainRoutes()
 
 
-    @Serializable
-    data class Reset(val oobCode: String) : MainRoutes()
+
 
 
     @Serializable

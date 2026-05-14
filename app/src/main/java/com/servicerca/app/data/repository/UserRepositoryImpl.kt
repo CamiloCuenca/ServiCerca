@@ -243,7 +243,17 @@ constructor(
     override suspend fun initiatePasswordRecovery(email: String): Result<Unit> {
         val trimmedEmail = email.trim()
         return try {
-            auth.sendPasswordResetEmail(trimmedEmail).await()
+            val actionCodeSettings = com.google.firebase.auth.ActionCodeSettings.newBuilder()
+                .setUrl("https://servicerca-6ee07.firebaseapp.com/__/auth/action")
+                .setHandleCodeInApp(true)
+                .setAndroidPackageName(
+                    "com.servicerca.app",
+                    true, /* installIfNotAvailable */
+                    "1"   /* minimumVersion */
+                )
+                .build()
+                
+            auth.sendPasswordResetEmail(trimmedEmail, actionCodeSettings).await()
             Result.success(Unit)
         } catch (e: Exception) {
             Log.e("UserRepository", "Error al iniciar recuperación de contraseña", e)
