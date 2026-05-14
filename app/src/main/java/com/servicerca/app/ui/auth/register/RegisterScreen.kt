@@ -69,7 +69,6 @@ fun RegisterScreen(
 
     ) {
 
-    val opciones = listOf("Hogar", "Tecnología", "Mecánica", "Salud", "Belleza")
     val snackbarHostState = remember { SnackbarHostState() }
     val registerResult by viewModel.registerResult.collectAsStateWithLifecycle()
 
@@ -260,13 +259,7 @@ fun RegisterScreen(
                 )
 
 
-                AppExposedDropdownMenu(
-                    label = "Categoría",
-                    options = opciones,
-                    selectedOption = viewModel.category.value,
-                    onOptionSelected = { viewModel.category.onChange(it) },
-                    errorMessage = viewModel.category.error
-                )
+
 
                 AppTextField(
                     value = viewModel.address.value,

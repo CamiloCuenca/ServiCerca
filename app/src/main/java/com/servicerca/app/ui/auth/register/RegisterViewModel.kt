@@ -107,13 +107,7 @@ class RegisterViewModel @Inject constructor(
         }
     }
 
-    val category = ValidatedField("") { value ->
 
-        when {
-            value.isEmpty() -> "La categoría es obligatoria"
-            else -> null
-        }
-    }
 
     fun register() {
         // Forzar validación visual de todos los campos
@@ -123,7 +117,6 @@ class RegisterViewModel @Inject constructor(
         SecondLastname.touch()
         address.touch()
         city.touch()
-        category.touch()
         email.touch()
         password.touch()
         confirmPassword.touch()
@@ -182,13 +175,11 @@ class RegisterViewModel @Inject constructor(
                 && SecondLastname.isValid
                 && address.isValid
                 && city.isValid
-                && category.isValid
 
 
     // Es útil para resetear el formulario después de un login exitoso
     fun resetForm() {
         email.reset()
         password.reset()
-        category.reset()
     }
 }
