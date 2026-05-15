@@ -1,18 +1,24 @@
 package com.servicerca.app.data.repository
 
+import android.util.Log
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
+import com.servicerca.app.core.fcm.FCMSender
 import com.servicerca.app.data.datastore.SessionDataStore
 import com.servicerca.app.domain.model.Chat
 import com.servicerca.app.domain.model.Message
 import com.servicerca.app.domain.repository.ChatRepository
 import com.servicerca.app.domain.repository.UserRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -24,8 +30,11 @@ import javax.inject.Singleton
 class ChatRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
     private val sessionDataStore: SessionDataStore,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val fcmSender: FCMSender
 ) : ChatRepository {
+
+    private val notifScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     private fun getConvId(u1: String, u2: String) = if (u1 < u2) "${u1}_$u2" else "${u2}_$u1"
 
@@ -163,6 +172,26 @@ class ChatRepositoryImpl @Inject constructor(
         batch.set(messageRef, messageData)
 
         batch.commit().await()
+
+        // Enviar push al destinatario en background (fire-and-forget)
+        notifScope.launch {
+            trySendChatPush(recipientId = chatId, senderId = currentUserId, text = message.message)
+        }
+    }
+
+    private suspend fun trySendChatPush(recipientId: String, senderId: String, text: String) {
+        try {
+            val recipientToken = firestore.collection("users").document(recipientId)
+                .get().await().getString("fcmToken")?.takeIf { it.isNotBlank() } ?: return
+
+            val senderDoc = firestore.collection("users").document(senderId).get().await()
+            val senderName = "${senderDoc.getString("name1") ?: ""} ${senderDoc.getString("lastname1") ?: ""}".trim()
+                .ifBlank { "Alguien" }
+
+            fcmSender.sendChatNotification(recipientToken, senderName, text, senderId)
+        } catch (e: Exception) {
+            Log.e("ChatRepo", "Error enviando push de chat", e)
+        }
     }
 
     override suspend fun markAsRead(chatId: String) {
