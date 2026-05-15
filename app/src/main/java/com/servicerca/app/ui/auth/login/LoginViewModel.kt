@@ -3,6 +3,7 @@ package com.servicerca.app.ui.auth.login
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.servicerca.app.core.fcm.FCMTokenManager
 import com.servicerca.app.core.utils.RequestResult
 import com.servicerca.app.core.utils.ValidatedField
 import com.servicerca.app.domain.model.UserRole
@@ -14,13 +15,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-/**
- * ViewModel encargado de gestionar la lógica de negocio y el estado de la pantalla de Login.
- * Maneja la validación de campos, el estado de la autenticación y los resultados de las peticiones.
- */
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val repository: UserRepository
+    private val repository: UserRepository,
+    private val fcmTokenManager: FCMTokenManager
 ) : ViewModel() {
 
     private val _loginResult = MutableStateFlow<RequestResult?>(null)
@@ -80,11 +78,9 @@ class LoginViewModel @Inject constructor(
                     if (!user.isEmailVerified) {
                         _loginResult.value = RequestResult.Failure("Por favor, verifica tu correo electrónico antes de iniciar sesión.")
                     } else {
-                        if (user.role == UserRole.ADMIN) {
-                            _loginResult.value = RequestResult.SuccessLogin(user.id, user.role)
-                        } else {
-                            _loginResult.value = RequestResult.SuccessLogin(user.id, user.role)
-                        }
+                        // Registrar token FCM del dispositivo para poder recibir notificaciones push
+                        fcmTokenManager.saveTokenForUser(user.id)
+                        _loginResult.value = RequestResult.SuccessLogin(user.id, user.role)
                     }
                 } else {
                     _loginResult.value = RequestResult.Failure("Credenciales inválidas")

@@ -1,13 +1,18 @@
 package com.servicerca.app
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.servicerca.app.core.i18n.LanguageManager
 import com.servicerca.app.core.navigation.AppNavigation
 import com.servicerca.app.ui.theme.ServiCercaTheme
@@ -32,12 +37,17 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var settingsDataStore: SettingsDataStore
 
+    private val notificationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { /* El usuario ya decidió; no forzamos nada */ }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         runBlocking {
             languageManager.applySavedLanguage()
         }
+        requestNotificationPermissionIfNeeded()
         enableEdgeToEdge()
 
         setContent {
@@ -57,12 +67,20 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun requestNotificationPermissionIfNeeded() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val granted = ContextCompat.checkSelfPermission(
+                this, Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+            if (!granted) {
+                notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun PreviewMain() {
-    ServiCercaTheme {
-
-    }
+    ServiCercaTheme {}
 }

@@ -26,5 +26,6 @@ package com.servicerca.app.domain.model
         val rejectReviews: Int = 0,
         @get:JvmName("getIsEmailVerified") val isEmailVerified: Boolean = false,
         val listInteresting: List<String> = emptyList(),
-        @get:JvmName("getIsSuspended") val isSuspended: Boolean = false
+        @get:JvmName("getIsSuspended") val isSuspended: Boolean = false,
+        val fcmToken: String = ""
     )
