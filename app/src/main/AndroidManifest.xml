@@ -48,6 +48,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
+            android:launchMode="singleTask"
             android:label="@string/app_name"
             android:theme="@style/Theme.ServiCerca">
             <intent-filter>
@@ -61,8 +62,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="https"
-                      android:host="servicerca-6ee07.firebaseapp.com"
-                      android:pathPrefix="/__/auth/action" />
+                      android:host="servicerca-6ee07.web.app"
+                      android:pathPrefix="/reset" />
             </intent-filter>
         </activity>
     </application>

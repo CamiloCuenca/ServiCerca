@@ -177,6 +177,25 @@ fun ResetPassword(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
+            Spacer(modifier = Modifier.height(16.dp))
+
+            if (oobCode.isBlank()) {
+                androidx.compose.material3.Card(
+                    colors = androidx.compose.material3.CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.errorContainer,
+                        contentColor = MaterialTheme.colorScheme.onErrorContainer
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "El enlace de recuperación parece ser inválido o estar dañado. Por favor, solicita uno nuevo si tienes problemas.",
+                        modifier = Modifier.padding(16.dp),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+
             Spacer(modifier = Modifier.height(32.dp))
 
             // — Campo: Nueva contraseña —
@@ -247,6 +266,7 @@ fun ResetPassword(
             PrimaryButton(
                 text = "Restablecer contraseña",
                 onClick = { viewModel.reset(oobCode) },
+                enabled = oobCode.isNotBlank(),
                 modifier = Modifier.fillMaxWidth()
             )
 

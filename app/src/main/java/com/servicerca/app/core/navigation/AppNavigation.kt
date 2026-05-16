@@ -176,7 +176,7 @@ private fun AuthNavigation(
         composable<MainRoutes.ResetPassword>(
             deepLinks = listOf(
                 androidx.navigation.navDeepLink<MainRoutes.ResetPassword>(
-                    basePath = "https://servicerca-6ee07.firebaseapp.com/__/auth/action"
+                    basePath = "https://servicerca-6ee07.web.app/reset"
                 )
             )
         ) { backStackEntry ->

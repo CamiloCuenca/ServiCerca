@@ -49,7 +49,19 @@ android {
         buildConfigField("String", "CLOUDINARY_UPLOAD_PRESET", if (cloudinaryUploadPreset != null) "\"$cloudinaryUploadPreset\"" else "\"\"")
     }
 
+    signingConfigs {
+        create("teamDebug") {
+            storeFile = file("debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
+    }
+
     buildTypes {
+        getByName("debug") {
+            signingConfig = signingConfigs.getByName("teamDebug")
+        }
         release {
             isMinifyEnabled = true
             isShrinkResources = true
