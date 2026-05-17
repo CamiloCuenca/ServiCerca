@@ -57,9 +57,7 @@ class SearchViewModel @Inject constructor(
         _selectedFilter
     ) { services, users, session, query, filter ->
         val normalizedQuery = query.trim()
-        if (normalizedQuery.isBlank()) {
-            return@combine emptyList()
-        }
+        if (normalizedQuery.isBlank()) return@combine emptyList()
 
         val currentUser = users.firstOrNull { it.id == session?.userId }
         val interestingIds = currentUser?.listInteresting?.toSet().orEmpty()
@@ -88,6 +86,7 @@ class SearchViewModel @Inject constructor(
         initialValue = emptyList()
     )
 
+    // Usa matchesType() para comparar tanto inglés como español
     val categoryResults: StateFlow<List<SearchServiceResult>> = combine(
         serviceRepository.services,
         userRepository.users,
@@ -102,7 +101,7 @@ class SearchViewModel @Inject constructor(
         var results = services
             .asSequence()
             .filter { it.status != ServiceStatus.DELETED }
-            .filter { it.type.contains(category.displayName, ignoreCase = true) }
+            .filter { category.matchesType(it.type) }
             .map { service ->
                 SearchServiceResult(
                     service = service,
@@ -181,5 +180,3 @@ class SearchViewModel @Inject constructor(
         }.take(5)
     }
 }
-
-

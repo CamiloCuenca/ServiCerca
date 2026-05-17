@@ -9,6 +9,7 @@ import com.servicerca.app.core.cloudinary.CloudinaryUploader
 import com.servicerca.app.core.utils.RequestResult
 import com.servicerca.app.core.utils.ValidatedField
 import com.servicerca.app.data.datastore.SessionDataStore
+import com.servicerca.app.domain.model.Categories
 import com.servicerca.app.domain.model.Location
 import com.servicerca.app.domain.model.ServiceStatus
 import com.servicerca.app.domain.model.Notification
@@ -34,17 +35,7 @@ class CreateServiceViewModel @Inject constructor(
     @param:ApplicationContext private val context: Context
 ) : ViewModel() {
 
-    val categories = listOf(
-        context.getString(R.string.category_plumbing),
-        context.getString(R.string.category_electricity),
-        context.getString(R.string.category_carpentry),
-        context.getString(R.string.category_painting),
-        context.getString(R.string.category_gardening),
-        context.getString(R.string.category_cleaning),
-        context.getString(R.string.category_moving),
-        context.getString(R.string.category_locksmith),
-        context.getString(R.string.category_other)
-    )
+    val categories = Categories.entries.map { it.displayName }
 
     val title = ValidatedField("") { value ->
         when {

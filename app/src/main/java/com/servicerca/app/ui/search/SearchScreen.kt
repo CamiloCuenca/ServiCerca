@@ -30,7 +30,6 @@ import com.servicerca.app.core.components.card.GridServiceCard
 import com.servicerca.app.core.components.input.SearchTextField
 import com.servicerca.app.core.components.utils.PopularCategoriesSection
 import com.servicerca.app.core.components.utils.RecentSearchesSection
-import com.servicerca.app.domain.model.Categories
 import com.servicerca.app.ui.theme.ServiCercaTheme
 
 @Composable
@@ -45,11 +44,7 @@ fun SearchScreen(
     viewModel: SearchViewModel? = null
 ) {
     val isInPreview = LocalInspectionMode.current
-    val actualViewModel = if (isInPreview) {
-        null
-    } else {
-        viewModel ?: hiltViewModel<SearchViewModel>()
-    }
+    val actualViewModel = if (isInPreview) null else viewModel ?: hiltViewModel<SearchViewModel>()
 
     val query = actualViewModel?.query?.collectAsStateWithLifecycle()?.value.orEmpty()
     val searchResults = actualViewModel?.searchResults?.collectAsStateWithLifecycle()?.value.orEmpty()
@@ -100,16 +95,13 @@ fun SearchScreen(
                     actualViewModel?.onQueryChange(newQuery)
                     onSearch(newQuery)
                 },
-                onSearch = {
-                    actualViewModel?.submitCurrentSearch()
-                },
+                onSearch = { actualViewModel?.submitCurrentSearch() },
                 placeholder = stringResource(R.string.search_placeholder),
             )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Quick Filters Row
         LazyRow(
             contentPadding = PaddingValues(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -132,7 +124,6 @@ fun SearchScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         if (query.isBlank() && selectedCategory == null) {
-            // Default View
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
@@ -152,11 +143,7 @@ fun SearchScreen(
                         }
                     )
                 }
-
-                item {
-                    ExploreMapCard(onOpenMap = onOpenMap)
-                }
-
+                item { ExploreMapCard(onOpenMap = onOpenMap) }
                 item {
                     PopularCategoriesSection(
                         onCategoryClick = { category ->
@@ -167,23 +154,26 @@ fun SearchScreen(
                 }
             }
         } else {
-            // Search or Category Results View (Staggered Grid)
             val resultsToDisplay = if (query.isNotBlank()) searchResults else categoryResults
-            
+
             if (selectedCategory != null) {
-                val categoryName = stringResource(categoryLabelRes(selectedCategory))
                 Text(
-                    text = stringResource(R.string.search_category_results_title, categoryName),
+                    text = stringResource(R.string.search_category_results_title,
+                        stringResource(selectedCategory.nameRes)),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier.padding(horizontal = 16.dp).padding(bottom = 12.dp)
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .padding(bottom = 12.dp)
                 )
             } else if (query.isNotBlank()) {
                 Text(
                     text = stringResource(R.string.search_results_for_query, query),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier.padding(horizontal = 16.dp).padding(bottom = 12.dp)
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .padding(bottom = 12.dp)
                 )
             }
 
@@ -194,7 +184,7 @@ fun SearchScreen(
                     columns = StaggeredGridCells.Fixed(2),
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(horizontal = 12.dp), // Less padding as cards have internal padding
+                        .padding(horizontal = 12.dp),
                     contentPadding = PaddingValues(bottom = 24.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalItemSpacing = 8.dp
@@ -246,9 +236,9 @@ fun EmptyStateView() {
                 )
             }
         }
-        
+
         Spacer(modifier = Modifier.height(24.dp))
-        
+
         Text(
             text = "No encontramos resultados",
             style = MaterialTheme.typography.titleLarge,
@@ -256,9 +246,9 @@ fun EmptyStateView() {
             color = MaterialTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center
         )
-        
+
         Spacer(modifier = Modifier.height(8.dp))
-        
+
         Text(
             text = "Prueba con palabras diferentes o revisa la ortografía.",
             style = MaterialTheme.typography.bodyMedium,
@@ -274,12 +264,4 @@ fun SearchScreenPreview() {
     ServiCercaTheme {
         SearchScreen()
     }
-}
-
-private fun categoryLabelRes(category: Categories): Int = when (category) {
-    Categories.HOGAR -> R.string.category_home
-    Categories.EDUCACIÓN -> R.string.category_education
-    Categories.MASCOTAS -> R.string.category_pets
-    Categories.TECNOLOGIA -> R.string.category_technology
-    Categories.TRANSPORTE -> R.string.category_transport
 }
