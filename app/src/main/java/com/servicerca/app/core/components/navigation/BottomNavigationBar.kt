@@ -55,7 +55,6 @@ fun BottomNavigationBar(
 
         Destination.entries.forEach { destination ->
 
-            // Obtener una representación de ruta consistente (qualifiedName) usada al registrar composable<...>
             val routeName = destination.route::class.qualifiedName ?: ""
 
             val isSelected = currentDestination?.route == routeName
@@ -100,7 +99,6 @@ fun BottomNavigationBar(
     }
 }
 
-// Items de navegación
 enum class Destination(
     val route: DashboardRoutes,
     @StringRes val labelRes: Int,
@@ -113,9 +111,6 @@ enum class Destination(
     PROFILE(DashboardRoutes.Profile, R.string.nav_label_profile, Icons.Default.AccountCircle),
 }
 
-
-
-// Moderador
 @Composable
 fun BottomNavigationBarModerator(
     navController: NavHostController,
@@ -189,9 +184,7 @@ enum class DestinationModerator(
     @StringRes val labelRes: Int,
     val icon: ImageVector,
 ) {
-
     HOME(DashboardRoutes.HomeModerator, R.string.nav_label_home, Icons.Default.Home),
     PROFILE(DashboardRoutes.ProfileModerator, R.string.nav_label_profile, Icons.Default.AccountCircle),
     HISTORIAL(DashboardRoutes.Historial(), R.string.nav_label_history, Icons.Default.History)
-
 }
