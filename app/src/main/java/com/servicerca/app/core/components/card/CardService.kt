@@ -34,8 +34,9 @@ import com.servicerca.app.core.components.tag.VerificationTag
 import com.servicerca.app.ui.theme.ServiCercaTheme
 
 @Composable
-fun CardService( // TODO @CAMILOCUENCA luego de tener el firestorage ponerle el parametro de imagn del servicio.
+fun CardService(
     modifier: Modifier = Modifier,
+    serviceId: String = "",
     title: String = "Reparación de Fugas Urgente",
     category: String = "Hogar",
     distance: String = "A 2.4 km de ti",
@@ -50,7 +51,8 @@ fun CardService( // TODO @CAMILOCUENCA luego de tener el firestorage ponerle el 
     isOwner: Boolean = false,
     onBookmarkClick: () -> Unit = {},
     onLikeClick: () -> Unit = {},
-    onRequestClick: () -> Unit = {}
+    onRequestClick: () -> Unit = {},
+    onShareClick: () -> Unit = {}
 ) {
 
 
@@ -154,7 +156,7 @@ fun CardService( // TODO @CAMILOCUENCA luego de tener el firestorage ponerle el 
                 }
 
                 IconButton(
-                    onClick = { },
+                    onClick = onShareClick,
                     modifier = Modifier
                         .align(Alignment.TopEnd)
                         .padding(8.dp)

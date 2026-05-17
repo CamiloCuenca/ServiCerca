@@ -360,7 +360,13 @@ private fun MainNavigation(
             )
         }
 
-        composable<MainRoutes.ServiceDetail> { backStackEntry ->
+        composable<MainRoutes.ServiceDetail>(
+            deepLinks = listOf(
+                androidx.navigation.navDeepLink<MainRoutes.ServiceDetail>(
+                    basePath = "https://servicerca-6ee07.web.app/service"
+                )
+            )
+        ) { backStackEntry ->
             val route = backStackEntry.toRoute<MainRoutes.ServiceDetail>()
             DetailServiceScreen(
                 serviceId = route.serviceId,

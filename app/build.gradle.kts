@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.devtools.ksp)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.google.gms.google.services)
+    alias(libs.plugins.firebase.app.distribution)
 }
 
 android {
@@ -61,6 +62,13 @@ android {
     buildTypes {
         getByName("debug") {
             signingConfig = signingConfigs.getByName("teamDebug")
+            firebaseAppDistribution {
+                artifactType = "APK"
+                releaseNotes = "Build de prueba ServiCerca"
+                // Agrega los emails separados por coma, o usa un grupo de Firebase Console
+                testers = "camilocuencadev@gmail.com"
+                // groups = "qa-team"
+            }
         }
         release {
             isMinifyEnabled = true
@@ -69,6 +77,12 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            firebaseAppDistribution {
+                artifactType = "APK"
+                releaseNotes = "Release ServiCerca v${defaultConfig.versionName}"
+                // groups = "beta-testers"
+                testers = "camilocuencadev@gmail.com"
+            }
         }
     }
     compileOptions {

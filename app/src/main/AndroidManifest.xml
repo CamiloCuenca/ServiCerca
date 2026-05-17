@@ -13,6 +13,11 @@
     <!-- Requerido en Android 13+ para mostrar notificaciones push -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
+    <!-- Necesario en Android 11+ para detectar si WhatsApp está instalado -->
+    <queries>
+        <package android:name="com.whatsapp" />
+        <package android:name="com.whatsapp.w4b" />
+    </queries>
 
     <application
         android:name=".MyApp"
@@ -64,6 +69,15 @@
                 <data android:scheme="https"
                       android:host="servicerca-6ee07.web.app"
                       android:pathPrefix="/reset" />
+            </intent-filter>
+
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https"
+                      android:host="servicerca-6ee07.web.app"
+                      android:pathPrefix="/service" />
             </intent-filter>
         </activity>
     </application>
