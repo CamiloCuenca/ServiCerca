@@ -38,7 +38,6 @@ class CreateServiceViewModel @Inject constructor(
 
     val categories = Categories.entries.map { it.displayName }
 
-
     val title = ValidatedField("") { value ->
         when {
             value.isBlank() -> context.getString(R.string.error_title_required)
