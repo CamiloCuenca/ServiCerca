@@ -244,7 +244,7 @@ constructor(
         val trimmedEmail = email.trim()
         return try {
             val actionCodeSettings = com.google.firebase.auth.ActionCodeSettings.newBuilder()
-                .setUrl("https://servicerca-6ee07.firebaseapp.com/__/auth/action")
+                .setUrl("https://servicerca-6ee07.web.app/reset")
                 .setHandleCodeInApp(true)
                 .setAndroidPackageName(
                     "com.servicerca.app",

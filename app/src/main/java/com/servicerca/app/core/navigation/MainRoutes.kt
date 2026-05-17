@@ -21,7 +21,7 @@ sealed class MainRoutes {
 
     @Serializable
     data class ResetPassword(
-        val oobCode: String,
+        val oobCode: String = "",
         val mode: String? = null,
         val apiKey: String? = null,
         val lang: String? = null,
