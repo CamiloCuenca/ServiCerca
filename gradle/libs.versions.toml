@@ -21,6 +21,7 @@ foundationLayout = "1.7.5"
 dataStore = "1.2.0"
 googleGmsGoogleServices = "4.4.4"
 firebaseBom = "33.13.0"
+firebaseAppDistribution = "5.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -66,3 +67,4 @@ kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", vers
 hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hiltAndroid" }
 devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
+firebase-app-distribution = { id = "com.google.firebase.appdistribution", version.ref = "firebaseAppDistribution" }
