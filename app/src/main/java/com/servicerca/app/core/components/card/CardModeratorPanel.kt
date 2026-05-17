@@ -40,7 +40,7 @@ fun CardModeratorPanelScreen (
     isNewService: Boolean = true,
     imageUrl: String,
     type: String,
-    tittle: String,
+    title: String,
     description: String,
     onVerifyClick: () -> Unit,
     onRejectClick: () -> Unit,
@@ -95,7 +95,7 @@ fun CardModeratorPanelScreen (
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
                 Text(
-                    text = tittle,
+                    text = title,
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.ExtraBold,
                     color = MaterialTheme.colorScheme.onSurface,
@@ -153,7 +153,7 @@ fun CardModeratorPanelPreview(){
     CardModeratorPanelScreen(
         imageUrl = "https://projectssdn.com/wp-content/uploads/elementor/thumbs/plomeria-en-general-qp5x9n6u64ze4tk30xqoxt57okaxdr7apr7hp13vds.png",
         type = "Tipo",
-        tittle = "Título",
+        title = "Título",
         description = "Descripción",
         onVerifyClick = {},
         onRejectClick = {}

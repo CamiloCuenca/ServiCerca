@@ -94,8 +94,6 @@ fun DetailServiceScreen(
     val isOwner by viewModel.isOwner.collectAsStateWithLifecycle()
     val errorMessage by viewModel.errorMessage.collectAsStateWithLifecycle()
 
-    val context = LocalContext.current
-
     LaunchedEffect(errorMessage) {
         errorMessage?.let {
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
