@@ -2,6 +2,7 @@ package com.servicerca.app.ui.services.detail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.servicerca.app.ai.ToxicityRepository
 import com.servicerca.app.core.utils.LevelUtils
 import com.servicerca.app.domain.model.Comment
 import com.servicerca.app.domain.model.Notification
@@ -21,6 +22,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
@@ -107,8 +109,8 @@ class DetailServiceViewModel @Inject constructor(
         if (s == null) return@combine "Principiante"
         val providerServiceIds = allServices.filter { it.ownerId == s.ownerId }.map { it.id }
         val providerComments = allComments.filter { it.serviceId in providerServiceIds }
-        val totalXp = providerComments.sumOf { (it.rating * 50).toInt() }
-        LevelUtils.getLevelName(totalXp)
+        val totalXp = providerComments.sumOf { (it.rating * 50).toLong() }
+        LevelUtils.getLevelName(totalXp.toInt())
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "Principiante")
 
     val isBookmarked: StateFlow<Boolean> = combine(
@@ -117,7 +119,7 @@ class DetailServiceViewModel @Inject constructor(
         sessionDataStore.sessionFlow
     ) { id, users, session ->
         val currentUser = users.find { it.id == session?.userId }
-        id != null && id in (currentUser?.listInteresting ?: emptyList())
+        (id != null && id in (currentUser?.listInteresting ?: emptyList()))
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
     val isLiked: StateFlow<Boolean> = combine(
@@ -137,6 +139,13 @@ class DetailServiceViewModel @Inject constructor(
     ) { s, session ->
         s?.ownerId != null && s.ownerId == session?.userId
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+
+    private val _errorMessage = MutableStateFlow<String?>(null)
+    val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
+
+    fun clearError() {
+        _errorMessage.value = null
+    }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val canReview: StateFlow<Boolean> = combine(
@@ -168,11 +177,25 @@ class DetailServiceViewModel @Inject constructor(
     }
 
     fun addComment(rating: Int, text: String) {
-        val s = service.value ?: return
-        val serviceId = s.id
-        val ownerId = s.ownerId
         viewModelScope.launch {
+            Log.d("DetailServiceVM", "Iniciando addComment para: $text")
             try {
+                // 1. Validación de IA (Independiente del servicio)
+                if (ToxicityRepository.isToxic(text)) {
+                    _errorMessage.value = "Contenido ofensivo detectado"
+                    return@launch
+                }
+
+                // 2. Verificar que el servicio esté cargado
+                val s = service.value
+                if (s == null) {
+                    Log.e("DetailServiceVM", "Error: El servicio es nulo al intentar comentar")
+                    return@launch
+                }
+                
+                val serviceId = s.id
+                val ownerId = s.ownerId
+
                 val session = sessionDataStore.sessionFlow.firstOrNull() ?: return@launch
                 val currentUser = userRepository.findById(session.userId) ?: return@launch
 
@@ -212,7 +235,7 @@ class DetailServiceViewModel @Inject constructor(
                         title = "Nueva reseña recibida",
                         message = "${currentUser.name1} comentó en tu servicio: \"$text\" ($rating★)",
                         date = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date()),
-                        imageRes = com.servicerca.app.R.drawable.insignia_chat,
+                        imageRes = R.drawable.insignia_chat,
                         isRead = false
                     )
                 )

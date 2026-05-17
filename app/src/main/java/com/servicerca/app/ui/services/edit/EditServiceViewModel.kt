@@ -8,6 +8,7 @@ import com.servicerca.app.R
 import com.servicerca.app.core.cloudinary.CloudinaryUploader
 import com.servicerca.app.core.utils.RequestResult
 import com.servicerca.app.core.utils.ValidatedField
+import com.servicerca.app.ai.ToxicityRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,7 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class EditServiceViewModel @Inject constructor(
     private val serviceRepository: com.servicerca.app.domain.repository.ServiceRepository,
-    @ApplicationContext private val context: Context
+    @param:ApplicationContext private val context: Context,
 ) : ViewModel() {
 
     // ── Categorías disponibles ─────────────────────────────────────────────
@@ -32,7 +33,7 @@ class EditServiceViewModel @Inject constructor(
         context.getString(R.string.category_cleaning),
         context.getString(R.string.category_moving),
         context.getString(R.string.category_locksmith),
-        context.getString(R.string.category_other)
+        context.getString(R.string.category_other),
     )
 
     // ── Campos del formulario ──────────────────────────────────────────────
@@ -41,7 +42,7 @@ class EditServiceViewModel @Inject constructor(
 
     val title = ValidatedField("") { value ->
         when {
-            value.isNotBlank() && value.length < 5 -> context.getString(R.string.error_title_min_length)
+            (value.isNotBlank() && (value.length < 5)) -> context.getString(R.string.error_title_min_length)
             else -> null
         }
     }
@@ -84,7 +85,7 @@ class EditServiceViewModel @Inject constructor(
     private val _deleteResult = MutableStateFlow<RequestResult?>(null)
     val deleteResult: StateFlow<RequestResult?> = _deleteResult.asStateFlow()
 
-    private val _isLoading = MutableStateFlow(false)
+    private val _isLoading = MutableStateFlow(value = false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
     private val _images = MutableStateFlow<List<ByteArray>>(emptyList())
@@ -136,7 +137,7 @@ class EditServiceViewModel @Inject constructor(
 
     fun addImage(image: ByteArray) {
         if (_images.value.size >= 5) return
-        _images.value = _images.value + image
+        _images.value += image
     }
 
     fun removeImageAt(index: Int) {
@@ -158,19 +159,29 @@ class EditServiceViewModel @Inject constructor(
             return
         }
 
-        val service = currentService ?: return
+        val s = currentService ?: run {
+            android.util.Log.e("EditServiceVM", "No hay servicio cargado para editar")
+            return
+        }
 
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                var photoUrl = service.photoUrl
+                // Validación de IA para contenido ofensivo
+                if (ToxicityRepository.isToxic(title.value) || ToxicityRepository.isToxic(description.value)) {
+                    _saveResult.value = RequestResult.Failure("Contenido ofensivo detectado")
+                    _isLoading.value = false
+                    return@launch
+                }
+
+                var photoUrl = s.photoUrl
 
                 // Si hay nuevas imágenes, subirlas a Cloudinary
                 if (_images.value.isNotEmpty()) {
                     val uploadResult = CloudinaryUploader.uploadImage(
                         imageBytes = _images.value.first(),
                         cloudName = BuildConfig.CLOUDINARY_CLOUD_NAME,
-                        uploadPreset = BuildConfig.CLOUDINARY_UPLOAD_PRESET
+                        uploadPreset = BuildConfig.CLOUDINARY_UPLOAD_PRESET,
                     )
                     if (uploadResult.isSuccess) {
                         photoUrl = uploadResult.getOrThrow()
@@ -183,12 +194,12 @@ class EditServiceViewModel @Inject constructor(
                     }
                 }
 
-                val updatedService = service.copy(
+                val updatedService = s.copy(
                     title = title.value,
                     type = category.value,
                     description = description.value,
-                    priceMin = minValue.value.toDoubleOrNull() ?: service.priceMin,
-                    priceMax = maxValue.value.toDoubleOrNull() ?: service.priceMax,
+                    priceMin = minValue.value.toDoubleOrNull() ?: s.priceMin,
+                    priceMax = maxValue.value.toDoubleOrNull() ?: s.priceMax,
                     status = com.servicerca.app.domain.model.ServiceStatus.PENDING,
                     photoUrl = photoUrl
                 )
