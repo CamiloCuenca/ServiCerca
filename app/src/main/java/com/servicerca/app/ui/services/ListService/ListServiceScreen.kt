@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,6 +41,7 @@ fun ListServiceScreen(
     var showDeleteModal by remember { mutableStateOf(false) }
     var selectedServiceId by remember { mutableStateOf<String?>(null) }
     var selectedTab by remember { mutableStateOf(0) }
+    var isRefreshing by remember { mutableStateOf(false) }
 
     val isInPreview = LocalInspectionMode.current
 
@@ -130,26 +132,30 @@ fun ListServiceScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // LISTA
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+        PullToRefreshBox(
+            isRefreshing = isRefreshing,
+            onRefresh = {
+                isRefreshing = true
+                isRefreshing = false
+            },
+            modifier = Modifier.fillMaxSize()
         ) {
-
-            items(services) { service ->
-
-                // Obtener el ViewModel real para manejar acciones (si no estamos en preview)
-                val actualViewModel = if (!isInPreview) (viewModel ?: hiltViewModel<ListServiceViewModel>()) else null
-
-                MyServiceCard(
-                    service = service,
-                    onEdit = { onEditService(service.id) },
-                    onClick = { onServiceClick(service.id) },
-                    onDelete = {
-                        selectedServiceId = service.id
-                        showDeleteModal = true
-                    }
-                )
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                items(services) { service ->
+                    val actualViewModel = if (!isInPreview) (viewModel ?: hiltViewModel<ListServiceViewModel>()) else null
+                    MyServiceCard(
+                        service = service,
+                        onEdit = { onEditService(service.id) },
+                        onClick = { onServiceClick(service.id) },
+                        onDelete = {
+                            selectedServiceId = service.id
+                            showDeleteModal = true
+                        }
+                    )
+                }
             }
         }
     }

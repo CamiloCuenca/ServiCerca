@@ -1,5 +1,7 @@
 package com.servicerca.app.ui.services.detail
 
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.util.Base64
 import androidx.compose.foundation.Image
@@ -31,6 +33,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -75,6 +78,7 @@ fun DetailServiceScreen(
         viewModel.loadService(serviceId)
     }
 
+    val context = LocalContext.current
     val service by viewModel.service.collectAsStateWithLifecycle()
     val provider = viewModel.provider.collectAsStateWithLifecycle().value
     val comments by viewModel.comments.collectAsStateWithLifecycle()
@@ -155,7 +159,50 @@ fun DetailServiceScreen(
                 }
 
                 IconButton(
-                    onClick = { },
+                    onClick = {
+                        service?.let { s ->
+                            val deepLink = "https://servicerca-6ee07.web.app/service?serviceId=${s.id}"
+                            val texto = buildString {
+                                appendLine("🔧 *${s.title}*")
+                                appendLine()
+                                appendLine("📝 ${s.description}")
+                                appendLine("💰 Precio: \$${s.priceMin.toInt()} - \$${s.priceMax.toInt()}")
+                                appendLine("📂 Categoría: ${s.type}")
+                                appendLine()
+                                appendLine("👆 Ver servicio en ServiCerca:")
+                                appendLine(deepLink)
+                                append("_Si tienes la app instalada, el enlace la abrirá directamente_ 📱")
+                            }
+
+                            // Detectar cuál paquete de WhatsApp está instalado
+                            val pm = context.packageManager
+                            val whatsappPackage = listOf("com.whatsapp", "com.whatsapp.w4b")
+                                .firstOrNull { pkg ->
+                                    try {
+                                        pm.getPackageInfo(pkg, PackageManager.GET_ACTIVITIES)
+                                        true
+                                    } catch (e: PackageManager.NameNotFoundException) {
+                                        false
+                                    }
+                                }
+
+                            val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                                type = "text/plain"
+                                putExtra(Intent.EXTRA_TEXT, texto)
+                                whatsappPackage?.let { setPackage(it) }
+                            }
+
+                            if (whatsappPackage != null) {
+                                // Abre WhatsApp directo
+                                context.startActivity(shareIntent)
+                            } else {
+                                // WhatsApp no instalado → selector del sistema
+                                context.startActivity(
+                                    Intent.createChooser(shareIntent, "Compartir servicio")
+                                )
+                            }
+                        }
+                    },
                     modifier = Modifier
                         .align(Alignment.TopEnd)
                         .padding(12.dp)

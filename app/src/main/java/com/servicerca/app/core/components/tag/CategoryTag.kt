@@ -26,11 +26,22 @@ fun CategoryTag(
     colorText: Color? = null
 ) {
     val (defaultBg, defaultContent) = when (text.uppercase()) {
-        "HOGAR" -> MaterialTheme.colorScheme.primaryContainer to MaterialTheme.colorScheme.primary
-        "TECNOLOGÍA", "TECNOLOGIA" -> InfoContainerLight to OnInfoContainerLight
-        "EDUCACIÓN", "EDUCACION" -> MaterialTheme.colorScheme.tertiaryContainer to MaterialTheme.colorScheme.onTertiaryContainer
-        "MASCOTAS" -> WarningContainerLight to OnWarningContainerLight
-        "TRANSPORTE" -> MaterialTheme.colorScheme.secondaryContainer to MaterialTheme.colorScheme.secondary
+        "PLOMERÍA", "PLOMERIA", "PLUMBING" ->
+            MaterialTheme.colorScheme.primaryContainer to MaterialTheme.colorScheme.primary
+        "ELECTRICIDAD", "ELECTRICITY" ->
+            InfoContainerLight to OnInfoContainerLight
+        "CARPINTERÍA", "CARPINTERIA", "CARPENTRY" ->
+            MaterialTheme.colorScheme.tertiaryContainer to MaterialTheme.colorScheme.onTertiaryContainer
+        "JARDINERÍA", "JARDINERIA", "GARDENING" ->
+            WarningContainerLight to OnWarningContainerLight
+        "LIMPIEZA", "CLEANING" ->
+            MaterialTheme.colorScheme.secondaryContainer to MaterialTheme.colorScheme.secondary
+        "MUDANZAS", "MOVING" ->
+            MaterialTheme.colorScheme.tertiaryContainer to MaterialTheme.colorScheme.onTertiaryContainer
+        "CERRAJERÍA", "CERRAJERIA", "LOCKSMITH" ->
+            InfoContainerLight to OnInfoContainerLight
+        "PINTURA", "PAINTING" ->
+            WarningContainerLight to OnWarningContainerLight
         else -> MaterialTheme.colorScheme.surfaceVariant to MaterialTheme.colorScheme.onSurfaceVariant
     }
 
