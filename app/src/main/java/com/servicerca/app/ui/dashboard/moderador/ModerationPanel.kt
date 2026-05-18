@@ -1,7 +1,6 @@
 package com.servicerca.app.ui.dashboard.moderador
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -77,7 +76,7 @@ fun ModeratorPanelScreen(
                     CardModeratorPanelScreen(
                         imageUrl = service.photoUrl,
                         type = service.type,
-                        tittle = service.title,
+                        title = service.title,
                         description = service.description,
                         onVerifyClick = {
                             navController.navigate(DashboardRoutes.DetailServiceModerator(service.id))

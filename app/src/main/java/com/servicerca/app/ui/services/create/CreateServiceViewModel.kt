@@ -8,6 +8,7 @@ import com.servicerca.app.R
 import com.servicerca.app.core.cloudinary.CloudinaryUploader
 import com.servicerca.app.core.utils.RequestResult
 import com.servicerca.app.core.utils.ValidatedField
+import com.servicerca.app.ai.ToxicityRepository
 import com.servicerca.app.data.datastore.SessionDataStore
 import com.servicerca.app.domain.model.Categories
 import com.servicerca.app.domain.model.Location
@@ -32,7 +33,7 @@ class CreateServiceViewModel @Inject constructor(
     private val serviceRepository: ServiceRepository,
     private val notificationRepository: NotificationRepository,
     private val sessionDataStore: SessionDataStore,
-    @param:ApplicationContext private val context: Context
+    @param:ApplicationContext private val context: Context,
 ) : ViewModel() {
 
     val categories = Categories.entries.map { it.displayName }
@@ -77,7 +78,7 @@ class CreateServiceViewModel @Inject constructor(
             value.isBlank() -> context.getString(R.string.error_max_price_required)
             max == null -> context.getString(R.string.error_valid_numeric_value)
             max < 0 -> context.getString(R.string.error_price_negative)
-            min != null && max < min -> context.getString(R.string.error_max_price_greater_than_min)
+            ((min != null) && (max < min)) -> context.getString(R.string.error_max_price_greater_than_min)
             else -> null
         }
     }
@@ -90,7 +91,7 @@ class CreateServiceViewModel @Inject constructor(
             _createResult.value = RequestResult.Failure(context.getString(R.string.error_max_images_allowed))
             return
         }
-        _images.value = _images.value + bytes
+        _images.value += bytes
     }
 
     fun removeImageAt(index: Int) {
@@ -114,7 +115,7 @@ class CreateServiceViewModel @Inject constructor(
     private val _createResult = MutableStateFlow<RequestResult?>(null)
     val createResult: StateFlow<RequestResult?> = _createResult.asStateFlow()
 
-    private val _isLoading = MutableStateFlow(false)
+    private val _isLoading = MutableStateFlow(value = false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
     val isFormValid: Boolean
@@ -123,7 +124,7 @@ class CreateServiceViewModel @Inject constructor(
                 && description.isValid
                 && minValue.isValid
                 && maxValue.isValid
-                && _images.value.size >= 1
+                && _images.value.isNotEmpty()
 
     fun createService() {
         title.touch()
@@ -153,13 +154,20 @@ class CreateServiceViewModel @Inject constructor(
                     return@launch
                 }
 
+                // Validación de IA para contenido ofensivo
+                if (ToxicityRepository.isToxic(title.value) || ToxicityRepository.isToxic(description.value)) {
+                    _createResult.value = RequestResult.Failure("Contenido ofensivo detectado")
+                    _isLoading.value = false
+                    return@launch
+                }
+
                 // Subir todas las imágenes a Cloudinary antes de guardar el servicio
                 val photoUrls = mutableListOf<String>()
                 for (imageBytes in _images.value) {
                     val uploadResult = CloudinaryUploader.uploadImage(
                         imageBytes = imageBytes,
                         cloudName = BuildConfig.CLOUDINARY_CLOUD_NAME,
-                        uploadPreset = BuildConfig.CLOUDINARY_UPLOAD_PRESET
+                        uploadPreset = BuildConfig.CLOUDINARY_UPLOAD_PRESET,
                     )
                     if (uploadResult.isSuccess) {
                         photoUrls.add(uploadResult.getOrThrow())

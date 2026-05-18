@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.util.Base64
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -91,6 +92,14 @@ fun DetailServiceScreen(
     val likeCount by viewModel.likeCount.collectAsStateWithLifecycle()
     val canReview by viewModel.canReview.collectAsStateWithLifecycle()
     val isOwner by viewModel.isOwner.collectAsStateWithLifecycle()
+    val errorMessage by viewModel.errorMessage.collectAsStateWithLifecycle()
+
+    LaunchedEffect(errorMessage) {
+        errorMessage?.let {
+            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+            viewModel.clearError()
+        }
+    }
 
     var reviewText by remember { mutableStateOf("") }
     var selectedRating by remember { mutableIntStateOf(5) }
