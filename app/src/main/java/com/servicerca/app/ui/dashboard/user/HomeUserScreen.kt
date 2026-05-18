@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -12,9 +13,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -70,8 +74,13 @@ fun HomeUserScreen(
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
 
     var showFilterSheet by remember { mutableStateOf(false) }
+    val listState = rememberLazyListState()
 
     val hasActiveFilters = homeFilters.maxPrice > 0f || homeFilters.sort != HomeSort.RECENT
+
+    LaunchedEffect(homeFilters, selectedCategory) {
+        listState.animateScrollToItem(0)
+    }
 
     Column(
         modifier = Modifier
@@ -135,20 +144,56 @@ fun HomeUserScreen(
             }
         }
 
+        if (hasActiveFilters) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                Text(
+                    text = "Ordenado: ${homeFilters.sort.label}",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.SemiBold
+                )
+                if (homeFilters.maxPrice > 0f) {
+                    Text(
+                        text = "· Máx $${homeFilters.maxPrice.roundToInt()}",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+        }
+
         PullToRefreshBox(
             isRefreshing = isRefreshing,
             onRefresh = { viewModel.refresh() },
             modifier = Modifier.fillMaxSize()
         ) {
-            if (services.isEmpty()) {
+            val isInitialLoading = services.isEmpty() && !hasActiveFilters && selectedCategory == null
+            if (isInitialLoading) {
                 LazyColumn(
+                    state = listState,
                     contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     items(5) { SkeletonServiceCard() }
                 }
+            } else if (services.isEmpty()) {
+                EmptyFilterState(
+                    hasCategory = selectedCategory != null,
+                    hasSort = homeFilters.sort != HomeSort.RECENT,
+                    onClearFilters = {
+                        viewModel.updateFilters(HomeFilters())
+                        if (selectedCategory != null) viewModel.selectCategory(selectedCategory!!)
+                    }
+                )
             } else {
                 LazyColumn(
+                    state = listState,
                     contentPadding = PaddingValues(bottom = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
@@ -340,6 +385,69 @@ private fun HomeFilterBottomSheet(
                     Text("Aplicar")
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun EmptyFilterState(
+    hasCategory: Boolean,
+    hasSort: Boolean,
+    onClearFilters: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(32.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Surface(
+            shape = androidx.compose.foundation.shape.CircleShape,
+            color = MaterialTheme.colorScheme.surfaceVariant,
+            modifier = Modifier.size(100.dp)
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                Icon(
+                    imageVector = Icons.Default.FilterList,
+                    contentDescription = null,
+                    modifier = Modifier.size(48.dp),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Text(
+            text = "Sin resultados",
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground,
+            textAlign = androidx.compose.ui.text.style.TextAlign.Center
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        val subtitle = when {
+            hasCategory && hasSort -> "No hay servicios que coincidan con la categoría y el orden seleccionados."
+            hasCategory -> "No hay servicios en esta categoría por ahora."
+            else -> "Ningún servicio coincide con los filtros aplicados."
+        }
+        Text(
+            text = subtitle,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = androidx.compose.ui.text.style.TextAlign.Center
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Button(
+            onClick = onClearFilters,
+            shape = RoundedCornerShape(12.dp)
+        ) {
+            Text("Limpiar filtros")
         }
     }
 }

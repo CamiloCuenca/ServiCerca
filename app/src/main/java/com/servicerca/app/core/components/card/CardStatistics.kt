@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CardDefaults
@@ -27,13 +28,14 @@ import com.servicerca.app.R
 fun CardStatistics(
     @DrawableRes imageRes: Int,
     number: String,
-    label: String
+    label: String,
+    modifier: Modifier = Modifier
 ){
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 2.dp),
-        modifier = Modifier
-            .size(width = 150.dp, height = 130.dp),
+        modifier = modifier
+            .height(130.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
