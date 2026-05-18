@@ -29,6 +29,15 @@ import com.servicerca.app.core.components.button.PrimaryButton
 import com.servicerca.app.core.components.button.SocialButton
 import com.servicerca.app.core.components.input.AppPasswordField
 import com.servicerca.app.core.components.input.AppTextField
+import androidx.credentials.CredentialManager
+import androidx.credentials.CustomCredential
+import androidx.credentials.GetCredentialRequest
+import androidx.credentials.exceptions.GetCredentialException
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
+import androidx.compose.ui.platform.LocalContext
+import kotlinx.coroutines.launch
 import com.servicerca.app.core.utils.RequestResult
 import kotlinx.coroutines.delay
 
@@ -46,6 +55,9 @@ fun LoginScreen(
     val loginResult by viewModel.loginResult.collectAsStateWithLifecycle()
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+    val credentialManager = remember { CredentialManager.create(context) }
 
     // Efecto para manejar los resultados de login (Mostrar Snackbar y Navegar)
     LaunchedEffect(loginResult) {
@@ -193,7 +205,44 @@ fun LoginScreen(
                 ) {
                     SocialButton(
                         text = "Google",
-                        onClick = {},
+                        onClick = {
+                            coroutineScope.launch {
+                                try {
+                                    val googleIdOption: GetGoogleIdOption = GetGoogleIdOption.Builder()
+                                        .setFilterByAuthorizedAccounts(false)
+                                        .setServerClientId("300935233932-4he7fa3vlubbkg97u8jdgitl84q467bg.apps.googleusercontent.com")
+                                        .setAutoSelectEnabled(true)
+                                        .build()
+
+                                    val request: GetCredentialRequest = GetCredentialRequest.Builder()
+                                        .addCredentialOption(googleIdOption)
+                                        .build()
+
+                                    val result = credentialManager.getCredential(
+                                        request = request,
+                                        context = context,
+                                    )
+                                    
+                                    val credential = result.credential
+
+                                    if (credential is CustomCredential &&
+                                        credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
+                                        try {
+                                            val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
+                                            viewModel.loginWithGoogle(googleIdTokenCredential.idToken)
+                                        } catch (e: GoogleIdTokenParsingException) {
+                                            Log.e("LoginScreen", "Invalid google id token response", e)
+                                        }
+                                    } else {
+                                        Log.e("LoginScreen", "Credencial no soportada: ${credential.type}")
+                                    }
+                                } catch (e: GetCredentialException) {
+                                    Log.e("LoginScreen", "Error al obtener credencial", e)
+                                } catch (e: Exception) {
+                                    Log.e("LoginScreen", "Error inesperado", e)
+                                }
+                            }
+                        },
                         iconRes = R.drawable.ic_google,
                         modifier = Modifier.weight(1f)
                     )
