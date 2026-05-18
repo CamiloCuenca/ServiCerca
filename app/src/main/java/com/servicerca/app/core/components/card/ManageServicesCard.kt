@@ -33,8 +33,7 @@ fun ManageServicesCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .height(95.dp)
-            .padding(horizontal = 16.dp),
+            .height(95.dp),
         colors = CardDefaults.cardColors(
             containerColor = color,
             contentColor = contentColor
