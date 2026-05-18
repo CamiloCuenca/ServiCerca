@@ -95,10 +95,6 @@ fun ModeratorPanelScreen(
             }
         }
     }
-                }
-            }
-        }
-    }
 }
 
 @Composable
