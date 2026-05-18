@@ -3,20 +3,33 @@ package com.servicerca.app.core.fcm
 import android.util.Log
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.servicerca.app.R
 import com.servicerca.app.core.notifications.NotificationHelper
+import com.servicerca.app.data.datastore.SessionDataStore
+import com.servicerca.app.domain.model.Notification
+import com.servicerca.app.domain.model.NotificationType
+import com.servicerca.app.domain.repository.NotificationRepository
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.launch
+import java.util.UUID
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class ServiCercaMessagingService : FirebaseMessagingService() {
 
-    @Inject
-    lateinit var fcmTokenManager: FCMTokenManager
+    @Inject lateinit var fcmTokenManager: FCMTokenManager
+    @Inject lateinit var notificationRepository: NotificationRepository
+    @Inject lateinit var sessionDataStore: SessionDataStore
+
+    private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         val data = remoteMessage.data
         val type = data["type"] ?: "general"
-        // Mensajes data-only: title y body siempre están en data
         val title = data["title"] ?: remoteMessage.notification?.title ?: "ServiCerca"
         val body = data["body"] ?: remoteMessage.notification?.body ?: ""
 
@@ -27,11 +40,52 @@ class ServiCercaMessagingService : FirebaseMessagingService() {
                 val senderId = data["senderId"] ?: ""
                 NotificationHelper.showChatNotification(applicationContext, title, body, senderId)
             }
-            else -> NotificationHelper.showGeneralNotification(applicationContext, title, body)
+            else -> {
+                NotificationHelper.showGeneralNotification(applicationContext, title, body)
+                // Guardar en Firestore para que aparezca en el listado in-app
+                saveToInAppList(data, title, body)
+            }
         }
     }
 
-    // Firebase llama a esto cuando renueva el token (cambio de dispositivo, reinstalación, etc.)
+    private fun saveToInAppList(data: Map<String, String>, title: String, body: String) {
+        serviceScope.launch {
+            try {
+                // Intentar obtener userId del payload, o del usuario en sesión como fallback
+                val targetUserId = data["userId"]
+                    ?: sessionDataStore.sessionFlow.firstOrNull()?.userId
+                    ?: return@launch
+
+                val notificationType = runCatching {
+                    NotificationType.valueOf(data["notificationType"] ?: "SYSTEM")
+                }.getOrDefault(NotificationType.SYSTEM)
+
+                val iconRes = when (notificationType) {
+                    NotificationType.RESERVATION -> R.drawable.nueva_solicitud_servicio
+                    NotificationType.SERVICE      -> R.drawable.nueva_publicacion
+                    NotificationType.MODERATION   -> R.drawable.servicio_verificado
+                    NotificationType.SYSTEM       -> R.drawable.nueva_publicacion
+                }
+
+                notificationRepository.addNotification(
+                    Notification(
+                        id = data["notificationId"] ?: UUID.randomUUID().toString(),
+                        userId = targetUserId,
+                        title = title,
+                        message = body,
+                        date = "Ahora",
+                        imageRes = iconRes,
+                        isRead = false,
+                        targetId = data["targetId"],
+                        notificationType = notificationType
+                    )
+                )
+            } catch (e: Exception) {
+                Log.e("FCM", "Error guardando notificación in-app", e)
+            }
+        }
+    }
+
     override fun onNewToken(token: String) {
         Log.d("FCM", "Token renovado: $token")
         fcmTokenManager.onTokenRefresh(token)

@@ -145,6 +145,7 @@ fun UserScreen(
             navController = navController,
             _padding = padding,
             onLogout = onLogout,
+            onMapClick = onMapClick,
             onReservationDetailClick = onReservationDetailClick,
             onMakeReservationClick = onMakeReservationClick
         )

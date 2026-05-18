@@ -31,6 +31,7 @@ fun UserNavigation(
     navController: NavHostController,
     _padding: PaddingValues,
     onLogout: () -> Unit,
+    onMapClick: () -> Unit,
     onReservationDetailClick: (String) -> Unit,
     onMakeReservationClick: (String) -> Unit
 ){
@@ -68,7 +69,8 @@ fun UserNavigation(
                 },
                 onBackClick = {
                     navController.popBackStack()
-                }
+                },
+                onOpenMap = onMapClick
             )
         }
 

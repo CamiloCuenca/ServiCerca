@@ -242,7 +242,7 @@ fun InsigniasSection(
     onInsignias: () -> Unit,
     onInsigniaClick: (InsigniaUiModel) -> Unit
 ) {
-    Column(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
+    Column(modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -316,24 +316,27 @@ fun StatisticsSection(state: ProfileUiState.Success) {
     val user = state.user
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(text = stringResource(R.string.statistic), fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 8.dp, bottom = 8.dp))
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             CardStatistics(
                 R.drawable.servicios_completados,
                 user.completedServices.toString(),
-                stringResource(R.string.services_completed)
+                stringResource(R.string.services_completed),
+                modifier = Modifier.weight(1f)
             )
             CardStatistics(
                 R.drawable.puntos_totales,
                 state.totalXp.toString(),
-                stringResource(R.string.total_points)
+                stringResource(R.string.total_points),
+                modifier = Modifier.weight(1f)
             )
         }
-        Spacer(modifier = Modifier.height(16.dp))
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+        Spacer(modifier = Modifier.height(12.dp))
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             CardStatistics(
                 R.drawable.calificacion,
                 String.format("%.1f", state.averageRating),
-                stringResource(R.string.average_rating)
+                stringResource(R.string.average_rating),
+                modifier = Modifier.weight(1f)
             )
             CardStatistics(
                 R.drawable.tiempo_miembro,
@@ -344,7 +347,8 @@ fun StatisticsSection(state: ProfileUiState.Success) {
                                     else stringResource(R.string.member_time_year_plural, years)
                     "$yearsText (${user.memberSince})"
                 },
-                stringResource(R.string.member_time)
+                stringResource(R.string.member_time),
+                modifier = Modifier.weight(1f)
             )
         }
     }
