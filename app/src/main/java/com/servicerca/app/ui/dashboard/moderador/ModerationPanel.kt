@@ -1,7 +1,6 @@
 package com.servicerca.app.ui.dashboard.moderador
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -41,56 +40,51 @@ fun ModeratorPanelScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        // Podríamos integrar la TabRow aquí si el ViewModel la soportara
-        // ServiceTabRow(selectedTabIndex = 0, onTabSelected = {})
-
-        PullToRefreshBox(
-            isRefreshing = uiState.isLoading,
-            onRefresh = { viewModel.loadPendingServices() },
-            modifier = Modifier.weight(1f)
-        ) {
-            if (uiState.isLoading) {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 24.dp, vertical = 20.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    items(4) {
-                        SkeletonServiceCard()
-                    }
+    PullToRefreshBox(
+        isRefreshing = uiState.isLoading,
+        onRefresh = { viewModel.loadPendingServices() },
+        modifier = Modifier.fillMaxSize()
+    ) {
+        if (uiState.isLoading) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 24.dp, vertical = 20.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                items(4) {
+                    SkeletonServiceCard()
                 }
-            } else if (uiState.services.isEmpty()) {
-                Text(
-                    text = stringResource(R.string.no_services_found),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(20.dp),
-                    textAlign = TextAlign.Center
-                )
-            } else {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(top = 20.dp, bottom = 20.dp)
-                        .padding(horizontal = 24.dp),
-                    verticalArrangement = Arrangement.spacedBy(20.dp)
-                ) {
-                    items(uiState.services) { service ->
-                        CardModeratorPanelScreen(
-                            imageUrl = service.photoUrl,
-                            type = service.type,
-                            title = service.title,
-                            description = service.description,
-                            onVerifyClick = {
-                                navController.navigate(DashboardRoutes.DetailServiceModerator(service.id))
-                            },
-                            onRejectClick = {
-                                navController.navigate(DashboardRoutes.RejectReason(service.id))
-                            }
-                        )
-                    }
+            }
+        } else if (uiState.services.isEmpty()) {
+            Text(
+                text = stringResource(R.string.no_services_found),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp),
+                textAlign = TextAlign.Center
+            )
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 20.dp, bottom = 20.dp)
+                    .padding(horizontal = 24.dp),
+                verticalArrangement = Arrangement.spacedBy(20.dp)
+            ) {
+                items(uiState.services) { service ->
+                    CardModeratorPanelScreen(
+                        imageUrl = service.photoUrl,
+                        type = service.type,
+                        title = service.title,
+                        description = service.description,
+                        onVerifyClick = {
+                            navController.navigate(DashboardRoutes.DetailServiceModerator(service.id))
+                        },
+                        onRejectClick = {
+                            navController.navigate(DashboardRoutes.RejectReason(service.id))
+                        }
+                    )
                 }
             }
         }
