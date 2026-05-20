@@ -92,6 +92,27 @@ class LoginViewModel @Inject constructor(
     }
 
     /**
+     * Ejecuta el proceso de inicio de sesión con Google usando el UserRepository.
+     */
+    fun loginWithGoogle(idToken: String) {
+        viewModelScope.launch {
+            try {
+                val user = repository.googleSignIn(idToken)
+
+                if (user != null) {
+                    // Registrar token FCM del dispositivo para poder recibir notificaciones push
+                    fcmTokenManager.saveTokenForUser(user.id)
+                    _loginResult.value = RequestResult.SuccessLogin(user.id, user.role)
+                } else {
+                    _loginResult.value = RequestResult.Failure("No se pudo iniciar sesión con Google")
+                }
+            } catch (e: Exception) {
+                _loginResult.value = RequestResult.Failure("Error en el inicio de sesión con Google: ${e.message}")
+            }
+        }
+    }
+
+    /**
      * Reinicia los campos del formulario a sus valores iniciales.
      * Útil después de un login exitoso o al cerrar sesión.
      */

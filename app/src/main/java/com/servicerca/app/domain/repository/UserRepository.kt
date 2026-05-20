@@ -10,6 +10,7 @@ interface UserRepository {
     suspend fun save(user: User)
     suspend fun findById(id: String): User?
     suspend fun login(email: String, password: String): User?
+    suspend fun googleSignIn(idToken: String): User?
     fun findByEmail(email: String): User?
     suspend fun deleteAccount(userId: String): Result<Unit>
     suspend fun suspendAccount(userId: String): Result<Unit>

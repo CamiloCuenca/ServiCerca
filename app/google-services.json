@@ -12,7 +12,20 @@
           "package_name": "com.servicerca.app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "300935233932-h9lcijmr6on0cr0gj6pnkfl1mmve6ert.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.servicerca.app",
+            "certificate_hash": "d707cc585fd757330c821da55af30a2efcf14fa6"
+          }
+        },
+        {
+          "client_id": "300935233932-4he7fa3vlubbkg97u8jdgitl84q467bg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDH_wj8hZnH_xObFNp45_SaK8snQq_HaxI"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "300935233932-4he7fa3vlubbkg97u8jdgitl84q467bg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
