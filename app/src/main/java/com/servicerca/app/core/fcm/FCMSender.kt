@@ -60,15 +60,20 @@ class FCMSender @Inject constructor(
         recipientToken: String,
         title: String,
         body: String,
-        type: String = "general"
+        type: String = "general",
+        alreadySavedInFirestore: Boolean = true
     ) = withContext(Dispatchers.IO) {
         try {
             val accessToken = getAccessToken()
+            val data = buildMap {
+                put("type", type)
+                if (alreadySavedInFirestore) put("noSave", "true")
+            }
             val payload = buildPayload(
                 token = recipientToken,
                 title = title,
                 body = body,
-                data = mapOf("type" to type),
+                data = data,
                 channelId = "channel_general"
             )
             postToFCM(accessToken, payload)

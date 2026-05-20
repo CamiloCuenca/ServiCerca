@@ -42,8 +42,10 @@ class ServiCercaMessagingService : FirebaseMessagingService() {
             }
             else -> {
                 NotificationHelper.showGeneralNotification(applicationContext, title, body)
-                // Guardar en Firestore para que aparezca en el listado in-app
-                saveToInAppList(data, title, body)
+                // Solo guardar en Firestore si el ViewModel no lo hizo previamente
+                if (data["noSave"] != "true") {
+                    saveToInAppList(data, title, body)
+                }
             }
         }
     }
