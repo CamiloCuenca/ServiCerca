@@ -12,6 +12,7 @@ import com.servicerca.app.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import androidx.lifecycle.viewModelScope
+import com.servicerca.app.ai.ToxicityRepository
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -44,6 +45,12 @@ class RecoverPasswordViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
+            // Validación de IA para contenido ofensivo
+            if (ToxicityRepository.isToxic(email.value)) {
+                _recoverResult.value = RequestResult.Failure("Contenido ofensivo detectado")
+                return@launch
+            }
+
             val result = userRepository.initiatePasswordRecovery(email.value.trim())
             if (result.isSuccess) {
                 _recoverResult.value = RequestResult.Success("¡Instrucciones enviadas!")

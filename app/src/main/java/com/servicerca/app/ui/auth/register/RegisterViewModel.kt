@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import androidx.lifecycle.viewModelScope
+import com.servicerca.app.ai.ToxicityRepository
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -133,6 +134,18 @@ class RegisterViewModel @Inject constructor(
 
         viewModelScope.launch {
             try {
+                // Validación de IA para contenido ofensivo en campos de texto
+                if (ToxicityRepository.isToxic(name.value) ||
+                    ToxicityRepository.isToxic(SecondName.value) ||
+                    ToxicityRepository.isToxic(Lastname.value) ||
+                    ToxicityRepository.isToxic(SecondLastname.value) ||
+                    ToxicityRepository.isToxic(address.value) ||
+                    ToxicityRepository.isToxic(city.value)
+                ) {
+                    _RegisterResult.value = RequestResult.Failure("Contenido ofensivo detectado en los datos de perfil")
+                    return@launch
+                }
+
                 val newUser = User(
                     id = "",
                     name1 = name.value,

@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.servicerca.app.R
+import com.servicerca.app.ai.ToxicityRepository
 import com.servicerca.app.data.datastore.SessionDataStore
 import com.servicerca.app.domain.model.Reservation
 import com.servicerca.app.domain.model.ReservationStatus
@@ -84,8 +85,17 @@ class MakeReservationViewModel @Inject constructor(
         message: String
     ) {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true)
+            _uiState.value = _uiState.value.copy(isLoading = true, error = null)
             try {
+                // Validación de IA para contenido ofensivo en el mensaje opcional
+                if (ToxicityRepository.isToxic(message)) {
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        error = "Contenido ofensivo detectado en el mensaje"
+                    )
+                    return@launch
+                }
+
                 val session = sessionDataStore.sessionFlow.first()
                 val currentUserId = session?.userId ?: "unknown_user"
                 

@@ -2,6 +2,7 @@ package com.servicerca.app.ui.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.servicerca.app.ai.ToxicityRepository
 import com.servicerca.app.core.utils.RequestResult
 import com.servicerca.app.core.utils.ValidatedField
 import com.servicerca.app.data.datastore.SessionDataStore
@@ -74,6 +75,13 @@ class UpdatePasswordViewModel @Inject constructor(
         viewModelScope.launch {
             _isLoading.value = true
             try {
+                // Validación de IA para contenido ofensivo (opcional para contraseñas pero solicitado)
+                if (ToxicityRepository.isToxic(newPassword.value)) {
+                    _updatePasswordResult.value = RequestResult.Failure("Contenido ofensivo detectado")
+                    _isLoading.value = false
+                    return@launch
+                }
+
                 val session = sessionDataStore.sessionFlow.firstOrNull()
                 if (session == null) {
                     _updatePasswordResult.value = RequestResult.Failure("Sesión no válida")
