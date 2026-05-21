@@ -4,6 +4,7 @@ import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import com.servicerca.app.core.utils.RequestResult
 import com.servicerca.app.core.utils.ValidatedField
+import com.servicerca.app.core.utils.validateSecurePassword
 import com.servicerca.app.domain.model.User
 import com.servicerca.app.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -43,18 +44,13 @@ class RegisterViewModel @Inject constructor(
 
 
     val password = ValidatedField("") { value ->
-        when {
-            value.isEmpty() -> "La contraseña es obligatoria"
-            value.length < 6 -> "La contraseña debe tener al menos 6 caracteres"
-            else -> null
-        }
+        validateSecurePassword(value)
     }
 
     val confirmPassword = ValidatedField("") { value ->
-
         when {
-            value.isEmpty() -> "La contraseña es obligatoria"
-            value.length < 6 -> "La contraseña debe tener al menos 6 caracteres"
+            value.isEmpty() -> "La confirmación de la contraseña es obligatoria"
+            value != password.value -> "Las contraseñas no coinciden"
             else -> null
         }
     }

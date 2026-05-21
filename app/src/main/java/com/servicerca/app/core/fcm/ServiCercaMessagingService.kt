@@ -42,8 +42,10 @@ class ServiCercaMessagingService : FirebaseMessagingService() {
             }
             else -> {
                 NotificationHelper.showGeneralNotification(applicationContext, title, body)
-                // Guardar en Firestore para que aparezca en el listado in-app
-                saveToInAppList(data, title, body)
+                // Solo guardar en Firestore si el ViewModel no lo hizo previamente
+                if (data["noSave"] != "true") {
+                    saveToInAppList(data, title, body)
+                }
             }
         }
     }
@@ -51,20 +53,26 @@ class ServiCercaMessagingService : FirebaseMessagingService() {
     private fun saveToInAppList(data: Map<String, String>, title: String, body: String) {
         serviceScope.launch {
             try {
-                // Intentar obtener userId del payload, o del usuario en sesión como fallback
                 val targetUserId = data["userId"]
                     ?: sessionDataStore.sessionFlow.firstOrNull()?.userId
-                    ?: return@launch
+
+                if (targetUserId == null) {
+                    Log.e("FCM", "saveToInAppList: userId nulo, no se guarda la notificación")
+                    return@launch
+                }
+
+                Log.d("FCM", "saveToInAppList: guardando notificación para userId=$targetUserId, title=$title")
 
                 val notificationType = runCatching {
                     NotificationType.valueOf(data["notificationType"] ?: "SYSTEM")
                 }.getOrDefault(NotificationType.SYSTEM)
 
-                val iconRes = when (notificationType) {
-                    NotificationType.RESERVATION -> R.drawable.nueva_solicitud_servicio
-                    NotificationType.SERVICE      -> R.drawable.nueva_publicacion
-                    NotificationType.MODERATION   -> R.drawable.servicio_verificado
-                    NotificationType.SYSTEM       -> R.drawable.nueva_publicacion
+                val iconRes = when {
+                    data["type"] == "rejection"                      -> R.drawable.publicacion_rechazada
+                    notificationType == NotificationType.RESERVATION -> R.drawable.nueva_solicitud_servicio
+                    notificationType == NotificationType.MODERATION  -> R.drawable.servicio_verificado
+                    notificationType == NotificationType.SERVICE      -> R.drawable.nueva_publicacion
+                    else                                              -> R.drawable.nueva_publicacion
                 }
 
                 notificationRepository.addNotification(
@@ -77,9 +85,11 @@ class ServiCercaMessagingService : FirebaseMessagingService() {
                         imageRes = iconRes,
                         isRead = false,
                         targetId = data["targetId"],
-                        notificationType = notificationType
+                        notificationType = notificationType,
+                        timestamp = System.currentTimeMillis()
                     )
                 )
+                Log.d("FCM", "saveToInAppList: notificación guardada en Firestore correctamente")
             } catch (e: Exception) {
                 Log.e("FCM", "Error guardando notificación in-app", e)
             }

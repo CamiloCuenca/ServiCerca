@@ -37,6 +37,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -44,6 +45,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.servicerca.app.R
 import com.servicerca.app.core.components.notifications.ContainerNotifications
+import com.servicerca.app.core.utils.DateUtils
 import com.servicerca.app.domain.model.NotificationType
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -57,6 +59,8 @@ fun NotificationsScreen (
     viewModel: NotificationViewModel = hiltViewModel()
 ){
     val notifications by viewModel.notifications.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    
     Scaffold(
         modifier = Modifier.fillMaxSize()
     ) { paddingValues ->
@@ -162,10 +166,13 @@ fun NotificationsScreen (
                                 }
                             }
                         ) {
+                            // Calcular fecha relativa desde el timestamp
+                            val relativeDate = DateUtils.getRelativeTimeString(context, notification.timestamp)
+                            
                             ContainerNotifications(
                                 imageRes = notification.imageRes,
                                 tittleNotification = notification.title,
-                                date = notification.date,
+                                date = relativeDate,  // Mostrar fecha relativa en lugar de "Ahora"
                                 content = notification.message,
                                 imageRes2 = if (!notification.isRead) R.drawable.nueva_notificacion else null,
                                 onClick = { 

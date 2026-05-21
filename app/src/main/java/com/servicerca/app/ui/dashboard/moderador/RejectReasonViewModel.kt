@@ -2,19 +2,17 @@ package com.servicerca.app.ui.dashboard.moderador
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.servicerca.app.R
 import com.servicerca.app.ai.ToxicityRepository
-import com.servicerca.app.domain.model.Notification
+import com.servicerca.app.core.fcm.FCMSender
 import com.servicerca.app.domain.model.Service
 import com.servicerca.app.domain.model.ServiceStatus
-import com.servicerca.app.domain.repository.NotificationRepository
 import com.servicerca.app.domain.repository.ServiceRepository
+import com.servicerca.app.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.util.UUID
 import javax.inject.Inject
 
 data class RejectReasonUiState(
@@ -27,7 +25,8 @@ data class RejectReasonUiState(
 @HiltViewModel
 class RejectReasonViewModel @Inject constructor(
     private val serviceRepository: ServiceRepository,
-    private val notificationRepository: NotificationRepository
+    private val userRepository: UserRepository,
+    private val fcmSender: FCMSender
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(RejectReasonUiState())
@@ -48,38 +47,47 @@ class RejectReasonViewModel @Inject constructor(
         }
 
         val currentService = _uiState.value.service ?: return
-        
+
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
-            
+
             try {
-                // Validación de IA para contenido ofensivo
                 if (ToxicityRepository.isToxic(reason)) {
-                    _uiState.update { it.copy(
-                        error = "Contenido ofensivo detectado en el motivo",
-                        isLoading = false 
-                    ) }
+                    _uiState.update {
+                        it.copy(
+                            error = "Contenido ofensivo detectado en el motivo",
+                            isLoading = false
+                        )
+                    }
                     return@launch
                 }
 
-                // In a real app, we might want to save the reason somewhere
                 val updatedService = currentService.copy(status = ServiceStatus.REJECTED)
                 serviceRepository.update(updatedService)
 
-                // Enviar notificación con el motivo del rechazo
-                notificationRepository.addNotification(
-                    Notification(
-                        id = UUID.randomUUID().toString(),
-                        userId = currentService.ownerId, // Asociar al dueño del servicio
-                        title = "Servicio rechazado",
-                        message = "Tu servicio \"${currentService.title}\" ha sido rechazado. Motivo: $reason",
-                        date = "Ahora",
-                        imageRes = R.drawable.publicacion_rechazada,
-                        isRead = false
+                val title = "Servicio rechazado"
+                val message = "Tu servicio \"${currentService.title}\" ha sido rechazado. Motivo: $reason"
+                val ownerToken = userRepository.findById(currentService.ownerId)?.fcmToken
+                if (!ownerToken.isNullOrBlank()) {
+                    fcmSender.sendGeneralNotification(
+                        recipientToken = ownerToken,
+                        title = title,
+                        body = message,
+                        type = "rejection",
+                        notificationType = "MODERATION",
+                        targetId = currentService.id,
+                        userId = currentService.ownerId,
+                        alreadySavedInFirestore = false
                     )
-                )
+                }
 
-                _uiState.update { it.copy(isSuccess = true, service = updatedService, isLoading = false) }
+                _uiState.update {
+                    it.copy(
+                        isSuccess = true,
+                        service = updatedService,
+                        isLoading = false
+                    )
+                }
             } catch (e: Exception) {
                 _uiState.update { it.copy(error = e.message, isLoading = false) }
             }

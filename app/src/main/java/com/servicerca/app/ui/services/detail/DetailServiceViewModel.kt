@@ -3,6 +3,7 @@ package com.servicerca.app.ui.services.detail
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.servicerca.app.ai.ToxicityRepository
+import com.servicerca.app.core.fcm.FCMSender
 import com.servicerca.app.core.utils.LevelUtils
 import com.servicerca.app.domain.model.Comment
 import com.servicerca.app.domain.model.Notification
@@ -43,7 +44,8 @@ class DetailServiceViewModel @Inject constructor(
     private val commentRepository: CommentRepository,
     private val notificationRepository: NotificationRepository,
     private val sessionDataStore: SessionDataStore,
-    private val reservationRepository: ReservationRepository
+    private val reservationRepository: ReservationRepository,
+    private val fcmSender: FCMSender
 ) : ViewModel() {
 
     private val _serviceId = MutableStateFlow<String?>(null)
@@ -296,17 +298,28 @@ class DetailServiceViewModel @Inject constructor(
             )
 
             if (isAddingLike) {
+                val title = "¡Nuevo like!"
+                val message = "${currentUser.name1} le dio like a tu servicio \"${s.title}\""
                 notificationRepository.addNotification(
                     Notification(
                         id = UUID.randomUUID().toString(),
                         userId = s.ownerId,
-                        title = "¡Nuevo like!",
-                        message = "${currentUser.name1} le dio like a tu servicio \"${s.title}\"",
+                        title = title,
+                        message = message,
                         date = "Ahora",
                         imageRes = R.drawable.insignia_favorita,
                         isRead = false
                     )
                 )
+                val owner = userRepository.findById(s.ownerId)
+                if (!owner?.fcmToken.isNullOrBlank()) {
+                    fcmSender.sendGeneralNotification(
+                        recipientToken = owner!!.fcmToken,
+                        title = title,
+                        body = message,
+                        type = "like"
+                    )
+                }
             }
         }
     }

@@ -3,6 +3,7 @@ package com.servicerca.app.ui.auth.login.Reset
 import androidx.lifecycle.ViewModel
 import com.servicerca.app.core.utils.RequestResult
 import com.servicerca.app.core.utils.ValidatedField
+import com.servicerca.app.core.utils.validateSecurePassword
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -28,13 +29,8 @@ class ResetPasswordViewModel @Inject constructor(
     private val _resetResult = MutableStateFlow<RequestResult?>(null)
     val resetResult: StateFlow<RequestResult?> = _resetResult.asStateFlow()
 
-    /** Nueva contraseña — mínimo 6 caracteres */
     val newPassword = ValidatedField("") { value ->
-        when {
-            value.isEmpty() -> "La contraseña es obligatoria"
-            value.length < 6 -> "La contraseña debe tener al menos 6 caracteres"
-            else -> null
-        }
+        validateSecurePassword(value)
     }
 
     /** Confirmación de contraseña — debe coincidir con newPassword */

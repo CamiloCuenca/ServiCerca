@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.servicerca.app.R
 import com.servicerca.app.ai.ToxicityRepository
+import com.servicerca.app.core.fcm.FCMSender
 import com.servicerca.app.data.datastore.SessionDataStore
 import com.servicerca.app.domain.model.Reservation
 import com.servicerca.app.domain.model.ReservationStatus
@@ -42,6 +43,7 @@ class MakeReservationViewModel @Inject constructor(
     private val reservationRepository: ReservationRepository,
     private val notificationRepository: com.servicerca.app.domain.repository.NotificationRepository,
     private val sessionDataStore: SessionDataStore,
+    private val fcmSender: FCMSender,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
@@ -87,7 +89,6 @@ class MakeReservationViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, error = null)
             try {
-                // Validación de IA para contenido ofensivo en el mensaje opcional
                 if (ToxicityRepository.isToxic(message)) {
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
@@ -98,15 +99,14 @@ class MakeReservationViewModel @Inject constructor(
 
                 val session = sessionDataStore.sessionFlow.first()
                 val currentUserId = session?.userId ?: "unknown_user"
-                
+
                 val reservationDate = Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())
 
-                // Validar que no haya una reserva activa (PENDING o CONFIRMED) para el mismo servicio en la misma fecha
                 val userReservations = reservationRepository.getReservationsByUser(currentUserId).first()
                 val hasActiveReservation = userReservations.any {
                     it.serviceId == serviceId &&
-                    (it.status == ReservationStatus.PENDING || it.status == ReservationStatus.CONFIRMED) &&
-                    it.date.time == reservationDate.time
+                        (it.status == ReservationStatus.PENDING || it.status == ReservationStatus.CONFIRMED) &&
+                        it.date.time == reservationDate.time
                 }
 
                 if (hasActiveReservation) {
@@ -131,19 +131,30 @@ class MakeReservationViewModel @Inject constructor(
                 )
                 reservationRepository.createReservation(reservation)
 
-                // Trigger Notification for the Provider
-                val notification = com.servicerca.app.domain.model.Notification(
-                    id = UUID.randomUUID().toString(),
-                    userId = providerId,
-                    title = context.getString(R.string.new_service_request_title),
-                    message = context.getString(R.string.new_reservation_received_message, serviceTitle),
-                    date = context.getString(R.string.now_label),
-                    imageRes = com.servicerca.app.R.drawable.nueva_solicitud_servicio,
-                    isRead = false,
-                    targetId = reservation.id,
-                    notificationType = com.servicerca.app.domain.model.NotificationType.RESERVATION
+                val notifTitle = context.getString(R.string.new_service_request_title)
+                val notifMessage = context.getString(R.string.new_reservation_received_message, serviceTitle)
+                notificationRepository.addNotification(
+                    com.servicerca.app.domain.model.Notification(
+                        id = UUID.randomUUID().toString(),
+                        userId = providerId,
+                        title = notifTitle,
+                        message = notifMessage,
+                        date = context.getString(R.string.now_label),
+                        imageRes = com.servicerca.app.R.drawable.nueva_solicitud_servicio,
+                        isRead = false,
+                        targetId = reservation.id,
+                        notificationType = com.servicerca.app.domain.model.NotificationType.RESERVATION
+                    )
                 )
-                notificationRepository.addNotification(notification)
+                val providerToken = _uiState.value.provider?.fcmToken
+                if (!providerToken.isNullOrBlank()) {
+                    fcmSender.sendGeneralNotification(
+                        recipientToken = providerToken,
+                        title = notifTitle,
+                        body = notifMessage,
+                        type = "reservation"
+                    )
+                }
 
                 _uiState.value = _uiState.value.copy(isLoading = false, isSuccess = true)
             } catch (e: Exception) {
