@@ -60,7 +60,6 @@ fun NotificationsScreen (
 ){
     val notifications by viewModel.notifications.collectAsStateWithLifecycle()
     val context = LocalContext.current
-
     Scaffold(
         modifier = Modifier.fillMaxSize()
     ) { paddingValues ->
@@ -168,7 +167,6 @@ fun NotificationsScreen (
                         ) {
                             // Calcular fecha relativa desde el timestamp
                             val relativeDate = DateUtils.getRelativeTimeString(context, notification.timestamp)
-
                             ContainerNotifications(
                                 imageRes = notification.imageRes,
                                 tittleNotification = notification.title,
