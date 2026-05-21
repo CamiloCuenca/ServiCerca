@@ -60,7 +60,7 @@ fun NotificationsScreen (
 ){
     val notifications by viewModel.notifications.collectAsStateWithLifecycle()
     val context = LocalContext.current
-    
+
     Scaffold(
         modifier = Modifier.fillMaxSize()
     ) { paddingValues ->
@@ -168,14 +168,14 @@ fun NotificationsScreen (
                         ) {
                             // Calcular fecha relativa desde el timestamp
                             val relativeDate = DateUtils.getRelativeTimeString(context, notification.timestamp)
-                            
+
                             ContainerNotifications(
                                 imageRes = notification.imageRes,
                                 tittleNotification = notification.title,
                                 date = relativeDate,  // Mostrar fecha relativa en lugar de "Ahora"
                                 content = notification.message,
                                 imageRes2 = if (!notification.isRead) R.drawable.nueva_notificacion else null,
-                                onClick = { 
+                                onClick = {
                                     viewModel.markAsRead(notification.id)
                                     // Navegar si hay un destino
                                     notification.targetId?.let { id ->
