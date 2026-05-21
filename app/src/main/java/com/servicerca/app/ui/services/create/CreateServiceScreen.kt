@@ -110,33 +110,9 @@ fun CreateServiceScreen(
         }
     }
 
-    // Dialog de pantalla completa para seleccionar ubicación en el mapa
-    if (showLocationPicker) {
-        Dialog(
-            onDismissRequest = { showLocationPicker = false },
-            properties = DialogProperties(
-                usePlatformDefaultWidth = false,
-                dismissOnBackPress = true,
-                dismissOnClickOutside = false
-            )
-        ) {
-            Surface(modifier = Modifier.fillMaxSize()) {
-                LocationPickerMap(
-                    modifier = Modifier.fillMaxSize(),
-                    initialLat = selectedLocation?.latitude ?: 4.4687891,
-                    initialLng = selectedLocation?.longitude ?: -75.6491181,
-                    onLocationConfirmed = { lat, lng ->
-                        viewModel.setLocation(lat, lng)
-                        showLocationPicker = false
-                    },
-                    onDismiss = { showLocationPicker = false }
-                )
-            }
-        }
-    }
-
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
+    Box(modifier = Modifier.fillMaxSize()) {
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState) { data ->
                 Snackbar(
@@ -409,6 +385,21 @@ fun CreateServiceScreen(
                     }
                 )
             }
+        }
+    }
+
+        // Overlay de selección de ubicación en el mapa
+        if (showLocationPicker) {
+            LocationPickerMap(
+                modifier = Modifier.fillMaxSize(),
+                initialLat = selectedLocation?.latitude ?: 4.4687891,
+                initialLng = selectedLocation?.longitude ?: -75.6491181,
+                onLocationConfirmed = { lat, lng ->
+                    viewModel.setLocation(lat, lng)
+                    showLocationPicker = false
+                },
+                onDismiss = { showLocationPicker = false }
+            )
         }
     }
 }
