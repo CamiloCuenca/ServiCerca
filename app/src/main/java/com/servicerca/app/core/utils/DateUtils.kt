@@ -1,7 +1,6 @@
 package com.servicerca.app.core.utils
 
 import android.content.Context
-import com.servicerca.app.R
 import java.util.concurrent.TimeUnit
 
 /**
