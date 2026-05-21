@@ -184,10 +184,10 @@ class HomeUserViewModel @Inject constructor(
                         isRead = false
                     )
                 )
-                val owner = userRepository.findById(service.ownerId)
-                if (!owner?.fcmToken.isNullOrBlank()) {
+                val ownerToken = userRepository.findById(service.ownerId)?.fcmToken
+                if (!ownerToken.isNullOrBlank()) {
                     fcmSender.sendGeneralNotification(
-                        recipientToken = owner!!.fcmToken,
+                        recipientToken = ownerToken,
                         title = title,
                         body = message,
                         type = "like"

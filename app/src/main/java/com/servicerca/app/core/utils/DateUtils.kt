@@ -1,14 +1,12 @@
 package com.servicerca.app.core.utils
 
 import android.content.Context
-import com.servicerca.app.R
 import java.util.concurrent.TimeUnit
 
 /**
  * Utilidades para formatear fechas y timestamps de manera legible.
  */
 object DateUtils {
-    
     /**
      * Convierte un timestamp en milisegundos a una fecha relativa legible en español.
      * Ejemplos: "Hace 5 minutos", "Hace 2 horas", "Hace 3 días", etc.
@@ -16,7 +14,7 @@ object DateUtils {
     fun getRelativeTimeString(context: Context, timestampMillis: Long): String {
         val now = System.currentTimeMillis()
         val diffMillis = now - timestampMillis
-        
+
         return when {
             diffMillis < 0 -> "Ahora"
             diffMillis < TimeUnit.MINUTES.toMillis(1) -> "Ahora"
@@ -46,4 +44,3 @@ object DateUtils {
         }
     }
 }
-

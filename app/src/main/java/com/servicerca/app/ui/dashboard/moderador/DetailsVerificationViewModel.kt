@@ -82,10 +82,10 @@ class DetailsVerificationViewModel @Inject constructor(
 
             val title = "Servicio aprobado"
             val message = "¡Tu servicio \"${currentService.title}\" ha sido aprobado y ya es público!"
-            val owner = _uiState.value.owner
-            if (!owner?.fcmToken.isNullOrBlank()) {
+            val ownerToken = _uiState.value.owner?.fcmToken
+            if (!ownerToken.isNullOrBlank()) {
                 fcmSender.sendGeneralNotification(
-                    recipientToken = owner!!.fcmToken,
+                    recipientToken = ownerToken,
                     title = title,
                     body = message,
                     type = "moderation",

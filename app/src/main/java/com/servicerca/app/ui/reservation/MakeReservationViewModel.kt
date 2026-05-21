@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.servicerca.app.R
+import com.servicerca.app.ai.ToxicityRepository
 import com.servicerca.app.core.fcm.FCMSender
 import com.servicerca.app.data.datastore.SessionDataStore
 import com.servicerca.app.domain.model.Reservation
@@ -86,19 +87,26 @@ class MakeReservationViewModel @Inject constructor(
         message: String
     ) {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true)
+            _uiState.value = _uiState.value.copy(isLoading = true, error = null)
             try {
+                if (ToxicityRepository.isToxic(message)) {
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        error = "Contenido ofensivo detectado en el mensaje"
+                    )
+                    return@launch
+                }
+
                 val session = sessionDataStore.sessionFlow.first()
                 val currentUserId = session?.userId ?: "unknown_user"
-                
+
                 val reservationDate = Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())
 
-                // Validar que no haya una reserva activa (PENDING o CONFIRMED) para el mismo servicio en la misma fecha
                 val userReservations = reservationRepository.getReservationsByUser(currentUserId).first()
                 val hasActiveReservation = userReservations.any {
                     it.serviceId == serviceId &&
-                    (it.status == ReservationStatus.PENDING || it.status == ReservationStatus.CONFIRMED) &&
-                    it.date.time == reservationDate.time
+                        (it.status == ReservationStatus.PENDING || it.status == ReservationStatus.CONFIRMED) &&
+                        it.date.time == reservationDate.time
                 }
 
                 if (hasActiveReservation) {
@@ -138,10 +146,10 @@ class MakeReservationViewModel @Inject constructor(
                         notificationType = com.servicerca.app.domain.model.NotificationType.RESERVATION
                     )
                 )
-                val provider = _uiState.value.provider
-                if (!provider?.fcmToken.isNullOrBlank()) {
+                val providerToken = _uiState.value.provider?.fcmToken
+                if (!providerToken.isNullOrBlank()) {
                     fcmSender.sendGeneralNotification(
-                        recipientToken = provider!!.fcmToken,
+                        recipientToken = providerToken,
                         title = notifTitle,
                         body = notifMessage,
                         type = "reservation"

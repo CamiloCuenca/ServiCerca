@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.servicerca.app.BuildConfig
+import com.servicerca.app.ai.ToxicityRepository
 import com.servicerca.app.core.cloudinary.CloudinaryUploader
 import com.servicerca.app.core.utils.RequestResult
 import com.servicerca.app.core.utils.ValidatedField
@@ -103,6 +104,19 @@ class EditProfileViewModel @Inject constructor(
         viewModelScope.launch {
             _isLoading.value = true
             try {
+                // Validación de IA para contenido ofensivo
+                if (ToxicityRepository.isToxic(firstName.value) ||
+                    ToxicityRepository.isToxic(middleName.value) ||
+                    ToxicityRepository.isToxic(firstLastName.value) ||
+                    ToxicityRepository.isToxic(secondLastName.value) ||
+                    ToxicityRepository.isToxic(address.value) ||
+                    ToxicityRepository.isToxic(city.value)
+                ) {
+                    _saveResult.value = RequestResult.Failure("Contenido ofensivo detectado")
+                    _isLoading.value = false
+                    return@launch
+                }
+
                 val session = sessionDataStore.sessionFlow.firstOrNull()
                 if (session != null) {
                     val user = userRepository.findById(session.userId)
@@ -150,6 +164,19 @@ class EditProfileViewModel @Inject constructor(
         viewModelScope.launch {
             _isLoading.value = true
             try {
+                // Validación de IA para contenido ofensivo
+                if (ToxicityRepository.isToxic(firstName.value) ||
+                    ToxicityRepository.isToxic(middleName.value) ||
+                    ToxicityRepository.isToxic(firstLastName.value) ||
+                    ToxicityRepository.isToxic(secondLastName.value) ||
+                    ToxicityRepository.isToxic(address.value) ||
+                    ToxicityRepository.isToxic(city.value)
+                ) {
+                    _saveResult.value = RequestResult.Failure("Contenido ofensivo detectado")
+                    _isLoading.value = false
+                    return@launch
+                }
+
                 val session = sessionDataStore.sessionFlow.firstOrNull()
                 if (session != null) {
                     val currentUser = userRepository.findById(session.userId)

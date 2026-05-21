@@ -2,6 +2,7 @@ package com.servicerca.app.ui.dashboard.moderador
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.servicerca.app.ai.ToxicityRepository
 import com.servicerca.app.core.fcm.FCMSender
 import com.servicerca.app.domain.model.Service
 import com.servicerca.app.domain.model.ServiceStatus
@@ -40,28 +41,60 @@ class RejectReasonViewModel @Inject constructor(
     }
 
     fun rejectService(reason: String) {
-        val currentService = _uiState.value.service ?: return
-        viewModelScope.launch {
-            val updatedService = currentService.copy(status = ServiceStatus.REJECTED)
-            serviceRepository.update(updatedService)
-
-            val title = "Servicio rechazado"
-            val message = "Tu servicio \"${currentService.title}\" ha sido rechazado. Motivo: $reason"
-            val owner = userRepository.findById(currentService.ownerId)
-            if (!owner?.fcmToken.isNullOrBlank()) {
-                fcmSender.sendGeneralNotification(
-                    recipientToken = owner!!.fcmToken,
-                    title = title,
-                    body = message,
-                    type = "rejection",
-                    notificationType = "MODERATION",
-                    targetId = currentService.id,
-                    userId = currentService.ownerId,
-                    alreadySavedInFirestore = false
-                )
-            }
-
-            _uiState.update { it.copy(isSuccess = true, service = updatedService) }
+        if (reason.isBlank()) {
+            _uiState.update { it.copy(error = "El motivo no puede estar vacío") }
+            return
         }
+
+        val currentService = _uiState.value.service ?: return
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null) }
+
+            try {
+                if (ToxicityRepository.isToxic(reason)) {
+                    _uiState.update {
+                        it.copy(
+                            error = "Contenido ofensivo detectado en el motivo",
+                            isLoading = false
+                        )
+                    }
+                    return@launch
+                }
+
+                val updatedService = currentService.copy(status = ServiceStatus.REJECTED)
+                serviceRepository.update(updatedService)
+
+                val title = "Servicio rechazado"
+                val message = "Tu servicio \"${currentService.title}\" ha sido rechazado. Motivo: $reason"
+                val ownerToken = userRepository.findById(currentService.ownerId)?.fcmToken
+                if (!ownerToken.isNullOrBlank()) {
+                    fcmSender.sendGeneralNotification(
+                        recipientToken = ownerToken,
+                        title = title,
+                        body = message,
+                        type = "rejection",
+                        notificationType = "MODERATION",
+                        targetId = currentService.id,
+                        userId = currentService.ownerId,
+                        alreadySavedInFirestore = false
+                    )
+                }
+
+                _uiState.update {
+                    it.copy(
+                        isSuccess = true,
+                        service = updatedService,
+                        isLoading = false
+                    )
+                }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(error = e.message, isLoading = false) }
+            }
+        }
+    }
+
+    fun clearError() {
+        _uiState.update { it.copy(error = null) }
     }
 }

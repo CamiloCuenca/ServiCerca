@@ -12,6 +12,7 @@ import com.servicerca.app.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import androidx.lifecycle.viewModelScope
+import com.servicerca.app.ai.ToxicityRepository
 import kotlinx.coroutines.launch
 
 /**
@@ -58,6 +59,12 @@ class ResetPasswordViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
+            // Validación de IA para contenido ofensivo
+            if (ToxicityRepository.isToxic(newPassword.value)) {
+                _resetResult.value = RequestResult.Failure("Contenido ofensivo detectado")
+                return@launch
+            }
+
             val result = userRepository.resetPassword("", oobCode, newPassword.value)
             if (result.isSuccess) {
                 _resetResult.value = RequestResult.Success("¡Contraseña restablecida exitosamente!")

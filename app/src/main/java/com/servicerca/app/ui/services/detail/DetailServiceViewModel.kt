@@ -311,10 +311,10 @@ class DetailServiceViewModel @Inject constructor(
                         isRead = false
                     )
                 )
-                val owner = userRepository.findById(s.ownerId)
-                if (!owner?.fcmToken.isNullOrBlank()) {
+                val ownerToken = userRepository.findById(s.ownerId)?.fcmToken
+                if (!ownerToken.isNullOrBlank()) {
                     fcmSender.sendGeneralNotification(
-                        recipientToken = owner!!.fcmToken,
+                        recipientToken = ownerToken,
                         title = title,
                         body = message,
                         type = "like"
