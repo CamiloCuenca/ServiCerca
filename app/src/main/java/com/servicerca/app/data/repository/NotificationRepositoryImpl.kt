@@ -67,7 +67,7 @@ class NotificationRepositoryImpl @Inject constructor(
             _notifications.value = snapshot?.documents
                 ?.mapNotNull { doc ->
                     runCatching {
-                        val timestampMillis = doc.getTimestamp("timestamp")?.toDate()?.time ?: 0L
+                        val timestampMillis = doc.getTimestamp("timestamp")?.toDate()?.time ?: System.currentTimeMillis()
                         val notification = Notification(
                             id = doc.getString("id") ?: doc.id,
                             userId = doc.getString("userId") ?: "",
@@ -81,7 +81,8 @@ class NotificationRepositoryImpl @Inject constructor(
                                 NotificationType.valueOf(
                                     doc.getString("notificationType") ?: "SYSTEM"
                                 )
-                            }.getOrDefault(NotificationType.SYSTEM)
+                            }.getOrDefault(NotificationType.SYSTEM),
+                            timestamp = timestampMillis
                         )
                         Pair(timestampMillis, notification)
                     }.getOrNull()
@@ -133,6 +134,7 @@ class NotificationRepositoryImpl @Inject constructor(
     }
 
     override suspend fun addNotification(notification: Notification) {
+        Log.d("NotificationRepo", "addNotification: guardando id=${notification.id}, userId=${notification.userId}")
         try {
             val data = mapOf(
                 "id" to notification.id,
@@ -147,6 +149,7 @@ class NotificationRepositoryImpl @Inject constructor(
                 "timestamp" to FieldValue.serverTimestamp()
             )
             collection.document(notification.id).set(data).await()
+            Log.d("NotificationRepo", "addNotification: guardado exitosamente en Firestore")
         } catch (e: Exception) {
             Log.e("NotificationRepo", "Error guardando notificación", e)
         }

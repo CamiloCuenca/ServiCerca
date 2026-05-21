@@ -6,10 +6,7 @@ import com.servicerca.app.core.fcm.FCMSender
 import com.servicerca.app.domain.model.Service
 import com.servicerca.app.domain.model.ServiceStatus
 import com.servicerca.app.domain.model.User
-import com.servicerca.app.R
-import com.servicerca.app.domain.model.Notification
 import com.servicerca.app.domain.repository.CommentRepository
-import com.servicerca.app.domain.repository.NotificationRepository
 import com.servicerca.app.domain.repository.ServiceRepository
 import com.servicerca.app.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,7 +15,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.util.UUID
 import javax.inject.Inject
 
 data class DetailsVerificationUiState(
@@ -34,7 +30,6 @@ data class DetailsVerificationUiState(
 class DetailsVerificationViewModel @Inject constructor(
     private val serviceRepository: ServiceRepository,
     private val userRepository: UserRepository,
-    private val notificationRepository: NotificationRepository,
     private val commentRepository: CommentRepository,
     private val fcmSender: FCMSender
 ) : ViewModel() {
@@ -87,24 +82,17 @@ class DetailsVerificationViewModel @Inject constructor(
 
             val title = "Servicio aprobado"
             val message = "¡Tu servicio \"${currentService.title}\" ha sido aprobado y ya es público!"
-            notificationRepository.addNotification(
-                Notification(
-                    id = UUID.randomUUID().toString(),
-                    userId = currentService.ownerId,
-                    title = title,
-                    message = message,
-                    date = "Ahora",
-                    imageRes = R.drawable.nueva_publicacion,
-                    isRead = false
-                )
-            )
             val owner = _uiState.value.owner
             if (!owner?.fcmToken.isNullOrBlank()) {
                 fcmSender.sendGeneralNotification(
                     recipientToken = owner!!.fcmToken,
                     title = title,
                     body = message,
-                    type = "moderation"
+                    type = "moderation",
+                    notificationType = "MODERATION",
+                    targetId = currentService.id,
+                    userId = currentService.ownerId,
+                    alreadySavedInFirestore = false
                 )
             }
 
