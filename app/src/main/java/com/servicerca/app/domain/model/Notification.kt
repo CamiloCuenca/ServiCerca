@@ -9,5 +9,6 @@ data class Notification(
     val imageRes: Int,
     val isRead: Boolean = false,
     val targetId: String? = null,
-    val notificationType: NotificationType = NotificationType.SYSTEM
+    val notificationType: NotificationType = NotificationType.SYSTEM,
+    val timestamp: Long = 0L  // Timestamp en milisegundos para ordenar correctamente
 )

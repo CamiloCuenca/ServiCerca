@@ -8,6 +8,7 @@ import com.servicerca.app.domain.model.Categories
 import com.servicerca.app.domain.model.Comment
 import com.servicerca.app.domain.model.Service
 import com.servicerca.app.domain.model.ServiceStatus
+import com.servicerca.app.core.fcm.FCMSender
 import com.servicerca.app.domain.repository.CommentRepository
 import com.servicerca.app.domain.repository.ServiceRepository
 import com.servicerca.app.domain.repository.UserRepository
@@ -54,7 +55,8 @@ class HomeUserViewModel @Inject constructor(
     private val commentRepository: CommentRepository,
     private val userRepository: UserRepository,
     private val notificationRepository: NotificationRepository,
-    private val sessionDataStore: SessionDataStore
+    private val sessionDataStore: SessionDataStore,
+    private val fcmSender: FCMSender
 ) : ViewModel() {
 
     private val _selectedCategory = MutableStateFlow<Categories?>(null)
@@ -169,17 +171,28 @@ class HomeUserViewModel @Inject constructor(
             )
 
             if (isAddingLike) {
+                val title = "¡Nuevo like!"
+                val message = "${currentUser.name1} le dio like a tu servicio \"${service.title}\""
                 notificationRepository.addNotification(
                     Notification(
                         id = UUID.randomUUID().toString(),
                         userId = service.ownerId,
-                        title = "¡Nuevo like!",
-                        message = "${currentUser.name1} le dio like a tu servicio \"${service.title}\"",
+                        title = title,
+                        message = message,
                         date = "Ahora",
                         imageRes = R.drawable.insignia_favorita,
                         isRead = false
                     )
                 )
+                val owner = userRepository.findById(service.ownerId)
+                if (!owner?.fcmToken.isNullOrBlank()) {
+                    fcmSender.sendGeneralNotification(
+                        recipientToken = owner!!.fcmToken,
+                        title = title,
+                        body = message,
+                        type = "like"
+                    )
+                }
             }
         }
     }
