@@ -61,11 +61,8 @@ fun NotificationsScreen (
     viewModel: NotificationViewModel = hiltViewModel()
 ){
     val notifications by viewModel.notifications.collectAsStateWithLifecycle()
-<<<<<<< HEAD
-    val context = LocalContext.current
-=======
     val unreadCount by viewModel.unreadCount.collectAsStateWithLifecycle()
->>>>>>> 6501d42 (probando notificaciones)
+    val context = LocalContext.current
     Scaffold(
         modifier = Modifier.fillMaxSize()
     ) { paddingValues ->

@@ -174,27 +174,17 @@ class HomeUserViewModel @Inject constructor(
                 userId = session.userId
             )
 
-<<<<<<< HEAD
-            if (isAddingLike) {
-                val title = "¡Nuevo like!"
-                val message = "${currentUser.name1} le dio like a tu servicio \"${service.title}\""
-=======
             if (isAddingLike && service.ownerId != session.userId) {
                 val dateStr = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault()).format(Date())
->>>>>>> 6501d42 (probando notificaciones)
+                val title = "¡Nuevo like!"
+                val message = "${currentUser.name1} le dio like a tu servicio \"${service.title}\""
                 notificationRepository.addNotification(
                     Notification(
                         id = UUID.randomUUID().toString(),
                         userId = service.ownerId,
-<<<<<<< HEAD
                         title = title,
                         message = message,
-                        date = "Ahora",
-=======
-                        title = "¡Nuevo like!",
-                        message = "${currentUser.name1} le dio like a tu servicio \"${service.title}\"",
                         date = dateStr,
->>>>>>> 6501d42 (probando notificaciones)
                         imageRes = R.drawable.insignia_favorita,
                         isRead = false,
                         targetId = serviceId,

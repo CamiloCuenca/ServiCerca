@@ -133,7 +133,7 @@ class MakeReservationViewModel @Inject constructor(
                 )
                 reservationRepository.createReservation(reservation)
 
-<<<<<<< HEAD
+                val dateStr = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault()).format(Date())
                 val notifTitle = context.getString(R.string.new_service_request_title)
                 val notifMessage = context.getString(R.string.new_reservation_received_message, serviceTitle)
                 notificationRepository.addNotification(
@@ -142,26 +142,12 @@ class MakeReservationViewModel @Inject constructor(
                         userId = providerId,
                         title = notifTitle,
                         message = notifMessage,
-                        date = context.getString(R.string.now_label),
+                        date = dateStr,
                         imageRes = com.servicerca.app.R.drawable.nueva_solicitud_servicio,
                         isRead = false,
                         targetId = reservation.id,
                         notificationType = com.servicerca.app.domain.model.NotificationType.RESERVATION
                     )
-=======
-                // Trigger Notification for the Provider
-                val dateStr = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault()).format(Date())
-                val notification = com.servicerca.app.domain.model.Notification(
-                    id = UUID.randomUUID().toString(),
-                    userId = providerId,
-                    title = context.getString(R.string.new_service_request_title),
-                    message = context.getString(R.string.new_reservation_received_message, serviceTitle),
-                    date = dateStr,
-                    imageRes = com.servicerca.app.R.drawable.nueva_solicitud_servicio,
-                    isRead = false,
-                    targetId = reservation.id,
-                    notificationType = com.servicerca.app.domain.model.NotificationType.RESERVATION
->>>>>>> 6501d42 (probando notificaciones)
                 )
                 val providerToken = _uiState.value.provider?.fcmToken
                 if (!providerToken.isNullOrBlank()) {
