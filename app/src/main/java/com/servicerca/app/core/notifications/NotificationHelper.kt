@@ -62,9 +62,10 @@ object NotificationHelper {
     }
 
     fun showGeneralNotification(context: Context, title: String, body: String) {
+        val requestCode = (title + body + System.currentTimeMillis()).hashCode()
         val pendingIntent = PendingIntent.getActivity(
             context,
-            0,
+            requestCode,
             Intent(context, MainActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
             },

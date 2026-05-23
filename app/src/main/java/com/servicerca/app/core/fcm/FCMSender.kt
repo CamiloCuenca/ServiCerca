@@ -62,6 +62,7 @@ class FCMSender @Inject constructor(
         body: String,
         type: String = "general",
         notificationType: String = "SYSTEM",
+<<<<<<< HEAD
         targetId: String? = null,
         userId: String? = null,
         alreadySavedInFirestore: Boolean = true
@@ -75,11 +76,30 @@ class FCMSender @Inject constructor(
                 userId?.let { put("userId", it) }
                 if (alreadySavedInFirestore) put("noSave", "true")
             }
+=======
+        userId: String = "",
+        targetId: String = "",
+        notificationId: String = ""
+    ) = withContext(Dispatchers.IO) {
+        try {
+            val accessToken = getAccessToken()
+            val extraData = mutableMapOf(
+                "type" to type,
+                "notificationType" to notificationType
+            )
+            if (userId.isNotBlank()) extraData["userId"] = userId
+            if (targetId.isNotBlank()) extraData["targetId"] = targetId
+            if (notificationId.isNotBlank()) extraData["notificationId"] = notificationId
+>>>>>>> 6501d42 (probando notificaciones)
             val payload = buildPayload(
                 token = recipientToken,
                 title = title,
                 body = body,
+<<<<<<< HEAD
                 data = data,
+=======
+                data = extraData,
+>>>>>>> 6501d42 (probando notificaciones)
                 channelId = "channel_general"
             )
             postToFCM(accessToken, payload)

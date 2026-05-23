@@ -25,6 +25,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import java.util.UUID
 import javax.inject.Inject
 
@@ -197,12 +200,13 @@ class CreateServiceViewModel @Inject constructor(
                 serviceRepository.save(service)
 
                 // Notificar a los moderadores del nuevo servicio pendiente
+                val dateStr = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault()).format(Date())
                 val notification = Notification(
                     id = UUID.randomUUID().toString(),
                     userId = "MODERATOR_ROLE",
                     title = context.getString(R.string.notification_moderation_title),
                     message = context.getString(R.string.notification_moderation_message, title.value),
-                    date = "Ahora",
+                    date = dateStr,
                     imageRes = R.drawable.nueva_solicitud_servicio,
                     notificationType = NotificationType.MODERATION,
                     targetId = id

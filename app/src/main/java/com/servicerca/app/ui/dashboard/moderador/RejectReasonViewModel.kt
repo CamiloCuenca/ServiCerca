@@ -2,8 +2,14 @@ package com.servicerca.app.ui.dashboard.moderador
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+<<<<<<< HEAD
 import com.servicerca.app.ai.ToxicityRepository
 import com.servicerca.app.core.fcm.FCMSender
+=======
+import com.servicerca.app.R
+import com.servicerca.app.domain.model.Notification
+import com.servicerca.app.domain.model.NotificationType
+>>>>>>> 6501d42 (probando notificaciones)
 import com.servicerca.app.domain.model.Service
 import com.servicerca.app.domain.model.ServiceStatus
 import com.servicerca.app.domain.repository.ServiceRepository
@@ -13,6 +19,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+<<<<<<< HEAD
+=======
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.UUID
+>>>>>>> 6501d42 (probando notificaciones)
 import javax.inject.Inject
 
 data class RejectReasonUiState(
@@ -49,6 +62,7 @@ class RejectReasonViewModel @Inject constructor(
         val currentService = _uiState.value.service ?: return
 
         viewModelScope.launch {
+<<<<<<< HEAD
             _uiState.update { it.copy(isLoading = true, error = null) }
 
             try {
@@ -61,6 +75,27 @@ class RejectReasonViewModel @Inject constructor(
                     }
                     return@launch
                 }
+=======
+            val updatedService = currentService.copy(status = ServiceStatus.REJECTED)
+            serviceRepository.update(updatedService)
+
+            val dateStr = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault()).format(Date())
+
+            // Enviar notificación con el motivo del rechazo
+            notificationRepository.addNotification(
+                Notification(
+                    id = UUID.randomUUID().toString(),
+                    userId = currentService.ownerId,
+                    title = "Servicio rechazado",
+                    message = "Tu servicio \"${currentService.title}\" ha sido rechazado. Motivo: $reason",
+                    date = dateStr,
+                    imageRes = R.drawable.publicacion_rechazada,
+                    isRead = false,
+                    targetId = currentService.id,
+                    notificationType = NotificationType.SERVICE
+                )
+            )
+>>>>>>> 6501d42 (probando notificaciones)
 
                 val updatedService = currentService.copy(status = ServiceStatus.REJECTED)
                 serviceRepository.update(updatedService)

@@ -6,6 +6,12 @@ import com.servicerca.app.core.fcm.FCMSender
 import com.servicerca.app.domain.model.Service
 import com.servicerca.app.domain.model.ServiceStatus
 import com.servicerca.app.domain.model.User
+<<<<<<< HEAD
+=======
+import com.servicerca.app.R
+import com.servicerca.app.domain.model.Notification
+import com.servicerca.app.domain.model.NotificationType
+>>>>>>> 6501d42 (probando notificaciones)
 import com.servicerca.app.domain.repository.CommentRepository
 import com.servicerca.app.domain.repository.ServiceRepository
 import com.servicerca.app.domain.repository.UserRepository
@@ -15,6 +21,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+<<<<<<< HEAD
+=======
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.UUID
+>>>>>>> 6501d42 (probando notificaciones)
 import javax.inject.Inject
 
 data class DetailsVerificationUiState(
@@ -80,6 +93,7 @@ class DetailsVerificationViewModel @Inject constructor(
             val updatedService = currentService.copy(status = ServiceStatus.APPROVED)
             serviceRepository.update(updatedService)
 
+<<<<<<< HEAD
             val title = "Servicio aprobado"
             val message = "¡Tu servicio \"${currentService.title}\" ha sido aprobado y ya es público!"
             val ownerToken = _uiState.value.owner?.fcmToken
@@ -93,6 +107,22 @@ class DetailsVerificationViewModel @Inject constructor(
                     targetId = currentService.id,
                     userId = currentService.ownerId,
                     alreadySavedInFirestore = false
+=======
+            val dateStr = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault()).format(Date())
+
+            // Enviar notificación al dueño
+            notificationRepository.addNotification(
+                Notification(
+                    id = UUID.randomUUID().toString(),
+                    userId = currentService.ownerId,
+                    title = "Servicio aprobado",
+                    message = "¡Tu servicio \"${currentService.title}\" ha sido aprobado y ya es público!",
+                    date = dateStr,
+                    imageRes = R.drawable.servicio_verificado,
+                    isRead = false,
+                    targetId = currentService.id,
+                    notificationType = NotificationType.SERVICE
+>>>>>>> 6501d42 (probando notificaciones)
                 )
             }
 

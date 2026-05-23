@@ -18,3 +18,5 @@
 .cxx
 local.properties
 /.res/
+.antigravitycli/
+app/assets/service_account.json
