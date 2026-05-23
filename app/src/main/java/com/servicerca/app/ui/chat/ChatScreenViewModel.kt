@@ -12,9 +12,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import androidx.navigation.toRoute
-import com.servicerca.app.core.navigation.DashboardRoutes
-
 data class ChatUiState(
     val messages: List<Message> = emptyList(),
     val currentMessage: String = "",
@@ -29,7 +26,7 @@ class ChatScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val chatId: String = savedStateHandle.toRoute<DashboardRoutes.Chat>().chatId
+    private val chatId: String = checkNotNull(savedStateHandle["chatId"])
     private val _uiState = MutableStateFlow(ChatUiState())
     val uiState: StateFlow<ChatUiState> = _uiState.asStateFlow()
 

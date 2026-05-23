@@ -164,6 +164,7 @@ class NotificationRepositoryImpl @Inject constructor(
         R.drawable.publicacion_rechazada    -> "publicacion_rechazada"
         R.drawable.nueva_publicacion        -> "nueva_publicacion"
         R.drawable.insignia_favorita        -> "insignia_favorita"
+        R.drawable.insignia_chat            -> "insignia_chat"
         else                                -> "nueva_publicacion"
     }
 
@@ -174,6 +175,7 @@ class NotificationRepositoryImpl @Inject constructor(
         "publicacion_rechazada"    -> R.drawable.publicacion_rechazada
         "nueva_publicacion"        -> R.drawable.nueva_publicacion
         "insignia_favorita"        -> R.drawable.insignia_favorita
+        "insignia_chat"            -> R.drawable.insignia_chat
         else                       -> R.drawable.nueva_publicacion
     }
 }

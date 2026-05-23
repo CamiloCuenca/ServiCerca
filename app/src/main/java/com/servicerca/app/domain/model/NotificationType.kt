@@ -4,5 +4,6 @@ enum class NotificationType {
     RESERVATION,
     SERVICE,
     SYSTEM,
-    MODERATION
+    MODERATION,
+    CHAT
 }

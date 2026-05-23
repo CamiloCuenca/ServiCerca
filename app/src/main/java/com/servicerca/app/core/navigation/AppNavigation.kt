@@ -309,6 +309,9 @@ private fun MainNavigation(
                         NotificationType.MODERATION -> {
                             navController.navigate(MainRoutes.ModeratorServiceDetail(id))
                         }
+                        NotificationType.CHAT -> {
+                            navController.navigate(MainRoutes.Chat(id))
+                        }
                         else -> { /* No-op for System */ }
                     }
                 }

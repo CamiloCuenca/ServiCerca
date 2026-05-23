@@ -175,11 +175,11 @@ class ChatRepositoryImpl @Inject constructor(
 
         // Enviar push al destinatario en background (fire-and-forget)
         notifScope.launch {
-            trySendChatPush(recipientId = chatId, senderId = currentUserId, text = message.message)
+            trySendChatPush(recipientId = chatId, senderId = currentUserId, text = message.message, convId = convId)
         }
     }
 
-    private suspend fun trySendChatPush(recipientId: String, senderId: String, text: String) {
+    private suspend fun trySendChatPush(recipientId: String, senderId: String, text: String, convId: String) {
         try {
             val recipientToken = firestore.collection("users").document(recipientId)
                 .get().await().getString("fcmToken")?.takeIf { it.isNotBlank() } ?: return
@@ -188,7 +188,7 @@ class ChatRepositoryImpl @Inject constructor(
             val senderName = "${senderDoc.getString("name1") ?: ""} ${senderDoc.getString("lastname1") ?: ""}".trim()
                 .ifBlank { "Alguien" }
 
-            fcmSender.sendChatNotification(recipientToken, senderName, text, senderId)
+            fcmSender.sendChatNotification(recipientToken, senderName, text, senderId, recipientId = recipientId, convId = convId)
         } catch (e: Exception) {
             Log.e("ChatRepo", "Error enviando push de chat", e)
         }

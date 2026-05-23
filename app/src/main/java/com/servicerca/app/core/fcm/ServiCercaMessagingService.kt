@@ -39,6 +39,7 @@ class ServiCercaMessagingService : FirebaseMessagingService() {
             "chat" -> {
                 val senderId = data["senderId"] ?: ""
                 NotificationHelper.showChatNotification(applicationContext, title, body, senderId)
+                saveToInAppList(data, title, body)
             }
             else -> {
                 NotificationHelper.showGeneralNotification(applicationContext, title, body)
@@ -68,6 +69,7 @@ class ServiCercaMessagingService : FirebaseMessagingService() {
                 }.getOrDefault(NotificationType.SYSTEM)
 
                 val iconRes = when {
+                    data["type"] == "chat"                           -> R.drawable.insignia_chat
                     data["type"] == "rejection"                      -> R.drawable.publicacion_rechazada
                     notificationType == NotificationType.RESERVATION -> R.drawable.nueva_solicitud_servicio
                     notificationType == NotificationType.MODERATION  -> R.drawable.servicio_verificado
