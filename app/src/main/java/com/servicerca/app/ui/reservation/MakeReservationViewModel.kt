@@ -21,10 +21,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId
 import java.util.Date
+import java.util.Locale
 import java.util.UUID
 import javax.inject.Inject
 
@@ -131,6 +133,7 @@ class MakeReservationViewModel @Inject constructor(
                 )
                 reservationRepository.createReservation(reservation)
 
+                val dateStr = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault()).format(Date())
                 val notifTitle = context.getString(R.string.new_service_request_title)
                 val notifMessage = context.getString(R.string.new_reservation_received_message, serviceTitle)
                 notificationRepository.addNotification(
@@ -139,7 +142,7 @@ class MakeReservationViewModel @Inject constructor(
                         userId = providerId,
                         title = notifTitle,
                         message = notifMessage,
-                        date = context.getString(R.string.now_label),
+                        date = dateStr,
                         imageRes = com.servicerca.app.R.drawable.nueva_solicitud_servicio,
                         isRead = false,
                         targetId = reservation.id,

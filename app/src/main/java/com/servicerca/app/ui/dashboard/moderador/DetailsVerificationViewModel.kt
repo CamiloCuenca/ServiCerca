@@ -2,11 +2,15 @@ package com.servicerca.app.ui.dashboard.moderador
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.servicerca.app.R
 import com.servicerca.app.core.fcm.FCMSender
+import com.servicerca.app.domain.model.Notification
+import com.servicerca.app.domain.model.NotificationType
 import com.servicerca.app.domain.model.Service
 import com.servicerca.app.domain.model.ServiceStatus
 import com.servicerca.app.domain.model.User
 import com.servicerca.app.domain.repository.CommentRepository
+import com.servicerca.app.domain.repository.NotificationRepository
 import com.servicerca.app.domain.repository.ServiceRepository
 import com.servicerca.app.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,6 +19,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.UUID
 import javax.inject.Inject
 
 data class DetailsVerificationUiState(
@@ -31,6 +39,7 @@ class DetailsVerificationViewModel @Inject constructor(
     private val serviceRepository: ServiceRepository,
     private val userRepository: UserRepository,
     private val commentRepository: CommentRepository,
+    private val notificationRepository: NotificationRepository,
     private val fcmSender: FCMSender
 ) : ViewModel() {
 
@@ -80,8 +89,24 @@ class DetailsVerificationViewModel @Inject constructor(
             val updatedService = currentService.copy(status = ServiceStatus.APPROVED)
             serviceRepository.update(updatedService)
 
+            val dateStr = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault()).format(Date())
             val title = "Servicio aprobado"
             val message = "¡Tu servicio \"${currentService.title}\" ha sido aprobado y ya es público!"
+
+            notificationRepository.addNotification(
+                Notification(
+                    id = UUID.randomUUID().toString(),
+                    userId = currentService.ownerId,
+                    title = title,
+                    message = message,
+                    date = dateStr,
+                    imageRes = R.drawable.servicio_verificado,
+                    isRead = false,
+                    targetId = currentService.id,
+                    notificationType = NotificationType.SERVICE
+                )
+            )
+
             val ownerToken = _uiState.value.owner?.fcmToken
             if (!ownerToken.isNullOrBlank()) {
                 fcmSender.sendGeneralNotification(
@@ -91,8 +116,7 @@ class DetailsVerificationViewModel @Inject constructor(
                     type = "moderation",
                     notificationType = "MODERATION",
                     targetId = currentService.id,
-                    userId = currentService.ownerId,
-                    alreadySavedInFirestore = false
+                    userId = currentService.ownerId
                 )
             }
 

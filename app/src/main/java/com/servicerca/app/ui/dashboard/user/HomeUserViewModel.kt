@@ -14,6 +14,7 @@ import com.servicerca.app.domain.repository.ServiceRepository
 import com.servicerca.app.domain.repository.UserRepository
 import com.servicerca.app.domain.repository.NotificationRepository
 import com.servicerca.app.domain.model.Notification
+import com.servicerca.app.domain.model.NotificationType
 import com.servicerca.app.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -25,6 +26,9 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import java.util.UUID
 import javax.inject.Inject
 
@@ -170,7 +174,8 @@ class HomeUserViewModel @Inject constructor(
                 userId = session.userId
             )
 
-            if (isAddingLike) {
+            if (isAddingLike && service.ownerId != session.userId) {
+                val dateStr = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault()).format(Date())
                 val title = "¡Nuevo like!"
                 val message = "${currentUser.name1} le dio like a tu servicio \"${service.title}\""
                 notificationRepository.addNotification(
@@ -179,9 +184,11 @@ class HomeUserViewModel @Inject constructor(
                         userId = service.ownerId,
                         title = title,
                         message = message,
-                        date = "Ahora",
+                        date = dateStr,
                         imageRes = R.drawable.insignia_favorita,
-                        isRead = false
+                        isRead = false,
+                        targetId = serviceId,
+                        notificationType = NotificationType.SERVICE
                     )
                 )
                 val ownerToken = userRepository.findById(service.ownerId)?.fcmToken
