@@ -37,57 +37,51 @@ fun PopularCategoriesSection(
                 text = stringResource(R.string.popular_categories_title),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
-
             )
-
             Text(
                 text = stringResource(R.string.view_all),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.clickable { onViewAll() }
             )
-
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
         Row(modifier = Modifier.fillMaxWidth()) {
             CategoryCard(
-                title = stringResource(R.string.category_home),
+                title = stringResource(R.string.category_plumbing),
                 icon = R.drawable.ic_push_pin,
                 modifier = Modifier.weight(1f),
-                onClick = { onCategoryClick(Categories.HOGAR) },
-                image = R.drawable.categoria_hogar
-
-
+                onClick = { onCategoryClick(Categories.PLOMERIA) },
+                image = R.drawable.plumber
             )
             Spacer(modifier = Modifier.width(12.dp))
             CategoryCard(
-                title = stringResource(R.string.category_education),
+                title = stringResource(R.string.category_electricity),
                 icon = R.drawable.ic_push_pin,
                 modifier = Modifier.weight(1f),
-                onClick = { onCategoryClick(Categories.EDUCACIÓN) },
-                image = R.drawable.categoria_educacion
+                onClick = { onCategoryClick(Categories.ELECTRICIDAD) },
+                image = R.drawable.electrician
             )
         }
         Spacer(modifier = Modifier.height(12.dp))
         Row(modifier = Modifier.fillMaxWidth()) {
             CategoryCard(
-                title = stringResource(R.string.category_pets),
+                title = stringResource(R.string.category_cleaning),
                 icon = R.drawable.ic_push_pin,
                 modifier = Modifier.weight(1f),
-                onClick = { onCategoryClick(Categories.MASCOTAS) },
-                image = R.drawable.categoria_mascotas
+                onClick = { onCategoryClick(Categories.LIMPIEZA) },
+                image = R.drawable.cleaner
             )
             Spacer(modifier = Modifier.width(12.dp))
             CategoryCard(
-                title = stringResource(R.string.category_technology),
+                title = stringResource(R.string.category_carpentry),
                 icon = R.drawable.ic_push_pin,
                 modifier = Modifier.weight(1f),
-                onClick = { onCategoryClick(Categories.TECNOLOGIA) }
-                ,image = R.drawable.categoria_tecnologia
+                onClick = { onCategoryClick(Categories.CARPINTERIA) },
+                image = R.drawable.categoria_hogar
             )
-
         }
     }
 }

@@ -176,7 +176,7 @@ private fun AuthNavigation(
         composable<MainRoutes.ResetPassword>(
             deepLinks = listOf(
                 androidx.navigation.navDeepLink<MainRoutes.ResetPassword>(
-                    basePath = "https://servicerca-6ee07.firebaseapp.com/__/auth/action"
+                    basePath = "https://servicerca-6ee07.web.app/reset"
                 )
             )
         ) { backStackEntry ->
@@ -309,6 +309,9 @@ private fun MainNavigation(
                         NotificationType.MODERATION -> {
                             navController.navigate(MainRoutes.ModeratorServiceDetail(id))
                         }
+                        NotificationType.CHAT -> {
+                            navController.navigate(MainRoutes.Chat(id))
+                        }
                         else -> { /* No-op for System */ }
                     }
                 }
@@ -360,7 +363,13 @@ private fun MainNavigation(
             )
         }
 
-        composable<MainRoutes.ServiceDetail> { backStackEntry ->
+        composable<MainRoutes.ServiceDetail>(
+            deepLinks = listOf(
+                androidx.navigation.navDeepLink<MainRoutes.ServiceDetail>(
+                    basePath = "https://servicerca-6ee07.web.app/service"
+                )
+            )
+        ) { backStackEntry ->
             val route = backStackEntry.toRoute<MainRoutes.ServiceDetail>()
             DetailServiceScreen(
                 serviceId = route.serviceId,

@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.google.firebase.auth.FirebaseAuth
 import com.servicerca.app.data.model.UserSession
 import com.servicerca.app.domain.model.UserRole
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -18,7 +19,8 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(na
 
 @Singleton
 class SessionDataStore @Inject constructor(
-    @param:ApplicationContext val context: Context
+    @param:ApplicationContext val context: Context,
+    private val firebaseAuth: FirebaseAuth
 ) {
     // Claves para las preferencias
     private object Keys {
@@ -53,6 +55,9 @@ class SessionDataStore @Inject constructor(
     }
 
     suspend fun clearSession() {
+        // Cerrar sesión en Firebase
+        firebaseAuth.signOut()
+        // Limpiar datos de la sesión local
         context.dataStore.edit { it.clear() }
     }
 }

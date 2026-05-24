@@ -1,0 +1,10 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.servicerca.app",
+    "sha256_cert_fingerprints": [
+      "C0:5B:58:29:89:F0:A9:26:86:CA:2F:1E:B8:45:E3:2B:22:3E:16:E3:1A:68:0A:66:F7:59:1A:B7:F5:41:45:85"
+    ]
+  }
+}]

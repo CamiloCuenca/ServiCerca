@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.devtools.ksp)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.google.gms.google.services)
+    alias(libs.plugins.firebase.app.distribution)
 }
 
 android {
@@ -35,21 +36,40 @@ android {
         val smtpHost: String? = (localProps.getProperty("smtpHost") ?: project.findProperty("smtpHost")) as? String
         val smtpPort: String? = (localProps.getProperty("smtpPort") ?: project.findProperty("smtpPort")) as? String
         val smtpFrom: String? = (localProps.getProperty("smtpFrom") ?: project.findProperty("smtpFrom")) as? String
+        val cloudinaryCloudName: String? = (localProps.getProperty("cloudinaryCloudName") ?: project.findProperty("cloudinaryCloudName")) as? String
+        val cloudinaryUploadPreset: String? = (localProps.getProperty("cloudinaryUploadPreset") ?: project.findProperty("cloudinaryUploadPreset")) as? String
+        val keyPerspectiveAI: String? = (localProps.getProperty("keyPerstectiveAI") ?: project.findProperty("keyPerstectiveAI")) as? String
 
         buildConfigField("String", "SMTP_USER", if (smtpUser != null) "\"$smtpUser\"" else "\"\"")
         buildConfigField("String", "SMTP_PASSWORD", if (smtpPassword != null) "\"$smtpPassword\"" else "\"\"")
         buildConfigField("String", "SMTP_HOST", if (smtpHost != null) "\"$smtpHost\"" else "\"smtp.gmail.com\"")
         buildConfigField("String", "SMTP_PORT", if (smtpPort != null) "\"$smtpPort\"" else "\"587\"")
         buildConfigField("String", "SMTP_FROM", if (smtpFrom != null) "\"$smtpFrom\"" else "\"no-reply@servicerca.app\"")
-
-        val cloudinaryCloudName: String? = (localProps.getProperty("cloudinaryCloudName") ?: project.findProperty("cloudinaryCloudName")) as? String
-        val cloudinaryUploadPreset: String? = (localProps.getProperty("cloudinaryUploadPreset") ?: project.findProperty("cloudinaryUploadPreset")) as? String
-
         buildConfigField("String", "CLOUDINARY_CLOUD_NAME", if (cloudinaryCloudName != null) "\"$cloudinaryCloudName\"" else "\"\"")
         buildConfigField("String", "CLOUDINARY_UPLOAD_PRESET", if (cloudinaryUploadPreset != null) "\"$cloudinaryUploadPreset\"" else "\"\"")
+        buildConfigField("String", "PERSPECTIVE_API_KEY", if (keyPerspectiveAI != null) "\"$keyPerspectiveAI\"" else "\"\"")
+    }
+
+    signingConfigs {
+        create("teamDebug") {
+            storeFile = file("debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
     }
 
     buildTypes {
+        getByName("debug") {
+            signingConfig = signingConfigs.getByName("teamDebug")
+            firebaseAppDistribution {
+                artifactType = "APK"
+                releaseNotes = "Build de prueba ServiCerca"
+                // Agrega los emails separados por coma, o usa un grupo de Firebase Console
+                testers = "camilocuencadev@gmail.com"
+                // groups = "qa-team"
+            }
+        }
         release {
             isMinifyEnabled = true
             isShrinkResources = true
@@ -57,6 +77,12 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            firebaseAppDistribution {
+                artifactType = "APK"
+                releaseNotes = "Release ServiCerca v${defaultConfig.versionName}"
+                // groups = "beta-testers"
+                testers = "camilocuencadev@gmail.com"
+            }
         }
     }
     compileOptions {
@@ -106,6 +132,11 @@ dependencies {
     implementation(libs.firebase.messaging)
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
 
+    // Credential Manager for Google Sign-In
+    implementation("androidx.credentials:credentials:1.3.0-rc01")
+    implementation("androidx.credentials:credentials-play-services-auth:1.3.0-rc01")
+    implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -148,11 +179,10 @@ dependencies {
     // --- Hilt + Compose Navigation ---
     implementation(libs.androidx.hilt.navigation.compose)
 
+    // Retrofit & Gson
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+
     implementation(libs.data.store)
-
-
-    // --- Cloudinary
-    implementation("com.cloudinary:kotlin-url-gen:1.7.0")
-
-
 }

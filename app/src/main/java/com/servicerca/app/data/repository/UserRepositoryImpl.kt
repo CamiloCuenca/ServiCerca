@@ -131,6 +131,47 @@ constructor(
         }
     }
 
+    override suspend fun googleSignIn(idToken: String): User? {
+        return try {
+            val credential = com.google.firebase.auth.GoogleAuthProvider.getCredential(idToken, null)
+            val responseUser = auth.signInWithCredential(credential).await()
+            val uid = responseUser.user?.uid ?: throw Exception("Usuario no encontrado")
+            var user = findById(uid)
+            
+            if (user == null) {
+                // Nuevo usuario de Google
+                val displayName = responseUser.user?.displayName ?: ""
+                val names = displayName.split(" ")
+                val firstName = names.firstOrNull() ?: ""
+                val lastName = names.drop(1).joinToString(" ")
+                
+                val newUser = User(
+                    id = uid,
+                    email = responseUser.user?.email ?: "",
+                    name1 = firstName,
+                    lastname1 = lastName,
+                    isEmailVerified = true,
+                    role = UserRole.USER
+                )
+                usersCollection.document(uid).set(newUser).await()
+                user = newUser
+                Log.d("UserRepository", "Nuevo usuario registrado vía Google: $uid")
+            } else {
+                // Asegurar que esté verificado (ya que Google siempre verifica los emails)
+                if (!user.isEmailVerified) {
+                    val updatedUser = user.copy(isEmailVerified = true)
+                    usersCollection.document(uid).set(updatedUser).await()
+                    user = updatedUser
+                }
+                Log.d("UserRepository", "Inicio de sesión vía Google exitoso: $uid")
+            }
+            user
+        } catch (e: Exception) {
+            Log.e("UserRepository", "Error en el inicio de sesión con Google", e)
+            null
+        }
+    }
+
     override suspend fun verifyEmail(email: String, otpCode: String): Result<Boolean> {
         return try {
             // Usamos el UID del usuario autenticado directamente — evita una query a la colección
@@ -244,7 +285,7 @@ constructor(
         val trimmedEmail = email.trim()
         return try {
             val actionCodeSettings = com.google.firebase.auth.ActionCodeSettings.newBuilder()
-                .setUrl("https://servicerca-6ee07.firebaseapp.com/__/auth/action")
+                .setUrl("https://servicerca-6ee07.web.app/reset")
                 .setHandleCodeInApp(true)
                 .setAndroidPackageName(
                     "com.servicerca.app",

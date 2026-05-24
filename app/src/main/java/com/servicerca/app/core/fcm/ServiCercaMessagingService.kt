@@ -3,20 +3,33 @@ package com.servicerca.app.core.fcm
 import android.util.Log
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.servicerca.app.R
 import com.servicerca.app.core.notifications.NotificationHelper
+import com.servicerca.app.data.datastore.SessionDataStore
+import com.servicerca.app.domain.model.Notification
+import com.servicerca.app.domain.model.NotificationType
+import com.servicerca.app.domain.repository.NotificationRepository
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.launch
+import java.util.UUID
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class ServiCercaMessagingService : FirebaseMessagingService() {
 
-    @Inject
-    lateinit var fcmTokenManager: FCMTokenManager
+    @Inject lateinit var fcmTokenManager: FCMTokenManager
+    @Inject lateinit var notificationRepository: NotificationRepository
+    @Inject lateinit var sessionDataStore: SessionDataStore
+
+    private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         val data = remoteMessage.data
         val type = data["type"] ?: "general"
-        // Mensajes data-only: title y body siempre están en data
         val title = data["title"] ?: remoteMessage.notification?.title ?: "ServiCerca"
         val body = data["body"] ?: remoteMessage.notification?.body ?: ""
 
@@ -26,12 +39,65 @@ class ServiCercaMessagingService : FirebaseMessagingService() {
             "chat" -> {
                 val senderId = data["senderId"] ?: ""
                 NotificationHelper.showChatNotification(applicationContext, title, body, senderId)
+                saveToInAppList(data, title, body)
             }
-            else -> NotificationHelper.showGeneralNotification(applicationContext, title, body)
+            else -> {
+                NotificationHelper.showGeneralNotification(applicationContext, title, body)
+                // Solo guardar en Firestore si el ViewModel no lo hizo previamente
+                if (data["noSave"] != "true") {
+                    saveToInAppList(data, title, body)
+                }
+            }
         }
     }
 
-    // Firebase llama a esto cuando renueva el token (cambio de dispositivo, reinstalación, etc.)
+    private fun saveToInAppList(data: Map<String, String>, title: String, body: String) {
+        serviceScope.launch {
+            try {
+                val targetUserId = data["userId"]
+                    ?: sessionDataStore.sessionFlow.firstOrNull()?.userId
+
+                if (targetUserId == null) {
+                    Log.e("FCM", "saveToInAppList: userId nulo, no se guarda la notificación")
+                    return@launch
+                }
+
+                Log.d("FCM", "saveToInAppList: guardando notificación para userId=$targetUserId, title=$title")
+
+                val notificationType = runCatching {
+                    NotificationType.valueOf(data["notificationType"] ?: "SYSTEM")
+                }.getOrDefault(NotificationType.SYSTEM)
+
+                val iconRes = when {
+                    data["type"] == "chat"                           -> R.drawable.insignia_chat
+                    data["type"] == "rejection"                      -> R.drawable.publicacion_rechazada
+                    notificationType == NotificationType.RESERVATION -> R.drawable.nueva_solicitud_servicio
+                    notificationType == NotificationType.MODERATION  -> R.drawable.servicio_verificado
+                    notificationType == NotificationType.SERVICE      -> R.drawable.nueva_publicacion
+                    else                                              -> R.drawable.nueva_publicacion
+                }
+
+                notificationRepository.addNotification(
+                    Notification(
+                        id = data["notificationId"] ?: UUID.randomUUID().toString(),
+                        userId = targetUserId,
+                        title = title,
+                        message = body,
+                        date = "Ahora",
+                        imageRes = iconRes,
+                        isRead = false,
+                        targetId = data["targetId"],
+                        notificationType = notificationType,
+                        timestamp = System.currentTimeMillis()
+                    )
+                )
+                Log.d("FCM", "saveToInAppList: notificación guardada en Firestore correctamente")
+            } catch (e: Exception) {
+                Log.e("FCM", "Error guardando notificación in-app", e)
+            }
+        }
+    }
+
     override fun onNewToken(token: String) {
         Log.d("FCM", "Token renovado: $token")
         fcmTokenManager.onTokenRefresh(token)

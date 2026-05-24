@@ -41,6 +41,12 @@ class MainActivity : AppCompatActivity() {
         ActivityResultContracts.RequestPermission()
     ) { /* El usuario ya decidió; no forzamos nada */ }
 
+    // Necesario para que los deep links funcionen cuando la app ya está abierta (launchMode=singleTask)
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

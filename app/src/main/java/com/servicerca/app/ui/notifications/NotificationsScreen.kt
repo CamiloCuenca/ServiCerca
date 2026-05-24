@@ -6,12 +6,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DeleteSweep
+import androidx.compose.material.icons.filled.DoneAll
+import androidx.compose.material.icons.outlined.NotificationsOff
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
@@ -28,7 +31,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.key
 import kotlinx.coroutines.delay
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -37,6 +39,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -44,6 +47,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.servicerca.app.R
 import com.servicerca.app.core.components.notifications.ContainerNotifications
+import com.servicerca.app.core.utils.DateUtils
 import com.servicerca.app.domain.model.NotificationType
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -57,6 +61,8 @@ fun NotificationsScreen (
     viewModel: NotificationViewModel = hiltViewModel()
 ){
     val notifications by viewModel.notifications.collectAsStateWithLifecycle()
+    val unreadCount by viewModel.unreadCount.collectAsStateWithLifecycle()
+    val context = LocalContext.current
     Scaffold(
         modifier = Modifier.fillMaxSize()
     ) { paddingValues ->
@@ -100,16 +106,68 @@ fun NotificationsScreen (
                     )
 
                     if (notifications.isNotEmpty()) {
-                        IconButton(
-                            onClick = { viewModel.clearAll() },
+                        Box(
                             modifier = Modifier.align(Alignment.CenterEnd)
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.DeleteSweep,
-                                contentDescription = "Limpiar todas las notificaciones",
-                                tint = MaterialTheme.colorScheme.error
-                            )
+                            // Marcar todas como leídas
+                            if (unreadCount > 0) {
+                                IconButton(
+                                    onClick = { viewModel.markAllAsRead() },
+                                    modifier = Modifier.align(Alignment.CenterEnd)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.DoneAll,
+                                        contentDescription = "Marcar todas como leídas",
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
+                                }
+                            } else {
+                                // Borrar todo (solo si todas ya están leídas)
+                                IconButton(
+                                    onClick = { viewModel.clearAll() },
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.DeleteSweep,
+                                        contentDescription = "Limpiar todas las notificaciones",
+                                        tint = MaterialTheme.colorScheme.error
+                                    )
+                                }
+                            }
                         }
+                    }
+                }
+            }
+
+            // Estado vacío
+            if (notifications.isEmpty()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 64.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.NotificationsOff,
+                            contentDescription = null,
+                            modifier = Modifier.size(64.dp),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                        )
+                        Text(
+                            text = "No tienes notificaciones",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.Center
+                        )
+                        Text(
+                            text = "Cuando tengas actividad, aparecerá aquí",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                            textAlign = TextAlign.Center
+                        )
                     }
                 }
             }
@@ -162,13 +220,15 @@ fun NotificationsScreen (
                                 }
                             }
                         ) {
+                            // Calcular fecha relativa desde el timestamp
+                            val relativeDate = DateUtils.getRelativeTimeString(context, notification.timestamp)
                             ContainerNotifications(
                                 imageRes = notification.imageRes,
                                 tittleNotification = notification.title,
-                                date = notification.date,
+                                date = relativeDate,  // Mostrar fecha relativa en lugar de "Ahora"
                                 content = notification.message,
                                 imageRes2 = if (!notification.isRead) R.drawable.nueva_notificacion else null,
-                                onClick = { 
+                                onClick = {
                                     viewModel.markAsRead(notification.id)
                                     // Navegar si hay un destino
                                     notification.targetId?.let { id ->

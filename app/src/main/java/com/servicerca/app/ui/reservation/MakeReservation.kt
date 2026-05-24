@@ -117,11 +117,11 @@ fun MakeReservation(
     Scaffold(
         snackbarHost = { 
             SnackbarHost(hostState = snackbarHostState) { data ->
+                val isError = uiState.error != null
                 androidx.compose.material3.Snackbar(
                     snackbarData = data,
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary,
-                    shape = RoundedCornerShape(12.dp)
+                    containerColor = if (isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
                 )
             }
         },

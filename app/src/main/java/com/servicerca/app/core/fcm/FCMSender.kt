@@ -39,15 +39,24 @@ class FCMSender @Inject constructor(
         recipientToken: String,
         senderName: String,
         messageText: String,
-        senderId: String
+        senderId: String,
+        recipientId: String? = null,
+        convId: String? = null
     ) = withContext(Dispatchers.IO) {
         try {
             val accessToken = getAccessToken()
+            val data = buildMap {
+                put("type", "chat")
+                put("notificationType", "CHAT")
+                put("senderId", senderId)
+                recipientId?.let { put("userId", it) }
+                convId?.let { put("targetId", it) }
+            }
             val body = buildPayload(
                 token = recipientToken,
                 title = senderName,
                 body = if (messageText.length > 100) messageText.take(97) + "..." else messageText,
-                data = mapOf("type" to "chat", "senderId" to senderId),
+                data = data,
                 channelId = "channel_chat"
             )
             postToFCM(accessToken, body)
@@ -60,15 +69,26 @@ class FCMSender @Inject constructor(
         recipientToken: String,
         title: String,
         body: String,
-        type: String = "general"
+        type: String = "general",
+        notificationType: String = "SYSTEM",
+        targetId: String? = null,
+        userId: String? = null,
+        alreadySavedInFirestore: Boolean = true
     ) = withContext(Dispatchers.IO) {
         try {
             val accessToken = getAccessToken()
+            val data = buildMap {
+                put("type", type)
+                put("notificationType", notificationType)
+                targetId?.let { put("targetId", it) }
+                userId?.let { put("userId", it) }
+                if (alreadySavedInFirestore) put("noSave", "true")
+            }
             val payload = buildPayload(
                 token = recipientToken,
                 title = title,
                 body = body,
-                data = mapOf("type" to type),
+                data = data,
                 channelId = "channel_general"
             )
             postToFCM(accessToken, payload)

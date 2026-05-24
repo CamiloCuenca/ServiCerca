@@ -2,8 +2,10 @@ package com.servicerca.app.ui.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.servicerca.app.ai.ToxicityRepository
 import com.servicerca.app.core.utils.RequestResult
 import com.servicerca.app.core.utils.ValidatedField
+import com.servicerca.app.core.utils.validateSecurePassword
 import com.servicerca.app.data.datastore.SessionDataStore
 import com.servicerca.app.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -34,17 +36,13 @@ class UpdatePasswordViewModel @Inject constructor(
     }
 
     val newPassword = ValidatedField("") { value ->
-        when {
-            value.isEmpty() -> "La contraseña nueva es obligatoria"
-            value.length < 6 -> "La contraseña nueva debe tener al menos 6 caracteres"
-            else -> null
-        }
+        validateSecurePassword(value)
     }
 
     val confirmNewPassword = ValidatedField("") { value ->
         when {
-            value.isEmpty() -> "La confirmación de contraseña es obligatoria"
-            value.length < 6 -> "La confirmación debe tener al menos 6 caracteres"
+            value.isEmpty() -> "La confirmación de la contraseña es obligatoria"
+            value != newPassword.value -> "Las contraseñas no coinciden"
             else -> null
         }
     }
@@ -74,6 +72,13 @@ class UpdatePasswordViewModel @Inject constructor(
         viewModelScope.launch {
             _isLoading.value = true
             try {
+                // Validación de IA para contenido ofensivo (opcional para contraseñas pero solicitado)
+                if (ToxicityRepository.isToxic(newPassword.value)) {
+                    _updatePasswordResult.value = RequestResult.Failure("Contenido ofensivo detectado")
+                    _isLoading.value = false
+                    return@launch
+                }
+
                 val session = sessionDataStore.sessionFlow.firstOrNull()
                 if (session == null) {
                     _updatePasswordResult.value = RequestResult.Failure("Sesión no válida")

@@ -46,3 +46,33 @@ class ValidatedField<T>(
         showError = true
     }
 }
+
+fun validateSecurePassword(value: String): String? {
+    if (value.isEmpty()) {
+        return "La contraseña es obligatoria"
+    }
+
+    val missingRequirements = mutableListOf<String>()
+
+    if (value.length < 8) {
+        missingRequirements.add("mínimo 8 caracteres")
+    }
+    if (!value.any { it.isUpperCase() }) {
+        missingRequirements.add("una mayúscula")
+    }
+    if (!value.any { it.isLowerCase() }) {
+        missingRequirements.add("una minúscula")
+    }
+    if (!value.any { it.isDigit() }) {
+        missingRequirements.add("un número")
+    }
+    if (!value.any { !it.isLetterOrDigit() }) {
+        missingRequirements.add("un carácter especial (ej. @, $, !, %, *, ?, &)")
+    }
+
+    return if (missingRequirements.isNotEmpty()) {
+        "Debe tener: " + missingRequirements.joinToString(", ")
+    } else {
+        null
+    }
+}
