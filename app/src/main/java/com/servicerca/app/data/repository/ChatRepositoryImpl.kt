@@ -17,7 +17,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.text.SimpleDateFormat
@@ -36,10 +36,19 @@ class ChatRepositoryImpl @Inject constructor(
 
     private val notifScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
-    private fun getConvId(u1: String, u2: String) = if (u1 < u2) "${u1}_$u2" else "${u2}_$u1"
+    /**
+     * Genera un ID de conversación ÚNICO.
+     * Si 'otherId' ya contiene un guion bajo, se asume que ya es un ID de conversación y se usa tal cual.
+     */
+    private fun resolveConvId(myId: String, otherId: String): String {
+        if (otherId.contains("_")) return otherId.trim()
+        val id1 = myId.trim()
+        val id2 = otherId.trim()
+        return if (id1 < id2) "${id1}_${id2}" else "${id2}_${id1}"
+    }
 
     override fun getChats(): Flow<List<Chat>> = callbackFlow {
-        val currentUserId = sessionDataStore.sessionFlow.first()?.userId
+        val currentUserId = sessionDataStore.sessionFlow.firstOrNull()?.userId
         if (currentUserId.isNullOrEmpty()) {
             trySend(emptyList())
             close()
@@ -83,7 +92,6 @@ class ChatRepositoryImpl @Inject constructor(
                             unreadCount = unreadCount
                         )
                     }
-                    // Sort descending locally since we don't have composite index initially
                     val sortedChats = chats.sortedByDescending { it.lastMessageTime }
                     trySend(sortedChats)
                 } else {
@@ -95,20 +103,21 @@ class ChatRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getMessages(chatId: String): Flow<List<Message>> = callbackFlow {
-        val currentUserId = sessionDataStore.sessionFlow.first()?.userId
-        if (currentUserId.isNullOrEmpty()) {
+        val currentUserId = sessionDataStore.sessionFlow.firstOrNull()?.userId
+        if (currentUserId.isNullOrEmpty() || chatId.isBlank()) {
             trySend(emptyList())
             close()
             return@callbackFlow
         }
 
-        val convId = getConvId(currentUserId, chatId)
+        val convId = resolveConvId(currentUserId, chatId)
 
         val listener = firestore.collection("conversations").document(convId)
             .collection("messages")
             .orderBy("timestamp", Query.Direction.ASCENDING)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
+                    Log.e("ChatRepo", "Error en messages para $convId: ${error.message}")
                     trySend(emptyList())
                     return@addSnapshotListener
                 }
@@ -141,15 +150,22 @@ class ChatRepositoryImpl @Inject constructor(
     }
 
     override suspend fun sendMessage(chatId: String, message: Message) {
-        val currentUserId = sessionDataStore.sessionFlow.first()?.userId ?: return
-        val convId = getConvId(currentUserId, chatId)
+        val currentUserId = sessionDataStore.sessionFlow.firstOrNull()?.userId ?: return
+        val convId = resolveConvId(currentUserId, chatId)
         val isUser1Sending = convId.startsWith(currentUserId)
 
-        val batch = firestore.batch()
+        // Extraer el ID real del destinatario (si convId es compuesto, es la parte que no soy yo)
+        val realRecipientId = if (chatId.contains("_")) {
+            chatId.split("_").firstOrNull { it != currentUserId } ?: chatId
+        } else {
+            chatId
+        }
 
+        val batch = firestore.batch()
         val convRef = firestore.collection("conversations").document(convId)
         
         val convUpdates = mutableMapOf<String, Any>(
+            "participants" to listOf(currentUserId, realRecipientId),
             "lastMessage" to message.message,
             "lastMessageTimestamp" to FieldValue.serverTimestamp(),
             "lastSenderId" to currentUserId
@@ -171,15 +187,17 @@ class ChatRepositoryImpl @Inject constructor(
         )
         batch.set(messageRef, messageData)
 
-        batch.commit().await()
-
-        // Enviar push al destinatario en background (fire-and-forget)
-        notifScope.launch {
-            trySendChatPush(recipientId = chatId, senderId = currentUserId, text = message.message, convId = convId)
+        try {
+            batch.commit().await()
+            notifScope.launch {
+                trySendChatPush(recipientId = realRecipientId, senderId = currentUserId, text = message.message)
+            }
+        } catch (e: Exception) {
+            Log.e("ChatRepo", "Error enviando mensaje", e)
         }
     }
 
-    private suspend fun trySendChatPush(recipientId: String, senderId: String, text: String, convId: String) {
+    private suspend fun trySendChatPush(recipientId: String, senderId: String, text: String) {
         try {
             val recipientToken = firestore.collection("users").document(recipientId)
                 .get().await().getString("fcmToken")?.takeIf { it.isNotBlank() } ?: return
@@ -188,33 +206,33 @@ class ChatRepositoryImpl @Inject constructor(
             val senderName = "${senderDoc.getString("name1") ?: ""} ${senderDoc.getString("lastname1") ?: ""}".trim()
                 .ifBlank { "Alguien" }
 
-            fcmSender.sendChatNotification(recipientToken, senderName, text, senderId, recipientId = recipientId, convId = convId)
+            fcmSender.sendChatNotification(recipientToken, senderName, text, senderId)
         } catch (e: Exception) {
-            Log.e("ChatRepo", "Error enviando push de chat", e)
+            Log.e("ChatRepo", "Error enviando push", e)
         }
     }
 
     override suspend fun markAsRead(chatId: String) {
-        val currentUserId = sessionDataStore.sessionFlow.first()?.userId ?: return
-        val convId = getConvId(currentUserId, chatId)
+        val currentUserId = sessionDataStore.sessionFlow.firstOrNull()?.userId ?: return
+        val convId = resolveConvId(currentUserId, chatId)
         val isUser1 = convId.startsWith(currentUserId)
 
         val convRef = firestore.collection("conversations").document(convId)
-        
-        // Optimizado: Solo actualizamos el contador global de la conversación en lugar de hacer batch a cada mensaje.
         val unreadField = if (isUser1) "unreadCount1" else "unreadCount2"
-        convRef.update(unreadField, 0).await()
+        try {
+            convRef.update(unreadField, 0).await()
+        } catch (e: Exception) {
+            // Documento podría no existir aún
+        }
     }
 
     override suspend fun getOrCreateChat(userId: String, userName: String, userImage: String): String {
-        val currentUserId = sessionDataStore.sessionFlow.first()?.userId ?: return userId
-        val convId = getConvId(currentUserId, userId)
-
+        val currentUserId = sessionDataStore.sessionFlow.firstOrNull()?.userId ?: return userId
+        val convId = resolveConvId(currentUserId, userId)
         val convRef = firestore.collection("conversations").document(convId)
         
         try {
             val snapshot = convRef.get().await()
-            
             if (!snapshot.exists()) {
                 val currentUserData = userRepository.findById(currentUserId)
                 val isUser1 = convId.startsWith(currentUserId)
@@ -247,9 +265,8 @@ class ChatRepositoryImpl @Inject constructor(
                 convRef.set(newConv).await()
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("ChatRepo", "Error getOrCreateChat", e)
         }
-
         return userId
     }
 }

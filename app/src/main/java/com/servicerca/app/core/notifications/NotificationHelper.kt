@@ -9,6 +9,7 @@ import android.media.RingtoneManager
 import androidx.core.app.NotificationCompat
 import com.servicerca.app.MainActivity
 import com.servicerca.app.R
+import androidx.core.net.toUri
 
 object NotificationHelper {
 
@@ -41,17 +42,19 @@ object NotificationHelper {
         )
     }
 
-    // Notificación de chat: al tocarla navega al chat con ese usuario
+    // Notificación de chat: al tocarla navega al chat con ese usuario usando Deep Linking
     fun showChatNotification(
         context: Context,
         title: String,
         body: String,
         senderId: String
     ) {
-        val intent = Intent(context, MainActivity::class.java).apply {
+        // Usar Deep Link para navegación segura
+        val deepLinkUri = "https://servicerca-6ee07.web.app/chat/$senderId".toUri()
+        val intent = Intent(Intent.ACTION_VIEW, deepLinkUri, context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-            putExtra("nav_chat_user_id", senderId)
         }
+        
         val pendingIntent = PendingIntent.getActivity(
             context,
             senderId.hashCode(),
@@ -83,7 +86,6 @@ object NotificationHelper {
         pendingIntent: PendingIntent
     ) {
         val notification = NotificationCompat.Builder(context, channelId)
-            // TODO: reemplazar con un vector drawable blanco 24dp en res/drawable/ic_notification.xml
             .setSmallIcon(R.mipmap.ic_launcher)
             .setContentTitle(title)
             .setContentText(body)
