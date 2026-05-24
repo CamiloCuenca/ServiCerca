@@ -39,18 +39,14 @@ class FCMSender @Inject constructor(
         recipientToken: String,
         senderName: String,
         messageText: String,
-        senderId: String,
-        recipientId: String? = null,
-        convId: String? = null
+        senderId: String
     ) = withContext(Dispatchers.IO) {
         try {
             val accessToken = getAccessToken()
             val data = buildMap {
                 put("type", "chat")
                 put("notificationType", "CHAT")
-                put("senderId", senderId)
-                recipientId?.let { put("userId", it) }
-                convId?.let { put("targetId", it) }
+                put("senderId", senderId) // El remitente es el ID que usará el receptor para abrir el chat
             }
             val body = buildPayload(
                 token = recipientToken,

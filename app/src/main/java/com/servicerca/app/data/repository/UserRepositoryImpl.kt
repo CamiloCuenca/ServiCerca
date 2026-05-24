@@ -2,11 +2,14 @@ package com.servicerca.app.data.repository
 
 import com.servicerca.app.domain.model.User
 import android.util.Log
+import com.google.firebase.auth.ActionCodeSettings
+import com.google.firebase.auth.EmailAuthProvider
 import com.servicerca.app.BuildConfig
 import com.servicerca.app.core.email.JavaMailSender
 import com.servicerca.app.domain.model.UserRole
 import com.servicerca.app.domain.repository.UserRepository
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -18,7 +21,6 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
 import com.google.firebase.firestore.FieldValue
-import com.google.firebase.Timestamp
 
 @Singleton
 class UserRepositoryImpl @Inject
@@ -33,30 +35,23 @@ constructor(
     private val usersCollection = firestore.collection("users")
     private val verificationCodesCollection = firestore.collection("emailVerificationCodes")
 
-    init {
-        usersCollection.addSnapshotListener { snapshot, error ->
+    override fun observeAllUsers(): Flow<List<User>> = callbackFlow {
+        val registration = usersCollection.addSnapshotListener { snapshot, error ->
             if (error != null) {
-                Log.e("UserRepository", "Error listening to users", error)
+                Log.e("UserRepository", "Error observing all users", error)
+                trySend(emptyList())
                 return@addSnapshotListener
             }
             if (snapshot != null) {
-                try {
-                    val usersList = snapshot.documents.mapNotNull { document ->
-                        try {
-                            // Usar document.id como fallback si el campo "id" está vacío
-                            document.toObject(User::class.java)
-                                ?.let { if (it.id.isBlank()) it.copy(id = document.id) else it }
-                        } catch (e: Exception) {
-                            Log.e("UserRepository", "Error converting document to User", e)
-                            null
-                        }
-                    }
-                    _users.value = usersList
-                } catch (e: Exception) {
-                    Log.e("UserRepository", "Error processing snapshot", e)
+                val usersList = snapshot.documents.mapNotNull { document ->
+                    document.toObject(User::class.java)
+                        ?.let { if (it.id.isBlank()) it.copy(id = document.id) else it }
                 }
+                trySend(usersList)
+                _users.value = usersList
             }
         }
+        awaitClose { registration.remove() }
     }
 
     override suspend fun save(user: User) {
@@ -75,9 +70,6 @@ constructor(
                 usersCollection.document(uid).set(userCopy).await()
 
                 generateAndStoreOtp(uid, user.email)
-
-                // Mantenemos la sesión activa para que verifyEmail() pueda leer Firestore.
-                // El signOut se hace dentro de verifyEmail() al confirmar el OTP.
 
                 Log.d("UserRepository", "Usuario creado: $uid")
             } else if (user.id.isNotEmpty()) {
@@ -133,7 +125,7 @@ constructor(
 
     override suspend fun googleSignIn(idToken: String): User? {
         return try {
-            val credential = com.google.firebase.auth.GoogleAuthProvider.getCredential(idToken, null)
+            val credential = GoogleAuthProvider.getCredential(idToken, null)
             val responseUser = auth.signInWithCredential(credential).await()
             val uid = responseUser.user?.uid ?: throw Exception("Usuario no encontrado")
             var user = findById(uid)
@@ -172,10 +164,20 @@ constructor(
         }
     }
 
+    override suspend fun findByEmail(email: String): User? {
+        return try {
+            val snapshot = usersCollection.whereEqualTo("email", email.trim()).get().await()
+            val document = snapshot.documents.firstOrNull()
+            document?.toObject(User::class.java)
+                ?.let { if (it.id.isBlank()) it.copy(id = document.id) else it }
+        } catch (e: Exception) {
+            Log.e("UserRepository", "Error al buscar usuario por email", e)
+            null
+        }
+    }
+
     override suspend fun verifyEmail(email: String, otpCode: String): Result<Boolean> {
         return try {
-            // Usamos el UID del usuario autenticado directamente — evita una query a la colección
-            // que Firestore rechazaría por reglas de seguridad (PERMISSION_DENIED).
             val userId = auth.currentUser?.uid
                 ?: return Result.failure(Exception("Sesión expirada. Vuelve a registrarte."))
 
@@ -192,7 +194,6 @@ constructor(
             val attempts = (otpDoc.getLong("attempts") ?: 0L).toInt()
             val status = otpDoc.getString("status") ?: "pending"
 
-            // Verificar estado
             if (status == "blocked") return Result.failure(Exception("Demasiados intentos. Solicita un nuevo código."))
             if (System.currentTimeMillis() > expiresAt) {
                 otpRef.delete().await()
@@ -200,7 +201,6 @@ constructor(
             }
 
             if (storedCode != otpCode.trim()) {
-                // Incrementar intentos y bloquear si supera umbral
                 val nextAttempts = attempts + 1
                 val updates = mutableMapOf<String, Any>("attempts" to nextAttempts)
                 if (nextAttempts >= 5) {
@@ -210,11 +210,8 @@ constructor(
                 return Result.failure(Exception("Código incorrecto. Intentos restantes: ${maxOf(0, 5 - nextAttempts)}"))
             }
 
-            // Código correcto: marcar usuario verificado y limpiar OTP
             usersCollection.document(userId).update("isEmailVerified", true).await()
             otpRef.delete().await()
-
-            // Cerrar sesión para que el usuario haga login explícito
             auth.signOut()
 
             Result.success(true)
@@ -250,15 +247,10 @@ constructor(
 
     override suspend fun deleteAccount(userId: String): Result<Unit> {
         return try {
-            val user = _users.value.firstOrNull { it.id == userId }
-            if (user != null) {
-                usersCollection.document(userId).delete().await()
-                auth.currentUser?.delete()?.await()
-                _users.value = _users.value.filter { it.id != userId }
-                Result.success(Unit)
-            } else {
-                Result.failure(Exception("Usuario no encontrado"))
-            }
+            usersCollection.document(userId).delete().await()
+            auth.currentUser?.delete()?.await()
+            _users.value = _users.value.filter { it.id != userId }
+            Result.success(Unit)
         } catch (e: Exception) {
             Log.e("UserRepository", "Error al borrar usuario", e)
             Result.failure(e)
@@ -267,9 +259,9 @@ constructor(
 
     override suspend fun suspendAccount(userId: String): Result<Unit> {
         return try {
-            val userIndex = _users.value.indexOfFirst { it.id == userId }
-            if (userIndex != -1) {
-                val user = _users.value[userIndex]
+            val doc = usersCollection.document(userId).get().await()
+            val user = doc.toObject(User::class.java)
+            if (user != null) {
                 val updatedUser = user.copy(isSuspended = !user.isSuspended)
                 usersCollection.document(userId).set(updatedUser).await()
                 Result.success(Unit)
@@ -284,14 +276,10 @@ constructor(
     override suspend fun initiatePasswordRecovery(email: String): Result<Unit> {
         val trimmedEmail = email.trim()
         return try {
-            val actionCodeSettings = com.google.firebase.auth.ActionCodeSettings.newBuilder()
+            val actionCodeSettings = ActionCodeSettings.newBuilder()
                 .setUrl("https://servicerca-6ee07.web.app/reset")
                 .setHandleCodeInApp(true)
-                .setAndroidPackageName(
-                    "com.servicerca.app",
-                    true, /* installIfNotAvailable */
-                    "1"   /* minimumVersion */
-                )
+                .setAndroidPackageName("com.servicerca.app", true, "1")
                 .build()
                 
             auth.sendPasswordResetEmail(trimmedEmail, actionCodeSettings).await()
@@ -319,7 +307,7 @@ constructor(
     ): Result<Unit> {
         return try {
             val user = auth.currentUser ?: throw Exception("Usuario no autenticado")
-            val credential = com.google.firebase.auth.EmailAuthProvider.getCredential(
+            val credential = EmailAuthProvider.getCredential(
                 user.email ?: throw Exception("Email del usuario no disponible"),
                 currentPassword
             )
@@ -347,17 +335,17 @@ constructor(
     }
 
     override suspend fun toggleInterestingService(userId: String, serviceId: String): Result<Boolean> {
-        val user = _users.value.firstOrNull { it.id == userId }
-            ?: return Result.failure(Exception("Usuario no encontrado"))
-
-        val alreadyInList = serviceId in user.listInteresting
-        val fieldUpdate: Any = if (alreadyInList) {
-            FieldValue.arrayRemove(serviceId)
-        } else {
-            FieldValue.arrayUnion(serviceId)
-        }
-
         return try {
+            val doc = usersCollection.document(userId).get().await()
+            val user = doc.toObject(User::class.java) ?: return Result.failure(Exception("Usuario no encontrado"))
+            
+            val alreadyInList = serviceId in user.listInteresting
+            val fieldUpdate: Any = if (alreadyInList) {
+                FieldValue.arrayRemove(serviceId)
+            } else {
+                FieldValue.arrayUnion(serviceId)
+            }
+
             usersCollection.document(userId).update("listInteresting", fieldUpdate).await()
             Result.success(!alreadyInList)
         } catch (e: Exception) {
@@ -366,8 +354,12 @@ constructor(
         }
     }
 
-    override fun findByEmail(email: String): User? {
-        return users.value.firstOrNull { it.email.equals(email, ignoreCase = true) }
+    override suspend fun updateOnlineStatus(userId: String, isOnline: Boolean) {
+        try {
+            usersCollection.document(userId).update("isOnline", isOnline).await()
+        } catch (e: Exception) {
+            Log.e("UserRepository", "Error updating online status for $userId", e)
+        }
     }
 
     private suspend fun generateAndStoreOtp(userId: String, email: String) {
@@ -386,9 +378,7 @@ constructor(
             )
         ).await()
 
-        // Intentar enviar correo usando JavaMail (SMTP) si las credenciales están configuradas
         try {
-            // Evitar enviar en blanco (BuildConfig tiene valores por defecto vacíos si no se configuran)
             if (BuildConfig.SMTP_USER.isNotBlank() && BuildConfig.SMTP_PASSWORD.isNotBlank()) {
                 val subject = "Verifica tu correo en ServiCerca — Código OTP"
                 val text = "Tu código de verificación en ServiCerca es: $code\n\nSi no creaste esta cuenta, ignora este correo."
@@ -396,24 +386,15 @@ constructor(
 
                 val sendResult = JavaMailSender.sendEmail(email, subject, text, html)
                 if (sendResult.isSuccess) {
-                    Log.d("UserRepository", "OTP enviado por SMTP a $email")
-                    // Marcar enviado y actualizar sentAt/lastSentAt
                     verificationCodesCollection.document(userId).update(mapOf(
                         "status" to "sent",
                         "sentAt" to FieldValue.serverTimestamp(),
                         "lastSentAt" to FieldValue.serverTimestamp()
                     )).await()
-                } else {
-                    Log.e("UserRepository", "Fallo envío SMTP a $email: ${sendResult.exceptionOrNull()}")
-                    Log.d("OTP_DEBUG", "Código de verificación para $email: $code")
                 }
-            } else {
-                // Sin credenciales SMTP, usar Logcat como fallback (desarrollo)
-                Log.d("OTP_DEBUG", "Código de verificación para $email: $code")
             }
         } catch (e: Exception) {
             Log.e("UserRepository", "Error al enviar OTP por SMTP", e)
-            Log.d("OTP_DEBUG", "Código de verificación para $email: $code")
         }
     }
 }
