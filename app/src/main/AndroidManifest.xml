@@ -54,6 +54,7 @@
             android:name=".MainActivity"
             android:exported="true"
             android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize"
             android:label="@string/app_name"
             android:theme="@style/Theme.ServiCerca">
             <intent-filter>
@@ -69,6 +70,15 @@
                 <data android:scheme="https"
                       android:host="servicerca-6ee07.web.app"
                       android:pathPrefix="/reset" />
+            </intent-filter>
+
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https"
+                      android:host="servicerca-6ee07.web.app"
+                      android:pathPrefix="/chat" />
             </intent-filter>
 
             <intent-filter android:autoVerify="true">

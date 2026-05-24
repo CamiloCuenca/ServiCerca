@@ -13,9 +13,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
-import androidx.compose.material.icons.filled.AttachFile
-import androidx.compose.material.icons.filled.PhotoCamera
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -39,9 +36,7 @@ import androidx.compose.foundation.layout.width
 fun SendMessageChatComponent(
     message: String = "",
     onMessageChange: (String) -> Unit = {},
-    onSendMessage: () -> Unit = {},
-    onAttachFile: () -> Unit = {},
-    onOpenCamera: () -> Unit = {}
+    onSendMessage: () -> Unit = {}
 ) {
 
     Surface(
@@ -51,26 +46,11 @@ fun SendMessageChatComponent(
     ) {
         Row(
             modifier = Modifier
-                .padding(horizontal = 8.dp, vertical = 8.dp)
+                .padding(horizontal = 12.dp, vertical = 8.dp)
                 .fillMaxWidth(),
-            verticalAlignment = Alignment.Bottom
+            verticalAlignment = Alignment.CenterVertically
         ) {
             
-            // Iconos de adjuntar (estilo WhatsApp: al inicio o dentro del TextField. Los pondremos a la izquierda para simplificar la escritura)
-            Row(
-                modifier = Modifier.padding(bottom = 4.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(onClick = onAttachFile, modifier = Modifier.size(36.dp)) {
-                    Icon(Icons.Default.AttachFile, null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
-                }
-                IconButton(onClick = onOpenCamera, modifier = Modifier.size(36.dp)) {
-                    Icon(Icons.Default.PhotoCamera, null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
-                }
-            }
-
-            Spacer(modifier = Modifier.width(4.dp))
-
             TextField(
                 value = message,
                 onValueChange = onMessageChange,
