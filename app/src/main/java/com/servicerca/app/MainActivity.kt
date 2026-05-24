@@ -15,6 +15,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.servicerca.app.core.i18n.LanguageManager
 import com.servicerca.app.core.navigation.AppNavigation
+import com.servicerca.app.domain.repository.UserRepository
+import com.servicerca.app.data.datastore.SessionDataStore
 import com.servicerca.app.ui.theme.ServiCercaTheme
 import androidx.compose.runtime.getValue
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -25,6 +27,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
@@ -36,6 +39,12 @@ class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var settingsDataStore: SettingsDataStore
+
+    @Inject
+    lateinit var userRepository: UserRepository
+
+    @Inject
+    lateinit var sessionDataStore: SessionDataStore
 
     private val notificationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -52,6 +61,10 @@ class MainActivity : AppCompatActivity() {
 
         runBlocking {
             languageManager.applySavedLanguage()
+            // Set online status if already logged in
+            sessionDataStore.sessionFlow.first()?.userId?.let { uid ->
+                userRepository.updateOnlineStatus(uid, true)
+            }
         }
         requestNotificationPermissionIfNeeded()
         enableEdgeToEdge()
@@ -69,6 +82,16 @@ class MainActivity : AppCompatActivity() {
 
             ServiCercaTheme(darkTheme = isDarkTheme) {
                 AppNavigation()
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // Set offline status on exit
+        runBlocking {
+            sessionDataStore.sessionFlow.first()?.userId?.let { uid ->
+                userRepository.updateOnlineStatus(uid, false)
             }
         }
     }

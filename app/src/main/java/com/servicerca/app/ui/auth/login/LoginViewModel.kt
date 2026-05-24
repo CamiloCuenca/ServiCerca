@@ -80,6 +80,7 @@ class LoginViewModel @Inject constructor(
                     } else {
                         // Registrar token FCM del dispositivo para poder recibir notificaciones push
                         fcmTokenManager.saveTokenForUser(user.id)
+                        repository.updateOnlineStatus(user.id, true)
                         _loginResult.value = RequestResult.SuccessLogin(user.id, user.role)
                     }
                 } else {
@@ -102,6 +103,7 @@ class LoginViewModel @Inject constructor(
                 if (user != null) {
                     // Registrar token FCM del dispositivo para poder recibir notificaciones push
                     fcmTokenManager.saveTokenForUser(user.id)
+                    repository.updateOnlineStatus(user.id, true)
                     _loginResult.value = RequestResult.SuccessLogin(user.id, user.role)
                 } else {
                     _loginResult.value = RequestResult.Failure("No se pudo iniciar sesión con Google")
