@@ -92,7 +92,7 @@ class ProfileViewModel @Inject constructor(
     private fun observeAverageRating() {
         viewModelScope.launch {
             // Esperar a que la sesión esté disponible antes de observar
-            val session = sessionDataStore.sessionFlow.filterNotNull().first()
+            val session = sessionDataStore.sessionFlow.first() ?: return@launch
             val userId = session.userId
 
             combine(

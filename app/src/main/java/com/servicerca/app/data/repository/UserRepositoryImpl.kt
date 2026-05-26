@@ -366,7 +366,7 @@ constructor(
         }
     }
 
-    override fun findByEmail(email: String): User? {
+    override suspend fun findByEmail(email: String): User? {
         return users.value.firstOrNull { it.email.equals(email, ignoreCase = true) }
     }
 

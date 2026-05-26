@@ -20,7 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class EditServiceViewModel @Inject constructor(
     private val serviceRepository: com.servicerca.app.domain.repository.ServiceRepository,
-    @param:ApplicationContext private val context: Context,
+    @ApplicationContext private val context: Context,
 ) : ViewModel() {
 
     // ── Categorías disponibles ─────────────────────────────────────────────

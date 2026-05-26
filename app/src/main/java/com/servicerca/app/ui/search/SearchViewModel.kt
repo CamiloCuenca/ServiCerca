@@ -32,7 +32,7 @@ enum class SearchFilter(val displayName: String) {
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    serviceRepository: ServiceRepository,
+    private val serviceRepository: ServiceRepository,
     private val userRepository: UserRepository,
     private val sessionDataStore: SessionDataStore
 ) : ViewModel() {

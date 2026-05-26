@@ -9,8 +9,11 @@ import android.media.RingtoneManager
 import androidx.core.app.NotificationCompat
 import com.servicerca.app.MainActivity
 import com.servicerca.app.R
+import java.util.concurrent.atomic.AtomicInteger
 
 object NotificationHelper {
+
+    private val notificationIdCounter = AtomicInteger(0)
 
     const val CHANNEL_CHAT = "channel_chat"
     const val CHANNEL_GENERAL = "channel_general"
@@ -90,11 +93,10 @@ object NotificationHelper {
             .setStyle(NotificationCompat.BigTextStyle().bigText(body))
             .setAutoCancel(true)
             .setPriority(priority)
-            .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
             .setContentIntent(pendingIntent)
             .build()
 
         val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        manager.notify(System.currentTimeMillis().toInt(), notification)
+        manager.notify(notificationIdCounter.incrementAndGet(), notification)
     }
 }

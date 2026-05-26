@@ -19,7 +19,7 @@ import javax.inject.Inject
 class ListInterestingViewModel @Inject constructor(
     private val sessionDataStore: SessionDataStore,
     private val userRepository: UserRepository,
-    serviceRepository: ServiceRepository
+    private val serviceRepository: ServiceRepository
 ) : ViewModel() {
 
     val interestingServices: StateFlow<List<Service>> = combine(

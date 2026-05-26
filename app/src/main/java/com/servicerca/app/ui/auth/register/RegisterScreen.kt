@@ -94,7 +94,7 @@ fun RegisterScreen(
             }
 
             // Reseta el estado del loginResult en el ViewModel después de mostrar el mensaje
-            viewModel.resetLoginResult()
+            viewModel.resetRegisterResult()
 
         }
     }

@@ -11,7 +11,7 @@ interface UserRepository {
     suspend fun findById(id: String): User?
     suspend fun login(email: String, password: String): User?
     suspend fun googleSignIn(idToken: String): User?
-    fun findByEmail(email: String): User?
+    suspend fun findByEmail(email: String): User?
     suspend fun deleteAccount(userId: String): Result<Unit>
     suspend fun suspendAccount(userId: String): Result<Unit>
     suspend fun verifyEmail(email: String, otpCode: String): Result<Boolean>

@@ -123,6 +123,7 @@
     <string name="error_max_price_required">Maximum price is required</string>
     <string name="error_max_price_greater_than_min">Maximum price must be greater than minimum price</string>
     <string name="error_max_images_allowed">Maximum 5 images allowed</string>
+    <string name="error_select_location">Select a location on the map</string>
     <string name="error_add_at_least_one_image">Add at least one image</string>
     <string name="error_fix_form_before_publish">Please fix the errors before publishing</string>
     <string name="error_login_required_to_publish">You must sign in to publish</string>

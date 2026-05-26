@@ -494,6 +494,7 @@
     <string name="error_max_price_required">El precio máximo es obligatorio</string>
     <string name="error_max_price_greater_than_min">El precio máximo debe ser mayor al mínimo</string>
     <string name="error_max_images_allowed">Máximo 5 imágenes permitidas</string>
+    <string name="error_select_location">Selecciona una ubicación en el mapa</string>
     <string name="error_add_at_least_one_image">Agrega al menos una imagen</string>
     <string name="error_fix_form_before_publish">Por favor corrige los errores antes de publicar</string>
     <string name="error_login_required_to_publish">Debes iniciar sesión para publicar</string>

@@ -2,7 +2,6 @@ package com.servicerca.app.ui.chat
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.servicerca.app.data.repository.ChatRepositoryImpl
 import com.servicerca.app.domain.model.Chat
 import com.servicerca.app.domain.repository.ChatRepository
 import dagger.hilt.android.lifecycle.HiltViewModel

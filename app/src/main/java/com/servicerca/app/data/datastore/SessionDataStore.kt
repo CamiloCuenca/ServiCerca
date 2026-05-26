@@ -19,7 +19,7 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(na
 
 @Singleton
 class SessionDataStore @Inject constructor(
-    @param:ApplicationContext val context: Context,
+    @ApplicationContext val context: Context,
     private val firebaseAuth: FirebaseAuth
 ) {
     // Claves para las preferencias

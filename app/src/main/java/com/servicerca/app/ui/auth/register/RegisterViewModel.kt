@@ -24,12 +24,12 @@ class RegisterViewModel @Inject constructor(
 
 
 
-    private val _RegisterResult = MutableStateFlow<RequestResult?>(null)
+    private val _registerResult = MutableStateFlow<RequestResult?>(null)
 
-    val registerResult: StateFlow<RequestResult?> = _RegisterResult.asStateFlow()
+    val registerResult: StateFlow<RequestResult?> = _registerResult.asStateFlow()
 
-    fun resetLoginResult(){
-        _RegisterResult.value = null
+    fun resetRegisterResult(){
+        _registerResult.value = null
     }
 
 
@@ -82,7 +82,7 @@ class RegisterViewModel @Inject constructor(
 
     val SecondLastname = ValidatedField("") { value ->
         when {
-            value.isEmpty() -> "El segundo apellido es obligatorio"
+            value.isEmpty() -> null // Opcional
             !value.matches(Regex("[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ ]+")) -> "El apellido solo puede contener letras"
             else -> null
         }
@@ -119,12 +119,12 @@ class RegisterViewModel @Inject constructor(
         confirmPassword.touch()
 
         if (!isFormValid) {
-            _RegisterResult.value = RequestResult.Failure("Por favor completa todos los campos")
+            _registerResult.value = RequestResult.Failure("Por favor completa todos los campos")
             return
         }
 
         if (password.value != confirmPassword.value) {
-            _RegisterResult.value = RequestResult.Failure("Las contraseñas no coinciden")
+            _registerResult.value = RequestResult.Failure("Las contraseñas no coinciden")
             return
         }
 
@@ -138,7 +138,7 @@ class RegisterViewModel @Inject constructor(
                     ToxicityRepository.isToxic(address.value) ||
                     ToxicityRepository.isToxic(city.value)
                 ) {
-                    _RegisterResult.value = RequestResult.Failure("Contenido ofensivo detectado en los datos de perfil")
+                    _registerResult.value = RequestResult.Failure("Contenido ofensivo detectado en los datos de perfil")
                     return@launch
                 }
 
@@ -158,14 +158,14 @@ class RegisterViewModel @Inject constructor(
 
                 val existingUser = userRepository.findByEmail(email.value.trim())
                 if (existingUser != null) {
-                    _RegisterResult.value = RequestResult.Failure("El correo electrónico ya está registrado")
+                    _registerResult.value = RequestResult.Failure("El correo electrónico ya está registrado")
                     return@launch
                 }
 
                 userRepository.save(newUser)
-                _RegisterResult.value = RequestResult.Success("Registro exitoso")
+                _registerResult.value = RequestResult.Success("Registro exitoso")
             } catch (e: Exception) {
-                _RegisterResult.value = RequestResult.Failure("Error al registrarse: ${e.message}")
+                _registerResult.value = RequestResult.Failure("Error al registrarse: ${e.message}")
             }
         }
     }
