@@ -31,13 +31,17 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -48,7 +52,14 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.credentials.CredentialManager
+import androidx.credentials.CustomCredential
+import androidx.credentials.GetCredentialRequest
+import androidx.credentials.exceptions.GetCredentialException
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
 import com.servicerca.app.R
 import com.servicerca.app.core.components.button.PrimaryButton
 import com.servicerca.app.core.components.button.SocialButton
@@ -57,6 +68,8 @@ import com.servicerca.app.core.components.input.AppPasswordField
 import com.servicerca.app.core.components.input.AppTextField
 import com.servicerca.app.core.utils.RequestResult
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import android.util.Log
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -65,13 +78,18 @@ fun RegisterScreen(
     onNavigateToLogin: () -> Unit,
     onBackClick: () -> Unit,
     onVerifyEmail: () -> Unit,
+    onLoginSuccess: (userId: String, role: com.servicerca.app.domain.model.UserRole) -> Unit,
     viewModel: RegisterViewModel = hiltViewModel(),
 
     ) {
 
     val snackbarHostState = remember { SnackbarHostState() }
     val registerResult by viewModel.registerResult.collectAsStateWithLifecycle()
-
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+    val credentialManager = remember { CredentialManager.create(context) }
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
 
     // Efecto para mostrar el snackbar cuando hay resultado
     LaunchedEffect(registerResult) {
@@ -79,18 +97,25 @@ fun RegisterScreen(
             // Obtener el mensaje según el resultado
             val message = when (result) {
                 is RequestResult.Success -> result.message
+                is RequestResult.SuccessLogin -> "Cuenta con Google creada con éxito"
                 is RequestResult.Failure -> result.errorMessage
-                else -> ""
             }
 
             if (message.toString().isNotEmpty()) {
                 snackbarHostState.showSnackbar(message.toString())
             }
 
-            // Navegar a la pantalla de usuarios si el login fue exitoso. Se puede agregar un delay para que el usuario alcance a ver el mensaje
-            if (result is RequestResult.Success) {
-                delay(1000) // 1 segundo
-                onVerifyEmail()
+            // Navegar según el resultado
+            when (result) {
+                is RequestResult.Success -> {
+                    delay(1000) // 1 segundo
+                    onVerifyEmail()
+                }
+                is RequestResult.SuccessLogin -> {
+                    delay(300)
+                    onLoginSuccess(result.userId, result.role)
+                }
+                else -> {}
             }
 
             // Reseta el estado del loginResult en el ViewModel después de mostrar el mensaje
@@ -356,20 +381,71 @@ fun RegisterScreen(
 
             // Botones sociales
             Row(
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalArrangement = Arrangement.Center,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 SocialButton(
                     text = "Google",
-                    onClick = {},
+                    onClick = {
+                        coroutineScope.launch {
+                            try {
+                                val googleIdOption: GetGoogleIdOption =
+                                    GetGoogleIdOption.Builder()
+                                        .setFilterByAuthorizedAccounts(false)
+                                        .setServerClientId(
+                                            "300935233932-4he7fa3vlubbkg97u8jdgitl84q467bg.apps.googleusercontent.com"
+                                        )
+                                        .setAutoSelectEnabled(true)
+                                        .build()
+
+                                val request: GetCredentialRequest =
+                                    GetCredentialRequest.Builder()
+                                        .addCredentialOption(googleIdOption)
+                                        .build()
+
+                                val result =
+                                    credentialManager.getCredential(
+                                        request = request,
+                                        context = context,
+                                    )
+
+                                val credential = result.credential
+
+                                if (credential is CustomCredential &&
+                                    credential.type ==
+                                    GoogleIdTokenCredential
+                                        .TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
+                                ) {
+                                    try {
+                                        val googleIdTokenCredential =
+                                            GoogleIdTokenCredential.createFrom(
+                                                credential.data
+                                            )
+                                        viewModel.loginWithGoogle(
+                                            googleIdTokenCredential.idToken
+                                        )
+                                    } catch (e: GoogleIdTokenParsingException) {
+                                        Log.e(
+                                            "RegisterScreen",
+                                            "Invalid google id token response",
+                                            e
+                                        )
+                                    }
+                                } else {
+                                    Log.e(
+                                        "RegisterScreen",
+                                        "Credencial no soportada: ${credential.type}"
+                                    )
+                                }
+                            } catch (e: GetCredentialException) {
+                                Log.e("RegisterScreen", "Error al obtener credencial", e)
+                            } catch (e: Exception) {
+                                Log.e("RegisterScreen", "Error inesperado", e)
+                            }
+                        }
+                    },
                     iconRes = R.drawable.ic_google,
-                    modifier = Modifier.weight(1f)
-                )
-                SocialButton(
-                    text = "Facebook",
-                    onClick = {},
-                    iconRes = R.drawable.ic_facebook,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.fillMaxWidth(0.7f)
                 )
             }
 
@@ -407,7 +483,7 @@ fun RegisterScreen(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun RegisterScreenPreview() {
-    RegisterScreen( onNavigateToLogin = {} , onBackClick = {}, onVerifyEmail = {})
+    RegisterScreen( onNavigateToLogin = {} , onBackClick = {}, onVerifyEmail = {}, onLoginSuccess = { _, _ -> })
 }
 
 /**

@@ -14,12 +14,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import androidx.lifecycle.viewModelScope
 import com.servicerca.app.ai.ToxicityRepository
+import com.servicerca.app.core.fcm.FCMTokenManager
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val fcmTokenManager: FCMTokenManager
 ) : ViewModel() {
 
 
@@ -171,7 +173,27 @@ class RegisterViewModel @Inject constructor(
     }
 
 
+    /**
+     * Ejecuta el proceso de inicio de sesión con Google usando el UserRepository.
+     */
+    fun loginWithGoogle(idToken: String) {
+        viewModelScope.launch {
+            try {
+                val user = userRepository.googleSignIn(idToken)
 
+                if (user != null) {
+                    // Registrar token FCM del dispositivo para poder recibir notificaciones push
+                    fcmTokenManager.saveTokenForUser(user.id)
+                    userRepository.updateOnlineStatus(user.id, true)
+                    _RegisterResult.value = RequestResult.SuccessLogin(user.id, user.role)
+                } else {
+                    _RegisterResult.value = RequestResult.Failure("No se pudo iniciar sesión con Google")
+                }
+            } catch (e: Exception) {
+                _RegisterResult.value = RequestResult.Failure("Error en el inicio de sesión con Google: ${e.message}")
+            }
+        }
+    }
 
 
     val isFormValid: Boolean
