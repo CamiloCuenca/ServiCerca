@@ -23,7 +23,7 @@ class ManageUserViewModel @Inject constructor(
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
-    val users: StateFlow<List<User>> = userRepository.users
+    val users: StateFlow<List<User>> = userRepository.observeAllUsers()
         .combine(_searchQuery) { users, query ->
             if (query.isBlank()) {
                 users

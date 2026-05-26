@@ -35,6 +35,21 @@ constructor(
     private val usersCollection = firestore.collection("users")
     private val verificationCodesCollection = firestore.collection("emailVerificationCodes")
 
+    init {
+        usersCollection.addSnapshotListener { snapshot, error ->
+            if (error != null) {
+                Log.e("UserRepository", "Error observando usuarios", error)
+                return@addSnapshotListener
+            }
+            if (snapshot != null) {
+                _users.value = snapshot.documents.mapNotNull { document ->
+                    document.toObject(User::class.java)
+                        ?.let { if (it.id.isBlank()) it.copy(id = document.id) else it }
+                }
+            }
+        }
+    }
+
     override fun observeAllUsers(): Flow<List<User>> = callbackFlow {
         val registration = usersCollection.addSnapshotListener { snapshot, error ->
             if (error != null) {
@@ -248,11 +263,9 @@ constructor(
     override suspend fun deleteAccount(userId: String): Result<Unit> {
         return try {
             usersCollection.document(userId).delete().await()
-            auth.currentUser?.delete()?.await()
-            _users.value = _users.value.filter { it.id != userId }
             Result.success(Unit)
         } catch (e: Exception) {
-            Log.e("UserRepository", "Error al borrar usuario", e)
+            Log.e("UserRepository", "Error al borrar usuario $userId", e)
             Result.failure(e)
         }
     }
@@ -260,15 +273,11 @@ constructor(
     override suspend fun suspendAccount(userId: String): Result<Unit> {
         return try {
             val doc = usersCollection.document(userId).get().await()
-            val user = doc.toObject(User::class.java)
-            if (user != null) {
-                val updatedUser = user.copy(isSuspended = !user.isSuspended)
-                usersCollection.document(userId).set(updatedUser).await()
-                Result.success(Unit)
-            } else {
-                Result.failure(Exception("Usuario no encontrado"))
-            }
+            val currentlySuspended = doc.getBoolean("isSuspended") ?: false
+            usersCollection.document(userId).update("isSuspended", !currentlySuspended).await()
+            Result.success(Unit)
         } catch (e: Exception) {
+            Log.e("UserRepository", "Error al suspender usuario $userId", e)
             Result.failure(e)
         }
     }

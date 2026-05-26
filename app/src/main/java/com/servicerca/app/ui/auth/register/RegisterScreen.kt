@@ -1,5 +1,6 @@
 package com.servicerca.app.ui.auth.register
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,13 +32,18 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.credentials.CredentialManager
+import androidx.credentials.CustomCredential
+import androidx.credentials.GetCredentialRequest
+import androidx.credentials.exceptions.GetCredentialException
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -49,14 +55,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
 import com.servicerca.app.R
 import com.servicerca.app.core.components.button.PrimaryButton
 import com.servicerca.app.core.components.button.SocialButton
-import com.servicerca.app.core.components.input.AppExposedDropdownMenu
 import com.servicerca.app.core.components.input.AppPasswordField
 import com.servicerca.app.core.components.input.AppTextField
 import com.servicerca.app.core.utils.RequestResult
+import com.servicerca.app.domain.model.UserRole
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -65,37 +75,41 @@ fun RegisterScreen(
     onNavigateToLogin: () -> Unit,
     onBackClick: () -> Unit,
     onVerifyEmail: () -> Unit,
+    onLoginSuccess: (userId: String, role: UserRole) -> Unit = { _, _ -> },
     viewModel: RegisterViewModel = hiltViewModel(),
-
-    ) {
-
+) {
     val snackbarHostState = remember { SnackbarHostState() }
     val registerResult by viewModel.registerResult.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+    val credentialManager = remember { CredentialManager.create(context) }
 
 
-    // Efecto para mostrar el snackbar cuando hay resultado
     LaunchedEffect(registerResult) {
         registerResult?.let { result ->
-            // Obtener el mensaje según el resultado
             val message = when (result) {
                 is RequestResult.Success -> result.message
+                is RequestResult.SuccessLogin -> "Registro con Google exitoso"
                 is RequestResult.Failure -> result.errorMessage
-                else -> ""
             }
 
-            if (message.toString().isNotEmpty()) {
-                snackbarHostState.showSnackbar(message.toString())
+            if (message.isNotEmpty()) {
+                snackbarHostState.showSnackbar(message)
             }
 
-            // Navegar a la pantalla de usuarios si el login fue exitoso. Se puede agregar un delay para que el usuario alcance a ver el mensaje
-            if (result is RequestResult.Success) {
-                delay(1000) // 1 segundo
-                onVerifyEmail()
+            when (result) {
+                is RequestResult.Success -> {
+                    delay(1000)
+                    onVerifyEmail()
+                }
+                is RequestResult.SuccessLogin -> {
+                    delay(300)
+                    onLoginSuccess(result.userId, result.role)
+                }
+                else -> {}
             }
 
-            // Reseta el estado del loginResult en el ViewModel después de mostrar el mensaje
             viewModel.resetLoginResult()
-
         }
     }
 
@@ -354,24 +368,50 @@ fun RegisterScreen(
                 )
             }
 
-            // Botones sociales
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                SocialButton(
-                    text = "Google",
-                    onClick = {},
-                    iconRes = R.drawable.ic_google,
-                    modifier = Modifier.weight(1f)
-                )
-                SocialButton(
-                    text = "Facebook",
-                    onClick = {},
-                    iconRes = R.drawable.ic_facebook,
-                    modifier = Modifier.weight(1f)
-                )
-            }
+            SocialButton(
+                text = "Google",
+                iconRes = R.drawable.ic_google,
+                modifier = Modifier.fillMaxWidth(),
+                onClick = {
+                    coroutineScope.launch {
+                        try {
+                            val googleIdOption = GetGoogleIdOption.Builder()
+                                .setFilterByAuthorizedAccounts(false)
+                                .setServerClientId("300935233932-4he7fa3vlubbkg97u8jdgitl84q467bg.apps.googleusercontent.com")
+                                .setAutoSelectEnabled(true)
+                                .build()
+
+                            val request = GetCredentialRequest.Builder()
+                                .addCredentialOption(googleIdOption)
+                                .build()
+
+                            val result = credentialManager.getCredential(
+                                request = request,
+                                context = context,
+                            )
+
+                            val credential = result.credential
+                            if (credential is CustomCredential &&
+                                credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
+                            ) {
+                                try {
+                                    val googleIdTokenCredential =
+                                        GoogleIdTokenCredential.createFrom(credential.data)
+                                    viewModel.registerWithGoogle(googleIdTokenCredential.idToken)
+                                } catch (e: GoogleIdTokenParsingException) {
+                                    Log.e("RegisterScreen", "Token de Google inválido", e)
+                                }
+                            } else {
+                                Log.e("RegisterScreen", "Credencial no soportada: ${credential.type}")
+                            }
+                        } catch (e: GetCredentialException) {
+                            Log.e("RegisterScreen", "Error al obtener credencial", e)
+                        } catch (e: Exception) {
+                            Log.e("RegisterScreen", "Error inesperado", e)
+                        }
+                    }
+                }
+            )
 
 
             Column(

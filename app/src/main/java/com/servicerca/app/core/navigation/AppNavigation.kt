@@ -152,8 +152,8 @@ private fun AuthNavigation(
                     },
                     onVerifyEmail = {
                         navController.navigate(MainRoutes.VerifyEmail(email = registerViewModel.email.value.trim()))
-
-                    }
+                    },
+                    onLoginSuccess = { userId, role -> onLoginSuccess(userId, role) }
                 )
             }
 
