@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -128,7 +129,8 @@ fun CreateServiceScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
                 .verticalScroll(rememberScrollState())
-                .padding(15.dp),
+                .imePadding()
+                .padding(16.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
 
@@ -145,7 +147,7 @@ fun CreateServiceScreen(
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = null
+                            contentDescription = "Volver"
                         )
                     }
 
@@ -159,7 +161,7 @@ fun CreateServiceScreen(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(40.dp))
+                Spacer(modifier = Modifier.height(32.dp))
 
                 // ── Imágenes ─────────────────────────────────────────────
                 Text(
@@ -196,7 +198,7 @@ fun CreateServiceScreen(
                     onRemoveAt = { idx: Int -> viewModel.removeImageAt(idx) }
                 )
 
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
                 // ── Título del servicio ───────────────────────────────────
                 AppTextField(
@@ -207,7 +209,7 @@ fun CreateServiceScreen(
                     supportingText = viewModel.title.error?.let { msg -> { Text(msg) } }
                 )
 
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
                 // ── Categoría (dropdown) ─────────────────────────────────
                 ExposedDropdownMenuBox(
@@ -259,7 +261,7 @@ fun CreateServiceScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
                 // ── Descripción ───────────────────────────────────────────
                 AppTextField(
@@ -272,7 +274,7 @@ fun CreateServiceScreen(
                     supportingText = viewModel.description.error?.let { msg -> { Text(msg) } }
                 )
 
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
                 // ── Precios ───────────────────────────────────────────────
                 Row(
@@ -300,7 +302,7 @@ fun CreateServiceScreen(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
                 // ── Botón de ubicación ────────────────────────────────────
                 androidx.compose.material3.Button(
@@ -331,7 +333,7 @@ fun CreateServiceScreen(
                             contentDescription = stringResource(R.string.add_location_content_description),
                             modifier = Modifier.align(Alignment.CenterVertically)
                         )
-                        Spacer(modifier = Modifier.width(20.dp))
+                        Spacer(modifier = Modifier.width(16.dp))
                         Column {
                             Text(
                                 text = if (selectedLocation != null)
@@ -349,7 +351,7 @@ fun CreateServiceScreen(
                                 modifier = Modifier.align(Alignment.Start)
                             )
                         }
-                        Spacer(modifier = Modifier.width(30.dp))
+                        Spacer(modifier = Modifier.width(32.dp))
                         Icon(
                             imageVector = Icons.Default.ArrowCircleRight,
                             contentDescription = stringResource(R.string.go_to_location_content_description),
@@ -369,7 +371,7 @@ fun CreateServiceScreen(
                     }
                 )
 
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
                 // ── Botón publicar ────────────────────────────────────────
                 ButtonCreateService(

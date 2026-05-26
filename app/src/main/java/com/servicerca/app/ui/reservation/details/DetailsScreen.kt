@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -44,7 +45,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.servicerca.app.R
 import com.servicerca.app.core.components.Map.MapBox
@@ -91,12 +91,13 @@ fun DetailsReservationScreen(
         val provider = uiState.provider
         val customer = uiState.customer
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp)
-                .verticalScroll(rememberScrollState())
-                .background(MaterialTheme.colorScheme.background)
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .verticalScroll(rememberScrollState())
+                    .imePadding()
+                    .background(MaterialTheme.colorScheme.background)
         ) {
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -116,7 +117,7 @@ fun DetailsReservationScreen(
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = null,
+                        contentDescription = "Volver",
                         tint = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.size(20.dp)
                     )
@@ -152,7 +153,7 @@ fun DetailsReservationScreen(
                 modifier = Modifier.padding(horizontal = 0.dp) // Reset padding inside Column
             )
 
-            Spacer(modifier = Modifier.height(28.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
             // 🔹 SECTION: INFORMACIÓN DETALLADA
             SectionHeader(
@@ -170,10 +171,11 @@ fun DetailsReservationScreen(
                 ),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Column(modifier = Modifier.padding(20.dp)) {
+                Column(modifier = Modifier.padding(16.dp)) {
 
                     InfoItem(
                         icon = Icons.Default.CalendarMonth,
+                        contentDescription = "Fecha",
                         label = stringResource(R.string.agreed_date_time_label),
                         value = reservation.time
                     )
@@ -182,11 +184,12 @@ fun DetailsReservationScreen(
 
                     InfoItem(
                         icon = Icons.Default.LocationOn,
+                        contentDescription = "Ubicación",
                         label = stringResource(R.string.meeting_address_label),
                         value = customer?.city ?: stringResource(R.string.location_not_available)
                     )
 
-                    Spacer(modifier = Modifier.height(20.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
 
                     // 🔹 Mapa con estilo premium
                     Surface(
@@ -236,7 +239,7 @@ fun DetailsReservationScreen(
                         icon = {
                             Icon(
                                 imageVector = Icons.Default.Delete,
-                                contentDescription = null,
+                                contentDescription = stringResource(R.string.reject_action),
                                 tint = MaterialTheme.colorScheme.error
                             )
                         }
@@ -267,7 +270,7 @@ fun DetailsReservationScreen(
                     icon = {
                         Icon(
                             imageVector = Icons.Default.Delete,
-                            contentDescription = null,
+                            contentDescription = stringResource(R.string.cancel_reservation_action),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
@@ -353,6 +356,7 @@ fun getStatusInfo(status: ReservationStatus): StatusUIInfo {
 @Composable
 fun InfoItem(
     icon: ImageVector,
+    contentDescription: String,
     label: String,
     value: String
 ) {
@@ -371,7 +375,7 @@ fun InfoItem(
             Box(contentAlignment = Alignment.Center) {
                 Icon(
                     imageVector = icon,
-                    contentDescription = null,
+                    contentDescription = contentDescription,
                     tint = MaterialTheme.colorScheme.primary
                 )
             }
@@ -408,7 +412,7 @@ fun EstimatedCostRow(label: String, value: String) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 14.dp),
+                .padding(horizontal = 16.dp, vertical = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {

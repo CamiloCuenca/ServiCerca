@@ -107,7 +107,7 @@ fun ProfileScreen(
                     .navigationBarsPadding()
                     .imePadding()
                     .padding(24.dp),
-                verticalArrangement = Arrangement.spacedBy(20.dp)
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 // Botón de Cerrar Sesión
                 Row(
@@ -146,9 +146,9 @@ fun ProfileScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Filled.LocationOn,
-                        contentDescription = null,
+                        contentDescription = "Ubicación",
                         tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(25.dp)
+                        modifier = Modifier.size(24.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
@@ -370,20 +370,20 @@ fun AccountSettingsSection(
     onChangeLanguage: () -> Unit,
     onChangeTheme: () -> Unit
 ) {
-    Column(modifier = Modifier.fillMaxWidth().padding(bottom = 20.dp), verticalArrangement = Arrangement.spacedBy(15.dp)) {
+    Column(modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         ButtonIcon(
             text = "Cambiar Tema / Apariencia",
             onClick = onChangeTheme,
-            icon = { Icon(Icons.Default.Palette, null) }
+            icon = { Icon(Icons.Default.Palette, contentDescription = "Cambiar Tema") }
         )
         ButtonIcon(
             text = stringResource(R.string.language_button),
             onClick = onChangeLanguage,
-            icon = { Icon(Icons.Default.Language, null) }
+            icon = { Icon(Icons.Default.Language, contentDescription = stringResource(R.string.language_button)) }
         )
-        ButtonIcon(text = stringResource(R.string.edit_account), onClick = onEdit, icon = { Icon(Icons.Default.Edit, null) })
-        PasswordButton(text = stringResource(R.string.edit_password), onClick = onUpdatePass, icon = { Icon(Icons.Default.Lock, null) })
-        DeleteButton(text = stringResource(R.string.delete_account), onClick = onDelete, icon = { Icon(Icons.Default.Delete, null) })
+        ButtonIcon(text = stringResource(R.string.edit_account), onClick = onEdit, icon = { Icon(Icons.Default.Edit, contentDescription = stringResource(R.string.edit_account)) })
+        PasswordButton(text = stringResource(R.string.edit_password), onClick = onUpdatePass, icon = { Icon(Icons.Default.Lock, contentDescription = stringResource(R.string.edit_password)) })
+        DeleteButton(text = stringResource(R.string.delete_account), onClick = onDelete, icon = { Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.delete_account)) })
     }
 }
 

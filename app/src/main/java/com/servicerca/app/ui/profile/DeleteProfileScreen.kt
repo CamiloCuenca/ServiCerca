@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -166,8 +167,9 @@ fun DeleteProfileScreen (
                 .fillMaxSize()
                 .padding(paddingValues)
                 .verticalScroll(rememberScrollState())
+                .imePadding()
                 .padding(horizontal = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(15.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
 
             Column(
@@ -183,7 +185,7 @@ fun DeleteProfileScreen (
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.fillMaxWidth()
-                        .padding(top = 30.dp)
+                        .padding(top = 24.dp)
                 ) {
                     Box(
                         contentAlignment = Alignment.BottomEnd,
@@ -192,7 +194,7 @@ fun DeleteProfileScreen (
 
                         Image(
                                 painter = painterResource(id = R.drawable.eliminar_perfil),
-                                contentDescription = null,
+                                contentDescription = stringResource(R.string.delete_profile),
                                 contentScale = ContentScale.Crop,
                                 modifier = Modifier.fillMaxSize()
                             )
@@ -254,8 +256,8 @@ fun DeleteProfileScreen (
                 onClick = { onBack()},
                 icon = {
                     Icon(
-                        imageVector = Icons.Default.Favorite, // Icono de Material
-                        contentDescription = null
+                        imageVector = Icons.Default.Favorite,
+                        contentDescription = stringResource(R.string.no_delete_account)
                     )
                 }
             )
@@ -264,8 +266,8 @@ fun DeleteProfileScreen (
                 onClick = { viewModel.onShowConfirmationDialog() },
                 icon = {
                     Icon(
-                        imageVector = Icons.Default.Delete, // Icono de Material
-                        contentDescription = null
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = stringResource(R.string.delete_account_permanently)
                     )
                 }
             )

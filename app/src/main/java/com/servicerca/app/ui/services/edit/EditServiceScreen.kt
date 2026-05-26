@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -185,7 +186,8 @@ fun EditServiceScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
                 .verticalScroll(rememberScrollState())
-                .padding(15.dp),
+                .imePadding()
+                .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
 
@@ -201,12 +203,12 @@ fun EditServiceScreen(
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = null
-                    )
-                }
+                    contentDescription = "Volver"
+                        )
+                    }
 
-                Text(
-                    text = stringResource(R.string.edit_service_screen_title),
+                    Text(
+                        text = stringResource(R.string.edit_service_screen_title),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onBackground,
@@ -357,16 +359,16 @@ fun EditServiceScreen(
             )
 
             // ── Eliminar servicio (con confirmación) ─────────────────────
-            DeleteButton(
-                text = stringResource(R.string.delete_service_title),
-                onClick = { showDeleteDialog = true },
-                icon = {
-                    Icon(
-                        imageVector = Icons.Default.Delete,
-                        contentDescription = null
-                    )
-                }
-            )
+                DeleteButton(
+                    text = stringResource(R.string.delete_service_title),
+                    onClick = { showDeleteDialog = true },
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = stringResource(R.string.delete_service_title)
+                        )
+                    }
+                )
         }
     }
 }

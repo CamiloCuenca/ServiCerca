@@ -99,6 +99,7 @@ fun ListServiceScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(24.dp)
+            .imePadding()
             .background(MaterialTheme.colorScheme.background)
     ) {
 
@@ -119,8 +120,7 @@ fun ListServiceScreen(
 
             Text(
                 text = stringResource(id = R.string.my_services_title),
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp
+                style = MaterialTheme.typography.titleLarge
             )
         }
 

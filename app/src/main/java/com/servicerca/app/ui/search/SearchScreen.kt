@@ -233,7 +233,7 @@ fun EmptyStateView() {
             Box(contentAlignment = Alignment.Center) {
                 Icon(
                     imageVector = Icons.Default.SearchOff,
-                    contentDescription = null,
+                    contentDescription = "Sin resultados",
                     modifier = Modifier.size(50.dp),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )

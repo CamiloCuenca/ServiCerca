@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -137,8 +138,9 @@ fun MakeReservation(
                     .fillMaxSize()
                     .padding(paddingValues)
                     .verticalScroll(rememberScrollState())
+                    .imePadding()
                     .padding(horizontal = 24.dp, vertical = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(20.dp)
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -223,7 +225,7 @@ fun MakeReservation(
                         onValueChange = { message = it },
                         modifier = Modifier
                             .height(150.dp)
-                            .padding(bottom = 25.dp)
+                            .padding(bottom = 16.dp)
                             .fillMaxWidth(),
                         placeholder = {
                             Text(stringResource(R.string.reservation_optional_message_placeholder))
@@ -315,11 +317,11 @@ fun MakeReservation(
                     Text(
                         text = stringResource(R.string.select_time_title),
                         style = MaterialTheme.typography.labelLarge,
-                        modifier = Modifier.padding(bottom = 20.dp)
+                        modifier = Modifier.padding(bottom = 16.dp)
                     )
                     TimePicker(state = timePickerState)
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(top = 20.dp),
+                        modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
                         horizontalArrangement = Arrangement.End
                     ) {
                         TextButton(onClick = { showTimePicker = false }) {

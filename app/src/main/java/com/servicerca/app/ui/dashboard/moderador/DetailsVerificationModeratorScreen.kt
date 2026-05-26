@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -87,8 +88,9 @@ fun DetailsVerificationModeratorScreen(
                     .fillMaxSize()
                     .padding(paddingValues)
                     .verticalScroll(rememberScrollState())
+                    .imePadding()
                     .padding(horizontal = 24.dp),
-                verticalArrangement = Arrangement.spacedBy(20.dp)
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
 
                 Column(
@@ -102,7 +104,7 @@ fun DetailsVerificationModeratorScreen(
                     Column() {
                         AsyncImage(
                             model = service?.photoUrl,
-                            contentDescription = null,
+                            contentDescription = service?.title ?: "",
                             contentScale = ContentScale.Crop,
                             modifier = Modifier.fillMaxWidth()
                                 .padding(vertical = 16.dp)
@@ -123,12 +125,12 @@ fun DetailsVerificationModeratorScreen(
 
                                 Icon(
                                     imageVector = Icons.Outlined.VerifiedUser,
-                                    contentDescription = null,
+                                    contentDescription = "Verificado",
                                     tint = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.size(14.dp)
+                                    modifier = Modifier.size(16.dp)
                                 )
 
-                                Spacer(modifier = Modifier.width(5.dp))
+                                Spacer(modifier = Modifier.width(8.dp))
 
                                 Text(
                                     text = when (service?.status) {
@@ -150,7 +152,7 @@ fun DetailsVerificationModeratorScreen(
                             fontWeight = FontWeight.Bold,
                             style = MaterialTheme.typography.headlineSmall,
                             color = MaterialTheme.colorScheme.onBackground,
-                            modifier = Modifier.padding(vertical = 10.dp)
+                            modifier = Modifier.padding(vertical = 8.dp)
 
                         )
                         CardRevisionUserService(
@@ -173,14 +175,14 @@ fun DetailsVerificationModeratorScreen(
                                 fontWeight = FontWeight.Bold,
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.outline,
-                                modifier = Modifier.padding(vertical = 10.dp)
+                                modifier = Modifier.padding(vertical = 8.dp)
                             )
                             Text(
                                 text = service?.description ?: "",
                                 textAlign = TextAlign.Start,
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onBackground,
-                                modifier = Modifier.padding(bottom = 10.dp)
+                                modifier = Modifier.padding(bottom = 8.dp)
                             )
                         }
                         if (service?.status == ServiceStatus.PENDING) {
@@ -189,22 +191,22 @@ fun DetailsVerificationModeratorScreen(
                                     text = stringResource(R.string.approve_publication),
                                     onClick = { viewModel.approveService() },
                                     icon = {
-                                        Icon(
-                                            imageVector = Icons.Outlined.CheckCircle,
-                                            contentDescription = null
-                                        )
-                                    }
-                                )
-                                ButtonIconDecline(
-                                    text = stringResource(R.string.reject_publication),
-                                    onClick = onRejectClick,
-                                    icon = {
-                                        Icon(
-                                            imageVector = Icons.Default.HighlightOff,
-                                            contentDescription = null
+                                    Icon(
+                                        imageVector = Icons.Outlined.CheckCircle,
+                                        contentDescription = stringResource(R.string.approve_publication)
+                                    )
+                                }
+                            )
+                            ButtonIconDecline(
+                                text = stringResource(R.string.reject_publication),
+                                onClick = onRejectClick,
+                                icon = {
+                                    Icon(
+                                        imageVector = Icons.Default.HighlightOff,
+                                        contentDescription = stringResource(R.string.reject_publication)
                                         )
                                     },
-                                    modifier = Modifier.padding(vertical = 10.dp)
+                                    modifier = Modifier.padding(vertical = 8.dp)
                                 )
                             }
                         }
