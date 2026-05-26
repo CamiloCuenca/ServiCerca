@@ -183,12 +183,12 @@ class RegisterViewModel @Inject constructor(
                 if (user != null) {
                     fcmTokenManager.saveTokenForUser(user.id)
                     userRepository.updateOnlineStatus(user.id, true)
-                    _RegisterResult.value = RequestResult.SuccessLogin(user.id, user.role)
+                    _registerResult.value = RequestResult.SuccessLogin(user.id, user.role)
                 } else {
-                    _RegisterResult.value = RequestResult.Failure("No se pudo registrar con Google")
+                    _registerResult.value = RequestResult.Failure("No se pudo registrar con Google")
                 }
             } catch (e: Exception) {
-                _RegisterResult.value = RequestResult.Failure("Error al registrarse con Google: ${e.message}")
+                _registerResult.value = RequestResult.Failure("Error al registrarse con Google: ${e.message}")
             }
         }
     }

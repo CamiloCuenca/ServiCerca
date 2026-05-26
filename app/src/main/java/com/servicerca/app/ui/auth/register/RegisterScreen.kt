@@ -109,7 +109,7 @@ fun RegisterScreen(
                 else -> {}
             }
 
-            viewModel.resetLoginResult()
+            viewModel.resetRegisterResult()
         }
     }
 
