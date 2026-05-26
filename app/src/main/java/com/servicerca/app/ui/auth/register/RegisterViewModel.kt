@@ -192,10 +192,10 @@ class RegisterViewModel @Inject constructor(
                     userRepository.updateOnlineStatus(user.id, true)
                     _registerResult.value = RequestResult.SuccessLogin(user.id, user.role)
                 } else {
-                    _registerResult.value = RequestResult.Failure("No se pudo iniciar sesión con Google")
+                    _registerResult.value = RequestResult.Failure("No se pudo registrar con Google")
                 }
             } catch (e: Exception) {
-                _registerResult.value = RequestResult.Failure("Error al iniciar sesión con Google: ${e.message}")
+                _registerResult.value = RequestResult.Failure("Error al registrarse con Google: ${e.message}")
             } finally {
                 _isLoading.value = false
             }
