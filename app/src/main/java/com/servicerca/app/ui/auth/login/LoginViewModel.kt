@@ -28,6 +28,9 @@ class LoginViewModel @Inject constructor(
      */
     val loginResult: StateFlow<RequestResult?> = _loginResult.asStateFlow()
 
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+
     /**
      * Campo validado para el correo electrónico.
      */
@@ -70,6 +73,7 @@ class LoginViewModel @Inject constructor(
             return
         }
 
+        _isLoading.value = true
         viewModelScope.launch {
             try {
                 val user = repository.login(email.value.trim(), password.value)
@@ -88,6 +92,8 @@ class LoginViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 _loginResult.value = RequestResult.Failure("Error en el inicio de sesión: ${e.message}")
+            } finally {
+                _isLoading.value = false
             }
         }
     }
@@ -96,6 +102,7 @@ class LoginViewModel @Inject constructor(
      * Ejecuta el proceso de inicio de sesión con Google usando el UserRepository.
      */
     fun loginWithGoogle(idToken: String) {
+        _isLoading.value = true
         viewModelScope.launch {
             try {
                 val user = repository.googleSignIn(idToken)
@@ -110,6 +117,8 @@ class LoginViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 _loginResult.value = RequestResult.Failure("Error en el inicio de sesión con Google: ${e.message}")
+            } finally {
+                _isLoading.value = false
             }
         }
     }

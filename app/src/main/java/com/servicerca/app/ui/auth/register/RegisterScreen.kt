@@ -10,18 +10,21 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.layout.statusBarsPadding
+        import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.ContactMail
-import androidx.compose.material3.Divider
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -48,9 +51,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -80,16 +86,14 @@ fun RegisterScreen(
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val registerResult by viewModel.registerResult.collectAsStateWithLifecycle()
-    val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
-    val credentialManager = remember { CredentialManager.create(context) }
+    val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
 
 
     LaunchedEffect(registerResult) {
         registerResult?.let { result ->
             val message = when (result) {
                 is RequestResult.Success -> result.message
-                is RequestResult.SuccessLogin -> "Registro con Google exitoso"
+                is RequestResult.SuccessLogin -> "Inicio de sesión exitoso"
                 is RequestResult.Failure -> result.errorMessage
             }
 
@@ -109,7 +113,7 @@ fun RegisterScreen(
                 else -> {}
             }
 
-            viewModel.resetLoginResult()
+            viewModel.resetRegisterResult()
         }
     }
 
@@ -137,7 +141,10 @@ fun RegisterScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 24.dp),
+                .imePadding()
+                .padding(horizontal = 24.dp)
+                .statusBarsPadding()
+                .navigationBarsPadding(),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
 
@@ -269,7 +276,8 @@ fun RegisterScreen(
                     placeholder = stringResource(R.string.placeholderEmail),
                     required = true,
                     isError = viewModel.email.error != null,
-                    supportingText = viewModel.email.error?.let { { Text(it) } }
+                    supportingText = viewModel.email.error?.let { { Text(it) } },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
                 )
 
 
@@ -344,7 +352,8 @@ fun RegisterScreen(
             PrimaryButton(
                 text = stringResource(R.string.registrarse),
                 onClick = { viewModel.register() },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                isLoading = isLoading
             )
 
             // -- Divisor Social --
@@ -352,7 +361,7 @@ fun RegisterScreen(
                 modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Divider(
+                HorizontalDivider(
                     modifier = Modifier.weight(1f),
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)
                 )
@@ -362,16 +371,21 @@ fun RegisterScreen(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(horizontal = 8.dp)
                 )
-                Divider(
+                HorizontalDivider(
                     modifier = Modifier.weight(1f),
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)
                 )
             }
 
+            // Botón Google
+            val context = LocalContext.current
+            val coroutineScope = rememberCoroutineScope()
+            val credentialManager = remember { CredentialManager.create(context) }
+            val keyboardController = LocalSoftwareKeyboardController.current
+            val focusManager = LocalFocusManager.current
+
             SocialButton(
                 text = "Google",
-                iconRes = R.drawable.ic_google,
-                modifier = Modifier.fillMaxWidth(),
                 onClick = {
                     coroutineScope.launch {
                         try {
@@ -391,15 +405,17 @@ fun RegisterScreen(
                             )
 
                             val credential = result.credential
+
                             if (credential is CustomCredential &&
                                 credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
                             ) {
                                 try {
-                                    val googleIdTokenCredential =
-                                        GoogleIdTokenCredential.createFrom(credential.data)
-                                    viewModel.registerWithGoogle(googleIdTokenCredential.idToken)
+                                    val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
+                                    keyboardController?.hide()
+                                    focusManager.clearFocus()
+                                    viewModel.loginWithGoogle(googleIdTokenCredential.idToken)
                                 } catch (e: GoogleIdTokenParsingException) {
-                                    Log.e("RegisterScreen", "Token de Google inválido", e)
+                                    Log.e("RegisterScreen", "Invalid google id token response", e)
                                 }
                             } else {
                                 Log.e("RegisterScreen", "Credencial no soportada: ${credential.type}")
@@ -410,7 +426,9 @@ fun RegisterScreen(
                             Log.e("RegisterScreen", "Error inesperado", e)
                         }
                     }
-                }
+                },
+                iconRes = R.drawable.ic_google,
+                modifier = Modifier.fillMaxWidth()
             )
 
 

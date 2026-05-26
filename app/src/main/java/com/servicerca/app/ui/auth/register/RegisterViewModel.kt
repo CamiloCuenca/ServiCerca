@@ -2,11 +2,11 @@ package com.servicerca.app.ui.auth.register
 
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
+import com.servicerca.app.core.fcm.FCMTokenManager
 import com.servicerca.app.core.utils.RequestResult
 import com.servicerca.app.core.utils.ValidatedField
 import com.servicerca.app.core.utils.validateSecurePassword
 import com.servicerca.app.domain.model.User
-import com.servicerca.app.core.fcm.FCMTokenManager
 import com.servicerca.app.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 
@@ -29,6 +29,9 @@ class RegisterViewModel @Inject constructor(
     private val _registerResult = MutableStateFlow<RequestResult?>(null)
 
     val registerResult: StateFlow<RequestResult?> = _registerResult.asStateFlow()
+
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
     fun resetRegisterResult(){
         _registerResult.value = null
@@ -130,6 +133,7 @@ class RegisterViewModel @Inject constructor(
             return
         }
 
+        _isLoading.value = true
         viewModelScope.launch {
             try {
                 // Validación de IA para contenido ofensivo en campos de texto
@@ -168,6 +172,8 @@ class RegisterViewModel @Inject constructor(
                 _registerResult.value = RequestResult.Success("Registro exitoso")
             } catch (e: Exception) {
                 _registerResult.value = RequestResult.Failure("Error al registrarse: ${e.message}")
+            } finally {
+                _isLoading.value = false
             }
         }
     }
@@ -176,19 +182,22 @@ class RegisterViewModel @Inject constructor(
 
 
 
-    fun registerWithGoogle(idToken: String) {
+    fun loginWithGoogle(idToken: String) {
+        _isLoading.value = true
         viewModelScope.launch {
             try {
                 val user = userRepository.googleSignIn(idToken)
                 if (user != null) {
                     fcmTokenManager.saveTokenForUser(user.id)
                     userRepository.updateOnlineStatus(user.id, true)
-                    _RegisterResult.value = RequestResult.SuccessLogin(user.id, user.role)
+                    _registerResult.value = RequestResult.SuccessLogin(user.id, user.role)
                 } else {
-                    _RegisterResult.value = RequestResult.Failure("No se pudo registrar con Google")
+                    _registerResult.value = RequestResult.Failure("No se pudo iniciar sesión con Google")
                 }
             } catch (e: Exception) {
-                _RegisterResult.value = RequestResult.Failure("Error al registrarse con Google: ${e.message}")
+                _registerResult.value = RequestResult.Failure("Error al iniciar sesión con Google: ${e.message}")
+            } finally {
+                _isLoading.value = false
             }
         }
     }
