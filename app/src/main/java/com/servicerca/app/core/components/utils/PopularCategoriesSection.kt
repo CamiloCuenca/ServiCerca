@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.clickable
 import androidx.compose.material3.MaterialTheme
@@ -42,7 +43,9 @@ fun PopularCategoriesSection(
                 text = stringResource(R.string.view_all),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.clickable { onViewAll() }
+                modifier = Modifier
+                    .clickable { onViewAll() }
+                    .padding(vertical = 15.dp)
             )
         }
 

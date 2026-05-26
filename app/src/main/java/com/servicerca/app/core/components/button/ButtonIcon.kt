@@ -3,6 +3,7 @@ package com.servicerca.app.core.components.button
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -24,7 +25,8 @@ fun ButtonIcon(
     Button(
         onClick = onClick,
         modifier = modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .heightIn(min = 48.dp),
         enabled = enabled,
         shape = RoundedCornerShape(16.dp),
         colors = ButtonDefaults.buttonColors(

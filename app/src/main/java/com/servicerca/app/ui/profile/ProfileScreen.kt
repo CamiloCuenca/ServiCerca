@@ -10,8 +10,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
@@ -99,6 +103,9 @@ fun ProfileScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
+                    .statusBarsPadding()
+                    .navigationBarsPadding()
+                    .imePadding()
                     .padding(24.dp),
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
@@ -257,7 +264,7 @@ fun InsigniasSection(
         }
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             // Mostramos un resumen de hasta 3 insignias
             val displayInsignias = insignias.take(3)
@@ -290,7 +297,7 @@ fun InsigniaItem(
     ) {
         Image(
             painter = painterResource(id = insignia.iconRes),
-            contentDescription = null,
+            contentDescription = stringResource(insignia.nameRes),
             modifier = Modifier
                 .size(80.dp)
                 .shadow(
@@ -447,7 +454,7 @@ fun ThemeOptionItem(
 
     TextButton(
         onClick = { onSelect(mode) },
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
         colors = androidx.compose.material3.ButtonDefaults.textButtonColors(
             containerColor = containerColor,
             contentColor = contentColor

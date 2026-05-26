@@ -177,7 +177,7 @@ fun ReactionIconButton(
             width = 2.dp,
             color = MaterialTheme.colorScheme.primary,
         ),
-        modifier = modifier.size(40.dp)
+        modifier = modifier.size(44.dp)
     ) {
         Box(contentAlignment = Alignment.Center) {
             CompositionLocalProvider(

@@ -2,6 +2,7 @@ package com.servicerca.app.ui.dashboard.user
 
 import android.content.Intent
 import android.content.pm.PackageManager
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,7 +13,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -22,13 +25,16 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material.icons.filled.AttachMoney
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -36,8 +42,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -47,6 +53,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -86,6 +93,8 @@ fun HomeUserScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
+            .statusBarsPadding()
+            .navigationBarsPadding()
     ) {
         // Fila de categorías + botón filtros
         Row(
@@ -289,11 +298,23 @@ private fun HomeFilterBottomSheet(
                 .padding(bottom = 32.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            Text(
-                text = "Filtros",
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Filtrar búsqueda",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
+                )
+                IconButton(onClick = onDismiss) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "Cerrar"
+                    )
+                }
+            }
 
             // Ordenar por
             Text(
@@ -301,42 +322,89 @@ private fun HomeFilterBottomSheet(
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 HomeSort.entries.forEach { sort ->
-                    FilterChip(
-                        selected = sort == filters.sort,
+                    val isSelected = sort == filters.sort
+                    Surface(
                         onClick = { onFiltersChange(filters.copy(sort = sort)) },
-                        label = { Text(sort.label, style = MaterialTheme.typography.labelMedium) },
-                        colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = MaterialTheme.colorScheme.primary,
-                            selectedLabelColor = MaterialTheme.colorScheme.onPrimary
-                        ),
-                        shape = CircleShape
-                    )
+                        shape = RoundedCornerShape(12.dp),
+                        color = if (isSelected)
+                            MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+                        else
+                            Color.Transparent,
+                        border = if (isSelected)
+                            BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.3f))
+                        else
+                            null
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 14.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            Icon(
+                                imageVector = when (sort) {
+                                    HomeSort.RECENT -> Icons.Default.Schedule
+                                    HomeSort.CHEAPEST -> Icons.Default.AttachMoney
+                                    HomeSort.BEST_RATED -> Icons.Default.Star
+                                },
+                                contentDescription = null,
+                                tint = if (isSelected)
+                                    MaterialTheme.colorScheme.primary
+                                else
+                                    MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Text(
+                                text = sort.label,
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = if (isSelected)
+                                    MaterialTheme.colorScheme.primary
+                                else
+                                    MaterialTheme.colorScheme.onSurface,
+                                fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
+                                modifier = Modifier.weight(1f)
+                            )
+                            if (isSelected) {
+                                Icon(
+                                    imageVector = Icons.Default.Check,
+                                    contentDescription = "Seleccionado",
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
+                        }
+                    }
                 }
             }
 
-            HorizontalDivider()
-
             // Precio máximo
-            Column {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
                         text = "Precio máximo",
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.Medium
+                        style = MaterialTheme.typography.titleSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    Text(
-                        text = if (filters.maxPrice > 0f) "$${filters.maxPrice.roundToInt()}" else "Sin límite",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.SemiBold
-                    )
+                    Surface(
+                        shape = RoundedCornerShape(8.dp),
+                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+                    ) {
+                        Text(
+                            text = if (filters.maxPrice > 0f) "$${filters.maxPrice.roundToInt()}" else "Sin límite",
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                            style = MaterialTheme.typography.labelLarge,
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                 }
-                Spacer(modifier = Modifier.height(8.dp))
                 Slider(
                     value = filters.maxPrice,
                     onValueChange = { onFiltersChange(filters.copy(maxPrice = it)) },
@@ -349,7 +417,7 @@ private fun HomeFilterBottomSheet(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "Sin límite",
+                        text = "$0",
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -361,29 +429,32 @@ private fun HomeFilterBottomSheet(
                 }
             }
 
-            // Botón limpiar + aplicar
-            Row(
+            HorizontalDivider(thickness = 0.5.dp, color = MaterialTheme.colorScheme.outlineVariant)
+
+            // Botón aplicar
+            Button(
+                onClick = onDismiss,
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                shape = RoundedCornerShape(12.dp)
             ) {
-                Button(
-                    onClick = {
-                        onFiltersChange(HomeFilters())
-                        onDismiss()
-                    },
-                    modifier = Modifier.weight(1f),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = androidx.compose.material3.ButtonDefaults.outlinedButtonColors()
-                ) {
-                    Text("Limpiar")
-                }
-                Button(
-                    onClick = onDismiss,
-                    modifier = Modifier.weight(1f),
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-                    Text("Aplicar")
-                }
+                Text(
+                    text = "Aplicar filtros",
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+
+            // Botón limpiar
+            TextButton(
+                onClick = {
+                    onFiltersChange(HomeFilters())
+                    onDismiss()
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = "Limpiar filtros",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
         }
     }

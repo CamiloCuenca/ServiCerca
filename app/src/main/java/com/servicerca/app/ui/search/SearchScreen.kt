@@ -57,6 +57,9 @@ fun SearchScreen(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
+            .statusBarsPadding()
+            .navigationBarsPadding()
+            .imePadding()
     ) {
         Spacer(modifier = Modifier.height(16.dp))
 
