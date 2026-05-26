@@ -36,7 +36,7 @@ class CreateServiceViewModel @Inject constructor(
     private val serviceRepository: ServiceRepository,
     private val notificationRepository: NotificationRepository,
     private val sessionDataStore: SessionDataStore,
-    @param:ApplicationContext private val context: Context,
+    @ApplicationContext private val context: Context,
 ) : ViewModel() {
 
     val categories = Categories.entries.map { it.displayName }
@@ -141,6 +141,11 @@ class CreateServiceViewModel @Inject constructor(
             return
         }
 
+        if (_selectedLocation.value == null) {
+            _createResult.value = RequestResult.Failure(context.getString(R.string.error_select_location))
+            return
+        }
+
         if (!isFormValid) {
             _createResult.value = RequestResult.Failure(context.getString(R.string.error_fix_form_before_publish))
             return
@@ -164,23 +169,20 @@ class CreateServiceViewModel @Inject constructor(
                     return@launch
                 }
 
-                // Subir todas las imágenes a Cloudinary antes de guardar el servicio
-                val photoUrls = mutableListOf<String>()
-                for (imageBytes in _images.value) {
-                    val uploadResult = CloudinaryUploader.uploadImage(
-                        imageBytes = imageBytes,
-                        cloudName = BuildConfig.CLOUDINARY_CLOUD_NAME,
-                        uploadPreset = BuildConfig.CLOUDINARY_UPLOAD_PRESET,
+                // Subir la primera imagen a Cloudinary
+                val uploadResult = CloudinaryUploader.uploadImage(
+                    imageBytes = _images.value.first(),
+                    cloudName = BuildConfig.CLOUDINARY_CLOUD_NAME,
+                    uploadPreset = BuildConfig.CLOUDINARY_UPLOAD_PRESET,
+                )
+                val photoUrl = if (uploadResult.isSuccess) {
+                    uploadResult.getOrThrow()
+                } else {
+                    _createResult.value = RequestResult.Failure(
+                        "Error al subir imagen: ${uploadResult.exceptionOrNull()?.message}"
                     )
-                    if (uploadResult.isSuccess) {
-                        photoUrls.add(uploadResult.getOrThrow())
-                    } else {
-                        _createResult.value = RequestResult.Failure(
-                            "Error al subir imagen: ${uploadResult.exceptionOrNull()?.message}"
-                        )
-                        _isLoading.value = false
-                        return@launch
-                    }
+                    _isLoading.value = false
+                    return@launch
                 }
 
                 val id = UUID.randomUUID().toString()
@@ -193,7 +195,7 @@ class CreateServiceViewModel @Inject constructor(
                     priceMax = maxValue.value.toDouble(),
                     status = ServiceStatus.PENDING,
                     type = category.value,
-                    photoUrl = photoUrls.first(),
+                    photoUrl = photoUrl,
                     ownerId = ownerId
                 )
 

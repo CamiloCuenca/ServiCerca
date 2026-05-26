@@ -152,8 +152,8 @@ private fun AuthNavigation(
                     },
                     onVerifyEmail = {
                         navController.navigate(MainRoutes.VerifyEmail(email = registerViewModel.email.value.trim()))
-
-                    }
+                    },
+                    onLoginSuccess = { userId, role -> onLoginSuccess(userId, role) }
                 )
             }
 
@@ -223,7 +223,6 @@ private fun MainNavigation(
     val startDestination = when (session.role) {
         UserRole.ADMIN, UserRole.MODERATOR -> DashboardRoutes.HomeModerator
         UserRole.USER -> DashboardRoutes.HomeUser
-        else -> DashboardRoutes.HomeUser
     }
 
     NavHost(
@@ -339,7 +338,7 @@ private fun MainNavigation(
                     basePath = "https://servicerca-6ee07.web.app/chat"
                 )
             )
-        ) { backStackEntry ->
+        ) {
             ChatScreen(onBack = { navController.popBackStack() })
         }
 

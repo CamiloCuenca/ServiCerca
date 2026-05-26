@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MapViewModel @Inject constructor(
-    serviceRepository: ServiceRepository
+    private val serviceRepository: ServiceRepository
 ) : ViewModel() {
 
     val approvedServices: StateFlow<List<Service>> = serviceRepository.services

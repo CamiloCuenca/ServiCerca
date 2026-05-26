@@ -8,35 +8,39 @@ class ValidatedField<T>(
     private val initialValue: T,
     private val validate: (T) -> String?
 ) {
-    // Estado del valor del campo
     var value by mutableStateOf(initialValue)
         private set
 
-    // Estado para controlar cuándo mostrar el error
     var showError by mutableStateOf(false)
         private set
 
-    // Mensaje de error. get() para que sea de solo lectura desde el exterior
+    private var cachedValue: T? = null
+    private var cachedResult: String? = null
+
+    private fun validateCached(): String? {
+        if (cachedValue != value) {
+            cachedValue = value
+            cachedResult = validate(value)
+        }
+        return cachedResult
+    }
+
     val error: String?
-        get() = if (showError) validate(value) else null
+        get() = if (showError) validateCached() else null
 
-    // Indica si el campo es válido, es de solo lectura desde el exterior
     val isValid: Boolean
-        get() = validate(value) == null
+        get() = validateCached() == null
 
-    // Función para actualizar el valor del campo
     fun onChange(newValue: T) {
         value = newValue
         showError = true
     }
 
-    // Nueva función para cargar valores iniciales sin disparar errores
     fun loadInitialValue(newValue: T) {
         value = newValue
         showError = false
     }
 
-    // Función para resetear el campo a su valor inicial
     fun reset() {
         value = initialValue
         showError = false

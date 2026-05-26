@@ -20,7 +20,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -53,9 +52,10 @@ class ReservationDetailsViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
             
-            val session = sessionDataStore.sessionFlow
-                .filterNotNull()
-                .first()
+            val session = sessionDataStore.sessionFlow.first() ?: run {
+                _uiState.value = _uiState.value.copy(isLoading = false)
+                return@launch
+            }
             val currentUserId = session.userId
             
             val reservation = reservationRepository.getReservationById(id)

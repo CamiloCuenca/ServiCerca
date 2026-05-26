@@ -146,7 +146,6 @@ class HomeUserViewModel @Inject constructor(
     fun refresh() {
         viewModelScope.launch {
             _isRefreshing.value = true
-            delay(700)
             _isRefreshing.value = false
         }
     }

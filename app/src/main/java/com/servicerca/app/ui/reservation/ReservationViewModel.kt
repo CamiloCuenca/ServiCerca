@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import com.servicerca.app.domain.repository.UserRepository
@@ -27,10 +28,11 @@ data class ReservationUiModel(
     val date: java.util.Date,
     val time: String,
     val status: com.servicerca.app.domain.model.ReservationStatus,
-    val otherUserName: String, // Profesional si es "Mis Pedidos" (0), Cliente si es "Mis Trabajos" (1)
+    val otherUserName: String,
     val otherUserId: String,
-    val isIncoming: Boolean // true si es una solicitud recibida (Mis Trabajos)
+    val isIncoming: Boolean
 )
+
 @HiltViewModel
 class ReservationViewModel @Inject constructor(
     private val reservationRepository: ReservationRepository,
@@ -43,7 +45,7 @@ class ReservationViewModel @Inject constructor(
     val selectedTab: StateFlow<Int> = _selectedTab.asStateFlow()
 
     private val _allReservations = MutableStateFlow<List<Reservation>>(emptyList())
-    
+
     val markedDates: StateFlow<Set<LocalDate>> = combine(
         _allReservations,
         _selectedTab,
@@ -70,79 +72,62 @@ class ReservationViewModel @Inject constructor(
     private val _reservationsUi = MutableStateFlow<List<ReservationUiModel>>(emptyList())
     val reservations: StateFlow<List<ReservationUiModel>> = _reservationsUi.asStateFlow()
 
-    private var currentUserId: String? = null
-
     init {
-        loadSessionAndObserve()
+        observeReservations()
     }
 
-    private fun loadSessionAndObserve() {
+    private fun observeReservations() {
         viewModelScope.launch {
-            sessionDataStore.sessionFlow.collect { session ->
-                currentUserId = session?.userId
-                currentUserId?.let { userId ->
-                    observeFilteredReservations(userId)
-                    loadAllReservations(userId)
-                }
-            }
-        }
-    }
+            sessionDataStore.sessionFlow.flatMapLatest { session ->
+                val userId = session?.userId ?: return@flatMapLatest kotlinx.coroutines.flow.flowOf(emptyList())
 
-    private fun observeFilteredReservations(userId: String) {
-        viewModelScope.launch {
-            combine(
-                _allReservations,
-                _selectedTab,
-                _selectedDate,
-                userRepository.users
-            ) { all, tab, date, users ->
-                all.filter { reservation ->
-                    val isVisible = reservation.status != com.servicerca.app.domain.model.ReservationStatus.CANCELLED
-                    val reservationLocalDate = reservation.date.toInstant()
-                        .atZone(ZoneId.systemDefault())
-                        .toLocalDate()
-                    
-                    val isCorrectDate = reservationLocalDate == date
-                    val isCorrectRole = if (tab == 0) {
-                        reservation.userId == userId && isVisible
-                    } else {
-                        reservation.providerId == userId && isVisible
+                combine(
+                    reservationRepository.getReservationsByUser(userId),
+                    reservationRepository.getReservationsByProvider(userId)
+                ) { asUser, asProvider ->
+                    (asUser + asProvider).distinctBy { it.id }
+                }.flatMapLatest { all ->
+                    _allReservations.value = all
+                    combine(
+                        kotlinx.coroutines.flow.flowOf(all),
+                        _selectedTab,
+                        _selectedDate,
+                        userRepository.users
+                    ) { allRes, tab, date, users ->
+                        allRes.filter { reservation ->
+                            val isVisible = reservation.status != com.servicerca.app.domain.model.ReservationStatus.CANCELLED
+                            val reservationLocalDate = reservation.date.toInstant()
+                                .atZone(ZoneId.systemDefault())
+                                .toLocalDate()
+
+                            val isCorrectDate = reservationLocalDate == date
+                            val isCorrectRole = if (tab == 0) {
+                                reservation.userId == userId && isVisible
+                            } else {
+                                reservation.providerId == userId && isVisible
+                            }
+
+                            isCorrectRole && isCorrectDate
+                        }.map { reservation ->
+                            val otherUserId = if (tab == 0) reservation.providerId else reservation.userId
+                            val otherUser = users.find { it.id == otherUserId }
+
+                            ReservationUiModel(
+                                id = reservation.id,
+                                serviceTitle = reservation.serviceTitle,
+                                serviceImageUrl = reservation.serviceImageUrl,
+                                date = reservation.date,
+                                time = reservation.time,
+                                status = reservation.status,
+                                otherUserName = otherUser?.let { "${it.name1} ${it.lastname1}" } ?: "Usuario Desconocido",
+                                otherUserId = otherUserId,
+                                isIncoming = tab == 1
+                            )
+                        }
                     }
-                    
-                    isCorrectRole && isCorrectDate
-                }.map { reservation ->
-                    // 🔹 Pestaña 0 (Mis Pedidos): El "otro" es el Proveedor
-                    // 🔹 Pestaña 1 (Mis Trabajos): El "otro" es el Cliente
-                    val otherUserId = if (tab == 0) reservation.providerId else reservation.userId
-                    val otherUser = users.find { it.id == otherUserId }
-                    
-                    ReservationUiModel(
-                        id = reservation.id,
-                        serviceTitle = reservation.serviceTitle,
-                        serviceImageUrl = reservation.serviceImageUrl,
-                        date = reservation.date,
-                        time = reservation.time,
-                        status = reservation.status,
-                        otherUserName = otherUser?.let { "${it.name1} ${it.lastname1}" } ?: "Usuario Desconocido",
-                        otherUserId = otherUserId,
-                        isIncoming = tab == 1
-                    )
                 }
-            }.collect {
-                _reservationsUi.value = it
-            }
-        }
-    }
-
-    private fun loadAllReservations(userId: String) {
-        viewModelScope.launch {
-            combine(
-                reservationRepository.getReservationsByUser(userId),
-                reservationRepository.getReservationsByProvider(userId)
-            ) { asUser, asProvider ->
-                (asUser + asProvider).distinctBy { it.id }
-            }.collect {
-                _allReservations.value = it
+            }.collect { filtered ->
+                _reservationsUi.value = filtered
             }
         }
     }
