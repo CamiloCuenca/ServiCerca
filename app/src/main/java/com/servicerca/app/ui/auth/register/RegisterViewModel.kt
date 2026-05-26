@@ -196,6 +196,7 @@ class RegisterViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 _registerResult.value = RequestResult.Failure("Error al registrarse con Google: ${e.message}")
+
             } finally {
                 _isLoading.value = false
             }
