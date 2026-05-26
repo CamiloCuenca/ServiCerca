@@ -89,6 +89,8 @@ class DetailsVerificationViewModel @Inject constructor(
             val updatedService = currentService.copy(status = ServiceStatus.APPROVED)
             serviceRepository.update(updatedService)
 
+            notificationRepository.deleteNotificationsByTargetId(currentService.id)
+
             val dateStr = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault()).format(Date())
             val title = "Servicio aprobado"
             val message = "¡Tu servicio \"${currentService.title}\" ha sido aprobado y ya es público!"

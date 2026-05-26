@@ -120,6 +120,22 @@ class NotificationRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun deleteNotificationsByTargetId(targetId: String) {
+        try {
+            val snapshot = collection.whereEqualTo("targetId", targetId).get().await()
+            val batch = firestore.batch()
+            snapshot.documents.forEach { doc ->
+                batch.delete(collection.document(doc.id))
+            }
+            if (snapshot.documents.isNotEmpty()) {
+                batch.commit().await()
+                Log.d("NotificationRepo", "Eliminadas ${snapshot.documents.size} notificaciones con targetId=$targetId")
+            }
+        } catch (e: Exception) {
+            Log.e("NotificationRepo", "Error eliminando notificaciones por targetId", e)
+        }
+    }
+
     override suspend fun clearAll() {
         try {
             val batch = firestore.batch()

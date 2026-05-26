@@ -11,7 +11,9 @@ interface NotificationRepository {
     suspend fun markAllAsRead()
 
     suspend fun deleteNotification(id: String)
-    
+
+    suspend fun deleteNotificationsByTargetId(targetId: String)
+
     suspend fun clearAll()
 
     suspend fun addNotification(notification: Notification)

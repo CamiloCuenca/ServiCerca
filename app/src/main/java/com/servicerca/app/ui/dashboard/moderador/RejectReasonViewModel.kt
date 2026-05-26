@@ -74,6 +74,8 @@ class RejectReasonViewModel @Inject constructor(
                 val updatedService = currentService.copy(status = ServiceStatus.REJECTED)
                 serviceRepository.update(updatedService)
 
+                notificationRepository.deleteNotificationsByTargetId(currentService.id)
+
                 val dateStr = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault()).format(Date())
                 val title = "Servicio rechazado"
                 val message = "Tu servicio \"${currentService.title}\" ha sido rechazado. Motivo: $reason"
