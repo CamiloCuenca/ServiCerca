@@ -52,6 +52,7 @@ fun LoginScreen(
     val scrollState = rememberScrollState()
     val snackBarHostState = remember { SnackbarHostState() }
     val loginResult by viewModel.loginResult.collectAsStateWithLifecycle()
+    val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
@@ -123,7 +124,8 @@ fun LoginScreen(
                                 .imePadding()
                                 .padding(paddingValues)
                                 .padding(horizontal = 24.dp)
-                                .navigationBarsPadding(),
+                                .navigationBarsPadding()
+                                .statusBarsPadding(),
                 verticalArrangement = Arrangement.SpaceBetween
         ) {
             Column(
@@ -137,7 +139,7 @@ fun LoginScreen(
                         else R.drawable.logo_servicerca
                 Image(
                         painter = painterResource(id = logoRes),
-                        contentDescription = null,
+                        contentDescription = stringResource(R.string.nameApp),
                         modifier = Modifier.size(90.dp)
                 )
 
@@ -192,7 +194,8 @@ fun LoginScreen(
                 // BOTÓN DE LOGIN: Ahora llama a viewModel.login() en lugar de navegar directamente
                 PrimaryButton(
                         text = stringResource(R.string.login_iniciar_secion),
-                        onClick = { viewModel.login() }
+                        onClick = { viewModel.login() },
+                        isLoading = isLoading
                 )
 
                 Spacer(modifier = Modifier.height(32.dp))

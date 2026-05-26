@@ -57,6 +57,9 @@ fun SearchScreen(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
+            .statusBarsPadding()
+            .navigationBarsPadding()
+            .imePadding()
     ) {
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -230,7 +233,7 @@ fun EmptyStateView() {
             Box(contentAlignment = Alignment.Center) {
                 Icon(
                     imageVector = Icons.Default.SearchOff,
-                    contentDescription = null,
+                    contentDescription = "Sin resultados",
                     modifier = Modifier.size(50.dp),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )

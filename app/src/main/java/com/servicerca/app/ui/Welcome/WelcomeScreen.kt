@@ -11,6 +11,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -46,7 +48,10 @@ fun WelcomeScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 24.dp, vertical = 32.dp),
+                .imePadding()
+                .padding(horizontal = 24.dp)
+                .statusBarsPadding()
+                .navigationBarsPadding(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
@@ -71,12 +76,18 @@ fun WelcomeScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
 
+                    val animationDescription = stringResource(R.string.nameApp)
+
                     LottieAnimation(
                         composition = composition,
                         progress = { progress },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(380.dp)
+                            .fillMaxHeight(0.35f)
+                            .heightIn(max = 320.dp)
+                            .semantics {
+                                contentDescription = animationDescription
+                            }
                     )
 
                     Spacer(modifier = Modifier.height(24.dp))

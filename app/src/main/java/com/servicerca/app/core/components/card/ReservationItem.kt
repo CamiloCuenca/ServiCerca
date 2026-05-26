@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -75,7 +75,7 @@ fun ReservationItem(
                     Box(contentAlignment = Alignment.Center) {
                         AsyncImage(
                             model = reservation.serviceImageUrl,
-                            contentDescription = null,
+                            contentDescription = reservation.serviceTitle,
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.Crop,
                             placeholder = painterResource(R.drawable.service),
@@ -156,7 +156,7 @@ fun ReservationItem(
                     colors =  IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primary)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Chat,
+                        imageVector = Icons.AutoMirrored.Filled.Chat,
                         contentDescription = "Chat"
                     )
                 }

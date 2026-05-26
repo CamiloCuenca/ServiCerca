@@ -21,7 +21,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.servicerca.app.R
 import com.servicerca.app.core.components.tag.CategoryTag
 import com.servicerca.app.core.components.tag.VerificationTag
@@ -47,12 +46,11 @@ fun ServiceDetailHeader(
     ) {
         Column(
             modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(6.dp)
-
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically  // esto alinea ambos al centro
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 if (isVerified) {
                     VerificationTag()
@@ -62,14 +60,14 @@ fun ServiceDetailHeader(
 
             Text(
                 text = title,
-                fontSize = 22.sp,
+                style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground
             )
 
             Text(
                 text = subtitle,
-                fontSize = 14.sp,
+                style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
@@ -84,7 +82,7 @@ fun ServiceDetailHeader(
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
                         text = likeCount.toString(),
-                        fontSize = 14.sp,
+                        style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Bold,
                         color = if (isLiked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -100,7 +98,7 @@ fun ServiceDetailHeader(
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
                     text = rating,
-                    fontSize = 14.sp,
+                    style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold,
                     color = StarColor
                 )
@@ -109,14 +107,14 @@ fun ServiceDetailHeader(
 
         Column(horizontalAlignment = Alignment.End) {
             Text(
-                text = "$$price",  // Double convertido a String
-                fontSize = 24.sp,
+                text = "$$price",
+                style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
             )
             Text(
                 text = "por hora",
-                fontSize = 12.sp,
+                style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }

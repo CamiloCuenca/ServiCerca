@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -70,9 +71,10 @@ fun NotificationsScreen (
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
+                .imePadding()
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
 
             Column(
@@ -91,7 +93,7 @@ fun NotificationsScreen (
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = null
+                            contentDescription = "Volver"
                         )
                     }
 
@@ -152,7 +154,7 @@ fun NotificationsScreen (
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.NotificationsOff,
-                            contentDescription = null,
+                            contentDescription = "Sin notificaciones",
                             modifier = Modifier.size(64.dp),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                         )
@@ -209,7 +211,7 @@ fun NotificationsScreen (
                                     modifier = Modifier
                                         .fillMaxSize()
                                         .background(color)
-                                        .padding(horizontal = 20.dp),
+                                        .padding(horizontal = 16.dp),
                                     contentAlignment = if (dismissState.dismissDirection == SwipeToDismissBoxValue.StartToEnd) Alignment.CenterStart else Alignment.CenterEnd
                                 ) {
                                     Icon(

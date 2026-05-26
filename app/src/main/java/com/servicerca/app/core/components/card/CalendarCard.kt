@@ -82,7 +82,7 @@ fun CalendarCard(
                     Box(
                         modifier = Modifier
                             .aspectRatio(1f)
-                            .padding(4.dp)
+                            .padding(2.dp)
                             .clip(CircleShape)
                             .background(
                                 if (isSelected)

@@ -88,7 +88,7 @@ fun ExploreMapCard(
                 onClick = onOpenMap,
                 modifier = Modifier
                     .fillMaxWidth(0.6f)
-                    .height(40.dp),
+                    .height(44.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = colorScheme.primary
                 ),

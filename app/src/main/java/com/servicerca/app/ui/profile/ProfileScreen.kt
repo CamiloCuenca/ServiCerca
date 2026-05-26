@@ -10,8 +10,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
@@ -99,8 +103,11 @@ fun ProfileScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
+                    .statusBarsPadding()
+                    .navigationBarsPadding()
+                    .imePadding()
                     .padding(24.dp),
-                verticalArrangement = Arrangement.spacedBy(20.dp)
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 // Botón de Cerrar Sesión
                 Row(
@@ -139,9 +146,9 @@ fun ProfileScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Filled.LocationOn,
-                        contentDescription = null,
+                        contentDescription = "Ubicación",
                         tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(25.dp)
+                        modifier = Modifier.size(24.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
@@ -257,7 +264,7 @@ fun InsigniasSection(
         }
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             // Mostramos un resumen de hasta 3 insignias
             val displayInsignias = insignias.take(3)
@@ -290,7 +297,7 @@ fun InsigniaItem(
     ) {
         Image(
             painter = painterResource(id = insignia.iconRes),
-            contentDescription = null,
+            contentDescription = stringResource(insignia.nameRes),
             modifier = Modifier
                 .size(80.dp)
                 .shadow(
@@ -363,20 +370,20 @@ fun AccountSettingsSection(
     onChangeLanguage: () -> Unit,
     onChangeTheme: () -> Unit
 ) {
-    Column(modifier = Modifier.fillMaxWidth().padding(bottom = 20.dp), verticalArrangement = Arrangement.spacedBy(15.dp)) {
+    Column(modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         ButtonIcon(
             text = "Cambiar Tema / Apariencia",
             onClick = onChangeTheme,
-            icon = { Icon(Icons.Default.Palette, null) }
+            icon = { Icon(Icons.Default.Palette, contentDescription = "Cambiar Tema") }
         )
         ButtonIcon(
             text = stringResource(R.string.language_button),
             onClick = onChangeLanguage,
-            icon = { Icon(Icons.Default.Language, null) }
+            icon = { Icon(Icons.Default.Language, contentDescription = stringResource(R.string.language_button)) }
         )
-        ButtonIcon(text = stringResource(R.string.edit_account), onClick = onEdit, icon = { Icon(Icons.Default.Edit, null) })
-        PasswordButton(text = stringResource(R.string.edit_password), onClick = onUpdatePass, icon = { Icon(Icons.Default.Lock, null) })
-        DeleteButton(text = stringResource(R.string.delete_account), onClick = onDelete, icon = { Icon(Icons.Default.Delete, null) })
+        ButtonIcon(text = stringResource(R.string.edit_account), onClick = onEdit, icon = { Icon(Icons.Default.Edit, contentDescription = stringResource(R.string.edit_account)) })
+        PasswordButton(text = stringResource(R.string.edit_password), onClick = onUpdatePass, icon = { Icon(Icons.Default.Lock, contentDescription = stringResource(R.string.edit_password)) })
+        DeleteButton(text = stringResource(R.string.delete_account), onClick = onDelete, icon = { Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.delete_account)) })
     }
 }
 
@@ -447,7 +454,7 @@ fun ThemeOptionItem(
 
     TextButton(
         onClick = { onSelect(mode) },
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
         colors = androidx.compose.material3.ButtonDefaults.textButtonColors(
             containerColor = containerColor,
             contentColor = contentColor

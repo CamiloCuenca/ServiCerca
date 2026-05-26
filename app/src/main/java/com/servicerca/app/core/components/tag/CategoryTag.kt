@@ -10,7 +10,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.servicerca.app.domain.model.Categories
 import com.servicerca.app.ui.theme.InfoContainerLight
 import com.servicerca.app.ui.theme.OnInfoContainerLight
@@ -52,7 +51,7 @@ fun CategoryTag(
     ) {
         Text(
             text = text,
-            fontSize = 12.sp,
+            style = MaterialTheme.typography.bodySmall,
             color = colorText ?: defaultContent,
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
         )
@@ -75,7 +74,7 @@ fun CategoryTagSearch(
     ) {
         Text(
             text = stringResource(category.nameRes),
-            fontSize = 12.sp,
+            style = MaterialTheme.typography.bodySmall,
             modifier = Modifier.padding(horizontal = 15.dp, vertical = 10.dp),
             color = if (isSelected)
                 MaterialTheme.colorScheme.onPrimary

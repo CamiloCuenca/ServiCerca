@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
@@ -85,8 +86,9 @@ fun InsigniasScreen(
                             .fillMaxSize()
                             .padding(paddingValues)
                             .verticalScroll(rememberScrollState())
+                            .imePadding()
                             .padding(horizontal = 24.dp),
-                        verticalArrangement = Arrangement.spacedBy(20.dp)
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
 
                         Column(
@@ -103,7 +105,7 @@ fun InsigniasScreen(
                             // Sección: Achievements (centrado)
                             Column(
                                 modifier = Modifier
-                                    .padding(top = 15.dp)
+                                    .padding(top = 8.dp)
                                     .fillMaxWidth(),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
@@ -136,7 +138,7 @@ fun InsigniasScreen(
                             // Todas las Insignias (Grid completo)
                             Column(
                                 modifier = Modifier
-                                    .padding(top = 20.dp)
+                                    .padding(top = 16.dp)
                                     .fillMaxWidth(),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {

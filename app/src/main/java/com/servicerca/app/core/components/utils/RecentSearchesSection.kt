@@ -44,7 +44,9 @@ fun RecentSearchesSection(
                 text = stringResource(R.string.clear_all),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.clickable { onClearAll() }
+                modifier = Modifier
+                    .clickable { onClearAll() }
+                    .padding(vertical = 15.dp)
             )
         }
 
@@ -55,7 +57,7 @@ fun RecentSearchesSection(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { onSearchClick(search) }
-                    .padding(vertical = 12.dp),
+                    .padding(vertical = 14.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(

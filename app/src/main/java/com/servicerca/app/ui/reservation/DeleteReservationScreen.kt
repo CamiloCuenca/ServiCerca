@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -61,20 +62,21 @@ fun DeleteReservationScreen (
         modifier = Modifier.fillMaxSize()
     ) { paddingValues ->
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(horizontal = 24.dp)
-        ) {
-
-            // CONTENIDO (SCROLL)
             Column(
                 modifier = Modifier
-                    .weight(1f)
-                    .verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(15.dp)
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(horizontal = 24.dp)
+                    .imePadding()
             ) {
+
+                // CONTENIDO (SCROLL)
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
 
                 // HEADER
                 Box(
@@ -90,7 +92,7 @@ fun DeleteReservationScreen (
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = null
+                            contentDescription = "Volver"
                         )
                     }
 
@@ -103,18 +105,18 @@ fun DeleteReservationScreen (
                 }
 
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
                 // IMAGEN
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 30.dp)
+                        .padding(top = 32.dp)
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.eliminar_perfil),
-                        contentDescription = null,
+                        contentDescription = "Ilustración de eliminación",
                         modifier = Modifier.size(150.dp)
                     )
                 }
@@ -162,7 +164,7 @@ fun DeleteReservationScreen (
             // BOTONES FIJOS ABAJO
             Column(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier.padding(bottom = 20.dp)
+                modifier = Modifier.padding(bottom = 16.dp)
             ) {
 
                 ButtonIcon(
@@ -171,7 +173,7 @@ fun DeleteReservationScreen (
                     icon = {
                         Icon(
                             imageVector = Icons.Default.Favorite,
-                            contentDescription = null
+                            contentDescription = textButton
                         )
                     }
                 )
@@ -182,7 +184,7 @@ fun DeleteReservationScreen (
                     icon = {
                         Icon(
                             imageVector = Icons.Default.Delete,
-                            contentDescription = null
+                            contentDescription = textSecondaryButton
                         )
                     }
                 )
@@ -215,7 +217,7 @@ fun ConfirmActionModal(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp)
-                .padding(bottom = 40.dp, top = 8.dp),
+                .padding(bottom = 32.dp, top = 8.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -228,7 +230,7 @@ fun ConfirmActionModal(
                 Box(contentAlignment = Alignment.Center) {
                     Icon(
                         imageVector = Icons.Default.Warning,
-                        contentDescription = null,
+                        contentDescription = "Advertencia",
                         modifier = Modifier.size(40.dp),
                         tint = MaterialTheme.colorScheme.error
                     )
@@ -275,7 +277,7 @@ fun ConfirmActionModal(
                     icon = {
                         Icon(
                             imageVector = Icons.Default.Delete,
-                            contentDescription = null,
+                            contentDescription = textSecondary,
                             tint = MaterialTheme.colorScheme.error
                         )
                     }

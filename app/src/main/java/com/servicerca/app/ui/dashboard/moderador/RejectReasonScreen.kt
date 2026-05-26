@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -94,8 +95,9 @@ fun RejectReasonScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
                 .verticalScroll(rememberScrollState())
+                .imePadding()
                 .padding(horizontal = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
 
             Column(
@@ -111,7 +113,7 @@ fun RejectReasonScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 20.dp)
+                        .padding(vertical = 16.dp)
                 ) {
 
                     Text(
@@ -134,7 +136,7 @@ fun RejectReasonScreen(
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onBackground,
-                        modifier = Modifier.padding(bottom = 5.dp)
+                        modifier = Modifier.padding(bottom = 8.dp)
                     )
 
                     OutlinedTextField(
@@ -153,7 +155,7 @@ fun RejectReasonScreen(
                     )
 
                     Column(
-                        modifier = Modifier.padding(top = 10.dp)
+                        modifier = Modifier.padding(top = 8.dp)
                     ) {
 
                         Row(
@@ -212,10 +214,10 @@ fun RejectReasonScreen(
                         text = "Confirmar rechazo",
                         onClick = { viewModel.rejectService(description) },
                         icon = {
-                            Icon(
-                                imageVector = Icons.Default.Block, // Icono de Material
-                                contentDescription = null
-                            )
+                                Icon(
+                                    imageVector = Icons.Default.Block,
+                                    contentDescription = "Confirmar rechazo"
+                                )
                         }
                     )
                     OutlinedButton(
@@ -227,7 +229,7 @@ fun RejectReasonScreen(
                         ),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 10.dp)
+                            .padding(top = 8.dp)
                     ) {
                         Text("Cancelar")
                     }

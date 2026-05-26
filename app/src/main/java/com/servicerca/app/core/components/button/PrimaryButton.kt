@@ -5,11 +5,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.MaterialTheme
@@ -17,6 +19,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Surface
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
@@ -34,6 +37,7 @@ fun PrimaryButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    isLoading: Boolean = false,
     containerColor: Color = MaterialTheme.colorScheme.primary,
     contentColor : Color = MaterialTheme.colorScheme.onPrimary,
     // alpha permite ajustar la intensidad (0f = totalmente transparente, 1f = opaco)
@@ -47,19 +51,27 @@ fun PrimaryButton(
         modifier = modifier
             .fillMaxWidth()
             .height(56.dp),
-        enabled = enabled,
+        enabled = enabled && !isLoading,
         shape = RoundedCornerShape(16.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = resolvedContainer,
             contentColor = contentColor
         )
     ) {
-        if (leadingIcon != null) {
-            leadingIcon()
-            Spacer(modifier = Modifier.width(8.dp))
+        if (isLoading) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(24.dp),
+                color = contentColor,
+                strokeWidth = 2.dp
+            )
+        } else {
+            if (leadingIcon != null) {
+                leadingIcon()
+                Spacer(modifier = Modifier.width(8.dp))
+            }
+            // Usar LocalContentColor para que respete contentColor provisto por Button
+            Text(text = text, color = LocalContentColor.current, fontWeight = FontWeight.Bold)
         }
-        // Usar LocalContentColor para que respete contentColor provisto por Button
-        Text(text = text, color = LocalContentColor.current, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold)
     }
 }
 
@@ -79,7 +91,7 @@ fun SocialButton(
 
     OutlinedButton(
         onClick = onClick,
-        modifier = modifier,
+        modifier = modifier.heightIn(min = 48.dp),
         shape = RoundedCornerShape(16.dp),
         border = BorderStroke(1.5.dp, resolvedBorder),
         colors = ButtonDefaults.outlinedButtonColors(
@@ -91,7 +103,7 @@ fun SocialButton(
                 painter = painterResource(id = iconRes),
                 contentDescription = null,
                 tint = Color.Unspecified,
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(24.dp)
             )
             Spacer(modifier = Modifier.width(8.dp))
         }
@@ -125,7 +137,7 @@ fun OutlineButton(
 
     androidx.compose.material3.OutlinedButton(
         onClick = onClick,
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth().heightIn(min = 48.dp),
         enabled = enabled,
         shape = RoundedCornerShape(16.dp),
         border = BorderStroke(1.5.dp, resolvedBorder),
@@ -165,7 +177,7 @@ fun ReactionIconButton(
             width = 2.dp,
             color = MaterialTheme.colorScheme.primary,
         ),
-        modifier = modifier.size(40.dp)
+        modifier = modifier.size(44.dp)
     ) {
         Box(contentAlignment = Alignment.Center) {
             CompositionLocalProvider(
