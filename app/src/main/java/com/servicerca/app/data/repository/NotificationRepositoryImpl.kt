@@ -1,7 +1,6 @@
 package com.servicerca.app.data.repository
 
 import android.util.Log
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.servicerca.app.R
@@ -67,7 +66,7 @@ class NotificationRepositoryImpl @Inject constructor(
             _notifications.value = snapshot?.documents
                 ?.mapNotNull { doc ->
                     runCatching {
-                        val timestampMillis = doc.getTimestamp("timestamp")?.toDate()?.time ?: System.currentTimeMillis()
+                        val timestampMillis = doc.getLong("timestamp") ?: doc.getTimestamp("timestamp")?.toDate()?.time ?: System.currentTimeMillis()
                         val notification = Notification(
                             id = doc.getString("id") ?: doc.id,
                             userId = doc.getString("userId") ?: "",
@@ -146,7 +145,7 @@ class NotificationRepositoryImpl @Inject constructor(
                 "isRead" to notification.isRead,
                 "targetId" to notification.targetId,
                 "notificationType" to notification.notificationType.name,
-                "timestamp" to FieldValue.serverTimestamp()
+                "timestamp" to System.currentTimeMillis()
             )
             collection.document(notification.id).set(data).await()
             Log.d("NotificationRepo", "addNotification: guardado exitosamente en Firestore")
