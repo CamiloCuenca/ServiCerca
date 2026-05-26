@@ -285,11 +285,6 @@ constructor(
     override suspend fun initiatePasswordRecovery(email: String): Result<Unit> {
         val trimmedEmail = email.trim()
         return try {
-            val existingUser = findByEmail(trimmedEmail)
-            if (existingUser == null) {
-                return Result.failure(Exception("No existe una cuenta asociada a este correo"))
-            }
-
             val actionCodeSettings = ActionCodeSettings.newBuilder()
                 .setUrl("https://servicerca-6ee07.web.app/reset")
                 .setHandleCodeInApp(true)
