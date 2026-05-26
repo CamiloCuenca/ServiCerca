@@ -9,11 +9,9 @@ import android.media.RingtoneManager
 import androidx.core.app.NotificationCompat
 import com.servicerca.app.MainActivity
 import com.servicerca.app.R
-import java.util.concurrent.atomic.AtomicInteger
+import androidx.core.net.toUri
 
 object NotificationHelper {
-
-    private val notificationIdCounter = AtomicInteger(0)
 
     const val CHANNEL_CHAT = "channel_chat"
     const val CHANNEL_GENERAL = "channel_general"
@@ -44,17 +42,19 @@ object NotificationHelper {
         )
     }
 
-    // Notificación de chat: al tocarla navega al chat con ese usuario
+    // Notificación de chat: al tocarla navega al chat con ese usuario usando Deep Linking
     fun showChatNotification(
         context: Context,
         title: String,
         body: String,
         senderId: String
     ) {
-        val intent = Intent(context, MainActivity::class.java).apply {
+        // Usar Deep Link para navegación segura
+        val deepLinkUri = "https://servicerca-6ee07.web.app/chat/$senderId".toUri()
+        val intent = Intent(Intent.ACTION_VIEW, deepLinkUri, context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-            putExtra("nav_chat_user_id", senderId)
         }
+        
         val pendingIntent = PendingIntent.getActivity(
             context,
             senderId.hashCode(),
@@ -86,17 +86,17 @@ object NotificationHelper {
         pendingIntent: PendingIntent
     ) {
         val notification = NotificationCompat.Builder(context, channelId)
-            // TODO: reemplazar con un vector drawable blanco 24dp en res/drawable/ic_notification.xml
             .setSmallIcon(R.mipmap.ic_launcher)
             .setContentTitle(title)
             .setContentText(body)
             .setStyle(NotificationCompat.BigTextStyle().bigText(body))
             .setAutoCancel(true)
             .setPriority(priority)
+            .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
             .setContentIntent(pendingIntent)
             .build()
 
         val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        manager.notify(notificationIdCounter.incrementAndGet(), notification)
+        manager.notify(System.currentTimeMillis().toInt(), notification)
     }
 }

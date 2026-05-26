@@ -26,7 +26,6 @@ import com.servicerca.app.ui.Map.MapScreen
 import com.servicerca.app.ui.Welcome.WelcomeScreen
 import com.servicerca.app.ui.auth.login.LoginScreen
 import com.servicerca.app.ui.auth.login.Recover.RecoverPasswordScreen
-import com.servicerca.app.ui.auth.login.Reset.ResetPassword
 import com.servicerca.app.ui.auth.register.RegisterScreen
 import com.servicerca.app.ui.auth.register.VerifyEmailScreen
 import com.servicerca.app.ui.dashboard.moderador.ModeratorScreen
@@ -37,7 +36,6 @@ import com.servicerca.app.ui.services.detail.DetailServiceScreen
 import com.servicerca.app.ui.reservation.details.DetailsReservationScreen
 import com.servicerca.app.domain.model.NotificationType
 import androidx.navigation.toRoute
-
 import com.servicerca.app.ui.auth.register.RegisterViewModel
 import com.servicerca.app.ui.reservation.MakeReservation
 import com.servicerca.app.ui.chat.ChatScreen
@@ -154,8 +152,8 @@ private fun AuthNavigation(
                     },
                     onVerifyEmail = {
                         navController.navigate(MainRoutes.VerifyEmail(email = registerViewModel.email.value.trim()))
-
-                    }
+                    },
+                    onLoginSuccess = { userId, role -> onLoginSuccess(userId, role) }
                 )
             }
 
@@ -225,7 +223,6 @@ private fun MainNavigation(
     val startDestination = when (session.role) {
         UserRole.ADMIN, UserRole.MODERATOR -> DashboardRoutes.HomeModerator
         UserRole.USER -> DashboardRoutes.HomeUser
-        else -> DashboardRoutes.HomeUser
     }
 
     NavHost(
@@ -335,7 +332,13 @@ private fun MainNavigation(
             )
         }
 
-        composable<MainRoutes.Chat> {
+        composable<MainRoutes.Chat>(
+            deepLinks = listOf(
+                androidx.navigation.navDeepLink<MainRoutes.Chat>(
+                    basePath = "https://servicerca-6ee07.web.app/chat"
+                )
+            )
+        ) {
             ChatScreen(onBack = { navController.popBackStack() })
         }
 

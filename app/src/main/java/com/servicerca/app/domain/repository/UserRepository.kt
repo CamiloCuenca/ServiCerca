@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.StateFlow
 interface UserRepository {
     val users: StateFlow<List<User>>
     fun observeUser(userId: String): Flow<User?>
+    fun observeAllUsers(): Flow<List<User>>
     suspend fun save(user: User)
     suspend fun findById(id: String): User?
     suspend fun login(email: String, password: String): User?
@@ -21,4 +22,5 @@ interface UserRepository {
     suspend fun updatePassword(userId: String, currentPassword: String, newPassword: String): Result<Unit>
     suspend fun toggleInterestingService(userId: String, serviceId: String): Result<Boolean>
     suspend fun updateProviderStats(providerId: String, newRating: Double, xpIncrement: Int)
+    suspend fun updateOnlineStatus(userId: String, isOnline: Boolean)
 }

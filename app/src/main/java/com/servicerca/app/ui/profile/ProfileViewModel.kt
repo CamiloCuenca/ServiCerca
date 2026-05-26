@@ -247,6 +247,10 @@ class ProfileViewModel @Inject constructor(
 
     fun logout() {
         viewModelScope.launch {
+            val session = sessionDataStore.sessionFlow.first()
+            session?.userId?.let { uid ->
+                userRepository.updateOnlineStatus(uid, false)
+            }
             sessionDataStore.clearSession()
         }
     }

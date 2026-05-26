@@ -44,12 +44,13 @@ class ServiCercaMessagingService : FirebaseMessagingService() {
         when (type) {
             "chat" -> {
                 val senderId = data["senderId"] ?: ""
-                NotificationHelper.showChatNotification(applicationContext, title, body, senderId)
-                saveToInAppList(data, title, body)
+                if (senderId.isNotBlank()) {
+                    NotificationHelper.showChatNotification(applicationContext, title, body, senderId)
+                    saveToInAppList(data, title, body)
+                }
             }
             else -> {
                 NotificationHelper.showGeneralNotification(applicationContext, title, body)
-                // Solo guardar en Firestore si el ViewModel no lo hizo previamente
                 if (data["noSave"] != "true") {
                     saveToInAppList(data, title, body)
                 }
@@ -63,24 +64,22 @@ class ServiCercaMessagingService : FirebaseMessagingService() {
                 val targetUserId = data["userId"]
                     ?: sessionDataStore.sessionFlow.firstOrNull()?.userId
 
-                if (targetUserId == null) {
-                    Log.e("FCM", "saveToInAppList: userId nulo, no se guarda la notificación")
-                    return@launch
+                if (targetUserId == null) return@launch
+
+                val notificationTypeStr = data["notificationType"] ?: "SYSTEM"
+                val notificationType = try {
+                    NotificationType.valueOf(notificationTypeStr)
+                } catch (e: Exception) {
+                    NotificationType.SYSTEM
                 }
 
-                Log.d("FCM", "saveToInAppList: guardando notificación para userId=$targetUserId, title=$title")
-
-                val notificationType = runCatching {
-                    NotificationType.valueOf(data["notificationType"] ?: "SYSTEM")
-                }.getOrDefault(NotificationType.SYSTEM)
-
                 val iconRes = when {
-                    data["type"] == "chat"                           -> R.drawable.insignia_chat
-                    data["type"] == "rejection"                      -> R.drawable.publicacion_rechazada
+                    data["type"] == "chat" -> R.drawable.insignia_chat
+                    data["type"] == "rejection" -> R.drawable.publicacion_rechazada
                     notificationType == NotificationType.RESERVATION -> R.drawable.nueva_solicitud_servicio
-                    notificationType == NotificationType.MODERATION  -> R.drawable.servicio_verificado
-                    notificationType == NotificationType.SERVICE      -> R.drawable.nueva_publicacion
-                    else                                              -> R.drawable.nueva_publicacion
+                    notificationType == NotificationType.MODERATION -> R.drawable.servicio_verificado
+                    notificationType == NotificationType.SERVICE -> R.drawable.nueva_publicacion
+                    else -> R.drawable.nueva_publicacion
                 }
 
                 notificationRepository.addNotification(
@@ -92,12 +91,11 @@ class ServiCercaMessagingService : FirebaseMessagingService() {
                         date = "Ahora",
                         imageRes = iconRes,
                         isRead = false,
-                        targetId = data["targetId"],
+                        targetId = data["targetId"] ?: data["senderId"], // Usar senderId como target para chats
                         notificationType = notificationType,
                         timestamp = System.currentTimeMillis()
                     )
                 )
-                Log.d("FCM", "saveToInAppList: notificación guardada en Firestore correctamente")
             } catch (e: Exception) {
                 Log.e("FCM", "Error guardando notificación in-app", e)
             }
@@ -105,7 +103,6 @@ class ServiCercaMessagingService : FirebaseMessagingService() {
     }
 
     override fun onNewToken(token: String) {
-        Log.d("FCM", "Token renovado: $token")
         fcmTokenManager.onTokenRefresh(token)
     }
 }

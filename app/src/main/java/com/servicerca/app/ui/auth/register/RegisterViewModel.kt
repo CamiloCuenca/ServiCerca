@@ -6,6 +6,7 @@ import com.servicerca.app.core.utils.RequestResult
 import com.servicerca.app.core.utils.ValidatedField
 import com.servicerca.app.core.utils.validateSecurePassword
 import com.servicerca.app.domain.model.User
+import com.servicerca.app.core.fcm.FCMTokenManager
 import com.servicerca.app.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 
@@ -19,7 +20,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val fcmTokenManager: FCMTokenManager
 ) : ViewModel() {
 
 
@@ -173,6 +175,23 @@ class RegisterViewModel @Inject constructor(
 
 
 
+
+    fun registerWithGoogle(idToken: String) {
+        viewModelScope.launch {
+            try {
+                val user = userRepository.googleSignIn(idToken)
+                if (user != null) {
+                    fcmTokenManager.saveTokenForUser(user.id)
+                    userRepository.updateOnlineStatus(user.id, true)
+                    _RegisterResult.value = RequestResult.SuccessLogin(user.id, user.role)
+                } else {
+                    _RegisterResult.value = RequestResult.Failure("No se pudo registrar con Google")
+                }
+            } catch (e: Exception) {
+                _RegisterResult.value = RequestResult.Failure("Error al registrarse con Google: ${e.message}")
+            }
+        }
+    }
 
     val isFormValid: Boolean
         get() = email.isValid

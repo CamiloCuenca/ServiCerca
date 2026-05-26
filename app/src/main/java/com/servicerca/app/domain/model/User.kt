@@ -27,5 +27,6 @@ package com.servicerca.app.domain.model
         @get:JvmName("getIsEmailVerified") val isEmailVerified: Boolean = false,
         val listInteresting: List<String> = emptyList(),
         @get:JvmName("getIsSuspended") val isSuspended: Boolean = false,
+        @get:JvmName("getIsOnline") val isOnline: Boolean = false,
         val fcmToken: String = ""
     )
