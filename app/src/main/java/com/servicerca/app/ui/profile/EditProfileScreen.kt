@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -22,12 +23,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -43,16 +42,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -64,6 +60,7 @@ import androidx.compose.runtime.setValue
 import com.servicerca.app.core.components.alertDialog.SuccessAlertDialog
 import com.servicerca.app.core.components.button.PrimaryButton
 import com.servicerca.app.core.components.card.CardInfoprofile
+import com.servicerca.app.core.components.header.ScreenHeader
 import com.servicerca.app.core.components.input.AppTextField
 import com.servicerca.app.core.utils.RequestResult
 
@@ -144,45 +141,25 @@ fun EditProfileScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
+                    .imePadding()
                     .verticalScroll(rememberScrollState())
                     .padding(horizontal = 24.dp),
-                verticalArrangement = Arrangement.spacedBy(20.dp)
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
 
                 Column(modifier = Modifier.fillMaxWidth()) {
 
-                    // ── Header ──
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 8.dp, vertical = 4.dp)
-                    ) {
-                        IconButton(
-                            onClick = { onBack() },
-                            modifier = Modifier.align(Alignment.CenterStart)
-                        ) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = null
-                            )
-                        }
-
-                        Text(
-                            text = stringResource(R.string.update_profile),
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onBackground,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.align(Alignment.Center)
-                        )
-                    }
+                    ScreenHeader(
+                        title = stringResource(R.string.update_profile),
+                        onBack = onBack
+                    )
 
                     // ── Avatar ──
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 30.dp)
+                            .padding(top = 24.dp)
                     ) {
                         val context = LocalContext.current
                         val launcher = rememberLauncherForActivityResult(
@@ -232,7 +209,7 @@ fun EditProfileScreen(
                             ) {
                                 AsyncImage(
                                     model = profilePictureUrl,
-                                    contentDescription = null,
+                                    contentDescription = "Foto de perfil",
                                     contentScale = ContentScale.Crop,
                                     placeholder = painterResource(id = R.drawable.logo_profile),
                                     error = painterResource(id = R.drawable.logo_profile),
@@ -274,7 +251,7 @@ fun EditProfileScreen(
                         textAlign = TextAlign.Center,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(10.dp)
+                            .padding(8.dp)
                     )
 
                     // ── Formulario ──
@@ -285,7 +262,7 @@ fun EditProfileScreen(
                     ) {
                         // Nombres
                         Row(
-                            modifier = Modifier.padding(bottom = 20.dp),
+                            modifier = Modifier.padding(bottom = 16.dp),
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             Column(modifier = Modifier.weight(1F)) {
@@ -310,7 +287,7 @@ fun EditProfileScreen(
 
                         // Apellidos
                         Row(
-                            modifier = Modifier.padding(bottom = 20.dp),
+                            modifier = Modifier.padding(bottom = 16.dp),
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             Column(modifier = Modifier.weight(1F)) {
@@ -334,7 +311,7 @@ fun EditProfileScreen(
                         }
 
                         // Dirección
-                        Column(modifier = Modifier.padding(bottom = 20.dp)) {
+                        Column(modifier = Modifier.padding(bottom = 16.dp)) {
                             AppTextField(
                                 value = viewModel.address.value,
                                 onValueChange = { viewModel.address.onChange(it) },
@@ -345,7 +322,7 @@ fun EditProfileScreen(
                         }
 
                         // Ciudad
-                        Column(modifier = Modifier.padding(bottom = 20.dp)) {
+                        Column(modifier = Modifier.padding(bottom = 16.dp)) {
                             AppTextField(
                                 value = viewModel.city.value,
                                 onValueChange = { viewModel.city.onChange(it) },
@@ -358,7 +335,7 @@ fun EditProfileScreen(
 
                     CardInfoprofile(email = email, role = role)
 
-                    Box(modifier = Modifier.padding(vertical = 20.dp)) {
+                    Box(modifier = Modifier.padding(vertical = 16.dp)) {
                         PrimaryButton(
                             text = if (isLoading) "Guardando..." else stringResource(R.string.btn_edit_profile),
                             onClick = { viewModel.saveProfile() },

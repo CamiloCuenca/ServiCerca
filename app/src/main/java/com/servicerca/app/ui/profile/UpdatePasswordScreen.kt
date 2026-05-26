@@ -4,9 +4,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -131,9 +131,10 @@ fun UpdatePasswordScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
+                .imePadding()
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(15.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
 
             Column(
@@ -217,16 +218,10 @@ fun UpdatePasswordScreen(
                 } ?: Box(Modifier.padding(bottom = 16.dp))
             }
 
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight()
-            ) {
-                PrimaryButton(
-                    text = stringResource(R.string.btn_update_password),
-                    onClick = { viewModel.updatePassword() }
-                )
-            }
+            PrimaryButton(
+                text = stringResource(R.string.btn_update_password),
+                onClick = { viewModel.updatePassword() }
+            )
         }
     }
 }

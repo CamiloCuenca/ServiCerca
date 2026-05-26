@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -47,14 +48,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.servicerca.app.R
@@ -120,7 +119,7 @@ fun DetailServiceScreen(
             }
         }
     ) { paddingValues ->
-        Column(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+        Column(modifier = Modifier.fillMaxSize().padding(paddingValues).imePadding()) {
             Column(
                 modifier = Modifier
                     .weight(1f)
@@ -129,7 +128,7 @@ fun DetailServiceScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(280.dp)
+                    .height(250.dp)
             ) {
                 val s = service
 
@@ -172,7 +171,7 @@ fun DetailServiceScreen(
                         .align(Alignment.TopStart)
                         .padding(12.dp)
                         .background(
-                            MaterialTheme.colorScheme.scrim.copy(alpha = 0.45f),
+                            MaterialTheme.colorScheme.scrim.copy(alpha = 0.65f),
                             CircleShape
                         )
                 ) {
@@ -232,7 +231,7 @@ fun DetailServiceScreen(
                         .align(Alignment.TopEnd)
                         .padding(12.dp)
                         .background(
-                            MaterialTheme.colorScheme.scrim.copy(alpha = 0.45f),
+                            MaterialTheme.colorScheme.scrim.copy(alpha = 0.65f),
                             CircleShape
                         )
                 ) {
@@ -361,7 +360,7 @@ fun DetailServiceScreen(
                         )
                         Text(
                             text = "${comments.size} comentario${if (comments.size != 1) "s" else ""}",
-                            fontSize = 13.sp,
+                            style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.Medium
                         )
@@ -372,7 +371,7 @@ fun DetailServiceScreen(
                     if (comments.isEmpty()) {
                         Text(
                             text = "Aún no hay reseñas para este servicio.",
-                            fontSize = 13.sp,
+                            style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                         )
@@ -404,8 +403,8 @@ fun DetailServiceScreen(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
-                                text = "Selecciona tu califiación",
-                                fontSize = 12.sp,
+                                text = "Selecciona tu calificación",
+                                style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 fontWeight = FontWeight.Medium
                             )
@@ -419,13 +418,13 @@ fun DetailServiceScreen(
                                     val isSelected = ratingValue <= selectedRating
                                     IconButton(
                                         onClick = { selectedRating = ratingValue },
-                                        modifier = Modifier.size(32.dp)
+                                        modifier = Modifier.size(44.dp)
                                     ) {
                                         Icon(
                                             painter = painterResource(id = R.drawable.ic_star),
                                             contentDescription = "Calificar $ratingValue estrellas",
                                             tint = if (isSelected) StarColor else StarInactiveColor,
-                                            modifier = Modifier.size(28.dp)
+                                            modifier = Modifier.size(24.dp)
                                         )
                                     }
                                 }

@@ -14,14 +14,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 
 @Composable
 fun ServiceDescriptionSection(
@@ -38,7 +36,7 @@ fun ServiceDescriptionSection(
     ) {
         Text(
             text = "Sobre el servicio",
-            fontSize = 18.sp,
+            style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground
         )
@@ -54,7 +52,7 @@ fun ServiceDescriptionSection(
             append(displayText)
             if (!expanded && description.split(" ").size > 35) {
                 append(" ")
-                withStyle(SpanStyle(color = Color(0xFF00BCD4), fontWeight = FontWeight.Medium)) {
+                withStyle(SpanStyle(color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Medium)) {
                     append("Leer más")
                 }
             }
@@ -62,9 +60,8 @@ fun ServiceDescriptionSection(
 
         Text(
             text = annotated,
-            fontSize = 14.sp,
+            style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            lineHeight = 22.sp,
             modifier = Modifier.clickable { expanded = !expanded }
         )
     }

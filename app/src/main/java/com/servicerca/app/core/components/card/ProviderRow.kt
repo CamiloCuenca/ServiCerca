@@ -20,13 +20,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.servicerca.app.R
 import com.servicerca.app.ui.theme.StarColor
 
@@ -69,25 +67,23 @@ fun ProviderRow(
                 ) {
                     Text(
                         text = name,
-                        fontSize = 16.sp,
+                        style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.onBackground
                     )
-                    // Badge nivel
                     Surface(
                         color = MaterialTheme.colorScheme.primaryContainer,
                         shape = androidx.compose.foundation.shape.RoundedCornerShape(6.dp)
                     ) {
                         Text(
                             text = level,
-                            fontSize = 10.sp,
+                            style = MaterialTheme.typography.labelSmall,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
                         )
                     }
                 }
-                // Rating
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_star),
@@ -98,7 +94,7 @@ fun ProviderRow(
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
                         text = "${String.format("%.1f", rating)} ($reviewCount reseñas)",
-                        fontSize = 12.sp,
+                        style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
